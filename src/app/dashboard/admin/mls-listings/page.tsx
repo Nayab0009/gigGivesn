@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import MLSListingsTable from '@/components/adminDashboard/MLSListingsTable';
+import MLSListingsTable from '@/components/adminDashboard/ProjectTable';
 
 export default function MLSListingsPage() {
   return (

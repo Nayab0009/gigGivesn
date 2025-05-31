@@ -35,7 +35,7 @@ interface SignupData {
 const PREDEFINED_USERS = [
   {
     id: 1,
-    email: "admin@Lemara.com",
+    email: "admin@giggives.com",
     password: "admin123",
     firstName: "AJ",
     lastName: "Rana",
@@ -43,36 +43,28 @@ const PREDEFINED_USERS = [
   },
   {
     id: 2,
-    email: "user@Lemara.com",
+    email: "team@giggives.com",
     password: "user123",
     firstName: "User",
     lastName: "",
-    role: "teacher"
+    role: "teammember"
   },
   {
     id: 3,
-    email: "agent@lemaraconstruction.com",
+    email: "manager@giggives.com",
     password: "123",
     firstName: "AJ",
     lastName: "Rana",
-    role: "agent"
+    role: "manager"
   },
-  {
-    id: 4,
-    email: "admin@lemaraconstruction.com",
-    password: "admin123",
-    firstName: "Lemara",
-    lastName: "Admin",
-    role: "admin"
-  }
 ];
 
 // Define dashboard paths for each role
 const ROLE_DASHBOARD_PATHS: Record<string, string> = {
   admin: "/dashboard/admin",
-  teacher: "/dashboard/teacher",
-  broker: "/dashboard/agent",
-  agent: "/dashboard/agent",
+  manager: "/dashboard/manager",
+  teammember: "/dashboard/teammember",
+  agent: "/dashboard/teammember",
   default: "/dashboard" 
 };
 
