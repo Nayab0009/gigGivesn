@@ -37,8 +37,8 @@ const PREDEFINED_USERS = [
     id: 1,
     email: "admin@giggives.com",
     password: "admin123",
-    firstName: "AJ",
-    lastName: "Rana",
+    firstName: "Admin",
+    lastName: "",
     role: "admin"
   },
   {

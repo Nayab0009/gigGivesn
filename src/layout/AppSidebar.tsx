@@ -62,11 +62,11 @@ const adminNavItems: NavItem[] = [
   },  {
     name: "Projects",
     icon: <List size={24} />,
-    path: "/dashboard/admin/commercial-listings",
+    path: "/dashboard/admin/projects",
   },  {
     name: "Managers",
     icon: <FileText size={24} />,
-    path: "/dashboard/admin/mls-listings",
+    path: "/dashboard/admin/managers",
   },
   {
     icon: <Users size={24} />,
@@ -395,18 +395,20 @@ const AppSidebar: React.FC = () => {
         >
           {/* Logo - Only show when expanded */}
           {(isExpanded || isMobileOpen) && (
-            <Link href="/" className="transition-transform duration-300 ease-in-out hover:scale-105">
-              <Image
-                className="transition-opacity duration-300 ease-in-out hover:opacity-90 drop-shadow-lg"
-                src="/images/logo/lemaraLogo.png"
-                alt="Logo"
-                width={140}
-                height={30}
-                style={{
-                  filter: 'brightness(1.4) contrast(1.2) saturate(0.8)',
-                }}
-              />
-            </Link>
+            // <Link href="/" className="transition-transform duration-300 ease-in-out hover:scale-105">
+            //   <Image
+            //     className="transition-opacity duration-300 ease-in-out hover:opacity-90 drop-shadow-lg"
+            //     src="/images/logo/lemaraLogo.png"
+            //     alt="Logo"
+            //     width={140}
+            //     height={30}
+            //     style={{
+            //       filter: 'brightness(1.4) contrast(1.2) saturate(0.8)',
+            //     }}
+            //   />
+            // </Link>
+
+            <h1 className="text-2xl font-bold text-gray-200 text-center ml-6">GigGives</h1>
           )}
 
           {/* Beautiful Toggle Button - Always visible, centered when collapsed */}

@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect, useMemo } from "react"
 import { Search, Filter, Edit, Trash2, Eye, MoreHorizontal, Plus, RefreshCw, Phone, Mail, Users, Calendar, Star, TrendingUp, User, Building2 } from 'lucide-react'
-
+import { useRouter } from "next/navigation";
 // --- Types for Managers Table ---
 interface Manager {
   id: string
@@ -70,7 +70,7 @@ export default function EnhancedManagersTable() {
   const [departmentFilter, setDepartmentFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
   const [expandedManager, setExpandedManager] = useState<string | null>(null)
-
+  const router = useRouter();
   useEffect(() => {
     const fetchManagers = async () => {
       setTimeout(() => {
@@ -255,15 +255,19 @@ export default function EnhancedManagersTable() {
               </div>
             </div>
             <div className="flex items-center space-x-3">
-              <button className="bg-gray-800 text-white px-5 py-2 rounded-lg font-semibold shadow hover:shadow-md transition-all duration-300 hover:scale-105 flex items-center space-x-2">
-                <Plus className="w-4 h-4" />
-                <span>Add Manager</span>
-              </button>
-              <button className="bg-white border border-gray-300 text-gray-700 px-5 py-2 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-all duration-300 flex items-center space-x-2 shadow-sm">
-                <RefreshCw className="w-4 h-4" />
-                <span>Refresh</span>
-              </button>
-            </div>
+      <button
+        type="button"
+        className="bg-gray-800 text-white px-5 py-2 rounded-lg font-semibold shadow hover:shadow-md transition-all duration-300 hover:scale-105 flex items-center space-x-2"
+        onClick={() => router.push("/dashboard/admin/addmanager")}
+      >
+        <Plus className="w-4 h-4" />
+        <span>Add Manager</span>
+      </button>
+      <button className="bg-white border border-gray-300 text-gray-700 px-5 py-2 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-all duration-300 flex items-center space-x-2 shadow-sm">
+        <RefreshCw className="w-4 h-4" />
+        <span>Refresh</span>
+      </button>
+    </div>
           </div>
 
           {/* Filters Section */}
