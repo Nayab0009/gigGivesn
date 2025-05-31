@@ -404,7 +404,7 @@ export default function SignUpForm() {
           <div className="mb-6 bg">
             {/* Simple centered title without animation */}
             <h1 className="mb-3 font-bold text-white text-2xl sm:text-3xl md:text-[28px] text-center">
-              Project Management System
+            GiGGives
             </h1>
             <p className="text-base text-gray-100 mt-2 text-center">Enter your details to create your account</p>
             <div className="mt-4 mb-5 border-b border-white/20"></div>

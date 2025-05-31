@@ -222,7 +222,7 @@ export default function SignInForm() {
         <div className="w-full max-w-2xl px-8 sm:px-12 py-8 mx-4 sm:mx-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 backdrop-blur-md rounded-xl border border-white/20 shadow-xl transition-all duration-300 hover:shadow-2xl">
           <div className="mb-6">
             <h1 className="mb-3 font-bold text-white text-2xl sm:text-3xl md:text-[28px] text-center">
-              Project Management System
+            GiGGives
             </h1>
             <p className="text-base text-gray-100 mt-2 text-center">Enter your credentials to continue your journey</p>
             <div className="mt-4 mb-5 border-b border-white/20"></div>
