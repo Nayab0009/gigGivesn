@@ -6,7 +6,7 @@ import { Mail, Phone, Users } from 'lucide-react'
 const teamMembers = [
 	{
 		id: 1,
-		name: 'John Smith',
+		name: 'Fahad Farman',
 		role: 'Frontend Developer',
 		email: 'john@example.com',
 		phone: '+1 234-567-8901',
