@@ -41,27 +41,35 @@ type NavItem = {
   subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[]
 }
 
+// Add interface for SubItem type
+interface SubItem {
+  name: string;
+  path: string;
+  pro?: boolean;
+  new?: boolean;
+}
+
 // Common navigation items for all roles
 const commonNavItems: NavItem[] = []
 
 // Admin-specific navigation items
 const adminNavItems: NavItem[] = [
   {
-    icon: <LayoutGrid size={20} />,
+    icon: <LayoutGrid size={24} />,
     name: "Dashboard",
     path:'/dashboard/admin',
 
   },  {
     name: "Projects",
-    icon: <List size={20} />,
+    icon: <List size={24} />,
     path: "/dashboard/admin/commercial-listings",
   },  {
     name: "Managers",
-    icon: <FileText size={20} />,
+    icon: <FileText size={24} />,
     path: "/dashboard/admin/mls-listings",
   },
   {
-    icon: <Users size={20} />,
+    icon: <Users size={24} />,
     name: "Teams",
     subItems: [
       { name: "Grid View", path: "/dashboard/admin/team/grid", pro: false },
@@ -198,7 +206,7 @@ const AppSidebar: React.FC = () => {
             nav.path && (
               <Link
                 href={nav.path}
-                className={`menu-item group bg-transparent transition-all duration-300 ease-in-out transform hover:scale-[1.02] rounded-lg p-3 border-l-4 ${
+                className={`menu-item group bg-transparent transition-all duration-300 ease-in-out transform hover:scale-[1.02] rounded-lg py-4 px-5 border-l-4 flex items-center gap-4 text-lg ${
                   isActive(nav.path)
                     ? "bg-gray-800/60 shadow-lg border-gray-400 shadow-gray-900/30 text-white"
                     : "text-gray-300 hover:bg-gray-800/40 hover:shadow-md border-transparent hover:border-gray-500/70 hover:text-white"
@@ -215,7 +223,7 @@ const AppSidebar: React.FC = () => {
                 </span>
                 {(isExpanded || isMobileOpen) && (
                   <span
-                    className={`font-medium text-sm tracking-wide transition-all duration-300 ease-in-out group-hover:font-semibold ${
+                    className={`font-medium text-base tracking-wide transition-all duration-300 ease-in-out group-hover:font-semibold ${
                       isActive(nav.path) 
                         ? "font-semibold text-white" 
                         : "text-gray-300 group-hover:text-white"
@@ -241,7 +249,7 @@ const AppSidebar: React.FC = () => {
                 opacity: openSubmenu?.type === menuType && openSubmenu?.index === index ? 1 : 0,
               }}
             >
-              <ul className="mt-2 space-y-2 ml-12">
+              <ul className="mt-2 space-y-1 ml-9">
                 {nav.subItems.map((subItem) => (
                   <li key={subItem.name}>
                     <Link
@@ -346,7 +354,7 @@ const AppSidebar: React.FC = () => {
   }
 
   return (
-    <>
+    <div className="relative">
       {/* Mobile Overlay */}
       {isMobileOpen && (
         <div
@@ -358,7 +366,8 @@ const AppSidebar: React.FC = () => {
       {/* Sidebar */}
       <aside
         className={`fixed top-0 left-0 h-screen z-50 shadow-2xl backdrop-blur-sm
-          transition-all duration-300 ease-in-out transform w-[300px]
+          transition-all duration-300 ease-in-out transform
+          ${isExpanded || isMobileOpen ? "w-[290px]" : "w-[90px]"}
           ${isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
         style={{
@@ -371,131 +380,115 @@ const AppSidebar: React.FC = () => {
           )`,
         }}
       >
-        {/* Header with Logo */}
-        <div className="flex items-center justify-center px-6 py-4 backdrop-blur-md border-b-2 border-gray-700/40">
-          <Link href="/" className="transition-transform duration-300 ease-in-out hover:scale-105">
-            <Image
-              className="transition-opacity duration-300 ease-in-out hover:opacity-90 drop-shadow-lg"
-              src="/images/logo/lemaraLogo.png"
-              alt="Logo"
-              width={160}
-              height={35}
+        {/* Header with Logo and Toggle Button */}
+        <div
+          className={`flex items-center backdrop-blur-md border-b-2 border-gray-700/40 transition-all duration-300 ease-in-out ${
+            !isExpanded && !isMobileOpen ? "justify-center px-4 py-3" : "justify-between px-6 py-3"
+          }`}
+          style={{
+            background: `linear-gradient(135deg, 
+              rgba(15, 15, 15, 0.95) 0%, 
+              rgba(26, 26, 26, 0.95) 50%, 
+              rgba(10, 10, 10, 0.95) 100%
+            )`,
+          }}
+        >
+          {/* Logo - Only show when expanded */}
+          {(isExpanded || isMobileOpen) && (
+            <Link href="/" className="transition-transform duration-300 ease-in-out hover:scale-105">
+              <Image
+                className="transition-opacity duration-300 ease-in-out hover:opacity-90 drop-shadow-lg"
+                src="/images/logo/lemaraLogo.png"
+                alt="Logo"
+                width={140}
+                height={30}
+                style={{
+                  filter: 'brightness(1.4) contrast(1.2) saturate(0.8)',
+                }}
+              />
+            </Link>
+          )}
+
+          {/* Beautiful Toggle Button - Always visible, centered when collapsed */}
+          <button
+            onClick={toggleSidebar}
+            className={`group relative flex items-center justify-center rounded-xl text-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:ring-offset-2 focus:ring-offset-gray-800 ${
+              !isExpanded && !isMobileOpen ? "w-11 h-11" : "w-9 h-9"
+            }`}
+            style={{
+              background: `linear-gradient(135deg, 
+                #404040 0%, 
+                #2d2d2d 50%, 
+                #1a1a1a 100%
+              )`,
+            }}
+            aria-label="Toggle Sidebar"
+          >
+            {/* Background glow effect */}
+            <div 
+              className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out" 
               style={{
-                filter: 'brightness(1.4) contrast(1.2) saturate(0.8)',
+                background: `linear-gradient(135deg, 
+                  rgba(255, 255, 255, 0.15) 0%, 
+                  rgba(255, 255, 255, 0.08) 100%
+                )`,
               }}
             />
-          </Link>
+
+            {/* Icon with smooth rotation */}
+            <div className="relative z-10 transition-transform duration-300 ease-in-out">
+              {isExpanded || isMobileOpen ? (
+                <ChevronLeft size={18} className="transform group-hover:scale-110 transition-transform duration-200 drop-shadow-sm text-gray-200 group-hover:text-white" />
+              ) : (
+                <ChevronRight size={20} className="transform group-hover:scale-110 transition-transform duration-200 drop-shadow-sm text-gray-200 group-hover:text-white" />
+              )}
+            </div>
+
+            {/* Ripple effect on click */}
+            <div className="absolute inset-0 rounded-xl overflow-hidden">
+              <div className="absolute inset-0 bg-gray-500/30 transform scale-0 group-active:scale-100 transition-transform duration-200 ease-out rounded-xl" />
+            </div>
+
+            {/* Subtle pulse animation when collapsed */}
+            {!isExpanded && !isMobileOpen && (
+              <div className="absolute inset-0 rounded-xl border-2 border-gray-600/20 animate-pulse opacity-40" />
+            )}
+          </button>
         </div>
 
-        {/* Updated menu items styling */}
-        <nav className="flex flex-col overflow-y-auto px-4 py-6">
-          <ul className="flex flex-col gap-3">
-            {navItems.map((nav, index) => (
-              <li key={nav.name}>
-                {nav.path ? (
-                  <Link
-                    href={nav.path}
-                    className={`menu-item group flex items-center gap-3 p-4 text-lg rounded-xl transition-all duration-300 ${
-                      isActive(nav.path)
-                        ? "bg-gray-800/60 text-white shadow-lg border-l-4 border-gray-400"
-                        : "text-gray-300 hover:bg-gray-800/40 hover:text-white border-l-4 border-transparent hover:border-gray-500/70"
-                    }`}
-                  >
-                    <span className="text-2xl">{nav.icon}</span>
-                    <span className="font-medium">{nav.name}</span>
-                  </Link>
-                ) : (
-                  nav.subItems && (
-                    <div>
-                      <button
-                        onClick={() => handleSubmenuToggle(index, "main")}
-                        className={`menu-item group flex items-center justify-between p-4 text-lg rounded-xl transition-all duration-300 ${
-                          openSubmenu?.type === "main" && openSubmenu?.index === index
-                            ? "bg-gray-800/60 text-white shadow-lg border-l-4 border-gray-400"
-                            : "text-gray-300 hover:bg-gray-800/40 hover:text-white border-l-4 border-transparent hover:border-gray-500/70"
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="text-2xl">{nav.icon}</span>
-                          <span className="font-medium">{nav.name}</span>
-                        </div>
-                        <ChevronDownIcon
-                          className={`w-5 h-5 transition-all duration-300 ease-in-out ${
-                            openSubmenu?.type === "main" && openSubmenu?.index === index
-                              ? "rotate-180 text-white"
-                              : "text-gray-300 group-hover:text-white"
-                          }`}
-                        />
-                      </button>
-                      {openSubmenu?.type === "main" && openSubmenu?.index === index && (
-                        <div
-                          ref={(el) => {
-                            subMenuRefs.current[`main-${index}`] = el
-                          }}
-                          className="overflow-hidden transition-all duration-300 ease-in-out"
-                          style={{
-                            height:
-                              openSubmenu?.type === "main" && openSubmenu?.index === index
-                                ? `${subMenuHeight[`main-${index}`]}px`
-                                : "0px",
-                            opacity: openSubmenu?.type === "main" && openSubmenu?.index === index ? 1 : 0,
-                          }}
-                        >
-                          <ul className="mt-2 space-y-2 ml-12">
-                            {nav.subItems.map((subItem) => (
-                              <li key={subItem.name}>
-                                <Link
-                                  href={subItem.path}
-                                  className={`menu-dropdown-item transition-all duration-300 ease-in-out hover:scale-[1.02] font-medium text-base tracking-wide block py-3 px-4 rounded-lg ${
-                                    isActive(subItem.path)
-                                      ? "bg-gray-800/70 text-white shadow-md border-l-2 border-gray-400"
-                                      : "text-gray-400 hover:bg-gray-800/50 hover:text-white hover:pl-6 border-l-2 border-transparent hover:border-gray-500/70"
-                                  }`}
-                                >
-                                  {subItem.name}
-                                  <span className="flex items-center gap-1 ml-auto">
-                                    {subItem.new && (
-                                      <span
-                                        className={`ml-auto transition-all duration-300 ease-in-out hover:scale-105 px-2 py-1 rounded-full text-xs font-semibold ${
-                                          isActive(subItem.path) 
-                                            ? "bg-gray-600 text-gray-100" 
-                                            : "bg-gray-700 text-gray-200"
-                                        }`}
-                                      >
-                                        new
-                                      </span>
-                                    )}
-                                    {subItem.pro && (
-                                      <span
-                                        className={`ml-auto transition-all duration-300 ease-in-out hover:scale-105 px-2 py-1 rounded-full text-xs font-semibold ${
-                                          isActive(subItem.path) 
-                                            ? "bg-gray-600 text-gray-100" 
-                                            : "bg-gray-700 text-gray-200"
-                                        }`}
-                                      >
-                                        pro
-                                      </span>
-                                    )}
-                                  </span>
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  )
-                )}
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {/* Sidebar Content */}
+        <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar px-5">
+          <nav className="mb-6">
+            <div className="flex flex-col gap-4">
+              <div className="pt-4">
+                {renderMenuItems(navItems, "main")}
+                {/* Remove the additional mapping of subItems here since it's already handled in renderMenuItems */}
+              </div>
+            </div>
+          </nav>
+        </div>
 
-        {/* ...existing widget code... */}
+        {/* Decorative bottom border */}
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-gray-600/50 to-transparent" />
       </aside>
 
-      {/* ...existing styles... */}
-    </>
+      {/* Custom scrollbar styles */}
+      <style jsx>{`
+        .no-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .no-scrollbar::-webkit-scrollbar-track {
+          background: rgba(64, 64, 64, 0.1);
+        }
+        .no-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(64, 64, 64, 0.5);
+          border-radius: 3px;
+        }
+        .no-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(64, 64, 64, 0.7);
+        }
+      `}</style>
+    </div>
   )
 }
 
