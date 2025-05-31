@@ -12,13 +12,13 @@ import Label from "@/components/form/Label"
 import { useAuth } from "@/context/AuthContext"
 import { toast, ToastContainer, type ToastOptions } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import { UserPlus, Mail, Linkedin } from 'lucide-react'
+import { UserPlus, Mail } from 'lucide-react'
 
-// Define roles enum
+// Update Role enum
 export enum Role {
-  ADMIN = "admin",
-  USER = "user",
-  BROKER = "broker",
+  MANAGER = "manager",
+  TEAM_MEMBER = "team_member",
+  USER = "user", // Add this if it's being used as default
 }
 
 // Define custom toast style type
@@ -40,40 +40,23 @@ export default function SignUpForm() {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    phone: "",
     email: "",
-    address: "",
+    phone: "",
     password: "",
-    whatsapp: "",
-    facebook: "",
-    twitter: "",
-    linkedIn: "",
-    instagram: "",
-    nmls: "",
-    dre: "",
-    association: "",
+    confirmPassword: "",
     role: selectedRoleFromQuery || Role.USER,
   })
   const [errors, setErrors] = useState({
     firstName: "",
     lastName: "",
-    phone: "",
     email: "",
-    address: "",
+    phone: "",
     password: "",
-    whatsapp: "",
-    facebook: "",
-    linkedIn: "",
-    twitter: "",
-    instagram: "",
-    association: "",
-    nmls: "",
-    dre: "",
-    role: "",
+    confirmPassword: "",
     terms: "",
+    role: "", // Add this line
   })
 
-  const [showEmailForm, setShowEmailForm] = useState(false)
   const [showTermsModal, setShowTermsModal] = useState(false)
 
   // Custom toast styles
@@ -108,91 +91,7 @@ export default function SignUpForm() {
     },
     icon: "⚠️",
   }
-  const Associations = [
-    "Amador County Association Of Realtors®",
-    "Arcadia Association Of Realtors®",
-    "Bakersfield Association Of Realtors® Inc",
-    "Bay Area Real Estate Information Service",
-    "Bay East Association Of Realtors®",
-    "Beverly Hills/Greater Los Angeles AOR",
-    "Big Bear Association Of Realtors®",
-    "Bridge Association Of Realtors®",
-    "Burbank Association Of Realtors®",
-    "Calaveras County Association Of Realtors®",
-    "California Association Of Realtors® Inc",
-    "California Desert Association Of Realtors®",
-    "Central Valley Association Of Realtors® Inc",
-    "Citrus Valley Association Of Realtors®",
-    "Conejo Simi Moorpark Association of REALTORS®",
-    "Contra Costa Association Of Realtors®",
-    "Downey Association Of Realtors®",
-    "East Bay Association Of Realtors® Inc",
-    "El Dorado County Association Of Realtors®",
-    "Fresno Association Of Realtors®",
-    "Glendale Association Of Realtors®",
-    "Greater Antelope Valley Association of REALTORS®",
-    "High Desert Association Of Realtors®",
-    "Humboldt Association Of Realtors®",
-    "Imperial County Association Of Realtors®",
-    "Inland Valleys Association Of Realtors®",
-    "Kern River Lake Isabella Board Of Realtors® Inc",
-    "Kings County Board Of Realtors®",
-    "Lake County Association Of Realtors®",
-    "Lake Tahoe Board Of Realtors®",
-    "Lassen Association Of Realtors®",
-    "Madera Association Of Realtors®",
-    "Marin Association Of Realtors®",
-    "Mariposa County Board Of Realtors®",
-    "Mendocino Association Of Realtors®",
-    "Merced County Association Of Realtors®",
-    "Monterey County Association Of Realtors® Inc",
-    "Napa Valley Vintners",
-    "Nevada County Association Of Realtors®",
-    "Northern Solano County Association Of Realtors®",
-    "North San Diego County Association Of Realtors®",
-    "North Santa Barbara County Regional MLS",
-    "Orange County Association Of Realtors®",
-    "Pacific West Association Of Realtors®",
-    "Palm Springs Regional Association Of Realtors®",
-    "Palos Verdes Board Of Realtors®",
-    "Pasadena-Foothills Association Of Realtors®",
-    "Placer County Association Of Realtors®",
-    "Plumas Association Of Realtors®",
-    "Real Estate Business Service",
-    "Ridgecrest Area Association Of Realtors®",
-    "Russian River Real Estate",
-    "Sacramento Association Of Realtors®",
-    "San Benito County Association Of Realtors®",
-    "San Diego Association Of Realtors®",
-    "San Francisco Association Of Realtors®",
-    "San Francisco Multiple Listing Service Inc",
-    "San Luis Obispo Association Of Realtors®",
-    "San Mateo County Association Of Realtors®",
-    "Santa Barbara Association Of Realtors®",
-    "Santa Clara County Association Of Realtors®",
-    "Santa Cruz County Association Of Realtors®",
-    "Santa Maria Association Of Realtors®",
-    "Santa Ynez Valley Association Of Realtors®",
-    "Shasta Association Of Realtors®",
-    "Sierra North Valley Association Of Realtors®",
-    "Siskiyou Association Of Realtors®",
-    "Solano Association Of Realtors®",
-    "Southland Regional Association Of Realtors®",
-    "Southwest Riverside County Association Of Realtors®",
-    "Stanislaus County Multiple Listing Service",
-    "Sutter/Yuba Association Of Realtors®",
-    "Tehama County Association Of Realtors®",
-    "Trinity County Association Of Realtors®",
-    "Tulare County Association Of Realtors®",
-    "Tuolumne County Association Of Realtors®",
-    "United Multiple Listing Service Inc",
-    "Ventura County Coastal Association Of Realtors®",
-    "West Contra Costa Association Of Realtors®",
-    "West San Gabriel Valley Association Of Realtors®",
-    "Western Nevada County Association Of Realtors®",
-    "Women's Council Of Realtors® Santa Clara Chapter",
-    "Yosemite Gateway Association Of Realtors®",
-  ]
+
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault()
 
@@ -250,11 +149,6 @@ export default function SignUpForm() {
       isValid = false
     }
 
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required"
-      isValid = false
-    }
-
     if (!formData.email.trim()) {
       newErrors.email = "Email is required"
       isValid = false
@@ -263,11 +157,13 @@ export default function SignUpForm() {
       isValid = false
     }
 
-    // Remove address validation since there's no address field in the form
-    // if (!formData.address) {
-    //   newErrors.address = "Address is required"
-    //   isValid = false
-    // }
+    if (!formData.phone) {
+      newErrors.phone = "Phone number is required"
+      isValid = false
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      newErrors.phone = "Please enter a valid 10-digit phone number"
+      isValid = false
+    }
 
     if (!formData.password) {
       newErrors.password = "Password is required"
@@ -277,8 +173,11 @@ export default function SignUpForm() {
       isValid = false
     }
 
-    if (!formData.role) {
-      newErrors.role = "Please select an account type"
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password"
+      isValid = false
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match"
       isValid = false
     }
 
@@ -311,17 +210,8 @@ export default function SignUpForm() {
       console.log("Sending data to API:", {
         firstName: formData.firstName,
         lastName: formData.lastName,
-        phone: formData.phone,
         email: formData.email,
         password: formData.password,
-        whatsapp: formData.whatsapp,
-        facebook: formData.facebook,
-        twitter: formData.twitter,
-        linkedIn: formData.linkedIn,
-        instagram: formData.instagram,
-        nmls: formData.nmls,
-        dre: formData.dre,
-        role: formData.role,
       })
 
       console.log("Starting fetch request to /api/signup")
@@ -330,17 +220,8 @@ export default function SignUpForm() {
       const requestBody = {
         firstName: formData.firstName,
         lastName: formData.lastName,
-        phone: formData.phone,
         email: formData.email,
         password: formData.password,
-        whatsapp: formData.whatsapp,
-        facebook: formData.facebook,
-        twitter: formData.twitter,
-        linkedIn: formData.linkedIn,
-        instagram: formData.instagram,
-        nmls: formData.nmls,
-        dre: formData.dre,
-        role: formData.role,
       }
 
       console.log("Request body:", JSON.stringify(requestBody))
@@ -461,29 +342,6 @@ export default function SignUpForm() {
     }
   }
 
-  const handleLinkedinSignup = async () => {
-    try {
-      console.log("Signing up with LinkedIn")
-      // Implement LinkedIn OAuth logic here
-      toast.info(
-        <div className="flex flex-col">
-          <span className="text-lg font-medium mb-1">LinkedIn Sign Up</span>
-          <span className="text-sm opacity-90">Redirecting to LinkedIn authentication...</span>
-        </div>,
-      )
-      // Redirect to LinkedIn OAuth endpoint or use a library like next-auth
-    } catch (error) {
-      console.error("LinkedIn signup error:", error)
-      toast.error(
-        <div className="flex flex-col">
-          <span className="text-lg font-medium mb-1">Authentication Failed</span>
-          <span className="text-sm opacity-90">Could not sign up with LinkedIn. Please try again.</span>
-        </div>,
-        errorToastStyle as ToastOptions,
-      )
-    }
-  }
-
   const handleOpenTermsModal = () => {
     // Check if first name and last name are filled
     if (!formData.firstName.trim() || !formData.lastName.trim()) {
@@ -518,12 +376,13 @@ export default function SignUpForm() {
     setErrors((prev) => ({ ...prev, terms: "" }))
   }
 
-  const toggleEmailForm = () => {
-    setShowEmailForm(!showEmailForm)
-  }
+  // Add this common class for all inputs
+  const commonInputClass = "w-full h-12 px-4 bg-white/5 text-white !rounded-lg border-white/20 focus:border-gray-400 focus:ring-gray-400 shadow-sm placeholder-gray-400"
+
+  // For select dropdown
+  const commonSelectClass = "w-full h-12 px-4 !bg-white text-gray-700 !rounded-lg border-white/20 focus:border-gray-400 focus:ring-gray-400 shadow-sm"
 
   return (
-    // Changed to min-h-screen with overflow-y-auto to enable scrolling when needed
     <div className="flex min-h-screen w-full">
       <ToastContainer
         position="top-right"
@@ -539,24 +398,20 @@ export default function SignUpForm() {
         className="toast-container-custom"
       />
 
-      {/* Left Section - Signup Form */}
-      <div className="w-full lg:w-1/2 flex items-start justify-center bg-white h-screen overflow-y-auto scrollbar-hide">
-        {/* Added responsive padding to ensure form is visible on smaller screens */}
-
-        <div
-          className={`w-full ${showEmailForm ? "max-w-xl" : "max-w-md"} px-6 sm:px-8 py-8 mx-4 sm:mx-6 my-8 sm:my-6 bg-white rounded-xl border border-gray-100 shadow-lg transition-all duration-300`}
-        >
-          <div className="mb-6">
+      {/* Full width form section */}
+      <div className="w-full flex items-center justify-center bg-white min-h-screen py-8">
+        <div className="w-full max-w-2xl px-8 sm:px-12 py-8 mx-4 sm:mx-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 backdrop-blur-md rounded-xl border border-white/20 shadow-xl transition-all duration-300 hover:shadow-2xl">
+          <div className="mb-6 bg">
             {/* Simple centered title without animation */}
-            <h1 className="mb-3 font-bold text-[#06AED7] text-2xl sm:text-3xl md:text-[28px] text-center">
-              Agent Registration
+            <h1 className="mb-3 font-bold text-white text-2xl sm:text-3xl md:text-[28px] text-center">
+              Project Management System
             </h1>
-            <p className="text-base text-gray-600 mt-2 text-center">Enter your details to create your account</p>
-            <div className="mt-4 mb-5 border-b border-gray-200"></div>
+            <p className="text-base text-gray-100 mt-2 text-center">Enter your details to create your account</p>
+            <div className="mt-4 mb-5 border-b border-white/20"></div>
           </div>
 
           <div className="space-y-5">
-            {/* Third-party authentication buttons */}
+            {/* Google signup button */}
             <button
               type="button"
               onClick={handleGoogleSignup}
@@ -583,15 +438,6 @@ export default function SignUpForm() {
               Sign up with Google
             </button>
 
-            <button
-              type="button"
-              onClick={handleLinkedinSignup}
-              className="w-full py-3 px-4 flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-all duration-200 shadow-sm"
-            >
-              <Linkedin size={24} className="text-[#0077B5]" />
-              Sign up with LinkedIn
-            </button>
-
             {/* OR divider */}
             <div className="relative flex items-center py-2">
               <div className="flex-grow border-t border-gray-300"></div>
@@ -599,424 +445,244 @@ export default function SignUpForm() {
               <div className="flex-grow border-t border-gray-300"></div>
             </div>
 
-            {/* Email signup button */}
-            <button
-              type="button"
-              onClick={toggleEmailForm}
-              className="w-full py-3 px-4 flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-all duration-200 shadow-sm"
+            {/* Form - Now always visible */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                handleSubmit(e)
+              }}
+              className="space-y-4"
             >
-              <Mail size={20} className="text-gray-600" />
-              Sign up with Email
-            </button>
-
-            {/* Email signup form */}
-            {showEmailForm && (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault()
-                  handleSubmit(e)
-                }}
-                className="space-y-4 mt-5"
-              >
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  {/* First Name */}
-                  <div className="sm:col-span-1">
-                    <Label htmlFor="name" className="mb-1 text-gray-700 font-medium text-sm">
-                      First Name<span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      type="text"
-                      id="firstName"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      placeholder="Enter your first name"
-                      error={!!errors.firstName}
-                      hint={errors.firstName}
-                      className="bg-white text-gray-800 !rounded-lg border-gray-300 focus:border-[#366084] focus:ring-[#366084] shadow-sm"
-                    />
-                  </div>
-                  {/* Last Name */}
-                  <div className="sm:col-span-1">
-                    <Label htmlFor="phone" className="mb-1 text-gray-700 font-medium text-sm">
-                      Last Name<span className="text-red-500">*</span>
-                    </Label>
-                    <Input
-                      type="text"
-                      id="lastName"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      placeholder="Enter your last name"
-                      error={!!errors.lastName}
-                      hint={errors.lastName}
-                      className="bg-white text-gray-800 !rounded-lg border-gray-300 focus:border-[#366084] focus:ring-[#366084] shadow-sm"
-                    />
-                  </div>
-                </div>
-
-                {/* Email */}
-                <div>
-                  <Label htmlFor="email" className="mb-1 text-gray-700 font-medium text-sm">
-                    Email<span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="Enter your email"
-                    error={!!errors.email}
-                    hint={errors.email}
-                    className="bg-white text-gray-800 !rounded-lg border-gray-300 focus:border-[#366084] focus:ring-[#366084] shadow-sm"
-                  />
-                </div>
-                <div>
-                  {/* Password */}
-                  <Label htmlFor="email" className="mb-1 text-gray-700 font-medium text-sm">
-                    Password<span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="Enter your password"
-                    error={!!errors.password}
-                    hint={errors.password}
-                    className="bg-white text-gray-800 !rounded-lg border-gray-300 focus:border-[#366084] focus:ring-[#366084] shadow-sm"
-                  />
-                </div>
-
-                {/* phone  */}
-                <div>
-                  <Label htmlFor="address" className="mb-1 text-gray-700 font-medium text-sm">
-                    Phone<span className="text-red-500">*</span>
+              {/* Form fields grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* First Name */}
+                <div className="w-full">
+                  <Label htmlFor="name" className="mb-1 text-gray-100 font-medium text-sm">
+                    First Name<span className="text-red-500">*</span>
                   </Label>
                   <Input
                     type="text"
-                    id="phone"
-                    name="phone"
-                    value={formData.phone}
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleChange}
-                    placeholder="Enter your Phone Number "
-                    error={!!errors.phone}
-                    hint={errors.phone}
-                    className="bg-white text-gray-800 !rounded-lg border-gray-300 focus:border-[#366084] focus:ring-[#366084] shadow-sm"
+                    placeholder="Enter your first name"
+                    error={!!errors.firstName}
+                    hint={errors.firstName}
+                    className={commonInputClass}
                   />
                 </div>
-                <div>
-                  {/* whatsapp  */}
-                  <Label htmlFor="address" className="mb-1 text-gray-700 font-medium text-sm">
-                    Whatsapp<span className="text-red-500">*</span>
+                {/* Last Name */}
+                <div className="w-full">
+                  <Label htmlFor="lastName" className="mb-1 text-gray-100 font-medium text-sm">
+                    Last Name<span className="text-red-500">*</span>
                   </Label>
                   <Input
                     type="text"
-                    id="whatsapp"
-                    name="whatsapp"
-                    value={formData.whatsapp}
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName}
                     onChange={handleChange}
-                    placeholder="Enter your Phone Number "
-                    error={!!errors.whatsapp}
-                    hint={errors.whatsapp}
-                    className="bg-white text-gray-800 !rounded-lg border-gray-300 focus:border-[#366084] focus:ring-[#366084] shadow-sm"
+                    placeholder="Enter your last name"
+                    error={!!errors.lastName}
+                    hint={errors.lastName}
+                    className={commonInputClass}
                   />
                 </div>
-                {/* facebook  */}
-                <div>
-                  <Label htmlFor="address" className="mb-1 text-gray-700 font-medium text-sm">
-                    Facebook<span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    type="text"
-                    id="facebook"
-                    name="facebook"
-                    value={formData.facebook}
-                    onChange={handleChange}
-                    placeholder="Enter your facebook "
-                    error={!!errors.facebook}
-                    hint={errors.facebook}
-                    className="bg-white text-gray-800 !rounded-lg border-gray-300 focus:border-[#366084] focus:ring-[#366084] shadow-sm"
-                  />
-                </div>
-                {/* twitter  */}
-                <div>
-                  <Label htmlFor="address" className="mb-1 text-gray-700 font-medium text-sm">
-                    Twitter<span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    type="text"
-                    id="twitter"
-                    name="twitter"
-                    value={formData.twitter}
-                    onChange={handleChange}
-                    placeholder="Enter your twitter "
-                    error={!!errors.twitter}
-                    hint={errors.twitter}
-                    className="bg-white text-gray-800 !rounded-lg border-gray-300 focus:border-[#366084] focus:ring-[#366084] shadow-sm"
-                  />
-                </div>
-                {/* linkedin  */}
-                <div>
-                  <Label htmlFor="address" className="mb-1 text-gray-700 font-medium text-sm">
-                    LinkedIn<span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    type="text"
-                    id="linkedIn"
-                    name="linkedIn"
-                    value={formData.linkedIn}
-                    onChange={handleChange}
-                    placeholder="Enter your LinkedIn "
-                    error={!!errors.linkedIn}
-                    hint={errors.linkedIn}
-                    className="bg-white text-gray-800 !rounded-lg border-gray-300 focus:border-[#366084] focus:ring-[#366084] shadow-sm"
-                  />
-                </div>
-                {/* instagram  */}
-                <div>
-                  <Label htmlFor="address" className="mb-1 text-gray-700 font-medium text-sm">
-                    Instagram<span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    type="text"
-                    id="instagram"
-                    name="instagram"
-                    value={formData.instagram}
-                    onChange={handleChange}
-                    placeholder="Enter your Instagram "
-                    error={!!errors.instagram}
-                    hint={errors.instagram}
-                    className="bg-white text-gray-800 !rounded-lg border-gray-300 focus:border-[#366084] focus:ring-[#366084] shadow-sm"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Association</label>
-                  <select
-                    name="association"
-                    value={formData.association}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-3 border ${
-                      errors.association ? "border-red-500" : "border-gray-300 dark:border-gray-600"
-                    } rounded-full bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-[#06AED7] dark:focus:ring-[#00c1f5] transition-all duration-300 hover:border-[#06AED7] dark:hover:border-[#00c1f5] appearance-none cursor-pointer text-gray-800 dark:text-gray-100`}
-                  >
-                    <option value="">Select Association</option>
-                    {Associations.map((assoc, index) => (
-                      <option key={index} value={assoc}>
-                        {assoc}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.association && <p className="text-red-500 text-xs mt-1">{errors.association}</p>}
-                </div>
+              </div>
 
-                {/* NMLS  */}
-                <div>
-                  <Label htmlFor="address" className="mb-1 text-gray-700 font-medium text-sm">
-                    NMLS #<span className="text-red-500">*</span>
-                  </Label>
-                  <Input
-                    type="text"
-                    id="nmls"
-                    name="nmls"
-                    value={formData.nmls}
-                    onChange={handleChange}
-                    placeholder="NMLS #"
-                    error={!!errors.nmls}
-                    hint={errors.nmls}
-                    className="bg-white text-gray-800 !rounded-lg border-gray-300 focus:border-[#366084] focus:ring-[#366084] shadow-sm"
-                  />
-                </div>
+              {/* Email */}
+              <div>
+                <Label htmlFor="email" className="mb-1 text-gray-100 font-medium text-sm">
+                  Email<span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Enter your email"
+                  error={!!errors.email}
+                  hint={errors.email}
+                  className={`${commonInputClass} min-w-[300px]`}
+                />
+              </div>
 
-                {/* DRE  */}
-                <div>
-                  <Label htmlFor="password" className="mb-1 text-gray-700 font-medium text-sm">
-                    DRE #<span className="text-red-500">*</span>
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      type="text"
-                      id="dre"
-                      name="dre"
-                      value={formData.dre}
-                      onChange={handleChange}
-                      placeholder="  DRE #  "
-                      error={!!errors.dre}
-                      hint={errors.dre}
-                      className="bg-white text-gray-800 !rounded-lg border-gray-100 focus:border-gray-100 focus:ring-gray-100 shadow-sm"
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                      onClick={() => setShowPassword(!showPassword)}
-                    ></button>
-                  </div>
-                </div>
+              {/* Phone Number */}
+              <div>
+                <Label htmlFor="phone" className="mb-1 text-gray-100 font-medium text-sm">
+                  Phone Number<span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="Enter your phone number"
+                  error={!!errors.phone}
+                  hint={errors.phone}
+                  className={`${commonInputClass} min-w-[300px]`}
+                />
+              </div>
 
-                {/* Role Selection */}
-                <div>
-                  <Label htmlFor="role" className="mb-1 text-gray-700 font-medium text-sm">
-                    Account Type<span className="text-red-500">*</span>
-                  </Label>
-                  <div className="relative">
-                    <select
-                      id="role"
-                      name="role"
-                      value={formData.role}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white text-gray-800 !rounded-lg border-gray-300 focus:border-[#366084] focus:ring-[#366084] shadow-sm appearance-none"
-                      required
-                    >
-                      <option value="" disabled>
-                        Select Account Type
-                      </option>
-                      <option value={Role.USER}>User</option>
-                      <option value={Role.BROKER}>Broker</option>
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 pt-0 text-gray-700">
-                      <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                      </svg>
-                    </div>
-                  </div>
-                  {errors.role && <p className="mt-1 text-xs text-red-500">{errors.role}</p>}
-                </div>
+              {/* Role Selection */}
+              <div>
+                <Label htmlFor="role" className="mb-1 text-gray-100 font-medium text-sm">
+                  Select Role<span className="text-red-500">*</span>
+                </Label>
+                <select
+                  id="role"
+                  name="role"
+                  value={formData.role}
+                  onChange={handleChange}
+                  className={commonSelectClass}
+                >
+                  <option value="" disabled>Select your role</option>
+                  <option value={Role.MANAGER}>Manager</option>
+                  <option value={Role.TEAM_MEMBER}>Team Member</option>
+                </select>
+              </div>
 
-                {/* Terms */}
-                <div className="flex items-center">
-                  <Checkbox
-                    id="terms"
-                    label={
-                      <span className="text-sm">
-                        Click to view & sign the{" "}
-                        <button
-                          type="button"
-                          onClick={handleOpenTermsModal}
-                          className="text-blue-600 hover:text-blue-800 underline focus:outline-none"
-                        >
-                          Independent Contractor Agreement
-                        </button>
-                      </span>
+              {/* Password */}
+              <div>
+                <Label htmlFor="password" className="mb-1 text-gray-100 font-medium text-sm">
+                  Password<span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Enter your password"
+                  error={!!errors.password}
+                  hint={errors.password}
+                  className={commonInputClass}
+                />
+              </div>
+
+              {/* Confirm Password */}
+              <div>
+                <Label htmlFor="confirmPassword" className="mb-1 text-gray-100 font-medium text-sm">
+                  Confirm Password<span className="text-red-500">*</span>
+                </Label>
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm your password"
+                  error={!!errors.confirmPassword}
+                  hint={errors.confirmPassword}
+                  className={commonInputClass}
+                />
+              </div>
+
+              {/* Terms */}
+              <div className="flex items-center">
+                <Checkbox
+                  checked={isChecked}
+                  onChange={() => setIsChecked(!isChecked)}
+                  className="h-4 w-4 text-teal-700 rounded focus:ring-teal-600 border-gray-300"
+                />
+                <label
+                  className="ml-2 block text-sm text-gray-100 cursor-pointer"
+                  onClick={() => {
+                    if (!isChecked) {
+                      handleOpenTermsModal()
+                    } else {
+                      setIsChecked(false)
+                      setErrors((prev) => ({ ...prev, terms: "" }))
                     }
-                    checked={isChecked}
-                    onChange={handleOpenTermsModal}
-                    className="text-gray-900"
-                  />
-                </div>
-                {errors.terms && <p className="mt-1 text-xs text-red-500">{errors.terms}</p>}
+                  }}
+                >
+                  I agree to the{" "}
+                  <span className="text-[#1e40af] underline">terms and conditions</span>
+                </label>
+              </div>
+              {errors.terms && <p className="mt-1 text-xs text-red-500">{errors.terms}</p>}
 
-                {authError && <div className="p-3 text-sm text-red-500 bg-red-50 rounded-lg">{authError}</div>}
+              {authError && <div className="p-3 text-sm text-red-500 bg-red-50 rounded-lg">{authError}</div>}
 
-                {errors.role && !selectedRoleFromQuery && (
-                  <div className="p-3 text-sm text-red-500 bg-red-50 rounded-lg">{errors.role}</div>
-                )}
+              {errors.role && !selectedRoleFromQuery && (
+                <div className="p-3 text-sm text-red-500 bg-red-50 rounded-lg">{errors.role}</div>
+              )}
 
-                <div className="pt-3 mt-3 flex justify-center">
-                  <button
-                    type="submit"
-                    className="w-48 py-3 font-medium text-white transition-all duration-300 rounded-full bg-[#06AED7] hover:bg-[#022340] hover:translate-y-1 hover:shadow-lg focus:ring-2 focus:ring-[#366084] focus:ring-offset-2 shadow-md disabled:opacity-70 flex justify-center items-center gap-2"
-                    disabled={isSubmitting || authLoading}
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <svg
-                          className="animate-spin h-5 w-5 text-white"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          ></circle>
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          ></path>
-                        </svg>
-                        <span>Loading...</span>
-                      </>
-                    ) : authLoading ? (
-                      <>
-                        <svg
-                          className="animate-spin h-5 w-5 text-white"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          ></circle>
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          ></path>
-                        </svg>
-                        <span>Processing...</span>
-                      </>
-                    ) : (
-                      <>
-                        <UserPlus size={20} />
-                        <span>Sign Up</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>
-            )}
+              <div className="pt-3 mt-3 flex justify-center">
+                <button
+                  type="submit"
+                  className="w-64 h-12 font-medium text-white transition-all duration-300 rounded-full bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 hover:translate-y-1 hover:shadow-lg focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 shadow-md disabled:opacity-70 flex justify-center items-center gap-2"
+                  disabled={isSubmitting || authLoading}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <svg
+                        className="animate-spin h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      <span>Loading...</span>
+                    </>
+                  ) : authLoading ? (
+                    <>
+                      <svg
+                        className="animate-spin h-5 w-5 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      <span>Processing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus size={20} />
+                      <span>Sign Up</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
-          <p className="text-sm text-center text-gray-600 mt-4">
+          <p className="text-sm text-center text-gray-100 mt-4">
             Already have an account?{" "}
-            <Link href="/signin" className="font-medium text-[#366084] transition-colors hover:text-[#022340]">
+            <Link href="/signin" className="font-medium text-white transition-colors hover:text-white">
               Sign in
             </Link>
           </p>
         </div>
       </div>
-
-      {/* Right Section - Property Image */}
-      <div className="hidden lg:block w-1/2 bg-[#366084] fixed right-0 top-0 bottom-0 overflow-hidden">
-        <Image
-          src="/images/logo/Property.jpg"
-          alt="Lemara Commercial Property"
-          fill
-          style={{ objectFit: "cover" }}
-          priority
-          className="absolute inset-0"
-        />
-        <div className="absolute inset-0 bg-[#366084]/60 flex flex-col items-center justify-center p-8">
-          <div className="text-center text-white max-w-lg">
-            <h2 className="text-3xl font-bold mb-4">Lemara Commercial</h2>
-            <p className="text-lg opacity-90">
-              Access exclusive properties and manage your commercial real estate portfolio with Lemara Commercial&apos;s
-              professional platform.
-            </p>
-          </div>
-        </div>
-        <div className="absolute bottom-8 left-0 right-0 flex justify-center"></div>
-      </div>
-
-      {/* Terms Modal */}
-      <TermsAndConditionsModal
-        isOpen={showTermsModal}
-        onClose={() => setShowTermsModal(false)}
-        onAccept={handleAcceptTerms}
-        firstName={formData.firstName}
-        lastName={formData.lastName}
-      />
 
       {/* Global styles */}
       <style jsx global>{`
@@ -1045,13 +711,13 @@ export default function SignUpForm() {
           opacity: 1;
         }
 
-        /* Input styling */
-        input {
+        /* Input and Select styling */
+        input, select {
           background-color: white !important;
           color: #1f2937 !important;
         }
 
-        input::placeholder {
+        input::placeholder, select::placeholder {
           color: #9ca3af !important;
           opacity: 1;
         }

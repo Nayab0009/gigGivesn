@@ -11,7 +11,7 @@ import Link from "next/link"
 import { useAuth } from "@/context/AuthContext"
 import { toast, ToastContainer, type ToastOptions } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import { LogIn, Linkedin } from 'lucide-react';
+import { LogIn } from 'lucide-react';
 
 // Define custom toast style type
 interface CustomToastStyle extends Omit<ToastOptions, "icon"> {
@@ -117,28 +117,6 @@ export default function SignInForm() {
       )
     }
   }
-const handleLinkedinSignup = async () => {
-    try {
-      console.log("Signing up with LinkedIn")
-      // Implement LinkedIn OAuth logic here
-      toast.info(
-        <div className="flex flex-col">
-          <span className="text-lg font-medium mb-1">LinkedIn Sign Up</span>
-          <span className="text-sm opacity-90">Redirecting to LinkedIn authentication...</span>
-        </div>,
-      )
-      // Redirect to LinkedIn OAuth endpoint or use a library like next-auth
-    } catch (error) {
-      console.error("LinkedIn signup error:", error)
-      toast.error(
-        <div className="flex flex-col">
-          <span className="text-lg font-medium mb-1">Authentication Failed</span>
-          <span className="text-sm opacity-90">Could not sign up with LinkedIn. Please try again.</span>
-        </div>,
-        errorToastStyle as ToastOptions,
-      )
-    }
-  }
 
   // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -239,23 +217,23 @@ const handleLinkedinSignup = async () => {
         className="toast-container-custom"
       />
 
-      {/* Left Section - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center bg-white">
-        <div className="w-full max-w-md px-8 py-12 mx-6 bg-white rounded-xl border border-gray-100 shadow-lg">
-          <div className="mb-10 text-center">
-            <h1 className="mb-3 font-bold text-[#06AED7] text-2xl sm:text-3xl md:text-[28px] ">
-              Agent Login
+      {/* Full width form section */}
+      <div className="w-full flex items-center justify-center bg-white min-h-screen py-8">
+        <div className="w-full max-w-2xl px-8 sm:px-12 py-8 mx-4 sm:mx-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 backdrop-blur-md rounded-xl border border-white/20 shadow-xl transition-all duration-300 hover:shadow-2xl">
+          <div className="mb-6">
+            <h1 className="mb-3 font-bold text-white text-2xl sm:text-3xl md:text-[28px] text-center">
+              Project Management System
             </h1>
-            <p className="text-base text-gray-600 mt-2">Enter your credentials to continue your journey</p>
-            <div className="mt-6 mb-8 border-b border-gray-200"></div>
+            <p className="text-base text-gray-100 mt-2 text-center">Enter your credentials to continue your journey</p>
+            <div className="mt-4 mb-5 border-b border-white/20"></div>
           </div>
           
-          {/* Third-party login buttons with enhanced styling */}
+          {/* Third-party login buttons */}
           <div className="space-y-4 mb-8">
             <button
               type="button"
               onClick={handleGoogleSignup}
-              className="w-full py-3 px-4 flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md hover:translate-y-0.5"
+              className="w-full py-3 px-4 flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-all duration-200 shadow-sm"
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
                 <path
@@ -277,30 +255,21 @@ const handleLinkedinSignup = async () => {
               </svg>
               <span>Sign in with Google</span>
             </button>
-            
-            <button
-              type="button"
-              onClick={handleLinkedinSignup}
-              className="w-full py-3 px-4 flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md hover:translate-y-0.5"
-            >
-              <Linkedin size={20} className="text-[#0077B5]" />
-              <span>Sign in with LinkedIn</span>
-            </button>
           </div>
 
           {/* OR Separator */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
+              <div className="w-full border-t border-white/20"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 text-gray-500 bg-white font-medium">OR</span>
+              <span className="px-4 text-gray-400 bg-slate-900 font-medium">OR</span>
             </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="email" className="mb-2 text-gray-700 font-medium">
+              <Label htmlFor="email" className="mb-2 text-gray-100 font-medium">
                 Email Address
               </Label>
               <Input
@@ -312,12 +281,12 @@ const handleLinkedinSignup = async () => {
                 onChange={handleChange}
                 error={!!errors.email}
                 hint={errors.email}
-                className="bg-white text-gray-800 !rounded-lg border-gray-300 focus:border-[#366084] focus:ring-[#366084] shadow-sm"
+                className="w-full h-12 px-4 bg-white/5 text-white !rounded-lg border-white/20 focus:border-gray-400 focus:ring-gray-400 shadow-sm placeholder-gray-400"
               />
             </div>
 
             <div>
-              <Label htmlFor="password" className="mb-2 text-gray-700 font-medium">
+              <Label htmlFor="password" className="mb-2 text-gray-100 font-medium">
                 Password
               </Label>
               <div className="relative">
@@ -330,7 +299,7 @@ const handleLinkedinSignup = async () => {
                   onChange={handleChange}
                   error={!!errors.password}
                   hint={errors.password}
-                  className="bg-white text-gray-800 !rounded-lg border-gray-300 focus:border-[#366084] focus:ring-[#366084] shadow-sm"
+                  className="w-full h-12 px-4 bg-white/5 text-white !rounded-lg border-white/20 focus:border-gray-400 focus:ring-gray-400 shadow-sm placeholder-gray-400"
                 />
                 <button
                   type="button"
@@ -348,23 +317,23 @@ const handleLinkedinSignup = async () => {
                 label="Remember me"
                 checked={isChecked}
                 onChange={() => setIsChecked(!isChecked)}
-                className="text-gray-900"
+                className="text-gray-100"
               />
 
               <Link
                 href="/forgot-password"
-                className="text-sm text-[#366084] font-medium transition-colors hover:text-[#022340]"
+                className="text-sm text-gray-100 font-medium transition-colors hover:text-white"
               >
                 Forgot password?
               </Link>
             </div>
 
-            {authError && <div className="p-3 text-sm text-red-500 bg-red-50 rounded-lg">{authError}</div>}
+            {authError && <div className="p-3 text-sm text-red-500 bg-red-50/10 rounded-lg border border-red-500/20">{authError}</div>}
 
             <div className="flex justify-center pt-4">
               <button
                 type="submit"
-                className="w-48 py-3 font-medium text-white transition-all duration-300 rounded-full bg-[#06AED7] hover:bg-[#022340] hover:translate-y-1 hover:shadow-lg focus:ring-2 focus:ring-[#366084] focus:ring-offset-2 shadow-md disabled:opacity-70 flex justify-center items-center gap-2"
+                className="w-64 h-12 font-medium text-white transition-all duration-300 rounded-full bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 hover:translate-y-1 hover:shadow-lg focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 shadow-md disabled:opacity-70 flex justify-center items-center gap-2"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
@@ -400,39 +369,14 @@ const handleLinkedinSignup = async () => {
               </button>
             </div>
 
-            <p className="text-sm text-center text-gray-600 mt-6">
-              Are you new to Lemara Commercial?{" "}
-              <Link
-                href="/signup"
-                className="font-medium text-[#366084] transition-colors hover:text-[#022340]"
-              >
+            <p className="text-sm text-center text-gray-100 mt-6">
+              Are you new to Project Management System?{" "}
+              <Link href="/signup" className="font-medium text-gray-100 transition-colors hover:text-white">
                 Sign up
               </Link>
             </p>
           </form>
         </div>
-      </div>
-
-      {/* Right Section - Property Image */}
-      <div className="hidden lg:block w-1/2 bg-[#366084] relative overflow-hidden">
-        <Image
-          src="/images/logo/Property.jpg"
-          alt="Lemara Commercial Property"
-          fill
-          style={{ objectFit: "cover" }}
-          priority
-          className="absolute inset-0"
-        />
-        <div className="absolute inset-0 bg-[#366084]/60 flex flex-col items-center justify-center p-8">
-          <div className="text-center text-white max-w-lg">
-            <h2 className="text-3xl font-bold mb-4">Lemara Commercial</h2>
-            <p className="text-lg opacity-90">
-              Access exclusive properties and manage your commercial real estate portfolio with Lemara Commercial&apos;s
-              professional platform.
-            </p>
-          </div>
-        </div>
-      
       </div>
 
       {/* Global styles */}

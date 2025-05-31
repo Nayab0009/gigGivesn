@@ -1,12 +1,12 @@
 "use client"
 
-import type React from "react"
+import React from "react"
 
-interface CheckboxProps {
-  id: string
-  label?: string
+export interface CheckboxProps {
+  id?: string 
+  label?: string 
   checked: boolean
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChange: (checked: boolean) => void
   className?: string
   disabled?: boolean
 }
@@ -19,7 +19,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ id, label, checked, onChange, class
           type="checkbox"
           id={id}
           checked={checked}
-          onChange={onChange}
+          onChange={(e) => onChange(e.target.checked)}
           disabled={disabled}
           className="sr-only" // Hide the actual input
         />
@@ -29,7 +29,7 @@ const Checkbox: React.FC<CheckboxProps> = ({ id, label, checked, onChange, class
               ? "bg-[#06AED7] border-[#06AED7]" // Checked state - use the blue color from the design
               : "bg-white border-gray-300"
           } ${disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
-          onClick={() => !disabled && onChange({ target: { checked: !checked } } as any)}
+          onClick={() => !disabled && onChange(!checked)}
         >
           {checked && (
             <svg
