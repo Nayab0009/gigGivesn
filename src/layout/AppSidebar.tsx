@@ -61,10 +61,14 @@ const adminNavItems: NavItem[] = [
     path: "/dashboard/admin/mls-listings",
   },
   {
-    name: "Teams",
     icon: <Users size={20} />,
-path: "/dashboard/admin/agents"
-  },
+    name: "Teams",
+    subItems: [
+      { name: "Grid View", path: "/dashboard/admin/agents/grid", pro: false },
+      { name: "List View", path: "/dashboard/admin/agents/list", pro: false }
+    ]
+  }
+  
 ]
 
 // Teacher-specific navigation items
