@@ -236,7 +236,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-2 pb-2">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#2563eb] mb-1 tracking-tight">Admin Dashboard</h1>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-black mb-1 tracking-tight">Admin Dashboard</h1>
           <p className="text-slate-600 text-lg">Welcome back! See your latest project insights below.</p>
         </div>
         <div className="mt-4 sm:mt-0 flex items-center space-x-3">
