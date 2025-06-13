@@ -47,7 +47,7 @@ const PREDEFINED_USERS = [
     password: "user123",
     firstName: "User",
     lastName: "",
-    role: "teammember"
+    role: "employee"
   },
   {
     id: 3,

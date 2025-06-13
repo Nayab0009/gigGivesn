@@ -3,8 +3,8 @@ import Providers from '@/components/common/Providers';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Lemara Commercial',
-  description: 'Commercial real estate platform',
+  title: 'GiGgives',
+  description: 'Project Management App',
 };
 
 export default function RootLayout({

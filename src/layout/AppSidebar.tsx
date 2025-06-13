@@ -2,7 +2,6 @@
 import type React from "react"
 import { useEffect, useRef, useState, useCallback } from "react"
 import Link from "next/link"
-import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useSidebar } from "../context/SidebarContext"
 import { useAuth } from "../context/AuthContext"
@@ -11,27 +10,21 @@ import {
   List,
   Users,
   FileText,
-  User,
-  Mail,
-  Settings,
-  Banknote,
-  Wallet,
   UserPlus,
-  Contact,
   ChevronLeft,
   ChevronRight,
-  
+  ChevronDown,
 } from "lucide-react"
 import {
   ChevronDownIcon,
-  EnvelopeListIcon,
   GridIcon,
   ListIcon,
   PaperPlaneIcon,
   TableIcon,
   UserCircleIcon,
+  EnvelopeListIcon,
+  Contact,
 } from "../icons/index"
-import SidebarWidget from "./SidebarWidget"
 
 // Define the type for navigation items
 type NavItem = {
@@ -57,13 +50,14 @@ const adminNavItems: NavItem[] = [
   {
     icon: <LayoutGrid size={24} />,
     name: "Dashboard",
-    path:'/dashboard/admin',
-
-  },  {
+    path: '/dashboard/admin',
+  },
+  {
     name: "Projects",
     icon: <List size={24} />,
     path: "/dashboard/admin/projects",
-  },  {
+  },
+  {
     name: "Managers",
     icon: <FileText size={24} />,
     path: "/dashboard/admin/managers",
@@ -76,10 +70,28 @@ const adminNavItems: NavItem[] = [
       { name: "List View", path: "/dashboard/admin/team/list", pro: false }
     ]
   }
-  
 ]
 
-// Teacher-specific navigation items
+// Manager-specific navigation items
+const managerNavItems: NavItem[] = [
+  {
+    icon: <LayoutGrid size={24} />,
+    name: "Dashboard",
+    path: "/dashboard/manager",
+  },
+  {
+    name: "Projects",
+    icon: <List size={24} />,
+    path: "/dashboard/manager/addproject",
+  },
+  {
+    name: "Team Members",
+    icon: <Users size={24} />,
+    path: "/dashboard/admin/addemployee",
+  }
+]
+
+// Teacher-specific navigation items (legacy, not used for manager)
 const teacherNavItems: NavItem[] = [
   {
     icon: <GridIcon />,
@@ -145,16 +157,16 @@ const AppSidebar: React.FC = () => {
       const role = user.role.toLowerCase()
       if (role === "admin") {
         setNavItems(adminNavItems)
+      } else if (role === "manager" || role === "manger") {
+        setNavItems(managerNavItems)
       } else if (role === "teacher") {
         setNavItems(teacherNavItems)
       } else if (role === "broker" || role === "agent") {
         setNavItems(studentNavItems)
       } else {
-        // Default to common items if role is not recognized
         setNavItems(commonNavItems)
       }
     } else {
-      // No user logged in, show minimal items
       setNavItems([])
     }
   }, [user])
@@ -193,7 +205,7 @@ const AppSidebar: React.FC = () => {
                 </span>
               )}
               {(isExpanded || isMobileOpen) && (
-                <ChevronDownIcon
+                <ChevronDown
                   className={`ml-auto w-5 h-5 transition-all duration-300 ease-in-out group-hover:scale-110 ${
                     openSubmenu?.type === menuType && openSubmenu?.index === index
                       ? "rotate-180 text-white"
@@ -395,23 +407,10 @@ const AppSidebar: React.FC = () => {
         >
           {/* Logo - Only show when expanded */}
           {(isExpanded || isMobileOpen) && (
-            // <Link href="/" className="transition-transform duration-300 ease-in-out hover:scale-105">
-            //   <Image
-            //     className="transition-opacity duration-300 ease-in-out hover:opacity-90 drop-shadow-lg"
-            //     src="/images/logo/lemaraLogo.png"
-            //     alt="Logo"
-            //     width={140}
-            //     height={30}
-            //     style={{
-            //       filter: 'brightness(1.4) contrast(1.2) saturate(0.8)',
-            //     }}
-            //   />
-            // </Link>
-
             <h1 className="text-2xl font-bold text-gray-200 text-center ml-6">GigGives</h1>
           )}
 
-          {/* Beautiful Toggle Button - Always visible, centered when collapsed */}
+          {/* Toggle Button */}
           <button
             onClick={toggleSidebar}
             className={`group relative flex items-center justify-center rounded-xl text-gray-200 shadow-lg hover:shadow-2xl transition-all duration-300 ease-in-out transform hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gray-500/50 focus:ring-offset-2 focus:ring-offset-gray-800 ${
@@ -426,7 +425,6 @@ const AppSidebar: React.FC = () => {
             }}
             aria-label="Toggle Sidebar"
           >
-            {/* Background glow effect */}
             <div 
               className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out" 
               style={{
@@ -436,8 +434,6 @@ const AppSidebar: React.FC = () => {
                 )`,
               }}
             />
-
-            {/* Icon with smooth rotation */}
             <div className="relative z-10 transition-transform duration-300 ease-in-out">
               {isExpanded || isMobileOpen ? (
                 <ChevronLeft size={18} className="transform group-hover:scale-110 transition-transform duration-200 drop-shadow-sm text-gray-200 group-hover:text-white" />
@@ -445,13 +441,9 @@ const AppSidebar: React.FC = () => {
                 <ChevronRight size={20} className="transform group-hover:scale-110 transition-transform duration-200 drop-shadow-sm text-gray-200 group-hover:text-white" />
               )}
             </div>
-
-            {/* Ripple effect on click */}
             <div className="absolute inset-0 rounded-xl overflow-hidden">
               <div className="absolute inset-0 bg-gray-500/30 transform scale-0 group-active:scale-100 transition-transform duration-200 ease-out rounded-xl" />
             </div>
-
-            {/* Subtle pulse animation when collapsed */}
             {!isExpanded && !isMobileOpen && (
               <div className="absolute inset-0 rounded-xl border-2 border-gray-600/20 animate-pulse opacity-40" />
             )}
@@ -464,7 +456,6 @@ const AppSidebar: React.FC = () => {
             <div className="flex flex-col gap-4">
               <div className="pt-4">
                 {renderMenuItems(navItems, "main")}
-                {/* Remove the additional mapping of subItems here since it's already handled in renderMenuItems */}
               </div>
             </div>
           </nav>

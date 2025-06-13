@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import AddListingFormNew from "@/components/agentDashboard/addListing/AddListingFormNew";
+import AddListingFormNew from "@/components/managerDashboard/addListing/AddListingFormNew";
 
 const AddListingPage = () => {
   return <AddListingFormNew />;

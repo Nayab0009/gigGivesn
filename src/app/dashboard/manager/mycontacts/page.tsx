@@ -1,5 +1,5 @@
 import React from 'react'
-import MyContacts from '@/components/agentDashboard/MyContacts'
+import MyContacts from '@/components/managerDashboard/MyContacts'
 const page = () => {
   return (
       <div>

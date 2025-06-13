@@ -1,5 +1,5 @@
 import React from 'react'
-import ContactForm from '@/components/agentDashboard/AddContactForm'
+import ContactForm from '@/components/managerDashboard/AddContactForm'
 const page = () => {
   return (
       <div>

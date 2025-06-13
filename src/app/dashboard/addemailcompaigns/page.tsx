@@ -1,5 +1,5 @@
 import React from 'react'
-import AddEmailCompaings from '@/components/agentDashboard/addListing/AddEmailCompaings'
+import AddEmailCompaings from '@/components/managerDashboard/addListing/AddEmailCompaings'
 const page = () => {
   return (
       <>

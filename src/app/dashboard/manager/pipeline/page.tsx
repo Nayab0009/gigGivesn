@@ -1,5 +1,5 @@
 import React from 'react'
-import PipeLine from '@/components/agentDashboard/PipeLine'
+import PipeLine from '@/components/managerDashboard/PipeLine'
 const page = () => {
   return (
     <PipeLine/>

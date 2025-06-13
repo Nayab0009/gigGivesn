@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import AddReminderModal from "@/components/agentDashboard/AddReminderModal"
+import AddReminderModal from "@/components/managerDashboard/AddReminderModal"
 import axiosInstance from "@/lib/axios" // Import the axios instance
 
 // Define types for the reminder data based on the API response
