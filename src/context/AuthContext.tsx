@@ -63,7 +63,7 @@ const PREDEFINED_USERS = [
 const ROLE_DASHBOARD_PATHS: Record<string, string> = {
   admin: "/dashboard/admin",
   manager: "/dashboard/manager",
-  teammember: "/dashboard/teammember",
+  employee: "/dashboard/teammember",
   agent: "/dashboard/teammember",
   default: "/dashboard" 
 };

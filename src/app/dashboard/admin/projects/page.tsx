@@ -1,9 +1,9 @@
 import React from 'react'
-import ProjectTable from '@/components/adminDashboard/ProjectTable'
+import ProjectDashboard from '@/components/adminDashboard/ProjectTable'
 const page = () => {
   return (
       <div>
-      <ProjectTable/>
+      <ProjectDashboard/>
       </div>
   )
 }

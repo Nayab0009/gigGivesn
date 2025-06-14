@@ -3,7 +3,6 @@ import { ThemeToggleButton } from "@/components/common/ThemeToggleButton"
 import UserDropdown from "@/components/header/UserDropdown"
 import { useAuth } from "@/context/AuthContext"
 import { useSidebar } from "@/context/SidebarContext"
-import Link from "next/link"
 import type React from "react"
 import { useEffect, useState } from "react"
 
@@ -15,8 +14,8 @@ const AppHeader: React.FC = () => {
   const [prevScrollPos, setPrevScrollPos] = useState(0)
   const [visible, setVisible] = useState(true)
 
-  // Calculate sidebar width for header positioning
-  const sidebarWidth = isMobileOpen ? 0 : isExpanded ? 290 : 90
+  // Calculate sidebar width for header positioning - Updated widths
+  const sidebarWidth = isMobileOpen ? 0 : isExpanded ? 320 : 90
 
   // Determine if sidebar is in expanded mode (more space available when collapsed)
   const hasMoreSpace = !isExpanded && !isMobileOpen
@@ -27,10 +26,7 @@ const AppHeader: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollPos = window.pageYOffset
-      setVisible(
-        (prevScrollPos > currentScrollPos && prevScrollPos - currentScrollPos > 70) ||
-        currentScrollPos < 10
-      )
+      setVisible((prevScrollPos > currentScrollPos && prevScrollPos - currentScrollPos > 70) || currentScrollPos < 10)
       setPrevScrollPos(currentScrollPos)
     }
 
@@ -38,20 +34,19 @@ const AppHeader: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [prevScrollPos, visible])
 
-  // --- LIGHT BACKGROUND (white or light gray) ---
+  // --- LIGHT BACKGROUND with emerald accent ---
   return (
     <header
       className={`
         fixed top-0 z-[99999] 
-        shadow-2xl border-b border-gray-200 transition-all duration-500 ease-in-out
+        shadow-lg border-b border-emerald-100 transition-all duration-500 ease-in-out
         backdrop-blur-sm bg-white/95
         ${visible ? "" : "transform -translate-y-full"}
       `}
       style={{
         left: `${sidebarWidth}px`,
         width: `calc(100% - ${sidebarWidth}px)`,
-        fontFamily:
-          "'Inter', 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+        fontFamily: "'Inter', 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
       }}
     >
       <div
@@ -64,14 +59,14 @@ const AppHeader: React.FC = () => {
           <div className="hidden md:block">
             <div
               className={`
-                font-semibold text-gray-700 tracking-wide drop-shadow-sm
+                font-semibold text-slate-700 tracking-wide drop-shadow-sm
                 transition-all duration-500 ease-in-out
                 ${hasMoreSpace ? "text-2xl" : "text-xl"}
               `}
             >
               <span
                 className={`
-                  font-light text-gray-500 transition-all duration-500 ease-in-out
+                  font-light text-slate-500 transition-all duration-500 ease-in-out
                   ${hasMoreSpace ? "text-xl" : "text-lg"}
                 `}
               >
@@ -79,12 +74,12 @@ const AppHeader: React.FC = () => {
               </span>
               <span
                 className={`
-                  ml-2 font-black bg-gradient-to-r from-gray-800 via-gray-600 to-gray-400 bg-clip-text text-transparent 
+                  ml-2 font-black bg-gradient-to-r from-emerald-700 via-teal-600 to-emerald-500 bg-clip-text text-transparent 
                   drop-shadow-lg transition-all duration-500 ease-in-out
                   ${hasMoreSpace ? "text-2xl" : "text-xl"}
                 `}
                 style={{
-                  textShadow: '0 0 8px rgba(80, 80, 80, 0.10)'
+                  textShadow: "0 0 8px rgba(16, 185, 129, 0.15)",
                 }}
               >
                 {displayName}
@@ -92,7 +87,7 @@ const AppHeader: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Right - Actions */}
         <div
           className={`flex items-center transition-all duration-500 ease-in-out ${
@@ -100,60 +95,23 @@ const AppHeader: React.FC = () => {
           }`}
         >
           {/* Theme Toggle - Always visible */}
-          <div
-            className={`transition-all duration-500 ease-in-out ${
-              hasMoreSpace ? "scale-110" : "scale-100"
-            }`}
-          >
+          <div className={`transition-all duration-500 ease-in-out ${hasMoreSpace ? "scale-110" : "scale-100"}`}>
             <ThemeToggleButton />
           </div>
 
-          {/* Notification Icon */}
-        
-
-          {/* "Add Listing" - Only for NON-admin roles */}
-          {userRole !== "admin" && (
-            <Link
-              href="/dashboard/agent/add"
-              className={`
-                font-bold text-gray-700 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-300
-                rounded-full hover:from-gray-200 hover:via-gray-300 hover:to-gray-400
-                transition-all duration-300 ease-in-out shadow hover:shadow-md 
-                transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-100
-                tracking-wide border border-gray-200 hover:border-blue-200
-                hover:text-blue-700
-                ${hasMoreSpace ? "px-7 py-3 text-base" : "px-3 md:px-4 py-2 text-sm"}
-                ${hasMoreSpace ? "inline-block" : "hidden sm:inline-block"}
-              `}
-              style={{
-                textShadow: '0 1px 3px rgba(220, 220, 220, 0.5)'
-              }}
-            >
-              Add Listing
-            </Link>
-          )}
-
           {/* User Dropdown - Always visible */}
-          <div
-            className={`transition-all duration-500 ease-in-out ${
-              hasMoreSpace ? "scale-110" : "scale-100"
-            }`}
-          >
+          <div className={`transition-all duration-500 ease-in-out ${hasMoreSpace ? "scale-110" : "scale-100"}`}>
             <UserDropdown />
           </div>
         </div>
       </div>
-      
+
       {/* Mobile Welcome Message */}
-      <div
-        className={`md:hidden px-4 transition-all duration-500 ease-in-out ${
-          hasMoreSpace ? "pb-3" : "pb-2"
-        }`}
-      >
+      <div className={`md:hidden px-4 transition-all duration-500 ease-in-out ${hasMoreSpace ? "pb-3" : "pb-2"}`}>
         <div className="text-center">
           <span
             className={`
-              font-light text-gray-500 transition-all duration-500 ease-in-out
+              font-light text-slate-500 transition-all duration-500 ease-in-out
               ${hasMoreSpace ? "text-base" : "text-sm"}
             `}
           >
@@ -161,21 +119,21 @@ const AppHeader: React.FC = () => {
           </span>
           <span
             className={`
-              ml-1 font-black bg-gradient-to-r from-gray-800 via-gray-600 to-gray-400 bg-clip-text text-transparent 
+              ml-1 font-black bg-gradient-to-r from-emerald-700 via-teal-600 to-emerald-500 bg-clip-text text-transparent 
               drop-shadow-lg transition-all duration-500 ease-in-out
               ${hasMoreSpace ? "text-xl" : "text-lg"}
             `}
             style={{
-              textShadow: '0 0 8px rgba(80, 80, 80, 0.10)'
+              textShadow: "0 0 8px rgba(16, 185, 129, 0.15)",
             }}
           >
             {displayName}
           </span>
         </div>
       </div>
-      
-      {/* Subtle bottom divider effect */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gray-200"></div>
+
+      {/* Subtle bottom divider effect with emerald accent */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-200 to-transparent"></div>
     </header>
   )
 }

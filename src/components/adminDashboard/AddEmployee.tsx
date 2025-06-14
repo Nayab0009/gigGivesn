@@ -1,5 +1,6 @@
 "use client"
-import React, { useState } from "react"
+import type React from "react"
+import { useState } from "react"
 import { User, Mail, Phone, Loader2, KeyRound, MapPin, Building2, UserPlus, Sparkles } from "lucide-react"
 import axiosInstance from "@/lib/axios"
 
@@ -10,7 +11,7 @@ const AddEmployee: React.FC = () => {
     password: "",
     phone: "",
     address: "",
-    organization: ""
+    organization: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -20,7 +21,7 @@ const AddEmployee: React.FC = () => {
     const { name, value } = e.target
     setForm((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }))
   }
 
@@ -39,7 +40,7 @@ const AddEmployee: React.FC = () => {
       phone: form.phone,
       address: form.address,
       role: "employee",
-      organization: Number(form.organization)
+      organization: Number(form.organization),
     }
 
     try {
@@ -50,7 +51,7 @@ const AddEmployee: React.FC = () => {
         password: "",
         phone: "",
         address: "",
-        organization: ""
+        organization: "",
       })
       setSuccess("Employee added successfully!")
     } catch (err: any) {
@@ -105,7 +106,7 @@ const AddEmployee: React.FC = () => {
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
               </div>
-              
+
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
                   <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg shadow-sm">
@@ -150,7 +151,7 @@ const AddEmployee: React.FC = () => {
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
               </div>
-              
+
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
                   <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-sm">
@@ -195,7 +196,7 @@ const AddEmployee: React.FC = () => {
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-500/5 to-red-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
               </div>
-              
+
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
                   <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg shadow-sm">
@@ -234,22 +235,22 @@ const AddEmployee: React.FC = () => {
             )}
 
             {/* Submit Button */}
-            <div className="pt-6">
+            <div className="pt-6 flex justify-center">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full group relative overflow-hidden bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white font-bold py-5 px-8 rounded-2xl hover:from-emerald-700 hover:via-teal-700 hover:to-cyan-700 transition-all duration-300 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed text-xl transform hover:scale-[1.02] active:scale-[0.98]"
+                className="group relative overflow-hidden bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white font-bold py-4 px-12 rounded-full hover:from-emerald-700 hover:via-teal-700 hover:to-cyan-700 transition-all duration-300 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed text-lg transform hover:scale-105 active:scale-95 min-w-[200px]"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative flex items-center justify-center">
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="animate-spin w-7 h-7 mr-3" />
-                      <span>Adding Employee...</span>
+                      <Loader2 className="animate-spin w-6 h-6 mr-3" />
+                      <span>Adding...</span>
                     </>
                   ) : (
                     <>
-                      <UserPlus className="w-7 h-7 mr-3 group-hover:rotate-12 transition-transform duration-300" />
+                      <UserPlus className="w-6 h-6 mr-3 group-hover:rotate-12 transition-transform duration-300" />
                       <span>Add Employee</span>
                     </>
                   )}

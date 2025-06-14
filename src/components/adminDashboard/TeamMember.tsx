@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useMemo } from "react"
-import { Search, Plus, RefreshCw, Users } from 'lucide-react'
+import { Search, Plus, RefreshCw, AlertCircle, Edit, Trash2, Eye } from "lucide-react"
 import { useRouter } from "next/navigation"
 import axiosInstance from "@/lib/axios"
 
@@ -11,6 +11,31 @@ interface TeamMember {
   phone: string
   address: string
   role?: string
+}
+
+const generateAvatar = (name: string, index: number) => {
+  const avatarStyles = [
+    `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`,
+    `https://api.dicebear.com/7.x/personas/svg?seed=${name}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`,
+    `https://api.dicebear.com/7.x/miniavs/svg?seed=${name}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`,
+    `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${name}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`,
+  ]
+  return avatarStyles[index % avatarStyles.length]
+}
+
+const getRoleColor = (role?: string) => {
+  switch (role?.toLowerCase()) {
+    case "employee":
+      return "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-blue-200 ring-1 ring-blue-200 shadow-sm"
+    case "developer":
+      return "bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 border-green-200 ring-1 ring-green-200 shadow-sm"
+    case "designer":
+      return "bg-gradient-to-r from-purple-50 to-pink-50 text-purple-700 border-purple-200 ring-1 ring-purple-200 shadow-sm"
+    case "manager":
+      return "bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border-orange-200 ring-1 ring-orange-200 shadow-sm"
+    default:
+      return "bg-gradient-to-r from-slate-50 to-gray-50 text-slate-700 border-slate-200 ring-1 ring-slate-200 shadow-sm"
+  }
 }
 
 export default function TeamListPage() {
@@ -24,11 +49,18 @@ export default function TeamListPage() {
       setIsLoading(true)
       try {
         const res = await axiosInstance.get("/user?role=employee")
+        let membersData: TeamMember[] = []
         if (Array.isArray(res.data)) {
-          setTeamMembers(res.data)
+          membersData = res.data
         } else {
-          setTeamMembers([res.data])
+          membersData = [res.data]
         }
+        // Add mock roles for better visualization
+        membersData = membersData.map((member, idx) => ({
+          ...member,
+          role: member.role || ["Employee", "Developer", "Designer", "QA Engineer"][idx % 4],
+        }))
+        setTeamMembers(membersData)
       } catch (e) {
         setTeamMembers([])
       } finally {
@@ -39,112 +71,200 @@ export default function TeamListPage() {
   }, [])
 
   const filteredMembers = useMemo(() => {
-    return teamMembers.filter(member =>
-      (member.name?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
-      (member.email?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
-      (member.id?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
+    return teamMembers.filter(
+      (member) =>
+        (member.name?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
+        (member.email?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
+        (member.id?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ?? false),
     )
   }, [teamMembers, searchTerm])
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-white backdrop-blur-sm rounded-lg shadow-sm border border-gray-200 p-6">
-          
-          {/* Header Section */}
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 space-y-4 lg:space-y-0">
-            <div className="flex items-center space-x-4">
-              <div className="bg-gray-800 p-3 rounded-lg shadow-sm">
-                <Users className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-semibold text-gray-800">
-                  Team Members
-                </h1>
-                <p className="text-gray-600 mt-1">Manage and track all team members</p>
-              </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">Team Members</h1>
+          <p className="text-slate-600 text-lg">Manage and track all team members</p>
+        </div>
+
+        {/* Action Bar */}
+        <div className="mb-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200 p-6">
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+              <input
+                type="text"
+                placeholder="Search employees by name, email or ID..."
+                className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 text-slate-900 placeholder-slate-500 shadow-sm focus:shadow-md"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center gap-4">
+              <div className="text-sm text-slate-600 bg-slate-100 px-4 py-2 rounded-full border border-slate-200">
+                <span className="font-semibold text-slate-800">{filteredMembers.length}</span> of {teamMembers.length}{" "}
+                employees
+              </div>
               <button
                 type="button"
-                className="bg-gray-800 text-white px-5 py-2 rounded-lg font-semibold shadow hover:shadow-md transition-all duration-300 hover:scale-105 flex items-center space-x-2"
+                className="group inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
                 onClick={() => router.push("/dashboard/admin/addemployee")}
               >
-                <Plus className="w-4 h-4" />
-                <span>Add Employee</span>
+                <Plus className="w-4 h-4 transition-transform duration-300 group-hover:rotate-90" />
+                Add Employee
               </button>
-              <button className="bg-white border border-gray-300 text-gray-700 px-5 py-2 rounded-lg font-semibold hover:border-gray-400 hover:text-gray-800 transition-all duration-300 flex items-center space-x-2 shadow-sm">
-                <RefreshCw className="w-4 h-4" />
-                <span>Refresh</span>
+              <button className="group inline-flex items-center gap-2 px-6 py-3 bg-white hover:bg-slate-50 border border-slate-300 hover:border-slate-400 text-slate-700 hover:text-slate-800 rounded-full text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105">
+                <RefreshCw className="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" />
+                Refresh
               </button>
-            </div>
-          </div>
-
-          {/* Filters Section */}
-          <div className="bg-gray-100 rounded-lg p-4 mb-6 border border-gray-200">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
-              <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <input 
-                  type="text"
-                  placeholder="Search employees by name, email or ID..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all duration-300 bg-white shadow-sm"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Table */}
-          <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
-            <div className="overflow-x-auto">
-              <table className="min-w-full">
-                <thead className="bg-gray-100 border-b border-gray-200">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-800 uppercase tracking-wider">ID</th>
-                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-800 uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-800 uppercase tracking-wider">Email</th>
-                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-800 uppercase tracking-wider">Phone</th>
-                    <th className="px-6 py-4 text-left text-sm font-bold text-gray-800 uppercase tracking-wider">Address</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {isLoading
-                    ? Array(3).fill(0).map((_, index) => (
-                        <tr key={index} className="animate-pulse">
-                          {Array(5).fill(0).map((_, i) => (
-                            <td key={i} className="px-6 py-4">
-                              <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-                            </td>
-                          ))}
-                        </tr>
-                      ))
-                    : filteredMembers.map((member, idx) => (
-                      <tr key={member.id || idx} className="hover:bg-gray-50 transition-all duration-200 group">
-                        <td className="px-6 py-4">
-                          <div className="text-gray-800 text-base">{member.id || "-"}</div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="font-semibold text-gray-900 text-lg">{member.name}</div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="text-sm text-gray-700">{member.email}</span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="text-sm text-gray-700">{member.phone}</span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="text-sm text-gray-700">{member.address}</span>
-                        </td>
-                      </tr>
-                    ))
-                  }
-                </tbody>
-              </table>
             </div>
           </div>
         </div>
+
+        {/* Table Container */}
+        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden backdrop-blur-sm">
+          {isLoading ? (
+            <div className="p-12 text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-full mb-4">
+                <RefreshCw className="w-6 h-6 text-indigo-600 animate-spin" />
+              </div>
+              <p className="text-slate-600 text-lg">Loading team members...</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-slate-200">
+                <thead className="bg-slate-50">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                      Employee Details
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                      Role
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                      Contact Information
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-slate-200">
+                  {filteredMembers.length === 0 ? (
+                    <tr>
+                      <td colSpan={4} className="px-6 py-12 text-center">
+                        <div className="flex flex-col items-center justify-center">
+                          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                            <AlertCircle className="w-8 h-8 text-slate-400" />
+                          </div>
+                          <p className="text-slate-600 text-lg font-medium mb-1">No team members found</p>
+                          <p className="text-slate-500">Try adjusting your search criteria</p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredMembers.map((member, index) => (
+                      <tr
+                        key={member.id || index}
+                        className={`hover:bg-gradient-to-r hover:from-slate-50 hover:to-indigo-50/30 transition-all duration-300 ${index % 2 === 0 ? "bg-white" : "bg-slate-25"}`}
+                      >
+                        <td className="px-6 py-6">
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-3">
+                              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                                {member.name.charAt(0).toUpperCase()}
+                              </div>
+                              <div>
+                                <h3 className="text-lg font-semibold text-slate-900 leading-tight">{member.name}</h3>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-700">
+                                    ID: {member.id || "N/A"}
+                                  </span>
+                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-blue-100 text-blue-700">
+                                    Team Member
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-6">
+                          <span
+                            className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium capitalize ${getRoleColor(member.role)}`}
+                          >
+                            {member.role || "Employee"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-6">
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                              <span className="text-sm font-medium text-slate-900">{member.email}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <span className="text-sm text-slate-600">{member.phone}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+                              <span className="text-sm text-slate-600 max-w-xs truncate" title={member.address}>
+                                {member.address}
+                              </span>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-6">
+                          <div className="flex items-center gap-2">
+                            <button className="group inline-flex items-center justify-center w-10 h-10 text-sky-600 hover:text-white bg-sky-50 hover:bg-gradient-to-r hover:from-sky-500 hover:to-sky-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1">
+                              <Eye className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                            </button>
+                            <button className="group inline-flex items-center justify-center w-10 h-10 text-amber-600 hover:text-white bg-amber-50 hover:bg-gradient-to-r hover:from-amber-500 hover:to-amber-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1">
+                              <Edit className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                            </button>
+                            <button className="group inline-flex items-center justify-center w-10 h-10 text-rose-600 hover:text-white bg-rose-50 hover:bg-gradient-to-r hover:from-rose-500 hover:to-rose-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1">
+                              <Trash2 className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {/* Summary Footer */}
+        {!isLoading && (
+          <div className="mt-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200 p-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-6">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-slate-900">{teamMembers.length}</div>
+                  <div className="text-sm text-slate-600">Total Employees</div>
+                </div>
+                <div className="w-px h-12 bg-slate-200"></div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-indigo-600">{filteredMembers.length}</div>
+                  <div className="text-sm text-slate-600">Filtered Results</div>
+                </div>
+                <div className="w-px h-12 bg-slate-200"></div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-emerald-600">
+                    {teamMembers.filter((member) => member.role?.toLowerCase() === "employee").length}
+                  </div>
+                  <div className="text-sm text-slate-600">Active Employees</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
+                <span className="text-sm text-slate-600">System Active</span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

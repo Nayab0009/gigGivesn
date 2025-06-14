@@ -1,6 +1,7 @@
 "use client"
-import React, { useState } from "react"
-import { Loader2, List, CalendarDays, FileText, Plus, Sparkles } from "lucide-react"
+import type React from "react"
+import { useState } from "react"
+import { Loader2, CalendarDays, FileText, Plus, Sparkles } from "lucide-react"
 import axiosInstance from "@/lib/axios"
 
 // You can install and use react-datepicker for a better UX:
@@ -13,7 +14,7 @@ const AddProject: React.FC = () => {
     title: "",
     description: "",
     startDate: null as Date | null,
-    endDate: null as Date | null
+    endDate: null as Date | null,
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -23,14 +24,14 @@ const AddProject: React.FC = () => {
     const { name, value } = e.target
     setForm((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }))
   }
 
   const handleDateChange = (date: Date | null, field: "startDate" | "endDate") => {
     setForm((prev) => ({
       ...prev,
-      [field]: date
+      [field]: date,
     }))
   }
 
@@ -45,9 +46,8 @@ const AddProject: React.FC = () => {
       title: form.title,
       description: form.description,
       startDate: form.startDate ? form.startDate.toISOString() : undefined,
-      endDate: form.endDate ? form.endDate.toISOString() : undefined
+      endDate: form.endDate ? form.endDate.toISOString() : undefined,
     }
-    
 
     try {
       const response = await axiosInstance.post("/projects", payload)
@@ -55,7 +55,7 @@ const AddProject: React.FC = () => {
         title: "",
         description: "",
         startDate: null,
-        endDate: null
+        endDate: null,
       })
       setSuccess("Project added successfully!")
     } catch (err: any) {
@@ -147,7 +147,7 @@ const AddProject: React.FC = () => {
                   <div className="relative bg-white/70 backdrop-blur-sm rounded-2xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 group-hover:border-gray-300">
                     <DatePicker
                       selected={form.startDate}
-                      onChange={date => handleDateChange(date, "startDate")}
+                      onChange={(date) => handleDateChange(date, "startDate")}
                       className="w-full px-6 py-4 text-lg bg-transparent border-none rounded-2xl focus:ring-4 focus:ring-purple-500/20 focus:outline-none"
                       placeholderText="Select project start date"
                       dateFormat="MMM dd, yyyy"
@@ -179,7 +179,7 @@ const AddProject: React.FC = () => {
                   <div className="relative bg-white/70 backdrop-blur-sm rounded-2xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 group-hover:border-gray-300">
                     <DatePicker
                       selected={form.endDate}
-                      onChange={date => handleDateChange(date, "endDate")}
+                      onChange={(date) => handleDateChange(date, "endDate")}
                       className="w-full px-6 py-4 text-lg bg-transparent border-none rounded-2xl focus:ring-4 focus:ring-orange-500/20 focus:outline-none"
                       placeholderText="Select project end date"
                       dateFormat="MMM dd, yyyy"
@@ -216,22 +216,22 @@ const AddProject: React.FC = () => {
             )}
 
             {/* Submit Button */}
-            <div className="pt-6">
+            <div className="pt-6 flex justify-center">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full group relative overflow-hidden bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white font-bold py-5 px-8 rounded-2xl hover:from-gray-800 hover:via-gray-700 hover:to-gray-800 transition-all duration-300 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed text-xl transform hover:scale-[1.02] active:scale-[0.98]"
+                className="group relative overflow-hidden bg-gradient-to-r from-slate-600 via-slate-700 to-slate-800 text-white font-bold py-4 px-12 rounded-full hover:from-slate-700 hover:via-slate-800 hover:to-slate-900 transition-all duration-300 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed text-lg transform hover:scale-105 active:scale-95 min-w-[200px]"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative flex items-center justify-center">
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="animate-spin w-7 h-7 mr-3" />
-                      <span>Creating Your Project...</span>
+                      <Loader2 className="animate-spin w-6 h-6 mr-3" />
+                      <span>Creating...</span>
                     </>
                   ) : (
                     <>
-                      <Plus className="w-7 h-7 mr-3 group-hover:rotate-90 transition-transform duration-300" />
+                      <Plus className="w-6 h-6 mr-3 group-hover:rotate-12 transition-transform duration-300" />
                       <span>Create Project</span>
                     </>
                   )}
