@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useMemo } from "react"
-import { Search, Edit, Trash2, Eye, RefreshCw, ClipboardCheck, AlertCircle, ChevronDown, UserCheck } from "lucide-react"
+import { Search, Edit, Trash2, Eye, RefreshCw, ClipboardCheck, AlertCircle, ChevronDown, UserCheck, Users, X, Loader2 } from "lucide-react"
 import { AssignTeamModal } from "../adminDashboard/AssignProjectTeam"
 import { AssignTaskModal } from "../adminDashboard/AssignProjectTicket"
 import { useAuth } from "@/context/AuthContext"
@@ -17,6 +17,27 @@ interface BackendProject {
   description: string;
   startDate: string;
   endDate: string;
+}
+
+// Interface for project team members
+interface ProjectTeamMember {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  avatar?: string;
+  status?: string;
+}
+
+// Interface for project with team
+interface ProjectWithTeam {
+  id: number;
+  name: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  isActive: boolean;
+  teamMembers?: ProjectTeamMember[];
 }
 
 // --- Helpers ---
@@ -78,6 +99,172 @@ const getStatusColor = (status: string) => {
   }
 }
 
+// View Team Modal Component
+function ViewTeamModal({ 
+  open, 
+  onClose, 
+  projectId 
+}: { 
+  open: boolean; 
+  onClose: () => void; 
+  projectId: number | null; 
+}) {
+  const [project, setProject] = useState<ProjectWithTeam | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchProjectTeam = async () => {
+    if (!projectId) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await axiosInstance.get(`/projects/${projectId}`);
+      console.log('Project team response:', response.data);
+      setProject(response.data);
+    } catch (error) {
+      console.error('Error fetching project team:', error);
+      setError('Failed to load project team. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (open && projectId) {
+      fetchProjectTeam();
+    }
+  }, [open, projectId]);
+
+  if (!open || !projectId) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-gradient-to-br from-white to-emerald-50/30 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden border border-white/50 backdrop-blur-sm">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold mb-1">Project Team</h2>
+              <p className="text-emerald-200 text-sm">
+                Team members for project {projectId}
+              </p>
+            </div>
+            <button 
+              onClick={onClose} 
+              className="p-2 rounded-full hover:bg-white/20 transition-colors"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 overflow-y-auto max-h-[calc(85vh-120px)]">
+          {isLoading ? (
+            <div className="text-center py-12">
+              <Loader2 className="w-8 h-8 text-emerald-600 animate-spin mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Loading Team...</h3>
+              <p className="text-gray-500">Fetching team members for this project.</p>
+            </div>
+          ) : error ? (
+            <div className="text-center py-12">
+              <AlertCircle className="w-8 h-8 text-red-600 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Error Loading Team</h3>
+              <p className="text-gray-500 mb-4">{error}</p>
+              <button
+                onClick={fetchProjectTeam}
+                className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
+          ) : project ? (
+            <div className="space-y-6">
+              {/* Project Info */}
+              <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
+                <h3 className="font-bold text-lg text-gray-900 mb-2">{project.name}</h3>
+                <p className="text-gray-600 text-sm">{project.description}</p>
+              </div>
+
+              {/* Team Members */}
+              <div>
+                <div className="flex items-center space-x-2 mb-4">
+                  <Users className="w-5 h-5 text-emerald-600" />
+                  <h3 className="font-semibold text-lg text-gray-900">Team Members</h3>
+                  <span className="bg-emerald-100 text-emerald-800 text-sm px-3 py-1 rounded-full font-medium">
+                    {project.teamMembers?.length || 0} member{(project.teamMembers?.length || 0) !== 1 ? 's' : ''}
+                  </span>
+                </div>
+
+                {project.teamMembers && project.teamMembers.length > 0 ? (
+                  <div className="grid gap-3">
+                    {project.teamMembers.map((member, index) => (
+                      <div
+                        key={member.id}
+                        className="flex items-center space-x-4 p-4 bg-white rounded-xl border border-emerald-200 hover:shadow-md transition-shadow"
+                      >
+                        <div className="relative flex-shrink-0">
+                          <img
+                            src={member.avatar || generateAvatar(member.name, index)}
+                            alt={member.name}
+                            className="w-12 h-12 rounded-full border-2 border-white shadow-sm"
+                          />
+                          {member.status && (
+                            <div className="absolute -bottom-0.5 -right-0.5 p-0.5 bg-white rounded-full shadow-sm">
+                              {getUserStatusIcon(member.status)}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold text-gray-900 truncate">
+                            {member.name}
+                          </div>
+                          <div className="text-sm text-gray-600 truncate">
+                            {member.role}
+                          </div>
+                          <div className="text-xs text-gray-500 truncate">
+                            {member.email}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <Users className="w-16 h-16 text-emerald-300 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No Team Members</h3>
+                    <p className="text-gray-500">No team members have been assigned to this project yet.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <AlertCircle className="w-16 h-16 text-emerald-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Project Not Found</h3>
+              <p className="text-gray-500">Unable to load project information.</p>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="border-t border-emerald-200 bg-emerald-50/50 px-6 py-4">
+          <div className="flex justify-end">
+            <button
+              onClick={onClose}
+              className="px-6 py-2.5 border border-emerald-300 rounded-xl text-gray-700 font-medium hover:bg-white hover:shadow-sm transition-all duration-200"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // --- Main Component ---
 export default function ProjectDashboard() {
   // Get user data from AuthContext
@@ -91,6 +278,7 @@ export default function ProjectDashboard() {
   const [searchTerm, setSearchTerm] = useState("")
   const [assignTeamProjectId, setAssignTeamProjectId] = useState<string | null>(null)
   const [assignTaskProjectId, setAssignTaskProjectId] = useState<string | null>(null)
+  const [viewTeamProjectId, setViewTeamProjectId] = useState<number | null>(null)
   const [analytics, setAnalytics] = useState({
     totalProjects: 0,
     activeProjects: 0,
@@ -416,6 +604,9 @@ export default function ProjectDashboard() {
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Actions
                     </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      View Team
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white/80 divide-y divide-emerald-100">
@@ -499,6 +690,16 @@ export default function ProjectDashboard() {
                             </div>
                           </div>
                         </td>
+                        <td className="px-6 py-6">
+                          <div className="flex items-center gap-2">
+                            <button
+                              className="group inline-flex items-center justify-center w-8 h-8 text-teal-600 hover:text-white bg-teal-50 hover:bg-gradient-to-r hover:from-teal-500 hover:to-teal-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110"
+                              onClick={() => setViewTeamProjectId(project.id)}
+                            >
+                              <Users className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))
                   )}
@@ -537,6 +738,11 @@ export default function ProjectDashboard() {
           teamMembers={teams.flatMap((team) => team.members)}
           toggleAssignment={toggleTaskAssignment}
           getUserStatusIcon={getUserStatusIcon}
+        />
+        <ViewTeamModal
+          open={!!viewTeamProjectId}
+          onClose={() => setViewTeamProjectId(null)}
+          projectId={viewTeamProjectId}
         />
       </div>
     </div>

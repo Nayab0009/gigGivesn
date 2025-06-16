@@ -327,7 +327,7 @@ export default function SignInForm() {
                   <Layers className="w-6 h-6 text-white" />
                 </div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent">
-                  GiGGives
+                  GiGJives
                 </h1>
               </div>
             </div>

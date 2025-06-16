@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { X, UserCheck, Users, Crown, ChevronRight, Loader2, AlertCircle } from "lucide-react";
+import { X, UserCheck, Users, Crown, ChevronRight, Loader2, AlertCircle, Check } from "lucide-react";
 import axiosInstance from "@/lib/axios";
 import type { Team, Project } from "@/types";
 
@@ -33,7 +33,9 @@ export function AssignTeamModal({
 }: AssignTeamModalProps) {
   const [teams, setTeams] = useState<Team[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAssigning, setIsAssigning] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
 
   // Fetch employees from backend and organize them into teams
   const fetchTeams = async () => {
@@ -83,10 +85,54 @@ export function AssignTeamModal({
     }
   };
 
+  // Assign team members to project
+  const assignTeamMembers = async () => {
+    if (!project || selectedMembers.length === 0) return;
+
+    setIsAssigning(true);
+    setError(null);
+
+    try {
+      const response = await axiosInstance.patch(`/projects/team/${project.id}`, {
+        teamMembers: selectedMembers
+      });
+
+      console.log('Team members assigned successfully:', response.data);
+      
+      // Call the onAssign callback with the selected team
+      const selectedTeam = teams.find(team => 
+        team.members.some(member => selectedMembers.includes(member.id))
+      );
+      if (selectedTeam) {
+        onAssign(selectedTeam);
+      }
+      
+      // Reset selection and close modal
+      setSelectedMembers([]);
+      onClose();
+      
+    } catch (error) {
+      console.error('Error assigning team members:', error);
+      setError('Failed to assign team members. Please try again.');
+    } finally {
+      setIsAssigning(false);
+    }
+  };
+
+  // Toggle member selection
+  const toggleMemberSelection = (memberId: string) => {
+    setSelectedMembers(prev => 
+      prev.includes(memberId) 
+        ? prev.filter(id => id !== memberId)
+        : [...prev, memberId]
+    );
+  };
+
   // Fetch teams when modal opens
   useEffect(() => {
     if (open) {
       fetchTeams();
+      setSelectedMembers([]); // Reset selection when modal opens
     }
   }, [open]);
 
@@ -94,15 +140,20 @@ export function AssignTeamModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-gradient-to-br from-white to-emerald-50/30 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[85vh] overflow-hidden border border-white/50 backdrop-blur-sm">
+      <div className="bg-gradient-to-br from-white to-emerald-50/30 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] overflow-hidden border border-white/50 backdrop-blur-sm">
         {/* Header */}
         <div className="bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-white">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold mb-1">Assign Team</h2>
+              <h2 className="text-2xl font-bold mb-1">Assign Team Members</h2>
               <p className="text-emerald-200 text-sm">
-                Select a team for <span className="font-semibold">{project.title}</span>
+                Select team members for <span className="font-semibold">{project.title}</span>
               </p>
+              {selectedMembers.length > 0 && (
+                <p className="text-emerald-100 text-sm mt-1">
+                  {selectedMembers.length} member{selectedMembers.length !== 1 ? 's' : ''} selected
+                </p>
+              )}
             </div>
             <button 
               onClick={onClose} 
@@ -156,69 +207,74 @@ export function AssignTeamModal({
           {!isLoading && !error && teams.map((team, index) => (
             <div
               key={team.id}
-              className="group border border-emerald-200 rounded-xl p-6 hover:border-emerald-300 hover:shadow-lg transition-all duration-300 cursor-pointer hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50/50 relative overflow-hidden"
-              onClick={() => onAssign(team)}
+              className="border border-emerald-200 rounded-xl p-6 hover:border-emerald-300 hover:shadow-lg transition-all duration-300 relative overflow-hidden"
             >
-              {/* Hover effect overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/5 to-teal-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl" />
-              
-              <div className="relative z-10">
-                {/* Team Header */}
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center space-x-4">
-                    <div className="p-3 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-xl group-hover:from-emerald-200 group-hover:to-teal-200 transition-colors">
-                      <Users className="w-6 h-6 text-emerald-600" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-xl text-gray-900 group-hover:text-emerald-900 transition-colors">
-                        {team.name}
-                      </h3>
-                      <p className="text-sm text-gray-600 font-medium">
-                        {team.department} Department
-                      </p>
-                    </div>
+              {/* Team Header */}
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center space-x-4">
+                  <div className="p-3 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-xl">
+                    <Users className="w-6 h-6 text-emerald-600" />
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <span className="bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-800 text-sm px-4 py-2 rounded-full font-semibold border border-emerald-200">
-                      {team.members.length} member{team.members.length !== 1 ? 's' : ''}
-                    </span>
-                    <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors transform group-hover:translate-x-1" />
+                  <div>
+                    <h3 className="font-bold text-xl text-gray-900">
+                      {team.name}
+                    </h3>
+                    <p className="text-sm text-gray-600 font-medium">
+                      {team.department} Department
+                    </p>
                   </div>
                 </div>
+                <div className="flex items-center space-x-3">
+                  <span className="bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-800 text-sm px-4 py-2 rounded-full font-semibold border border-emerald-200">
+                    {team.members.length} member{team.members.length !== 1 ? 's' : ''}
+                  </span>
+                </div>
+              </div>
 
-                {/* Team Members */}
-                <div>
-                  <div className="flex items-center space-x-2 mb-4">
-                    <Users className="w-4 h-4 text-emerald-500" />
-                    <span className="font-semibold text-sm text-gray-700">Team Members</span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {team.members.map((member: any) => (
-                      <div
-                        key={member.id}
-                        className="flex items-center space-x-3 p-3 bg-emerald-50 hover:bg-emerald-100 rounded-xl border border-emerald-200 transition-colors"
-                      >
-                        <div className="relative flex-shrink-0">
-                          <img
-                            src={member.avatar}
-                            alt={member.name}
-                            className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
-                          />
-                          <div className="absolute -bottom-0.5 -right-0.5 p-0.5 bg-white rounded-full shadow-sm">
-                            {getUserStatusIcon(member.status)}
-                          </div>
+              {/* Team Members */}
+              <div>
+                <div className="flex items-center space-x-2 mb-4">
+                  <Users className="w-4 h-4 text-emerald-500" />
+                  <span className="font-semibold text-sm text-gray-700">Select Team Members</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {team.members.map((member: any) => (
+                    <div
+                      key={member.id}
+                      className={`relative flex items-center space-x-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer ${
+                        selectedMembers.includes(member.id)
+                          ? 'bg-emerald-100 border-emerald-300 shadow-md'
+                          : 'bg-emerald-50 hover:bg-emerald-100 border-emerald-200 hover:border-emerald-300'
+                      }`}
+                      onClick={() => toggleMemberSelection(member.id)}
+                    >
+                      {/* Selection indicator */}
+                      {selectedMembers.includes(member.id) && (
+                        <div className="absolute top-2 right-2 w-5 h-5 bg-emerald-600 rounded-full flex items-center justify-center">
+                          <Check className="w-3 h-3 text-white" />
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-gray-900 truncate">
-                            {member.name}
-                          </div>
-                          <div className="text-sm text-gray-600 truncate">
-                            {member.role}
-                          </div>
+                      )}
+                      
+                      <div className="relative flex-shrink-0">
+                        <img
+                          src={member.avatar}
+                          alt={member.name}
+                          className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
+                        />
+                        <div className="absolute -bottom-0.5 -right-0.5 p-0.5 bg-white rounded-full shadow-sm">
+                          {getUserStatusIcon(member.status)}
                         </div>
                       </div>
-                    ))}
-                  </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-gray-900 truncate">
+                          {member.name}
+                        </div>
+                        <div className="text-sm text-gray-600 truncate">
+                          {member.role}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -237,15 +293,30 @@ export function AssignTeamModal({
         {/* Footer */}
         <div className="border-t border-emerald-200 bg-emerald-50/50 px-6 py-4">
           <div className="flex justify-between items-center">
-            <p className="text-sm text-gray-600">
-              Select a team to assign to your project
-            </p>
-            <button
-              onClick={onClose}
-              className="px-6 py-2.5 border border-emerald-300 rounded-xl text-gray-700 font-medium hover:bg-white hover:shadow-sm transition-all duration-200"
-            >
-              Cancel
-            </button>
+            <div className="flex items-center space-x-4">
+              <p className="text-sm text-gray-600">
+                {selectedMembers.length > 0 
+                  ? `${selectedMembers.length} member${selectedMembers.length !== 1 ? 's' : ''} selected`
+                  : 'Select team members to assign to your project'
+                }
+              </p>
+            </div>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={onClose}
+                className="px-6 py-2.5 border border-emerald-300 rounded-xl text-gray-700 font-medium hover:bg-white hover:shadow-sm transition-all duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={assignTeamMembers}
+                disabled={selectedMembers.length === 0 || isAssigning}
+                className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              >
+                {isAssigning && <Loader2 className="w-4 h-4 animate-spin" />}
+                <span>{isAssigning ? 'Assigning...' : 'Assign Members'}</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
