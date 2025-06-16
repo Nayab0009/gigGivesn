@@ -1,42 +1,43 @@
 "use client"
 import { useState, useEffect, useMemo } from "react"
-import { Search, Edit, Trash2, Eye, RefreshCw, ClipboardCheck, AlertCircle, ChevronDown, UserCheck } from "lucide-react"
-import { AssignTeamModal } from "./AssignProjectTeam"
-import { AssignTaskModal } from "./AssignProjectTicket"
-import type { Task, Team, Project } from "@/types"
+import { Search, Edit, Trash2, Eye, RefreshCw, AlertCircle, ChevronDown, UserCheck, Plus } from "lucide-react"
+import { useRouter } from "next/navigation"
+import axiosInstance from "@/lib/axios"
 
-// --- Helpers ---
-const generateAvatar = (name: string, index: number) => {
-  const avatarStyles = [
-    `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`,
-    `https://api.dicebear.com/7.x/personas/svg?seed=${name}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`,
-    `https://api.dicebear.com/7.x/miniavs/svg?seed=${name}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`,
-    `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${name}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`,
-  ]
-  return avatarStyles[index % avatarStyles.length]
+interface Manager {
+  id: string
+  name: string
+  email: string
+  phone: string
+  address: string
 }
 
-const getUserStatusIcon = (status: string) => {
-  switch (status) {
-    case "active":
-      return <div className="w-2 h-2 bg-emerald-500 rounded-full shadow-sm"></div>
-    case "busy":
-      return <div className="w-2 h-2 bg-amber-500 rounded-full shadow-sm"></div>
-    case "offline":
-      return <div className="w-2 h-2 bg-slate-400 rounded-full shadow-sm"></div>
-    default:
-      return <div className="w-2 h-2 bg-slate-400 rounded-full shadow-sm"></div>
-  }
+interface Project {
+  id: string
+  name: string
+  description: string
+  startDate: string
+  endDate: string
+  status: string
+  priority: string
+  budget?: number
+  completion?: number
+  manager?: Manager
+}
+
+// --- Helpers ---
+const generateAvatar = (name: string) => {
+  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}&backgroundColor=a7f3d0,bbf7d0,d1fae5,ecfdf5,f0fdfa`
 }
 
 const getPriorityColor = (priority: string) => {
-  switch (priority) {
+  switch (priority?.toLowerCase()) {
     case "critical":
       return "bg-gradient-to-r from-red-50 to-rose-50 text-red-700 border-red-200 ring-1 ring-red-200 shadow-sm"
     case "high":
       return "bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border-orange-200 ring-1 ring-orange-200 shadow-sm"
     case "medium":
-      return "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-blue-200 ring-1 ring-blue-200 shadow-sm"
+      return "bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border-emerald-200 ring-1 ring-emerald-200 shadow-sm"
     case "low":
       return "bg-gradient-to-r from-slate-50 to-gray-50 text-slate-700 border-slate-200 ring-1 ring-slate-200 shadow-sm"
     default:
@@ -45,18 +46,18 @@ const getPriorityColor = (priority: string) => {
 }
 
 const getStatusColor = (status: string) => {
-  switch (status) {
+  switch (status?.toLowerCase()) {
     case "active":
     case "in-progress":
       return "bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border-emerald-200 ring-1 ring-emerald-200 shadow-sm"
     case "planning":
     case "pending":
-      return "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-blue-200 ring-1 ring-blue-200 shadow-sm"
+      return "bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-700 border-blue-200 ring-1 ring-blue-200 shadow-sm"
     case "on-hold":
     case "blocked":
       return "bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-700 border-amber-200 ring-1 ring-amber-200 shadow-sm"
     case "completed":
-      return "bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 border-green-200 ring-1 ring-green-200 shadow-sm"
+      return "bg-gradient-to-r from-teal-50 to-emerald-50 text-teal-700 border-teal-200 ring-1 ring-teal-200 shadow-sm"
     case "cancelled":
       return "bg-gradient-to-r from-red-50 to-rose-50 text-red-700 border-red-200 ring-1 ring-red-200 shadow-sm"
     default:
@@ -64,343 +65,246 @@ const getStatusColor = (status: string) => {
   }
 }
 
+// --- Assign Manager Modal Component ---
+interface AssignManagerModalProps {
+  open: boolean
+  onClose: () => void
+  onAssign: (manager: Manager) => void
+  project: Project | null
+  managers: Manager[]
+}
+
+function AssignManagerModal({ open, onClose, onAssign, project, managers }: AssignManagerModalProps) {
+  if (!open || !project) return null
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
+        <div className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-6">
+          <h2 className="text-2xl font-bold">Assign Manager to {project.name}</h2>
+          <p className="text-emerald-200 mt-1">Select a manager to oversee this project</p>
+        </div>
+
+        <div className="p-6 max-h-96 overflow-y-auto">
+          <div className="space-y-4">
+            {managers.map((manager) => (
+              <div
+                key={manager.id}
+                className="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:bg-emerald-50 transition-colors cursor-pointer"
+                onClick={() => onAssign(manager)}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                    {manager.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-gray-900">{manager.name}</h3>
+                    <p className="text-sm text-gray-600">{manager.email}</p>
+                    <p className="text-xs text-gray-500">{manager.phone}</p>
+                  </div>
+                </div>
+                <button className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors">
+                  Assign
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="p-6 border-t border-gray-200 flex justify-end">
+          <button
+            onClick={onClose}
+            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // --- Main Component ---
 export default function ProjectDashboard() {
-  // Dynamic teams state (mock data for now, replace with API later)
-  const [teams, setTeams] = useState<Team[]>([])
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [projects, setProjects] = useState<Project[]>([])
+  const [managers, setManagers] = useState<Manager[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [priorityFilter, setPriorityFilter] = useState<string>("all")
-  const [assignTeamProjectId, setAssignTeamProjectId] = useState<string | null>(null)
-  const [assignTaskProjectId, setAssignTaskProjectId] = useState<string | null>(null)
-  const [newTask, setNewTask] = useState<Task>({
-    id: "",
-    title: "",
-    description: "",
-    assignedTo: [],
-    status: "pending",
-    priority: "medium",
-    dueDate: "",
-    estimatedHours: 0,
-  })
+  const [assignManagerProjectId, setAssignManagerProjectId] = useState<string | null>(null)
 
-  // --- MOCK TEAM DATA, stored in state ---
+  // Fetch projects from API
   useEffect(() => {
-    setTeams([
-      {
-        id: "team-1",
-        name: "Frontend Development",
-        department: "Engineering",
-        lead: "user-1",
-        members: [
-          {
-            id: "user-1",
-            name: "Sarah Chen",
-            role: "Frontend Lead",
-            email: "sarah.chen@company.com",
-            avatar: generateAvatar("Sarah Chen", 0),
-            status: "active",
-          },
-          {
-            id: "user-2",
-            name: "Mike Rodriguez",
-            role: "React Developer",
-            email: "mike.rodriguez@company.com",
-            avatar: generateAvatar("Mike Rodriguez", 1),
-            status: "active",
-          },
-          {
-            id: "user-3",
-            name: "Emma Watson",
-            role: "UI/UX Designer",
-            email: "emma.watson@company.com",
-            avatar: generateAvatar("Emma Watson", 2),
-            status: "busy",
-          },
-        ],
-      },
-      {
-        id: "team-2",
-        name: "Backend Development",
-        department: "Engineering",
-        lead: "user-4",
-        members: [
-          {
-            id: "user-4",
-            name: "Lisa Park",
-            role: "Backend Lead",
-            email: "lisa.park@company.com",
-            avatar: generateAvatar("Lisa Park", 3),
-            status: "active",
-          },
-          {
-            id: "user-5",
-            name: "David Kim",
-            role: "Node.js Developer",
-            email: "david.kim@company.com",
-            avatar: generateAvatar("David Kim", 4),
-            status: "active",
-          },
-          {
-            id: "user-6",
-            name: "Alex Johnson",
-            role: "DevOps Engineer",
-            email: "alex.johnson@company.com",
-            avatar: generateAvatar("Alex Johnson", 5),
-            status: "offline",
-          },
-        ],
-      },
-      {
-        id: "team-3",
-        name: "Quality Assurance",
-        department: "QA",
-        lead: "user-7",
-        members: [
-          {
-            id: "user-7",
-            name: "Jessica Brown",
-            role: "QA Lead",
-            email: "jessica.brown@company.com",
-            avatar: generateAvatar("Jessica Brown", 6),
-            status: "active",
-          },
-          {
-            id: "user-8",
-            name: "Tom Wilson",
-            role: "Test Engineer",
-            email: "tom.wilson@company.com",
-            avatar: generateAvatar("Tom Wilson", 7),
-            status: "busy",
-          },
-        ],
-      },
-    ])
+    const fetchProjects = async () => {
+      setIsLoading(true)
+      try {
+        const response = await axiosInstance.get("/projects")
+        setProjects(response.data || [])
+      } catch (error) {
+        console.error("Error fetching projects:", error)
+        setProjects([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchProjects()
   }, [])
 
-  // --- MOCK PROJECTS DATA, with some teams assigned ---
+  // Fetch managers from API
   useEffect(() => {
-    setTimeout(() => {
-      setProjects([
-        {
-          id: "PRJ-001",
-          title: "E-commerce Platform Redesign",
-          description:
-            "Complete redesign of the e-commerce platform with modern UI/UX, improved performance, and mobile responsiveness.",
-          startDate: "2024-05-01",
-          endDate: "2024-08-15",
-          status: "active",
-          priority: "high",
-          budget: 150000,
-          completion: 65,
-          team: undefined, // or teams[0] if you want to assign a team initially
-          tasks: [],
-        },
-        {
-          id: "PRJ-002",
-          title: "Mobile Banking Application",
-          description:
-            "Cross-platform mobile banking app with advanced security features and intuitive user interface.",
-          startDate: "2024-04-10",
-          endDate: "2024-09-30",
-          status: "planning",
-          priority: "critical",
-          budget: 300000,
-          completion: 25,
-          team: undefined,
-          tasks: [],
-        },
-        {
-          id: "PRJ-003",
-          title: "API Integration Suite",
-          description:
-            "Comprehensive API integration platform for connecting with third-party services and internal systems.",
-          startDate: "2024-05-12",
-          endDate: "2024-07-20",
-          status: "active",
-          priority: "medium",
-          budget: 75000,
-          completion: 40,
-          team: undefined,
-          tasks: [],
-        },
-        {
-          id: "PRJ-004",
-          title: "Customer Support Portal",
-          description: "Self-service customer support portal with ticketing system and knowledge base.",
-          startDate: "2024-06-01",
-          endDate: "2024-08-30",
-          status: "on-hold",
-          priority: "low",
-          budget: 50000,
-          completion: 10,
-          team: undefined,
-          tasks: [],
-        },
-      ])
-      setIsLoading(false)
-    }, 1000)
+    const fetchManagers = async () => {
+      try {
+        const response = await axiosInstance.get("/user?role=manager")
+        const managersData = Array.isArray(response.data) ? response.data : [response.data]
+        setManagers(managersData.filter(Boolean))
+      } catch (error) {
+        console.error("Error fetching managers:", error)
+        setManagers([])
+      }
+    }
+
+    fetchManagers()
   }, [])
 
-  // --- PROJECT TABLE LOGIC as before ---
+  // Filter projects
   const filteredProjects = useMemo(() => {
     return projects.filter((project) => {
       const matchesSearch =
-        project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.description.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesStatus = statusFilter === "all" || project.status === statusFilter
-      const matchesPriority = priorityFilter === "all" || project.priority === priorityFilter
+        project.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        String(project.id || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        project.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesStatus = statusFilter === "all" || project.status?.toLowerCase() === statusFilter
+      const matchesPriority = priorityFilter === "all" || project.priority?.toLowerCase() === priorityFilter
       return matchesSearch && matchesStatus && matchesPriority
     })
   }, [projects, searchTerm, statusFilter, priorityFilter])
 
-  // --- Assign Team Logic ---
-  const assignTeam = (projectId: string, team: Team) => {
-    setProjects((prev) => prev.map((p) => (p.id === projectId ? { ...p, team } : p)))
-    setAssignTeamProjectId(null)
+  // Assign manager to project
+  const assignManager = (projectId: string, manager: Manager) => {
+    setProjects((prev) => prev.map((p) => (p.id === projectId ? { ...p, manager } : p)))
+    setAssignManagerProjectId(null)
   }
 
-  // --- Assign Task Logic ---
-  const addTaskToProject = (projectId: string | null) => {
-    if (!projectId || !newTask.title.trim() || newTask.assignedTo.length === 0) return
-    const task: Task = {
-      ...newTask,
-      id: `task-${Date.now()}`,
-    }
-    setProjects((prev) => prev.map((p) => (p.id === projectId ? { ...p, tasks: [...p.tasks, task] } : p)))
-    setNewTask({
-      id: "",
-      title: "",
-      description: "",
-      assignedTo: [],
-      status: "pending",
-      priority: "medium",
-      dueDate: "",
-      estimatedHours: 0,
-    })
-    setAssignTaskProjectId(null)
-  }
+  const currentProject = assignManagerProjectId ? projects.find((p) => p.id === assignManagerProjectId) : null
 
-  // --- Toggle Task Assignment ---
-  const toggleTaskAssignment = (userId: string) => {
-    setNewTask((prev) => ({
-      ...prev,
-      assignedTo: prev.assignedTo.includes(userId)
-        ? prev.assignedTo.filter((id) => id !== userId)
-        : [...prev.assignedTo, userId],
-    }))
-  }
-
-  const currentProject = assignTeamProjectId
-    ? projects.find((p) => p.id === assignTeamProjectId)
-    : assignTaskProjectId
-      ? projects.find((p) => p.id === assignTaskProjectId)
-      : null
-
-  // --- RENDER ---
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-white via-emerald-50 to-teal-50 p-4 sm:p-6 lg:p-8 ml-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">Project Dashboard</h1>
-          <p className="text-slate-600 text-lg">Manage and track your project progress</p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Project Dashboard</h1>
+          <p className="text-gray-600 text-lg">Manage and track your project progress</p>
         </div>
 
-        {/* Filters */}
-        <div className="mb-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200 p-6">
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+        {/* Action Bar */}
+        <div className="mb-8 bg-gradient-to-r from-emerald-50 to-teal-100 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-6">
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search projects by name, ID, or description..."
-                className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 text-slate-900 placeholder-slate-500 shadow-sm focus:shadow-md"
+                className="w-full pl-10 pr-4 py-3 border border-emerald-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 text-gray-900 placeholder-gray-500 shadow-sm focus:shadow-md bg-white/80"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative">
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="appearance-none bg-white border border-slate-300 rounded-2xl px-4 py-3 pr-10 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 text-slate-900 min-w-[140px] shadow-sm focus:shadow-md"
-                >
-                  <option value="all">All Status</option>
-                  <option value="planning">Planning</option>
-                  <option value="active">Active</option>
-                  <option value="on-hold">On Hold</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none" />
+            <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="relative">
+                  <select
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    className="appearance-none bg-white/80 border border-emerald-200 rounded-2xl px-4 py-3 pr-10 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 text-gray-900 min-w-[140px] shadow-sm focus:shadow-md"
+                  >
+                    <option value="all">All Status</option>
+                    <option value="planning">Planning</option>
+                    <option value="active">Active</option>
+                    <option value="on-hold">On Hold</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5 pointer-events-none" />
+                </div>
+                <div className="relative">
+                  <select
+                    value={priorityFilter}
+                    onChange={(e) => setPriorityFilter(e.target.value)}
+                    className="appearance-none bg-white/80 border border-emerald-200 rounded-2xl px-4 py-3 pr-10 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 text-gray-900 min-w-[140px] shadow-sm focus:shadow-md"
+                  >
+                    <option value="all">All Priority</option>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                    <option value="critical">Critical</option>
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5 pointer-events-none" />
+                </div>
               </div>
-              <div className="relative">
-                <select
-                  value={priorityFilter}
-                  onChange={(e) => setPriorityFilter(e.target.value)}
-                  className="appearance-none bg-white border border-slate-300 rounded-2xl px-4 py-3 pr-10 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 text-slate-900 min-w-[140px] shadow-sm focus:shadow-md"
-                >
-                  <option value="all">All Priority</option>
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                  <option value="critical">Critical</option>
-                </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5 pointer-events-none" />
-              </div>
+              <button
+                type="button"
+                className="group inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
+                onClick={() => router.push("/dashboard/admin/addProject")}
+              >
+                <Plus className="w-4 h-4 transition-transform duration-300 group-hover:rotate-90" />
+                Add Project
+              </button>
             </div>
           </div>
         </div>
 
         {/* Table Container */}
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden backdrop-blur-sm">
+        <div className="bg-gradient-to-br from-white to-emerald-50/30 rounded-2xl shadow-lg border border-white/50 overflow-hidden backdrop-blur-sm">
           {isLoading ? (
             <div className="p-12 text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-4">
-                <RefreshCw className="w-6 h-6 text-blue-600 animate-spin" />
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
+                <RefreshCw className="w-6 h-6 text-emerald-600 animate-spin" />
               </div>
-              <p className="text-slate-600 text-lg">Loading projects...</p>
+              <p className="text-gray-600 text-lg">Loading projects...</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-slate-200">
-                <thead className="bg-slate-50">
+              <table className="min-w-full divide-y divide-emerald-200">
+                <thead className="bg-gradient-to-r from-emerald-100 to-teal-100">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                      Project Details
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Name
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Description
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Priority
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                      Team
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Manager
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Progress
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-slate-200">
+                <tbody className="bg-white/80 divide-y divide-emerald-100">
                   {filteredProjects.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-6 py-12 text-center">
+                      <td colSpan={7} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center justify-center">
-                          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                            <AlertCircle className="w-8 h-8 text-slate-400" />
+                          <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+                            <AlertCircle className="w-8 h-8 text-emerald-500" />
                           </div>
-                          <p className="text-slate-600 text-lg font-medium mb-1">No projects found</p>
-                          <p className="text-slate-500">Try adjusting your search or filter criteria</p>
+                          <p className="text-gray-600 text-lg font-medium mb-1">No projects found</p>
+                          <p className="text-gray-500">Try adjusting your search or filter criteria</p>
                         </div>
                       </td>
                     </tr>
@@ -408,104 +312,82 @@ export default function ProjectDashboard() {
                     filteredProjects.map((project, index) => (
                       <tr
                         key={project.id}
-                        className={`hover:bg-gradient-to-r hover:from-slate-50 hover:to-indigo-50/30 transition-all duration-300 ${index % 2 === 0 ? "bg-white" : "bg-slate-25"}`}
+                        className={`hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50/50 transition-all duration-300 ${
+                          index % 2 === 0 ? "bg-white/60" : "bg-emerald-50/30"
+                        }`}
                       >
                         <td className="px-6 py-6">
                           <div className="space-y-2">
-                            <div className="flex items-center gap-3">
-                              <h3 className="text-lg font-semibold text-slate-900 leading-tight">{project.title}</h3>
-                            </div>
+                            <h3 className="text-lg font-semibold text-gray-900 leading-tight">{project.name}</h3>
                             <div className="flex items-center gap-2">
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-700">
-                                {project.id}
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-700">
+                                ID: {project.id}
                               </span>
-                              <span className="text-slate-500 text-sm">${project.budget.toLocaleString()} budget</span>
+                              {project.budget && (
+                                <span className="text-gray-500 text-sm">${project.budget.toLocaleString()}</span>
+                              )}
                             </div>
-                            <p className="text-slate-600 text-sm leading-relaxed max-w-md">{project.description}</p>
                           </div>
+                        </td>
+                        <td className="px-6 py-6">
+                          <p className="text-gray-600 text-sm leading-relaxed max-w-xs">{project.description}</p>
                         </td>
                         <td className="px-6 py-6">
                           <span
                             className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium capitalize ${getStatusColor(project.status)}`}
                           >
-                            {project.status.replace("-", " ")}
+                            {project.status?.replace("-", " ") || "Unknown"}
                           </span>
                         </td>
                         <td className="px-6 py-6">
                           <span
                             className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium capitalize ${getPriorityColor(project.priority)}`}
                           >
-                            {project.priority}
+                            {project.priority || "Medium"}
                           </span>
                         </td>
                         <td className="px-6 py-6">
-                          {project.team ? (
+                          {project.manager ? (
                             <div className="space-y-3">
-                              <div>
-                                <p className="font-semibold text-slate-900">{project.team.name}</p>
-                                <p className="text-sm text-slate-500">{project.team.department}</p>
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <div className="flex -space-x-2">
-                                  {project.team.members.slice(0, 4).map((member, idx) => (
-                                    <div key={member.id} className="relative">
-                                      <img
-                                        src={member.avatar || "/placeholder.svg"}
-                                        alt={member.name}
-                                        className="w-8 h-8 rounded-full border-2 border-white shadow-sm"
-                                        style={{ zIndex: 10 - idx }}
-                                        title={`${member.name} - ${member.role}`}
-                                      />
-                                      <div className="absolute -bottom-0.5 -right-0.5" style={{ zIndex: 15 - idx }}>
-                                        {getUserStatusIcon(member.status)}
-                                      </div>
-                                    </div>
-                                  ))}
-                                  {project.team.members.length > 4 && (
-                                    <div className="w-8 h-8 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-xs font-medium text-slate-600 shadow-sm">
-                                      +{project.team.members.length - 4}
-                                    </div>
-                                  )}
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold">
+                                  {project.manager.name.charAt(0).toUpperCase()}
                                 </div>
-                                <span className="text-sm text-slate-500">
-                                  {project.team.members.length} member{project.team.members.length !== 1 ? "s" : ""}
-                                </span>
+                                <div>
+                                  <p className="font-semibold text-gray-900">{project.manager.name}</p>
+                                  <p className="text-sm text-gray-600">{project.manager.email}</p>
+                                </div>
                               </div>
                               <button
-                                className="group inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-slate-500 to-slate-600 hover:from-slate-600 hover:to-slate-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
-                                onClick={() => setAssignTeamProjectId(project.id)}
+                                className="group inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-full text-xs font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105"
+                                onClick={() => setAssignManagerProjectId(project.id)}
                               >
-                                <UserCheck className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12" />
-                                Change Team
+                                <UserCheck className="w-3 h-3" />
+                                Change
                               </button>
                             </div>
                           ) : (
-                            <div className="space-y-3">
-                              <div className="text-center py-4">
-                                <p className="text-slate-500 text-sm mb-3">No team assigned</p>
-                                <button
-                                  className="group inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
-                                  onClick={() => setAssignTeamProjectId(project.id)}
-                                >
-                                  <UserCheck className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12" />
-                                  Assign Team
-                                </button>
-                              </div>
+                            <div className="text-center py-2">
+                              <p className="text-gray-500 text-sm mb-2">No manager</p>
+                              <button
+                                className="group inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105"
+                                onClick={() => setAssignManagerProjectId(project.id)}
+                              >
+                                <UserCheck className="w-4 h-4" />
+                                Assign
+                              </button>
                             </div>
                           )}
                         </td>
                         <td className="px-6 py-6">
-                          <div className="space-y-3">
+                          <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                              <span className="text-sm font-medium text-slate-900">{project.completion}% Complete</span>
-                              <span className="text-xs text-slate-500">
-                                {project.tasks.length} task{project.tasks.length !== 1 ? "s" : ""}
-                              </span>
+                              <span className="text-sm font-medium text-gray-900">{project.completion || 0}%</span>
                             </div>
-                            <div className="w-full bg-slate-200 rounded-full h-3 shadow-inner">
+                            <div className="w-full bg-emerald-200/50 rounded-full h-2 shadow-inner">
                               <div
-                                className="bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-600 h-3 rounded-full transition-all duration-500 shadow-sm relative overflow-hidden"
-                                style={{ width: `${project.completion}%` }}
+                                className="bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 h-2 rounded-full transition-all duration-500 shadow-sm relative overflow-hidden"
+                                style={{ width: `${project.completion || 0}%` }}
                               >
                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
                               </div>
@@ -513,25 +395,16 @@ export default function ProjectDashboard() {
                           </div>
                         </td>
                         <td className="px-6 py-6">
-                          <div className="flex flex-col gap-3">
-                            <button
-                              className="group inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
-                              onClick={() => setAssignTaskProjectId(project.id)}
-                            >
-                              <ClipboardCheck className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12" />
-                              Assign Task
+                          <div className="flex items-center gap-2">
+                            <button className="group inline-flex items-center justify-center w-8 h-8 text-teal-600 hover:text-white bg-teal-50 hover:bg-gradient-to-r hover:from-teal-500 hover:to-teal-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110">
+                              <Eye className="w-4 h-4" />
                             </button>
-                            <div className="flex items-center gap-2">
-                              <button className="group inline-flex items-center justify-center w-10 h-10 text-sky-600 hover:text-white bg-sky-50 hover:bg-gradient-to-r hover:from-sky-500 hover:to-sky-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1">
-                                <Eye className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
-                              </button>
-                              <button className="group inline-flex items-center justify-center w-10 h-10 text-amber-600 hover:text-white bg-amber-50 hover:bg-gradient-to-r hover:from-amber-500 hover:to-amber-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1">
-                                <Edit className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
-                              </button>
-                              <button className="group inline-flex items-center justify-center w-10 h-10 text-rose-600 hover:text-white bg-rose-50 hover:bg-gradient-to-r hover:from-rose-500 hover:to-rose-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1">
-                                <Trash2 className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
-                              </button>
-                            </div>
+                            <button className="group inline-flex items-center justify-center w-8 h-8 text-amber-600 hover:text-white bg-amber-50 hover:bg-gradient-to-r hover:from-amber-500 hover:to-amber-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110">
+                              <Edit className="w-4 h-4" />
+                            </button>
+                            <button className="group inline-flex items-center justify-center w-8 h-8 text-rose-600 hover:text-white bg-rose-50 hover:bg-gradient-to-r hover:from-rose-500 hover:to-rose-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -543,24 +416,13 @@ export default function ProjectDashboard() {
           )}
         </div>
 
-        {/* MODALS */}
-        <AssignTeamModal
-          open={!!assignTeamProjectId}
-          onClose={() => setAssignTeamProjectId(null)}
-          onAssign={(team) => assignTeam(assignTeamProjectId!, team)}
+        {/* Assign Manager Modal */}
+        <AssignManagerModal
+          open={!!assignManagerProjectId}
+          onClose={() => setAssignManagerProjectId(null)}
+          onAssign={(manager) => assignManager(assignManagerProjectId!, manager)}
           project={currentProject}
-          teams={teams}
-          getUserStatusIcon={getUserStatusIcon}
-        />
-        <AssignTaskModal
-          open={!!assignTaskProjectId}
-          onClose={() => setAssignTaskProjectId(null)}
-          onAdd={() => addTaskToProject(assignTaskProjectId)}
-          task={newTask}
-          setTask={setNewTask}
-          teamMembers={currentProject?.team?.members || teams.flatMap((team) => team.members)}
-          toggleAssignment={toggleTaskAssignment}
-          getUserStatusIcon={getUserStatusIcon}
+          managers={managers}
         />
       </div>
     </div>

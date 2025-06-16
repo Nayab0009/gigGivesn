@@ -1,9 +1,9 @@
 import React from 'react'
-import AgentDashboard from '@/components/managerDashboard/AgentDashboard'
+import ManagerDashboard from '@/components/managerDashboard/ManagerDashboard'
 export default function page() {
   return (
     <div>
-      <AgentDashboard/>
+      <ManagerDashboard/>
     </div>
   )
 }

@@ -39,7 +39,7 @@ const AddManager: React.FC = () => {
       password: form.password,
       phone: form.phone,
       address: form.address,
-      role: "manger",
+      role: "manager",
       organization: Number(form.organization),
     }
 

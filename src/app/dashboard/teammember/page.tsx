@@ -1,9 +1,9 @@
 import React from 'react'
-import TeacherDashboard from '@/components/employeeDashboard/TeacherDashboard'
+import EmployeeDashboard from '@/components/employeeDashboard/EmployeeDashboard'
 export default function page() {
   return (
     <div>
-      <TeacherDashboard/>
+      <EmployeeDashboard/>
     </div>
   )
 }
