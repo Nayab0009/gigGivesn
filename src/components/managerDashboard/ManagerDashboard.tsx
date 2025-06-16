@@ -15,84 +15,13 @@ import {
   MessageSquare,
   Settings,
   Plus,
+  RefreshCw,
+  AlertCircle,
 } from "lucide-react"
+import axiosInstance from "@/lib/axios"
+import { useAuth } from "@/context/AuthContext" // Import your AuthContext
 
-// Static demo data
-const staticProjects = [
-  {
-    id: 1,
-    title: "Mobile App Redesign",
-    status: "Active",
-    description: "Complete UI/UX overhaul of the mobile application with modern design principles",
-    startDate: "2024-03-15",
-    endDate: "2024-07-30",
-    progress: 65,
-    priority: "High",
-    teamSize: 4,
-    cardBg: "bg-gradient-to-br from-emerald-50 to-green-100",
-  },
-  {
-    id: 2,
-    title: "E-commerce Integration",
-    status: "Active",
-    description: "Integrate payment gateway and shopping cart functionality",
-    startDate: "2024-04-01",
-    endDate: "2024-06-15",
-    progress: 80,
-    priority: "Medium",
-    teamSize: 3,
-    cardBg: "bg-gradient-to-br from-blue-50 to-cyan-100",
-  },
-  {
-    id: 3,
-    title: "Customer Dashboard",
-    status: "Completed",
-    description: "Build comprehensive customer analytics and reporting dashboard",
-    startDate: "2024-01-10",
-    endDate: "2024-03-20",
-    progress: 100,
-    priority: "High",
-    teamSize: 5,
-    cardBg: "bg-gradient-to-br from-teal-50 to-emerald-100",
-  },
-  {
-    id: 4,
-    title: "API Documentation",
-    status: "Active",
-    description: "Create comprehensive API documentation for external developers",
-    startDate: "2024-05-01",
-    endDate: "2024-06-30",
-    progress: 45,
-    priority: "Low",
-    teamSize: 2,
-    cardBg: "bg-gradient-to-br from-purple-50 to-indigo-100",
-  },
-  {
-    id: 5,
-    title: "Security Audit",
-    status: "Pending",
-    description: "Complete security assessment and implementation of fixes",
-    startDate: "2024-06-01",
-    endDate: "2024-08-15",
-    progress: 20,
-    priority: "High",
-    teamSize: 3,
-    cardBg: "bg-gradient-to-br from-orange-50 to-red-100",
-  },
-  {
-    id: 6,
-    title: "Marketing Website",
-    status: "Completed",
-    description: "Develop new marketing website with SEO optimization",
-    startDate: "2024-02-01",
-    endDate: "2024-04-10",
-    progress: 100,
-    priority: "Medium",
-    teamSize: 4,
-    cardBg: "bg-gradient-to-br from-violet-50 to-purple-100",
-  },
-]
-
+// Static team members data (you can replace with API call later)
 const staticTeamMembers = [
   {
     id: 1,
@@ -164,15 +93,19 @@ const staticTeamMembers = [
 
 interface Project {
   id: number | string
-  title: string
+  name?: string
+  title?: string
   status: string
   description?: string
   startDate?: string
   endDate?: string
   progress?: number
+  completion?: number
   priority?: string
   teamSize?: number
   cardBg?: string
+  manager?: any
+  budget?: number
 }
 
 interface TeamMember {
@@ -197,8 +130,11 @@ interface AnalyticsData {
 }
 
 export default function ManagerDashboard() {
+  const { user } = useAuth() // Get logged-in manager info
   const [projects, setProjects] = useState<Project[]>([])
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [analytics, setAnalytics] = useState<AnalyticsData>({
     totalProjects: 0,
     activeProjects: 0,
@@ -208,43 +144,90 @@ export default function ManagerDashboard() {
     avgTeamRating: "0.0",
   })
 
+  // Fetch projects assigned to the manager
   useEffect(() => {
-    // Simulate loading and set static data
-    setTimeout(() => {
-      setProjects(staticProjects)
-      setTeamMembers(staticTeamMembers)
-      const totalTasks = staticTeamMembers.reduce((sum, member) => sum + (member.tasksCompleted || 0), 0)
-      setAnalytics({
-        totalProjects: staticProjects.length,
-        activeProjects: staticProjects.filter((p) => p.status === "Active").length,
-        completedProjects: staticProjects.filter((p) => p.status === "Completed").length,
-        teamMembers: staticTeamMembers.length,
-        totalTasks,
-        avgTeamRating: "4.6",
-      })
-    }, 500)
+    const fetchManagerProjects = async () => {
+      if (!user?.id) return
+
+      setIsLoading(true)
+      setError(null)
+      
+      try {
+        console.log('Fetching projects for manager:', user.id)
+        const response = await axiosInstance.get('/projects/manager/all')
+        console.log('API Response:', response.data)
+        
+        const projectsData = Array.isArray(response.data) ? response.data : []
+        setProjects(projectsData)
+        
+        // Calculate analytics from fetched projects
+        const totalProjects = projectsData.length
+        const activeProjects = projectsData.filter((p: Project) => 
+          p.status?.toLowerCase() === 'active' || p.status?.toLowerCase() === 'in-progress'
+        ).length
+        const completedProjects = projectsData.filter((p: Project) => 
+          p.status?.toLowerCase() === 'completed'
+        ).length
+        
+        setAnalytics(prev => ({
+          ...prev,
+          totalProjects,
+          activeProjects,
+          completedProjects,
+        }))
+        
+      } catch (error) {
+        console.error("Error fetching manager projects:", error)
+        setError("Failed to load projects. Please try again.")
+        setProjects([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchManagerProjects()
+  }, [user?.id])
+
+  // Set team members (using static data for now)
+  useEffect(() => {
+    setTeamMembers(staticTeamMembers)
+    const totalTasks = staticTeamMembers.reduce((sum, member) => sum + (member.tasksCompleted || 0), 0)
+    setAnalytics(prev => ({
+      ...prev,
+      teamMembers: staticTeamMembers.length,
+      totalTasks,
+      avgTeamRating: "4.6",
+    }))
   }, [])
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Active":
+    switch (status?.toLowerCase()) {
+      case "active":
+      case "in-progress":
         return "bg-emerald-500 text-white"
-      case "Completed":
+      case "completed":
         return "bg-teal-500 text-white"
-      case "Pending":
+      case "pending":
+      case "planning":
         return "bg-yellow-500 text-white"
+      case "on-hold":
+      case "blocked":
+        return "bg-orange-500 text-white"
+      case "cancelled":
+        return "bg-red-500 text-white"
       default:
         return "bg-gray-500 text-white"
     }
   }
 
   const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "High":
+    switch (priority?.toLowerCase()) {
+      case "high":
+      case "critical":
         return "bg-red-100 text-red-700 border-red-200"
-      case "Medium":
+      case "medium":
         return "bg-yellow-100 text-yellow-700 border-yellow-200"
-      case "Low":
+      case "low":
         return "bg-emerald-100 text-emerald-700 border-emerald-200"
       default:
         return "bg-gray-100 text-gray-700 border-gray-200"
@@ -264,6 +247,36 @@ export default function ManagerDashboard() {
     }
   }
 
+  const getCardBackground = (index: number) => {
+    const backgrounds = [
+      "bg-gradient-to-br from-emerald-50 to-green-100",
+      "bg-gradient-to-br from-blue-50 to-cyan-100",
+      "bg-gradient-to-br from-teal-50 to-emerald-100",
+      "bg-gradient-to-br from-purple-50 to-indigo-100",
+      "bg-gradient-to-br from-orange-50 to-red-100",
+      "bg-gradient-to-br from-violet-50 to-purple-100",
+    ]
+    return backgrounds[index % backgrounds.length]
+  }
+
+  // Filter active projects
+  const activeProjects = projects.filter((p) => 
+    p.status?.toLowerCase() === 'active' || p.status?.toLowerCase() === 'in-progress'
+  )
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-white via-emerald-50 to-teal-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-full mb-4">
+            <RefreshCw className="w-8 h-8 text-emerald-600 animate-spin" />
+          </div>
+          <p className="text-gray-600 text-lg">Loading your dashboard...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-emerald-50 to-teal-50 pb-12">
       {/* Header */}
@@ -272,7 +285,7 @@ export default function ManagerDashboard() {
           <div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Manager Dashboard</h1>
             <p className="text-emerald-200 text-sm md:text-base mt-1">
-              Oversee projects and manage your team effectively
+              Welcome back, {user?.name || 'Manager'}! Oversee your assigned projects and manage your team effectively
             </p>
           </div>
           <div className="flex gap-4">
@@ -287,6 +300,16 @@ export default function ManagerDashboard() {
       </header>
 
       <div className="max-w-7xl mx-auto px-10">
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-red-500" />
+              <p className="text-red-700">{error}</p>
+            </div>
+          </div>
+        )}
+
         {/* Analytics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
           <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl shadow-lg p-6 hover:shadow-xl transition border border-white/50">
@@ -339,39 +362,58 @@ export default function ManagerDashboard() {
           {/* Projects Section */}
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Active Projects</h2>
-              <a href="#" className="text-emerald-600 hover:underline text-sm font-medium">
-                View all projects
-              </a>
+              <h2 className="text-2xl font-bold text-gray-900">Your Assigned Projects</h2>
+              <button
+                onClick={() => window.location.reload()}
+                className="text-emerald-600 hover:text-emerald-700 text-sm font-medium flex items-center gap-1"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Refresh
+              </button>
             </div>
+            
             <div className="space-y-6">
-              {projects
-                .filter((p) => p.status === "Active")
-                .map((project) => (
+              {activeProjects.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <FolderKanban className="w-8 h-8 text-emerald-500" />
+                  </div>
+                  <p className="text-gray-600 text-lg font-medium mb-1">No Active Projects</p>
+                  <p className="text-gray-500">You don't have any active projects assigned yet.</p>
+                </div>
+              ) : (
+                activeProjects.map((project, index) => (
                   <div
                     key={project.id}
-                    className={`${project.cardBg} rounded-xl shadow-lg hover:shadow-xl transition p-6 border border-white/50`}
+                    className={`${getCardBackground(index)} rounded-xl shadow-lg hover:shadow-xl transition p-6 border border-white/50`}
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <h3 className="font-bold text-lg text-gray-900 mb-2">{project.title}</h3>
+                        <h3 className="font-bold text-lg text-gray-900 mb-2">
+                          {project.name || project.title}
+                        </h3>
                         <p className="text-gray-700 text-sm mb-3">{project.description}</p>
                         <div className="flex items-center gap-4 text-xs text-gray-600">
                           <span className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
-                            Due: {project.endDate && new Date(project.endDate).toLocaleDateString()}
+                            Start: {project.startDate && new Date(project.startDate).toLocaleDateString()}
                           </span>
-                          <span className="flex items-center gap-1">
-                            <Users className="w-3 h-3" />
-                            {project.teamSize} members
-                          </span>
+                          {project.endDate && (
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-3 h-3" />
+                              Due: {new Date(project.endDate).toLocaleDateString()}
+                            </span>
+                          )}
+                          {project.budget && (
+                            <span>${project.budget.toLocaleString()}</span>
+                          )}
                         </div>
                       </div>
                       <div className="flex flex-col gap-2 items-end">
                         <span
                           className={`text-xs font-semibold px-3 py-1 rounded-full ${getStatusColor(project.status)}`}
                         >
-                          {project.status}
+                          {project.status?.replace('-', ' ')}
                         </span>
                         {project.priority && (
                           <span
@@ -383,22 +425,25 @@ export default function ManagerDashboard() {
                       </div>
                     </div>
 
-                    {project.progress !== undefined && (
+                    {(project.progress !== undefined || project.completion !== undefined) && (
                       <div>
                         <div className="flex justify-between text-sm mb-2">
                           <span className="text-gray-700">Progress</span>
-                          <span className="font-medium text-gray-800">{project.progress}%</span>
+                          <span className="font-medium text-gray-800">
+                            {project.progress || project.completion || 0}%
+                          </span>
                         </div>
                         <div className="w-full bg-white/60 rounded-full h-2">
                           <div
                             className="bg-gradient-to-r from-emerald-500 to-teal-600 h-2 rounded-full transition-all duration-500"
-                            style={{ width: `${project.progress}%` }}
+                            style={{ width: `${project.progress || project.completion || 0}%` }}
                           />
                         </div>
                       </div>
                     )}
                   </div>
-                ))}
+                ))
+              )}
             </div>
           </div>
 

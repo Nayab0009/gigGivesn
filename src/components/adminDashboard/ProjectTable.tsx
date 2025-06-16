@@ -72,9 +72,17 @@ interface AssignManagerModalProps {
   onAssign: (manager: Manager) => void
   project: Project | null
   managers: Manager[]
+  isAssigning?: boolean
 }
 
-function AssignManagerModal({ open, onClose, onAssign, project, managers }: AssignManagerModalProps) {
+function AssignManagerModal({
+  open,
+  onClose,
+  onAssign,
+  project,
+  managers,
+  isAssigning = false,
+}: AssignManagerModalProps) {
   if (!open || !project) return null
 
   return (
@@ -91,7 +99,7 @@ function AssignManagerModal({ open, onClose, onAssign, project, managers }: Assi
               <div
                 key={manager.id}
                 className="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:bg-emerald-50 transition-colors cursor-pointer"
-                onClick={() => onAssign(manager)}
+                onClick={() => !isAssigning && onAssign(manager)}
               >
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
@@ -103,8 +111,18 @@ function AssignManagerModal({ open, onClose, onAssign, project, managers }: Assi
                     <p className="text-xs text-gray-500">{manager.phone}</p>
                   </div>
                 </div>
-                <button className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors">
-                  Assign
+                <button
+                  className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  disabled={isAssigning}
+                >
+                  {isAssigning ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      Assigning...
+                    </>
+                  ) : (
+                    "Assign"
+                  )}
                 </button>
               </div>
             ))}
@@ -114,7 +132,8 @@ function AssignManagerModal({ open, onClose, onAssign, project, managers }: Assi
         <div className="p-6 border-t border-gray-200 flex justify-end">
           <button
             onClick={onClose}
-            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+            disabled={isAssigning}
           >
             Cancel
           </button>
@@ -128,6 +147,7 @@ function AssignManagerModal({ open, onClose, onAssign, project, managers }: Assi
 export default function ProjectDashboard() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
+  const [isAssigning, setIsAssigning] = useState(false)
   const [projects, setProjects] = useState<Project[]>([])
   const [managers, setManagers] = useState<Manager[]>([])
   const [searchTerm, setSearchTerm] = useState("")
@@ -184,10 +204,28 @@ export default function ProjectDashboard() {
     })
   }, [projects, searchTerm, statusFilter, priorityFilter])
 
-  // Assign manager to project
-  const assignManager = (projectId: string, manager: Manager) => {
-    setProjects((prev) => prev.map((p) => (p.id === projectId ? { ...p, manager } : p)))
-    setAssignManagerProjectId(null)
+  // Assign manager to project with API call
+  const assignManager = async (projectId: string, manager: Manager) => {
+    setIsAssigning(true)
+    try {
+      // Make PATCH request to assign manager
+      await axiosInstance.patch(`/projects/${projectId}`, {
+        manager: manager.id,
+      })
+
+      // Update local state on success
+      setProjects((prev) => prev.map((p) => (p.id === projectId ? { ...p, manager } : p)))
+      setAssignManagerProjectId(null)
+
+      // You could add a success notification here
+      console.log(`Manager ${manager.name} assigned to project successfully!`)
+    } catch (error) {
+      console.error("Error assigning manager:", error)
+      // You could add an error notification here
+      alert("Failed to assign manager. Please try again.")
+    } finally {
+      setIsAssigning(false)
+    }
   }
 
   const currentProject = assignManagerProjectId ? projects.find((p) => p.id === assignManagerProjectId) : null
@@ -249,7 +287,7 @@ export default function ProjectDashboard() {
               <button
                 type="button"
                 className="group inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
-                onClick={() => router.push("/dashboard/admin/addProject")}
+                onClick={() => router.push("/admin/addproject")}
               >
                 <Plus className="w-4 h-4 transition-transform duration-300 group-hover:rotate-90" />
                 Add Project
@@ -361,6 +399,7 @@ export default function ProjectDashboard() {
                               <button
                                 className="group inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-full text-xs font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105"
                                 onClick={() => setAssignManagerProjectId(project.id)}
+                                disabled={isAssigning}
                               >
                                 <UserCheck className="w-3 h-3" />
                                 Change
@@ -370,8 +409,9 @@ export default function ProjectDashboard() {
                             <div className="text-center py-2">
                               <p className="text-gray-500 text-sm mb-2">No manager</p>
                               <button
-                                className="group inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105"
+                                className="group inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                                 onClick={() => setAssignManagerProjectId(project.id)}
+                                disabled={isAssigning}
                               >
                                 <UserCheck className="w-4 h-4" />
                                 Assign
@@ -423,6 +463,7 @@ export default function ProjectDashboard() {
           onAssign={(manager) => assignManager(assignManagerProjectId!, manager)}
           project={currentProject}
           managers={managers}
+          isAssigning={isAssigning}
         />
       </div>
     </div>
