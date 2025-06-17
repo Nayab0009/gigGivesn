@@ -95,9 +95,9 @@ const AppHeader: React.FC = () => {
           }`}
         >
           {/* Theme Toggle - Always visible */}
-          <div className={`transition-all duration-500 ease-in-out ${hasMoreSpace ? "scale-110" : "scale-100"}`}>
+          {/* <div className={`transition-all duration-500 ease-in-out ${hasMoreSpace ? "scale-110" : "scale-100"}`}>
             <ThemeToggleButton />
-          </div>
+          </div> */}
 
           {/* User Dropdown - Always visible */}
           <div className={`transition-all duration-500 ease-in-out ${hasMoreSpace ? "scale-110" : "scale-100"}`}>

@@ -1,5 +1,8 @@
-import { X, Check, Clock, Users, AlertTriangle } from "lucide-react";
-import type { Project, Task, User } from "../types";
+import React, { useState, useEffect } from "react";
+import { X, Check, Clock, Users, AlertTriangle, Loader2, AlertCircle } from "lucide-react";
+import axiosInstance from "@/lib/axios";
+import type { Project, Task, User, Team } from "@/types";
+import { useAuth } from "@/context/AuthContext";
 
 interface AssignTaskModalProps {
   open: boolean;
@@ -7,9 +10,19 @@ interface AssignTaskModalProps {
   onAdd: () => void;
   task: Task;
   setTask: (task: Task) => void;
-  teamMembers: User[];
-  toggleAssignment: (userId: string) => void;
-  getUserStatusIcon: (status: string) => JSX.Element;
+  getUserStatusIcon: (status: string) => React.ReactElement;
+  projectId?: number; // Add projectId prop
+}
+
+// Helper function to generate avatar
+const generateAvatar = (name: string, index: number) => {
+  const avatarStyles = [
+    `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`,
+    `https://api.dicebear.com/7.x/personas/svg?seed=${name}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`,
+    `https://api.dicebear.com/7.x/miniavs/svg?seed=${name}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`,
+    `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${name}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`,
+  ]
+  return avatarStyles[index % avatarStyles.length]
 }
 
 export function AssignTaskModal({
@@ -18,241 +31,441 @@ export function AssignTaskModal({
   onAdd,
   task,
   setTask,
-  teamMembers,
-  toggleAssignment,
   getUserStatusIcon,
+  projectId,
 }: AssignTaskModalProps) {
-  if (!open) return null;
+  const { user, isAuthenticated } = useAuth();
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [allMembers, setAllMembers] = useState<User[]>([]);
+  const [isCreating, setIsCreating] = useState(false);
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'critical':
-        return 'text-red-600 bg-red-50 border-red-200';
-      case 'high':
-        return 'text-orange-600 bg-orange-50 border-orange-200';
-      case 'medium':
-        return 'text-yellow-600 bg-yellow-50 border-yellow-200';
-      case 'low':
-        return 'text-green-600 bg-green-50 border-green-200';
-      default:
-        return 'text-gray-600 bg-gray-50 border-gray-200';
+  // Check if user is authorized to assign tasks
+  const isAuthorizedToAssignTasks = () => {
+    if (!isAuthenticated || !user) {
+      return false;
+    }
+    
+    // Only admin and manager can assign tasks
+    const authorizedRoles = ['admin', 'manager'];
+    return authorizedRoles.includes(user.role.toLowerCase());
+  };
+
+  // Fetch employees from backend and organize them into teams
+  const fetchTeams = async () => {
+    if (!isAuthorizedToAssignTasks()) {
+      setError('You are not authorized to assign tasks. Only admins and managers can assign tasks.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await axiosInstance.get('/user?role=employee');
+      const employees = Array.isArray(response.data) ? response.data : [];
+      
+      // Group employees by department to create teams
+      const teamsMap = new Map<string, Team>();
+      const allMembersArray: User[] = [];
+      
+      employees.forEach((employee: any, index: number) => {
+        const department = employee.department || 'General';
+        
+        if (!teamsMap.has(department)) {
+          teamsMap.set(department, {
+            id: `team-${department.toLowerCase().replace(/\s+/g, '-')}`,
+            name: `${department} Team`,
+            department: department,
+            lead: employee.id,
+            members: []
+          });
+        }
+        
+        const team = teamsMap.get(department)!;
+        const teamMember = {
+          id: employee.id,
+          name: employee.name || employee.email,
+          role: employee.role || 'Employee',
+          email: employee.email,
+          avatar: employee.avatar || generateAvatar(employee.name || employee.email, index),
+          status: employee.status || 'active'
+        };
+        
+        team.members.push(teamMember);
+        allMembersArray.push(teamMember);
+      });
+      
+      setTeams(Array.from(teamsMap.values()));
+      setAllMembers(allMembersArray);
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+      setError('Failed to load teams. Please try again.');
+      setTeams([]);
+      setAllMembers([]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden">
-        {/* Header */}
-        <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-              <Clock className="w-5 h-5 text-blue-600" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">Create New Task</h2>
-              <p className="text-sm text-gray-600">Add a task and assign team members</p>
-            </div>
+  // Create tasks for each assigned user
+  const handleCreateTask = async () => {
+    if (!isAuthorizedToAssignTasks()) {
+      setError('You are not authorized to assign tasks. Only admins and managers can assign tasks.');
+      return;
+    }
+
+    if (!task.title.trim() || task.assignedTo.length === 0) {
+      return;
+    }
+
+    setIsCreating(true);
+    setError(null);
+
+    try {
+      // Create a task for each assigned user
+      const createTaskPromises = task.assignedTo.map(async (userId: string) => {
+        const taskData = {
+          title: task.title.trim(),
+          description: task.description.trim() || '',
+          taskFor: parseInt(userId), // ID of the user the task is assigned to
+          taskOf: projectId || 1, // ID of the project the task belongs to
+          assignedBy: user?.id, // ID of the user who is assigning the task
+        };
+
+        console.log('Sending task data:', taskData);
+        console.log('Request URL:', axiosInstance.defaults.baseURL + '/tasks');
+        console.log('Current user:', user);
+
+        const response = await axiosInstance.post('/tasks', taskData);
+        console.log('Task creation response:', response.data);
+        
+        return response;
+      });
+
+      // Wait for all tasks to be created
+      await Promise.all(createTaskPromises);
+
+      // Call the original onAdd callback
+      onAdd();
+
+      // Close the modal
+      onClose();
+
+      // Reset the task
+      setTask({
+        ...task,
+        title: '',
+        description: '',
+        assignedTo: []
+      });
+
+    } catch (error: any) {
+      console.error('Error creating tasks:', error);
+      console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
+      console.error('Error headers:', error.response?.headers);
+      setError(
+        error.response?.data?.message || 
+        'Failed to create tasks. Please try again.'
+      );
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  // Toggle assignment
+  const toggleAssignment = (userId: string) => {
+    const newAssigned = task.assignedTo.includes(userId)
+      ? task.assignedTo.filter((id: string) => id !== userId)
+      : [...task.assignedTo, userId];
+    
+    setTask({ ...task, assignedTo: newAssigned });
+  };
+
+  // Fetch teams when modal opens
+  useEffect(() => {
+    if (open) {
+      fetchTeams();
+    }
+  }, [open]);
+
+  if (!open) return null;
+
+  // Show authorization error if user is not authorized
+  if (!isAuthorizedToAssignTasks()) {
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+          <div className="text-center">
+            <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
+            <p className="text-gray-600 mb-6">
+              You are not authorized to assign tasks. Only administrators and managers can assign tasks to team members.
+            </p>
+            <button
+              onClick={onClose}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Close
+            </button>
           </div>
-          <button 
-            onClick={onClose} 
-            className="p-2 rounded-xl hover:bg-white/60 transition-all duration-200 group"
-          >
-            <X className="w-5 h-5 text-gray-500 group-hover:text-gray-700" />
-          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-gradient-to-br from-white to-blue-50/30 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-white/50 backdrop-blur-sm">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-white">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                <Clock className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold mb-1">Create New Task</h2>
+                <p className="text-blue-200 text-sm">Add a task and assign team members</p>
+                {task.assignedTo.length > 0 && (
+                  <p className="text-blue-100 text-sm mt-1">
+                    {task.assignedTo.length} member{task.assignedTo.length !== 1 ? 's' : ''} assigned
+                  </p>
+                )}
+                <p className="text-blue-100 text-sm mt-1">
+                  Assigned by: {user?.name} ({user?.role})
+                </p>
+              </div>
+            </div>
+            <button 
+              onClick={onClose} 
+              className="p-2 rounded-full hover:bg-white/20 transition-colors"
+              disabled={isCreating}
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
         </div>
 
         {/* Scrollable Content with Hidden Scrollbar */}
-        <div className="overflow-y-auto scrollbar-hide" style={{ maxHeight: 'calc(90vh - 180px)' }}>
-          <div className="p-6 space-y-6">
-            {/* Task Title */}
-            <div className="group">
-              <label htmlFor="task-title" className="block text-sm font-semibold text-gray-800 mb-2">
-                Task Title*
-              </label>
-              <input
-                id="task-title"
-                type="text"
-                value={task.title}
-                onChange={(e) => setTask({ ...task, title: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-gray-50/50 hover:bg-white"
-                placeholder="Enter a descriptive task title..."
-              />
+        <div 
+          className="p-6 space-y-6 overflow-y-auto scrollbar-hide"
+          style={{
+            maxHeight: 'calc(90vh - 180px)',
+            scrollbarWidth: 'none', // Firefox
+            msOverflowStyle: 'none', // IE/Edge
+          }}
+        >
+          <style jsx>{`
+            .scrollbar-hide::-webkit-scrollbar {
+              display: none; /* Chrome, Safari, Opera */
+            }
+          `}</style>
+
+          {/* Task Title */}
+          <div className="group">
+            <label htmlFor="task-title" className="block text-sm font-semibold text-gray-800 mb-2">
+              Task Title*
+            </label>
+            <input
+              id="task-title"
+              type="text"
+              value={task.title}
+              onChange={(e) => setTask({ ...task, title: e.target.value })}
+              className="w-full px-4 py-3 border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-blue-50/30 hover:bg-white"
+              placeholder="Enter a descriptive task title..."
+              disabled={isCreating}
+            />
+          </div>
+
+          {/* Task Description */}
+          <div className="group">
+            <label htmlFor="task-description" className="block text-sm font-semibold text-gray-800 mb-2">
+              Description
+            </label>
+            <textarea
+              id="task-description"
+              value={task.description}
+              onChange={(e) => setTask({ ...task, description: e.target.value })}
+              className="w-full px-4 py-3 border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-blue-50/30 hover:bg-white resize-none"
+              placeholder="Describe the task details and requirements..."
+              rows={3}
+              disabled={isCreating}
+            />
+          </div>
+
+          {/* Team Member Assignment */}
+          <div className="group">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-2">
+                <Users className="w-4 h-4 text-blue-500" />
+                <span className="font-semibold text-sm text-gray-700">Assign Team Members*</span>
+              </div>
+              <span className="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 text-sm px-4 py-2 rounded-full font-semibold border border-blue-200">
+                {task.assignedTo.length} selected
+              </span>
             </div>
 
-            {/* Task Description */}
-            <div className="group">
-              <label htmlFor="task-description" className="block text-sm font-semibold text-gray-800 mb-2">
-                Description
-              </label>
-              <textarea
-                id="task-description"
-                value={task.description}
-                onChange={(e) => setTask({ ...task, description: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-gray-50/50 hover:bg-white resize-none"
-                placeholder="Describe the task details and requirements..."
-                rows={3}
-              />
-            </div>
+            {/* Loading State */}
+            {isLoading && (
+              <div className="text-center py-12">
+                <Loader2 className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Loading Teams...</h3>
+                <p className="text-gray-500">Fetching available teams from the backend.</p>
+              </div>
+            )}
 
-            {/* Priority and Due Date */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="group">
-                <label htmlFor="task-priority" className="block text-sm font-semibold text-gray-800 mb-2">
-                  Priority Level
-                </label>
-                <div className="relative">
-                  <select
-                    id="task-priority"
-                    value={task.priority}
-                    onChange={(e) => setTask({ ...task, priority: e.target.value as Task["priority"] })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-gray-50/50 hover:bg-white appearance-none cursor-pointer"
+            {/* Error State */}
+            {error && (
+              <div className="text-center py-12">
+                <AlertCircle className="w-8 h-8 text-red-600 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Error</h3>
+                <p className="text-gray-500 mb-4">{error}</p>
+                {!isCreating && (
+                  <button
+                    onClick={fetchTeams}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    <option value="low">🟢 Low Priority</option>
-                    <option value="medium">🟡 Medium Priority</option>
-                    <option value="high">🟠 High Priority</option>
-                    <option value="critical">🔴 Critical Priority</option>
-                  </select>
-                  <AlertTriangle className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                    Try Again
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Teams List */}
+            {!isLoading && !error && teams.map((team) => (
+              <div
+                key={team.id}
+                className="border border-blue-200 rounded-xl p-6 hover:border-blue-300 hover:shadow-lg transition-all duration-300 relative overflow-hidden mb-4"
+              >
+                {/* Team Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-3 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl">
+                      <Users className="w-6 h-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-xl text-gray-900">
+                        {team.name}
+                      </h3>
+                      <p className="text-sm text-gray-600 font-medium">
+                        {team.department} Department
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <span className="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 text-sm px-4 py-2 rounded-full font-semibold border border-blue-200">
+                      {team.members.length} member{team.members.length !== 1 ? 's' : ''}
+                    </span>
+                  </div>
                 </div>
-              </div>
 
-              <div className="group">
-                <label htmlFor="task-due-date" className="block text-sm font-semibold text-gray-800 mb-2">
-                  Due Date
-                </label>
-                <input
-                  id="task-due-date"
-                  type="date"
-                  value={task.dueDate}
-                  onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-gray-50/50 hover:bg-white"
-                />
-              </div>
-            </div>
-
-            {/* Estimated Hours */}
-            <div className="group">
-              <label htmlFor="task-hours" className="block text-sm font-semibold text-gray-800 mb-2">
-                Estimated Hours
-              </label>
-              <input
-                id="task-hours"
-                type="number"
-                min="0"
-                step="0.5"
-                value={task.estimatedHours}
-                onChange={(e) =>
-                  setTask({ ...task, estimatedHours: Number.parseFloat(e.target.value) || 0 })
-                }
-                className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-gray-50/50 hover:bg-white"
-                placeholder="0.0"
-              />
-            </div>
-
-            {/* Team Member Assignment */}
-            <div className="group">
-              <div className="flex items-center justify-between mb-3">
-                <label className="block text-sm font-semibold text-gray-800">
-                  Assign Team Members*
-                </label>
-                <div className="flex items-center space-x-2 text-xs text-gray-500">
-                  <Users className="w-4 h-4" />
-                  <span>{task.assignedTo.length} selected</span>
-                </div>
-              </div>
-              
-              <div className="border border-gray-200 rounded-xl bg-gray-50/30 overflow-hidden">
-                {/* Custom scrollable area with hidden scrollbar */}
-                <div 
-                  className="space-y-1 p-2 overflow-y-auto scrollbar-hide" 
-                  style={{ maxHeight: '240px' }}
-                >
-                  {teamMembers.map((member, index) => (
-                    <div
-                      key={member.id}
-                      className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 ${
-                        task.assignedTo.includes(member.id)
-                          ? "bg-blue-500 text-white shadow-md transform scale-[1.02]"
-                          : "hover:bg-white hover:shadow-sm bg-white/60"
-                      }`}
-                      onClick={() => toggleAssignment(member.id)}
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className="relative">
-                          <img 
-                            src={member.avatar} 
-                            alt={member.name} 
-                            className="w-9 h-9 rounded-full ring-2 ring-white shadow-sm" 
+                {/* Team Members */}
+                <div>
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Users className="w-4 h-4 text-blue-500" />
+                    <span className="font-semibold text-sm text-gray-700">Select Team Members</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {team.members.map((member: any) => (
+                      <div
+                        key={member.id}
+                        className={`relative flex items-center space-x-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer ${
+                          task.assignedTo.includes(member.id)
+                            ? 'bg-blue-100 border-blue-300 shadow-md'
+                            : 'bg-blue-50 hover:bg-blue-100 border-blue-200 hover:border-blue-300'
+                        } ${isCreating ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        onClick={() => !isCreating && toggleAssignment(member.id)}
+                      >
+                        {/* Selection indicator */}
+                        {task.assignedTo.includes(member.id) && (
+                          <div className="absolute top-2 right-2 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
+                            <Check className="w-3 h-3 text-white" />
+                          </div>
+                        )}
+                        
+                        <div className="relative flex-shrink-0">
+                          <img
+                            src={member.avatar}
+                            alt={member.name}
+                            className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
                           />
-                          <div className="absolute -bottom-0.5 -right-0.5 scale-75">
+                          <div className="absolute -bottom-0.5 -right-0.5 p-0.5 bg-white rounded-full shadow-sm">
                             {getUserStatusIcon(member.status)}
                           </div>
                         </div>
-                        <div>
-                          <div className={`font-semibold ${
-                            task.assignedTo.includes(member.id) ? 'text-white' : 'text-gray-900'
-                          }`}>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium text-gray-900 truncate">
                             {member.name}
                           </div>
-                          <div className={`text-xs ${
-                            task.assignedTo.includes(member.id) ? 'text-blue-100' : 'text-gray-500'
-                          }`}>
+                          <div className="text-sm text-gray-600 truncate">
                             {member.role}
                           </div>
                         </div>
                       </div>
-                      <div
-                        className={`w-6 h-6 rounded-full border-2 transition-all duration-200 ${
-                          task.assignedTo.includes(member.id)
-                            ? "bg-white border-white flex items-center justify-center"
-                            : "border-gray-300 hover:border-blue-400"
-                        }`}
-                      >
-                        {task.assignedTo.includes(member.id) && (
-                          <Check className="w-4 h-4 text-blue-500" />
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            ))}
+
+            {/* No Teams State */}
+            {!isLoading && !error && teams.length === 0 && (
+              <div className="text-center py-12">
+                <Users className="w-16 h-16 text-blue-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No Teams Available</h3>
+                <p className="text-gray-500">No employees found to create teams from.</p>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-gray-100 flex justify-end space-x-3 bg-gray-50/50">
-          <button
-            onClick={onClose}
-            className="px-6 py-3 border border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-white hover:shadow-sm transition-all duration-200"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onAdd}
-            disabled={!task.title.trim() || task.assignedTo.length === 0}
-            className={`px-6 py-3 rounded-xl text-white font-semibold transition-all duration-200 flex items-center space-x-2 ${
-              !task.title.trim() || task.assignedTo.length === 0
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-            }`}
-          >
-            <Check className="w-4 h-4" />
-            <span>Create Task</span>
-          </button>
+        <div className="border-t border-blue-200 bg-blue-50/50 px-6 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-4">
+              <p className="text-sm text-gray-600">
+                {task.assignedTo.length > 0 
+                  ? `${task.assignedTo.length} member${task.assignedTo.length !== 1 ? 's' : ''} assigned`
+                  : 'Select team members to assign to your task'
+                }
+              </p>
+            </div>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={onClose}
+                disabled={isCreating}
+                className="px-6 py-2.5 border border-blue-300 rounded-xl text-gray-700 font-medium hover:bg-white hover:shadow-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreateTask}
+                disabled={!task.title.trim() || task.assignedTo.length === 0 || isCreating}
+                className={`px-6 py-2.5 rounded-xl text-white font-medium transition-all duration-200 flex items-center space-x-2 ${
+                  !task.title.trim() || task.assignedTo.length === 0 || isCreating
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl"
+                }`}
+              >
+                {isCreating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Creating Tasks...</span>
+                  </>
+                ) : (
+                  <>
+                    <Check className="w-4 h-4" />
+                    <span>Create Task</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
-
-      {/* Custom CSS for hiding scrollbar */}
-      <style jsx>{`
-        .scrollbar-hide {
-          -ms-overflow-style: none;  /* Internet Explorer 10+ */
-          scrollbar-width: none;  /* Firefox */
-        }
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;  /* Safari and Chrome */
-        }
-      `}</style>
     </div>
   );
 }

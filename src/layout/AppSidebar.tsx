@@ -91,7 +91,7 @@ const employeeNavItems: NavItem[] = [
   {
     name: "My Tasks",
     icon: <ListIcon />,
-    path: "/dashboard/teammember/tasks",
+    path: "/dashboard/teammember/mytasks",
   },
   {
     name: "Attendance",
@@ -379,7 +379,7 @@ const AppSidebar: React.FC = () => {
               <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
                 <Layers className="w-5 h-5src/app/dashboard/admin/commercial-listings text-white" />
               </div>
-              <h1 className="text-xl font-bold text-white">GiGGives</h1>
+              <h1 className="text-xl font-bold text-white">GiGJives</h1>
             </div>
           )}
 

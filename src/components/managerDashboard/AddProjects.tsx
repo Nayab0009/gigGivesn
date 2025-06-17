@@ -464,27 +464,6 @@ export default function ProjectDashboard() {
     setAssignTeamProjectId(null)
   }
 
-  // --- Assign Task Logic ---
-  const addTaskToProject = (projectId: string | null) => {
-    if (!projectId || !newTask.title.trim() || newTask.assignedTo.length === 0) return
-    const task: Task = {
-      ...newTask,
-      id: `task-${Date.now()}`,
-    }
-    // Since tasks don't exist in backend response, we'll just close the modal
-    setNewTask({
-      id: "",
-      title: "",
-      description: "",
-      assignedTo: [],
-      status: "pending",
-      priority: "medium",
-      dueDate: "",
-      estimatedHours: 0,
-    })
-    setAssignTaskProjectId(null)
-  }
-
   // --- Toggle Task Assignment ---
   const toggleTaskAssignment = (userId: string) => {
     setNewTask((prev) => ({
@@ -732,12 +711,15 @@ export default function ProjectDashboard() {
         <AssignTaskModal
           open={!!assignTaskProjectId}
           onClose={() => setAssignTaskProjectId(null)}
-          onAdd={() => addTaskToProject(assignTaskProjectId)}
+          onAdd={() => {
+            // Refresh the projects data after task assignment
+            fetchManagerProjects();
+            setAssignTaskProjectId(null);
+          }}
           task={newTask}
           setTask={setNewTask}
-          teamMembers={teams.flatMap((team) => team.members)}
-          toggleAssignment={toggleTaskAssignment}
           getUserStatusIcon={getUserStatusIcon}
+          projectId={assignTaskProjectId ? parseInt(assignTaskProjectId) : undefined}
         />
         <ViewTeamModal
           open={!!viewTeamProjectId}

@@ -289,12 +289,7 @@ export default function ManagerDashboard() {
             </p>
           </div>
           <div className="flex gap-4">
-            <button className="flex items-center gap-2 px-5 py-2 bg-white text-emerald-700 rounded-xl font-semibold shadow hover:bg-emerald-50 transition">
-              <Plus className="h-5 w-5" /> New Project
-            </button>
-            <button className="flex items-center gap-2 px-5 py-2 bg-emerald-500 rounded-xl font-semibold shadow hover:bg-emerald-600 transition">
-              <UserPlus className="h-5 w-5" /> Add Member
-            </button>
+         
           </div>
         </div>
       </header>
