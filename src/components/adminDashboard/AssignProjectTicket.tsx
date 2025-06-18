@@ -59,38 +59,53 @@ export function AssignTaskModal({
       return;
     }
 
+    if (!projectId) {
+      setError('Project ID is required to fetch team members.');
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     
     try {
-      const response = await axiosInstance.get('/user?role=employee');
-      const employees = Array.isArray(response.data) ? response.data : [];
+      // Fetch project details to get team members assigned to this specific project
+      const response = await axiosInstance.get(`/projects/${projectId}`);
+      const projectData = response.data;
       
-      // Group employees by department to create teams
+      if (!projectData.teamMembers || !Array.isArray(projectData.teamMembers)) {
+        setError('No team members found for this project.');
+        setTeams([]);
+        setAllMembers([]);
+        return;
+      }
+      
+      const teamMembers = projectData.teamMembers;
+      
+      // Group team members by department to create teams
       const teamsMap = new Map<string, Team>();
       const allMembersArray: User[] = [];
       
-      employees.forEach((employee: any, index: number) => {
-        const department = employee.department || 'General';
+      teamMembers.forEach((member: any, index: number) => {
+        const department = member.department || 'General';
         
         if (!teamsMap.has(department)) {
           teamsMap.set(department, {
             id: `team-${department.toLowerCase().replace(/\s+/g, '-')}`,
             name: `${department} Team`,
             department: department,
-            lead: employee.id,
+            lead: member.id,
             members: []
           });
         }
         
         const team = teamsMap.get(department)!;
         const teamMember = {
-          id: employee.id,
-          name: employee.name || employee.email,
-          role: employee.role || 'Employee',
-          email: employee.email,
-          avatar: employee.avatar || generateAvatar(employee.name || employee.email, index),
-          status: employee.status || 'active'
+          id: member.id,
+          name: member.name || member.email,
+          role: member.role || 'Employee',
+          email: member.email,
+          avatar: member.avatar || generateAvatar(member.name || member.email, index),
+          status: member.status || 'active'
         };
         
         team.members.push(teamMember);
@@ -99,9 +114,13 @@ export function AssignTaskModal({
       
       setTeams(Array.from(teamsMap.values()));
       setAllMembers(allMembersArray);
+      
+      console.log('Project team members loaded:', teamMembers);
+      console.log('Teams created:', Array.from(teamsMap.values()));
+      
     } catch (error) {
-      console.error('Error fetching employees:', error);
-      setError('Failed to load teams. Please try again.');
+      console.error('Error fetching project team members:', error);
+      setError('Failed to load project team members. Please try again.');
       setTeams([]);
       setAllMembers([]);
     } finally {

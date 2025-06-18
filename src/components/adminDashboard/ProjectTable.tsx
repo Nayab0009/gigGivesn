@@ -287,7 +287,7 @@ export default function ProjectDashboard() {
               <button
                 type="button"
                 className="group inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
-                onClick={() => router.push("/admin/addproject")}
+                onClick={() => router.push("/dashboard/admin/addProject")}
               >
                 <Plus className="w-4 h-4 transition-transform duration-300 group-hover:rotate-90" />
                 Add Project

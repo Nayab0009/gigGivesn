@@ -26,13 +26,13 @@ const generateAvatar = (name: string, index: number) => {
 const getRoleColor = (role?: string) => {
   switch (role?.toLowerCase()) {
     case "employee":
-      return "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-blue-200 ring-1 ring-blue-200 shadow-sm"
+      return "bg-gradient-to-r from-emerald-50 to-teal-50 text-emerald-700 border-emerald-200 ring-1 ring-emerald-200 shadow-sm"
     case "developer":
       return "bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 border-green-200 ring-1 ring-green-200 shadow-sm"
     case "designer":
-      return "bg-gradient-to-r from-purple-50 to-pink-50 text-purple-700 border-purple-200 ring-1 ring-purple-200 shadow-sm"
+      return "bg-gradient-to-r from-teal-50 to-cyan-50 text-teal-700 border-teal-200 ring-1 ring-teal-200 shadow-sm"
     case "manager":
-      return "bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border-orange-200 ring-1 ring-orange-200 shadow-sm"
+      return "bg-gradient-to-r from-cyan-50 to-blue-50 text-cyan-700 border-cyan-200 ring-1 ring-cyan-200 shadow-sm"
     default:
       return "bg-gradient-to-r from-slate-50 to-gray-50 text-slate-700 border-slate-200 ring-1 ring-slate-200 shadow-sm"
   }
@@ -80,11 +80,11 @@ export default function TeamListPage() {
   }, [teamMembers, searchTerm])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">Team Members</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent mb-2">Team Members</h1>
           <p className="text-slate-600 text-lg">Manage and track all team members</p>
         </div>
 
@@ -96,7 +96,7 @@ export default function TeamListPage() {
               <input
                 type="text"
                 placeholder="Search employees by name, email or ID..."
-                className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300 text-slate-900 placeholder-slate-500 shadow-sm focus:shadow-md"
+                className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 text-slate-900 placeholder-slate-500 shadow-sm focus:shadow-md"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -108,7 +108,7 @@ export default function TeamListPage() {
               </div>
               <button
                 type="button"
-                className="group inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-600 hover:to-indigo-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
+                className="group inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
                 onClick={() => router.push("/dashboard/admin/addemployee")}
               >
                 <Plus className="w-4 h-4 transition-transform duration-300 group-hover:rotate-90" />
@@ -126,8 +126,8 @@ export default function TeamListPage() {
         <div className="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden backdrop-blur-sm">
           {isLoading ? (
             <div className="p-12 text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-full mb-4">
-                <RefreshCw className="w-6 h-6 text-indigo-600 animate-spin" />
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
+                <RefreshCw className="w-6 h-6 text-emerald-600 animate-spin" />
               </div>
               <p className="text-slate-600 text-lg">Loading team members...</p>
             </div>
@@ -167,12 +167,12 @@ export default function TeamListPage() {
                     filteredMembers.map((member, index) => (
                       <tr
                         key={member.id || index}
-                        className={`hover:bg-gradient-to-r hover:from-slate-50 hover:to-indigo-50/30 transition-all duration-300 ${index % 2 === 0 ? "bg-white" : "bg-slate-25"}`}
+                        className={`hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50/30 transition-all duration-300 ${index % 2 === 0 ? "bg-white" : "bg-slate-25"}`}
                       >
                         <td className="px-6 py-6">
                           <div className="space-y-2">
                             <div className="flex items-center gap-3">
-                              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                              <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
                                 {member.name.charAt(0).toUpperCase()}
                               </div>
                               <div>
@@ -181,7 +181,7 @@ export default function TeamListPage() {
                                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-700">
                                     ID: {member.id || "N/A"}
                                   </span>
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-blue-100 text-blue-700">
+                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-emerald-100 text-emerald-700">
                                     Team Member
                                   </span>
                                 </div>
@@ -203,11 +203,11 @@ export default function TeamListPage() {
                               <span className="text-sm font-medium text-slate-900">{member.email}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
                               <span className="text-sm text-slate-600">{member.phone}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
+                              <div className="w-2 h-2 bg-cyan-500 rounded-full"></div>
                               <span className="text-sm text-slate-600 max-w-xs truncate" title={member.address}>
                                 {member.address}
                               </span>
@@ -216,10 +216,10 @@ export default function TeamListPage() {
                         </td>
                         <td className="px-6 py-6">
                           <div className="flex items-center gap-2">
-                            <button className="group inline-flex items-center justify-center w-10 h-10 text-sky-600 hover:text-white bg-sky-50 hover:bg-gradient-to-r hover:from-sky-500 hover:to-sky-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1">
+                            <button className="group inline-flex items-center justify-center w-10 h-10 text-emerald-600 hover:text-white bg-emerald-50 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-emerald-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1">
                               <Eye className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
                             </button>
-                            <button className="group inline-flex items-center justify-center w-10 h-10 text-amber-600 hover:text-white bg-amber-50 hover:bg-gradient-to-r hover:from-amber-500 hover:to-amber-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1">
+                            <button className="group inline-flex items-center justify-center w-10 h-10 text-teal-600 hover:text-white bg-teal-50 hover:bg-gradient-to-r hover:from-teal-500 hover:to-teal-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1">
                               <Edit className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
                             </button>
                             <button className="group inline-flex items-center justify-center w-10 h-10 text-rose-600 hover:text-white bg-rose-50 hover:bg-gradient-to-r hover:from-rose-500 hover:to-rose-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1">
@@ -247,12 +247,12 @@ export default function TeamListPage() {
                 </div>
                 <div className="w-px h-12 bg-slate-200"></div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-indigo-600">{filteredMembers.length}</div>
+                  <div className="text-2xl font-bold text-emerald-600">{filteredMembers.length}</div>
                   <div className="text-sm text-slate-600">Filtered Results</div>
                 </div>
                 <div className="w-px h-12 bg-slate-200"></div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-emerald-600">
+                  <div className="text-2xl font-bold text-teal-600">
                     {teamMembers.filter((member) => member.role?.toLowerCase() === "employee").length}
                   </div>
                   <div className="text-sm text-slate-600">Active Employees</div>

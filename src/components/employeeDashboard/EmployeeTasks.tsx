@@ -1,6 +1,7 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 import axiosInstance from '@/lib/axios';
 import { 
   Clock, 
@@ -25,7 +26,9 @@ import {
   ArrowLeft,
   ClipboardList,
   Users,
-  TrendingUp
+  TrendingUp,
+  Send,
+  Edit3
 } from 'lucide-react';
 
 // Interface for project (from taskOf object)
@@ -71,6 +74,7 @@ interface ProjectWithTasks {
 
 const EmployeeTasks = () => {
   const { user, isAuthenticated } = useAuth();
+  const router = useRouter();
   const [allTasks, setAllTasks] = useState<TaskResponse[]>([]);
   const [projectsWithTasks, setProjectsWithTasks] = useState<ProjectWithTasks[]>([]);
   const [selectedProject, setSelectedProject] = useState<ProjectWithTasks | null>(null);
@@ -78,6 +82,12 @@ const EmployeeTasks = () => {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [viewMode, setViewMode] = useState<'projects' | 'tasks'>('projects');
+  
+  // Modal states
+  const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
+  const [newStatus, setNewStatus] = useState('');
+  const [updatingStatus, setUpdatingStatus] = useState(false);
 
   // Fetch all tasks for the current user
   const fetchUserTasks = async () => {
@@ -154,6 +164,51 @@ const EmployeeTasks = () => {
     setRefreshing(false);
   };
 
+  // Modal handlers
+  const handleSubmitReport = (task: TaskResponse) => {
+    // Navigate to the submit report page with task data
+    router.push(`/dashboard/teammember/submittaskreport?taskId=${task.id}&projectId=${task.taskOf.id}`);
+  };
+
+  const handleUpdateStatus = (task: TaskResponse) => {
+    setSelectedTask(task);
+    setNewStatus(task.status);
+    setShowUpdateStatusModal(true);
+  };
+
+  const closeUpdateStatusModal = () => {
+    setShowUpdateStatusModal(false);
+    setSelectedTask(null);
+    setNewStatus('');
+    setUpdatingStatus(false);
+  };
+
+  const updateTaskStatus = async () => {
+    if (!selectedTask || !newStatus.trim()) return;
+    
+    setUpdatingStatus(true);
+    try {
+      // PATCH API call to update task status
+      const response = await axiosInstance.patch(`/tasks/${selectedTask.id}`, {
+        status: newStatus
+      });
+
+      console.log('Task status updated successfully:', response.data);
+      
+      closeUpdateStatusModal();
+      // Refresh data to show updated status
+      await fetchUserTasks();
+    } catch (error: any) {
+      console.error('Error updating task status:', error);
+      setError(
+        error.response?.data?.message || 
+        'Failed to update task status. Please try again.'
+      );
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
+
   // Get status color and icon
   const getStatusInfo = (status: string) => {
     switch (status.toLowerCase()) {
@@ -166,8 +221,6 @@ const EmployeeTasks = () => {
           glowColor: 'shadow-emerald-100'
         };
       case 'inprogress':
-      case 'in-progress':
-      case 'active':
         return {
           color: 'bg-gradient-to-r from-teal-100 to-cyan-100 text-teal-700 border-teal-200',
           icon: <Clock className="w-5 h-5" />,
@@ -175,15 +228,7 @@ const EmployeeTasks = () => {
           borderColor: 'border-teal-200',
           glowColor: 'shadow-teal-100'
         };
-      case 'pending':
-        return {
-          color: 'bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 border-amber-200',
-          icon: <AlertCircle className="w-5 h-5" />,
-          bgColor: 'bg-gradient-to-br from-amber-50 to-yellow-50',
-          borderColor: 'border-amber-200',
-          glowColor: 'shadow-amber-100'
-        };
-      case 'blocked':
+      case 'cancelled':
         return {
           color: 'bg-gradient-to-r from-red-100 to-rose-100 text-red-700 border-red-200',
           icon: <AlertTriangle className="w-5 h-5" />,
@@ -232,9 +277,9 @@ const EmployeeTasks = () => {
     const total = tasks.length;
     const completed = tasks.filter(task => task.status.toLowerCase() === 'completed').length;
     const inProgress = tasks.filter(task => task.status.toLowerCase() === 'inprogress').length;
-    const pending = tasks.filter(task => task.status.toLowerCase() === 'pending').length;
+    const cancelled = tasks.filter(task => task.status.toLowerCase() === 'cancelled').length;
     
-    return { total, completed, inProgress, pending };
+    return { total, completed, inProgress, cancelled };
   };
 
   // Initial data fetch
@@ -441,7 +486,7 @@ const EmployeeTasks = () => {
                             <ClipboardList className="w-5 h-5 text-emerald-600" />
                             <span className="text-sm font-bold text-slate-700">Task Overview</span>
                           </div>
-                          <div className="grid grid-cols-3 gap-2 text-center">
+                          <div className="grid grid-cols-4 gap-2 text-center">
                             <div>
                               <p className="text-lg font-bold text-emerald-600">{taskStats.total}</p>
                               <p className="text-xs text-slate-600">Total</p>
@@ -453,6 +498,10 @@ const EmployeeTasks = () => {
                             <div>
                               <p className="text-lg font-bold text-green-600">{taskStats.completed}</p>
                               <p className="text-xs text-slate-600">Completed</p>
+                            </div>
+                            <div>
+                              <p className="text-lg font-bold text-red-600">{taskStats.cancelled}</p>
+                              <p className="text-xs text-slate-600">Cancelled</p>
                             </div>
                           </div>
                         </div>
@@ -576,22 +625,20 @@ const EmployeeTasks = () => {
 
                         {/* Action Buttons */}
                         <div className="flex flex-col space-y-3">
-                          <button className="w-full px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2">
-                            <Eye className="w-4 h-4" />
-                            View Details
+                          <button 
+                            onClick={() => handleSubmitReport(task)}
+                            className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"
+                          >
+                            <Send className="w-4 h-4" />
+                            Submit Report
                           </button>
-                          {task.status.toLowerCase() === 'pending' && (
-                            <button className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2">
-                              <Play className="w-4 h-4" />
-                              Start Task
-                            </button>
-                          )}
-                          {task.status.toLowerCase() === 'inprogress' && (
-                            <button className="w-full px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2">
-                              <CheckSquare className="w-4 h-4" />
-                              Mark Complete
-                            </button>
-                          )}
+                          <button 
+                            onClick={() => handleUpdateStatus(task)}
+                            className="w-full px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                            Update Status
+                          </button>
                         </div>
                       </div>
                     );
@@ -602,6 +649,69 @@ const EmployeeTasks = () => {
           )}
         </div>
       </div>
+
+      {/* Update Status Modal */}
+      {showUpdateStatusModal && selectedTask && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all duration-300 scale-100">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-slate-900">Update Task Status</h3>
+              <button
+                onClick={closeUpdateStatusModal}
+                className="p-2 text-slate-400 hover:text-slate-600 transition-colors rounded-lg hover:bg-slate-100"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="mb-6">
+              <h4 className="text-lg font-semibold text-slate-800 mb-2">{selectedTask.title}</h4>
+              <p className="text-sm text-slate-600 mb-4">Update the status of this task.</p>
+              
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  New Status
+                </label>
+                <select
+                  value={newStatus}
+                  onChange={(e) => setNewStatus(e.target.value)}
+                  className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                >
+                  <option value="inprogress">In Progress</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="flex space-x-3">
+              <button
+                onClick={closeUpdateStatusModal}
+                className="flex-1 px-4 py-3 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={updateTaskStatus}
+                disabled={!newStatus || updatingStatus}
+                className="flex-1 px-4 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl font-medium transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {updatingStatus ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <Edit3 className="w-4 h-4" />
+                    Update Status
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
