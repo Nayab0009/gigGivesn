@@ -215,8 +215,8 @@ export function AssignTaskModal({
   // Show authorization error if user is not authorized
   if (!isAuthorizedToAssignTasks()) {
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4">
+        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 mx-4">
           <div className="text-center">
             <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
@@ -236,8 +236,8 @@ export function AssignTaskModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-gradient-to-br from-white to-blue-50/30 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-white/50 backdrop-blur-sm">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4">
+      <div className="bg-gradient-to-br from-white to-blue-50/30 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] overflow-hidden border border-white/50 backdrop-blur-sm mx-4 ml-16 lg:ml-20">
         {/* Header */}
         <div className="bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-white">
           <div className="flex items-center justify-between">
@@ -270,16 +270,27 @@ export function AssignTaskModal({
 
         {/* Scrollable Content with Hidden Scrollbar */}
         <div 
-          className="p-6 space-y-6 overflow-y-auto scrollbar-hide"
+          className="p-6 space-y-6 overflow-y-auto"
           style={{
-            maxHeight: 'calc(90vh - 180px)',
+            maxHeight: 'calc(95vh - 280px)',
             scrollbarWidth: 'none', // Firefox
             msOverflowStyle: 'none', // IE/Edge
           }}
         >
           <style jsx>{`
-            .scrollbar-hide::-webkit-scrollbar {
-              display: none; /* Chrome, Safari, Opera */
+            .overflow-y-auto::-webkit-scrollbar {
+              display: none !important; /* Chrome, Safari, Opera */
+              width: 0 !important;
+              height: 0 !important;
+            }
+            .overflow-y-auto::-webkit-scrollbar-track {
+              display: none !important;
+            }
+            .overflow-y-auto::-webkit-scrollbar-thumb {
+              display: none !important;
+            }
+            .overflow-y-auto::-webkit-scrollbar-corner {
+              display: none !important;
             }
           `}</style>
 
@@ -441,47 +452,78 @@ export function AssignTaskModal({
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="border-t border-blue-200 bg-blue-50/50 px-6 py-4">
-          <div className="flex justify-between items-center">
+        {/* Footer - Fixed at bottom with better button visibility */}
+        <div className="border-t border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="flex items-center space-x-4">
-              <p className="text-sm text-gray-600">
-                {task.assignedTo.length > 0 
-                  ? `${task.assignedTo.length} member${task.assignedTo.length !== 1 ? 's' : ''} assigned`
-                  : 'Select team members to assign to your task'
-                }
-              </p>
+              <div className="flex items-center space-x-2">
+                <Users className="w-4 h-4 text-blue-600" />
+                <p className="text-sm text-gray-700 font-medium">
+                  {task.assignedTo.length > 0 
+                    ? `${task.assignedTo.length} member${task.assignedTo.length !== 1 ? 's' : ''} selected`
+                    : 'Select team members to assign to your task'
+                  }
+                </p>
+              </div>
+              {task.title.trim() && (
+                <div className="flex items-center space-x-2">
+                  <Check className="w-4 h-4 text-green-600" />
+                  <p className="text-sm text-green-700 font-medium">Task title provided</p>
+                </div>
+              )}
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 w-full sm:w-auto">
               <button
                 onClick={onClose}
                 disabled={isCreating}
-                className="px-6 py-2.5 border border-blue-300 rounded-xl text-gray-700 font-medium hover:bg-white hover:shadow-sm transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 border-2 border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex-1 sm:flex-none"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreateTask}
                 disabled={!task.title.trim() || task.assignedTo.length === 0 || isCreating}
-                className={`px-6 py-2.5 rounded-xl text-white font-medium transition-all duration-200 flex items-center space-x-2 ${
+                className={`px-8 py-3 rounded-xl text-white font-bold transition-all duration-300 flex items-center justify-center space-x-2 flex-1 sm:flex-none shadow-lg hover:shadow-xl transform hover:scale-105 ${
                   !task.title.trim() || task.assignedTo.length === 0 || isCreating
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl"
+                    ? "bg-gray-400 cursor-not-allowed transform-none shadow-none"
+                    : "bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
                 }`}
               >
                 {isCreating ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader2 className="w-5 h-5 animate-spin" />
                     <span>Creating Tasks...</span>
                   </>
                 ) : (
                   <>
-                    <Check className="w-4 h-4" />
-                    <span>Create Task</span>
+                    <Check className="w-5 h-5" />
+                    <span>Create Task ({task.assignedTo.length})</span>
                   </>
                 )}
               </button>
             </div>
+          </div>
+          
+          {/* Validation Messages */}
+          <div className="mt-3 space-y-1">
+            {!task.title.trim() && (
+              <p className="text-sm text-red-600 flex items-center space-x-1">
+                <AlertCircle className="w-3 h-3" />
+                <span>Task title is required</span>
+              </p>
+            )}
+            {task.title.trim() && task.assignedTo.length === 0 && (
+              <p className="text-sm text-red-600 flex items-center space-x-1">
+                <AlertCircle className="w-3 h-3" />
+                <span>Please select at least one team member</span>
+              </p>
+            )}
+            {task.title.trim() && task.assignedTo.length > 0 && (
+              <p className="text-sm text-green-600 flex items-center space-x-1">
+                <Check className="w-3 h-3" />
+                <span>Ready to create task for {task.assignedTo.length} member{task.assignedTo.length !== 1 ? 's' : ''}</span>
+              </p>
+            )}
           </div>
         </div>
       </div>

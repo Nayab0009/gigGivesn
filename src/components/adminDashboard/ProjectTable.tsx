@@ -148,11 +148,11 @@ export default function ProjectDashboard() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [isAssigning, setIsAssigning] = useState(false)
+  const [isDeleting, setIsDeleting] = useState<string | null>(null)
   const [projects, setProjects] = useState<Project[]>([])
   const [managers, setManagers] = useState<Manager[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
-  const [priorityFilter, setPriorityFilter] = useState<string>("all")
   const [assignManagerProjectId, setAssignManagerProjectId] = useState<string | null>(null)
 
   // Fetch projects from API
@@ -194,15 +194,11 @@ export default function ProjectDashboard() {
     return projects.filter((project) => {
       const matchesSearch =
         project.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        String(project.id || "")
-          .toLowerCase()
-          .includes(searchTerm.toLowerCase()) ||
         project.description?.toLowerCase().includes(searchTerm.toLowerCase())
       const matchesStatus = statusFilter === "all" || project.status?.toLowerCase() === statusFilter
-      const matchesPriority = priorityFilter === "all" || project.priority?.toLowerCase() === priorityFilter
-      return matchesSearch && matchesStatus && matchesPriority
+      return matchesSearch && matchesStatus
     })
-  }, [projects, searchTerm, statusFilter, priorityFilter])
+  }, [projects, searchTerm, statusFilter])
 
   // Assign manager to project with API call
   const assignManager = async (projectId: string, manager: Manager) => {
@@ -228,6 +224,31 @@ export default function ProjectDashboard() {
     }
   }
 
+  // Delete project with API call
+  const deleteProject = async (projectId: string) => {
+    if (!confirm("Are you sure you want to delete this project? This action cannot be undone.")) {
+      return
+    }
+
+    setIsDeleting(projectId)
+    try {
+      // Make DELETE request to delete project
+      await axiosInstance.delete(`/projects/${projectId}`)
+
+      // Remove project from local state on success
+      setProjects((prev) => prev.filter((p) => p.id !== projectId))
+
+      // You could add a success notification here
+      console.log(`Project deleted successfully!`)
+    } catch (error) {
+      console.error("Error deleting project:", error)
+      // You could add an error notification here
+      alert("Failed to delete project. Please try again.")
+    } finally {
+      setIsDeleting(null)
+    }
+  }
+
   const currentProject = assignManagerProjectId ? projects.find((p) => p.id === assignManagerProjectId) : null
 
   return (
@@ -246,7 +267,7 @@ export default function ProjectDashboard() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
               <input
                 type="text"
-                placeholder="Search projects by name, ID, or description..."
+                placeholder="Search projects by name or description..."
                 className="w-full pl-10 pr-4 py-3 border border-emerald-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 text-gray-900 placeholder-gray-500 shadow-sm focus:shadow-md bg-white/80"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -266,20 +287,6 @@ export default function ProjectDashboard() {
                     <option value="on-hold">On Hold</option>
                     <option value="completed">Completed</option>
                     <option value="cancelled">Cancelled</option>
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5 pointer-events-none" />
-                </div>
-                <div className="relative">
-                  <select
-                    value={priorityFilter}
-                    onChange={(e) => setPriorityFilter(e.target.value)}
-                    className="appearance-none bg-white/80 border border-emerald-200 rounded-2xl px-4 py-3 pr-10 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 text-gray-900 min-w-[140px] shadow-sm focus:shadow-md"
-                  >
-                    <option value="all">All Priority</option>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="critical">Critical</option>
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5 pointer-events-none" />
                 </div>
@@ -320,9 +327,6 @@ export default function ProjectDashboard() {
                       Status
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Priority
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Manager
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
@@ -336,7 +340,7 @@ export default function ProjectDashboard() {
                 <tbody className="bg-white/80 divide-y divide-emerald-100">
                   {filteredProjects.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-6 py-12 text-center">
+                      <td colSpan={6} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center justify-center">
                           <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
                             <AlertCircle className="w-8 h-8 text-emerald-500" />
@@ -358,9 +362,6 @@ export default function ProjectDashboard() {
                           <div className="space-y-2">
                             <h3 className="text-lg font-semibold text-gray-900 leading-tight">{project.name}</h3>
                             <div className="flex items-center gap-2">
-                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-700">
-                                ID: {project.id}
-                              </span>
                               {project.budget && (
                                 <span className="text-gray-500 text-sm">${project.budget.toLocaleString()}</span>
                               )}
@@ -375,13 +376,6 @@ export default function ProjectDashboard() {
                             className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium capitalize ${getStatusColor(project.status)}`}
                           >
                             {project.status?.replace("-", " ") || "Unknown"}
-                          </span>
-                        </td>
-                        <td className="px-6 py-6">
-                          <span
-                            className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium capitalize ${getPriorityColor(project.priority)}`}
-                          >
-                            {project.priority || "Medium"}
                           </span>
                         </td>
                         <td className="px-6 py-6">
@@ -442,8 +436,16 @@ export default function ProjectDashboard() {
                             <button className="group inline-flex items-center justify-center w-8 h-8 text-amber-600 hover:text-white bg-amber-50 hover:bg-gradient-to-r hover:from-amber-500 hover:to-amber-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110">
                               <Edit className="w-4 h-4" />
                             </button>
-                            <button className="group inline-flex items-center justify-center w-8 h-8 text-rose-600 hover:text-white bg-rose-50 hover:bg-gradient-to-r hover:from-rose-500 hover:to-rose-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110">
-                              <Trash2 className="w-4 h-4" />
+                            <button 
+                              onClick={() => deleteProject(project.id)}
+                              disabled={isDeleting === project.id}
+                              className="group inline-flex items-center justify-center w-8 h-8 text-rose-600 hover:text-white bg-rose-50 hover:bg-gradient-to-r hover:from-rose-500 hover:to-rose-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {isDeleting === project.id ? (
+                                <RefreshCw className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <Trash2 className="w-4 h-4" />
+                              )}
                             </button>
                           </div>
                         </td>

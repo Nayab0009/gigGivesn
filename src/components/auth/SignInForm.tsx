@@ -10,7 +10,8 @@ import Link from "next/link"
 import { useAuth } from "@/context/AuthContext"
 import { toast, ToastContainer, type ToastOptions } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import { LogIn, CheckCircle, Layers } from "lucide-react"
+import { LogIn, CheckCircle } from "lucide-react"
+import Image from "next/image"
 
 // Define custom toast style type
 interface CustomToastStyle extends Omit<ToastOptions, "icon"> {
@@ -203,7 +204,7 @@ export default function SignInForm() {
                 <CheckCircle className="w-10 h-10 text-emerald-600" />
               </div>
               <h2 className="text-2xl font-bold text-slate-900 mb-2">Welcome Back!</h2>
-              <p className="text-slate-600">You have successfully signed in to GiGGives.</p>
+              <p className="text-slate-600">You have successfully signed in.</p>
             </div>
 
             <div className="flex items-center justify-center space-x-2 text-sm text-slate-500">
@@ -266,12 +267,15 @@ export default function SignInForm() {
             <div className="absolute inset-8 border-2 border-teal-400/40 rounded-full animate-spin-reverse"></div>
 
             {/* Inner circle with logo */}
-            <div className="absolute inset-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-2xl">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4 backdrop-blur-sm">
-                  <Layers className="w-8 h-8 text-white" />
-                </div>
-                <h1 className="text-3xl font-bold text-white tracking-wider">GiGGives</h1>
+            <div className="absolute inset-16 bg-white/95 rounded-full flex items-center justify-center shadow-2xl backdrop-blur-sm">
+              <div className="w-32 h-32 flex items-center justify-center">
+                <Image
+                  src="/images/logo/Gigjives-Logo-final.png"
+                  alt="GigJives Logo"
+                  width={120}
+                  height={120}
+                  className="object-contain drop-shadow-lg"
+                />
               </div>
             </div>
 
@@ -322,13 +326,16 @@ export default function SignInForm() {
           <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 sm:p-10">
             {/* Mobile Logo */}
             <div className="lg:hidden text-center mb-8">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-emerald-600 to-teal-700 rounded-xl flex items-center justify-center">
-                  <Layers className="w-6 h-6 text-white" />
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-slate-100 p-2">
+                  <Image
+                    src="/images/logo/Gigjives-Logo-final.png"
+                    alt="GigJives Logo"
+                    width={48}
+                    height={48}
+                    className="object-contain"
+                  />
                 </div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent">
-                  GiGJives
-                </h1>
               </div>
             </div>
 
@@ -473,13 +480,13 @@ export default function SignInForm() {
                 ) : (
                   <>
                     <LogIn size={20} />
-                    <span>Sign In to GiGGives</span>
+                    <span>Sign In to GigJives</span>
                   </>
                 )}
               </button>
 
               <p className="text-sm text-center text-slate-600 mt-6">
-                New to GiGGives?{" "}
+                New to GigJives?{" "}
                 <Link href="/signup" className="font-medium text-emerald-600 transition-colors hover:text-emerald-700">
                   Create an account
                 </Link>

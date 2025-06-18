@@ -656,17 +656,7 @@ export default function ProjectDashboard() {
                               Assign Task
                             </button>
 
-                            <div className="flex items-center gap-2">
-                              <button className="group inline-flex items-center justify-center w-8 h-8 text-teal-600 hover:text-white bg-teal-50 hover:bg-gradient-to-r hover:from-teal-500 hover:to-teal-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110">
-                                <Eye className="w-4 h-4" />
-                              </button>
-                              <button className="group inline-flex items-center justify-center w-8 h-8 text-amber-600 hover:text-white bg-amber-50 hover:bg-gradient-to-r hover:from-amber-500 hover:to-amber-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110">
-                                <Edit className="w-4 h-4" />
-                              </button>
-                              <button className="group inline-flex items-center justify-center w-8 h-8 text-rose-600 hover:text-white bg-rose-50 hover:bg-gradient-to-r hover:from-rose-500 hover:to-rose-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110">
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
+                           
                           </div>
                         </td>
                         <td className="px-6 py-6">

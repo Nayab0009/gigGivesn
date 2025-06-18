@@ -92,11 +92,7 @@ const employeeNavItems: NavItem[] = [
     icon: <ListIcon />,
     path: "/dashboard/teammember/mytasks",
   },
-  {
-    name: "Attendance",
-    icon: <UserCircleIcon />,
-    path: "/dashboard/teammember/attendance",
-  },
+
 ]
 
 // Student-specific navigation items (unchanged)
