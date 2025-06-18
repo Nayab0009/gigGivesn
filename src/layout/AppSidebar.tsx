@@ -13,7 +13,6 @@ import {
   TableIcon,
   UserCircleIcon,
   EnvelopeListIcon,
-  Contact,
 } from "../icons/index"
 
 // Define the type for navigation items
@@ -115,7 +114,7 @@ const studentNavItems: NavItem[] = [
   ...commonNavItems,
   {
     name: "My Contacts",
-    icon: <Contact />,
+    icon: <UserCircleIcon />,
     path: "/dashboard/agent/mycontacts",
   },
   {
