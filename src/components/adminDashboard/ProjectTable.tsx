@@ -83,7 +83,15 @@ function AssignManagerModal({
   managers,
   isAssigning = false,
 }: AssignManagerModalProps) {
+  const [assigningManagerId, setAssigningManagerId] = useState<string | null>(null);
+
   if (!open || !project) return null
+
+  const handleAssign = async (manager: Manager) => {
+    setAssigningManagerId(manager.id);
+    await onAssign(manager);
+    setAssigningManagerId(null);
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -99,7 +107,7 @@ function AssignManagerModal({
               <div
                 key={manager.id}
                 className="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:bg-emerald-50 transition-colors cursor-pointer"
-                onClick={() => !isAssigning && onAssign(manager)}
+                onClick={() => !assigningManagerId && handleAssign(manager)}
               >
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
@@ -113,9 +121,9 @@ function AssignManagerModal({
                 </div>
                 <button
                   className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  disabled={isAssigning}
+                  disabled={!!assigningManagerId}
                 >
-                  {isAssigning ? (
+                  {assigningManagerId === manager.id ? (
                     <>
                       <RefreshCw className="w-4 h-4 animate-spin" />
                       Assigning...
@@ -133,7 +141,7 @@ function AssignManagerModal({
           <button
             onClick={onClose}
             className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
-            disabled={isAssigning}
+            disabled={!!assigningManagerId}
           >
             Cancel
           </button>
@@ -324,9 +332,6 @@ export default function ProjectDashboard() {
                       Description
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Manager
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
@@ -340,7 +345,7 @@ export default function ProjectDashboard() {
                 <tbody className="bg-white/80 divide-y divide-emerald-100">
                   {filteredProjects.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-6 py-12 text-center">
+                      <td colSpan={5} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center justify-center">
                           <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
                             <AlertCircle className="w-8 h-8 text-emerald-500" />
@@ -370,13 +375,6 @@ export default function ProjectDashboard() {
                         </td>
                         <td className="px-6 py-6">
                           <p className="text-gray-600 text-sm leading-relaxed max-w-xs">{project.description}</p>
-                        </td>
-                        <td className="px-6 py-6">
-                          <span
-                            className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium capitalize ${getStatusColor(project.status)}`}
-                          >
-                            {project.status?.replace("-", " ") || "Unknown"}
-                          </span>
                         </td>
                         <td className="px-6 py-6">
                           {project.manager ? (
