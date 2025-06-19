@@ -54,10 +54,8 @@ const adminNavItems: NavItem[] = [
   {
     icon: <Users size={20} />,
     name: "Teams",
-    subItems: [
-      { name: "Grid View", path: "/dashboard/admin/team/grid", pro: false },
-      { name: "List View", path: "/dashboard/admin/team/list", pro: false },
-    ],
+    path: "/dashboard/admin/team/list",
+  
   },
 ]
 
