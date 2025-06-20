@@ -380,7 +380,16 @@ export default function ProjectDashboard() {
                           {project.manager ? (
                             <span className="font-semibold text-gray-900">{project.manager.name}</span>
                           ) : (
-                            <span className="text-gray-500 text-sm">No manager</span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-gray-500 text-sm">No manager</span>
+                              <button
+                                className="ml-2 px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-full text-xs font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                                onClick={() => setAssignManagerProjectId(project.id)}
+                                disabled={isAssigning}
+                              >
+                                Assign
+                              </button>
+                            </div>
                           )}
                         </td>
                         <td className="px-6 py-6">
@@ -433,7 +442,7 @@ export default function ProjectDashboard() {
           open={!!assignManagerProjectId}
           onClose={() => setAssignManagerProjectId(null)}
           onAssign={(manager) => assignManager(assignManagerProjectId!, manager)}
-          project={currentProject}
+          project={currentProject ?? null}
           managers={managers}
           isAssigning={isAssigning}
         />
