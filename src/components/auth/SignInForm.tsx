@@ -57,19 +57,12 @@ export default function SignInForm() {
   // Effect to handle redirection after successful authentication
   useEffect(() => {
     if (signInAttempted && isAuthenticated && !isSubmitting) {
-      console.log("Authentication successful, preparing to redirect...")
-
-      // Show custom success overlay
       setShowSuccessOverlay(true)
-
-      // Redirect after a short delay to allow the success message to be seen
+      // Redirect after 1 second or immediately after authentication
       const redirectTimeout = setTimeout(() => {
         const redirectPath = getRedirectPath() || "/dashboard"
-        console.log("Redirecting to:", redirectPath)
         router.push(redirectPath)
-      }, 2500)
-
-      // Clean up timeout if component unmounts
+      }, 1000)
       return () => clearTimeout(redirectTimeout)
     }
   }, [isAuthenticated, signInAttempted, getRedirectPath, router, isSubmitting])
