@@ -5,7 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useSidebar } from "../context/SidebarContext"
 import { useAuth } from "../context/AuthContext"
-import { LayoutGrid, List, Users, FileText, ChevronLeft, ChevronRight, ChevronDown, Layers } from 'lucide-react'
+import { LayoutGrid, List, Users, FileText, ChevronLeft, ChevronRight, ChevronDown, Layers, Building2 } from 'lucide-react'
 import {
   GridIcon,
   ListIcon,
@@ -33,6 +33,20 @@ interface SubItem {
 
 // Common navigation items for all roles
 const commonNavItems: NavItem[] = []
+
+// Super Admin-specific navigation items
+const superAdminNavItems: NavItem[] = [
+  {
+    icon: <LayoutGrid size={20} />,
+    name: "Dashboard",
+    path: "/dashboard/superadmin",
+  },
+  {
+    name: "Organizations",
+    icon: <Building2 size={20} />,
+    path: "/dashboard/superadmin/organizations",
+  },
+]
 
 // Admin-specific navigation items
 const adminNavItems: NavItem[] = [
@@ -148,7 +162,9 @@ const AppSidebar: React.FC = () => {
   useEffect(() => {
     if (user) {
       const role = user.role.toLowerCase()
-      if (role === "admin") {
+      if (role === "superadmin") {
+        setNavItems(superAdminNavItems)
+      } else if (role === "admin") {
         setNavItems(adminNavItems)
       } else if (role === "manager" || role === "manger") {
         setNavItems(managerNavItems)

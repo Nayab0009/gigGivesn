@@ -57,6 +57,14 @@ const PREDEFINED_USERS = [
     lastName: "Rana",
     role: "manager"
   },
+  {
+    id: 4,
+    email: "superadmin@giggives.com",
+    password: "123",
+    firstName: "Super",
+    lastName: "Admin",
+    role: "superadmin"
+  },
 ];
 
 // Define dashboard paths for each role
@@ -64,7 +72,7 @@ const ROLE_DASHBOARD_PATHS: Record<string, string> = {
   admin: "/dashboard/admin",
   manager: "/dashboard/manager",
   employee: "/dashboard/teammember",
-  agent: "/dashboard/teammember",
+  superadmin:"/dashboard/superadmin",
   default: "/dashboard" 
 };
 
