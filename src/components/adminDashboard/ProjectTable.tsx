@@ -49,13 +49,7 @@ const getStatusColor = (status: string) => {
   switch (status?.toLowerCase()) {
     case "active":
     case "in-progress":
-      return "bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border-emerald-200 ring-1 ring-emerald-200 shadow-sm"
-    case "planning":
-    case "pending":
-      return "bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-700 border-blue-200 ring-1 ring-blue-200 shadow-sm"
-    case "on-hold":
-    case "blocked":
-      return "bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-700 border-amber-200 ring-1 ring-amber-200 shadow-sm"
+      return "bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border-emerald-200 ring-1 ring-emerald-200 shadow-sm" 
     case "completed":
       return "bg-gradient-to-r from-teal-50 to-emerald-50 text-teal-700 border-teal-200 ring-1 ring-teal-200 shadow-sm"
     case "cancelled":
@@ -290,15 +284,13 @@ export default function ProjectDashboard() {
                     className="appearance-none bg-white/80 border border-emerald-200 rounded-2xl px-4 py-3 pr-10 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 text-gray-900 min-w-[140px] shadow-sm focus:shadow-md"
                   >
                     <option value="all">All Status</option>
-                    <option value="planning">Planning</option>
-                    <option value="active">Active</option>
-                    <option value="on-hold">On Hold</option>
+                    <option value="in-progress">In Progress</option>
                     <option value="completed">Completed</option>
                     <option value="cancelled">Cancelled</option>
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5 pointer-events-none" />
                 </div>
-              </div>
+              </div>  
               <button
                 type="button"
                 className="group inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
@@ -330,7 +322,10 @@ export default function ProjectDashboard() {
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Description
-                    </th>
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+      Status
+    </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Manager
                     </th>
@@ -376,6 +371,27 @@ export default function ProjectDashboard() {
                         <td className="px-6 py-6">
                           <p className="text-gray-600 text-sm leading-relaxed max-w-xs">{project.description}</p>
                         </td>
+                        <td className="px-6 py-6">
+          {project.status ? (
+            <span
+              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize ${getStatusColor(
+                // Map "inprogress" or any similar backend value to "in-progress"
+                project.status.replace(/in[\s-]?progress/i, "in-progress")
+              )}`}
+            >
+              {/* Display in a friendly way: */}
+              {(() => {
+                const status = project.status.toLowerCase();
+                if (status === "inprogress" || status === "in-progress") return "In Progress";
+                if (status === "onhold" || status === "on-hold") return "On Hold";
+                // Capitalize first letter
+                return status.charAt(0).toUpperCase() + status.slice(1);
+              })()}
+            </span>
+          ) : (
+            <span className="text-gray-400 text-xs">—</span>
+          )}
+        </td>
                         <td className="px-6 py-6">
                           {project.manager ? (
                             <span className="font-semibold text-gray-900">{project.manager.name}</span>
