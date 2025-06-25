@@ -15,7 +15,7 @@ const AppHeader: React.FC = () => {
   const [visible, setVisible] = useState(true)
 
   // Calculate sidebar width for header positioning - Updated widths
-  const sidebarWidth = isMobileOpen ? 0 : isExpanded ? 320 : 90
+  const sidebarWidth = isMobileOpen ? 0 : isExpanded ? 280 : 80
 
   // Determine if sidebar is in expanded mode (more space available when collapsed)
   const hasMoreSpace = !isExpanded && !isMobileOpen

@@ -2,18 +2,15 @@
 import type React from "react"
 import { useEffect, useRef, useState, useCallback } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useSidebar } from "../context/SidebarContext"
 import { useAuth } from "../context/AuthContext"
-import { LayoutGrid, List, Users, FileText, ChevronLeft, ChevronRight, ChevronDown, Layers, Building2 } from 'lucide-react'
-import {
-  GridIcon,
-  ListIcon,
-  PaperPlaneIcon,
-  TableIcon,
-  UserCircleIcon,
-  EnvelopeListIcon,
-} from "../icons/index"
+import { LayoutGrid, List, Users, FileText, ChevronLeft, ChevronRight, ChevronDown, Building2 } from "lucide-react"
+import { GridIcon, ListIcon, PaperPlaneIcon, TableIcon, UserCircleIcon, EnvelopeListIcon } from "../icons/index"
+
+// Add this constant for consistent mobile width
+const SIDEBAR_WIDTH_MOBILE = "280px"
 
 // Define the type for navigation items
 type NavItem = {
@@ -69,7 +66,6 @@ const adminNavItems: NavItem[] = [
     icon: <Users size={20} />,
     name: "Teams",
     path: "/dashboard/admin/team/list",
-  
   },
 ]
 
@@ -86,7 +82,7 @@ const managerNavItems: NavItem[] = [
     path: "/dashboard/manager/addproject",
   },
   {
-    name: "Team Members",
+    name: " Add Team Members",
     icon: <Users size={20} />,
     path: "/dashboard/admin/addemployee",
   },
@@ -104,7 +100,6 @@ const employeeNavItems: NavItem[] = [
     icon: <ListIcon />,
     path: "/dashboard/teammember/mytasks",
   },
-
 ]
 
 // Student-specific navigation items (unchanged)
@@ -372,30 +367,41 @@ const AppSidebar: React.FC = () => {
       <aside
         className={`fixed top-0 left-0 h-screen z-50 bg-white border-r border-slate-200 shadow-xl
           transition-all duration-300 ease-in-out transform
-          ${isExpanded || isMobileOpen ? "w-[320px]" : "w-[90px]"}
+          ${isExpanded || isMobileOpen ? "w-[280px]" : "w-[80px]"}
           ${isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
         `}
       >
         {/* Header with Logo and Toggle Button */}
         <div
-          className={`flex items-center bg-gradient-to-r from-emerald-600 to-teal-700 border-b border-emerald-500/20 transition-all duration-300 ease-in-out ${
+          className={`flex items-center bg-white border-b border-slate-200 transition-all duration-300 ease-in-out ${
             !isExpanded && !isMobileOpen ? "justify-center px-4 py-4" : "justify-between px-6 py-4"
           }`}
         >
           {/* Logo - Only show when expanded */}
           {(isExpanded || isMobileOpen) && (
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
-                <Layers className="w-5 h-5src/app/dashboard/admin/commercial-listings text-white" />
+            <div className="flex items-center gap-3 w-full">
+              <div className="w-full h-16 flex items-center justify-center rounded-lg p-2">
+                <Image
+                  src="/images/logo/gigjives-logo-new-2222.png"
+                  alt="GigJives Logo"
+                  width={200}
+                  height={60}
+                  className="object-contain max-w-full max-h-full"
+                />
               </div>
-              <h1 className="text-xl font-bold text-white">GiGJives</h1>
             </div>
           )}
 
           {/* Collapsed Logo */}
           {!isExpanded && !isMobileOpen && (
-            <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
-              <Layers className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 flex items-center justify-center">
+              <Image
+                src="/images/logo/gigjives-logo-new-2222.png"
+                alt="GigJives Logo"
+                width={80}
+                height={80}
+                className="object-contain"
+              />
             </div>
           )}
 
@@ -403,7 +409,7 @@ const AppSidebar: React.FC = () => {
           {(isExpanded || isMobileOpen) && (
             <button
               onClick={toggleSidebar}
-              className="group relative flex items-center justify-center w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-white/30"
+              className="group relative flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-slate-300"
               aria-label="Toggle Sidebar"
             >
               <ChevronLeft size={16} className="transition-transform duration-200" />

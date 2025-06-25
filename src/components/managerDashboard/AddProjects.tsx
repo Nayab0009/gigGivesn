@@ -1,17 +1,6 @@
 "use client"
 import { useState, useEffect, useMemo } from "react"
-import {
-  Search,
-  RefreshCw,
-  ClipboardCheck,
-  AlertCircle,
-  UserCheck,
-  Users,
-  X,
-  Loader2,
-  Trash2,
-  Edit,
-} from "lucide-react"
+import { Search, RefreshCw, AlertCircle, Users, X, Loader2, Trash2, Edit } from "lucide-react"
 import { AssignTeamModal } from "../adminDashboard/AssignProjectTeam"
 import { AssignTaskModal } from "../adminDashboard/AssignProjectTicket"
 import { useAuth } from "@/context/AuthContext"
@@ -594,10 +583,10 @@ export default function ProjectDashboard() {
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       End Date
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[120px]">
                       Status
                     </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[200px]">
                       Actions
                     </th>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
@@ -654,7 +643,7 @@ export default function ProjectDashboard() {
                         <td className="px-6 py-4">
                           {project.status ? (
                             <span
-                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize ${getStatusColor(project.status)}`}
+                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize whitespace-nowrap ${getStatusColor(project.status)}`}
                             >
                               {project.status === "inprogress"
                                 ? "In Progress"
@@ -665,26 +654,24 @@ export default function ProjectDashboard() {
                             </span>
                           ) : (
                             <span
-                              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${project.isActive ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-700"}`}
+                              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${project.isActive ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-700"}`}
                             >
                               {project.isActive ? "Active" : "Inactive"}
                             </span>
                           )}
                         </td>
                         <td className="px-6 py-6">
-                          <div className="flex flex-col gap-3">
+                          <div className="flex flex-row gap-2">
                             <button
-                              className="group inline-flex items-center gap-1 px-5 py-2.5 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
+                              className="px-4 py-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
                               onClick={() => setAssignTeamProjectId(project.id.toString())}
                             >
-                              <UserCheck className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12" />
                               Assign Team
                             </button>
                             <button
-                              className="group inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
+                              className="px-4 py-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
                               onClick={() => setAssignTaskProjectId(project.id.toString())}
                             >
-                              <ClipboardCheck className="w-4 h-4 transition-transform duration-300 group-hover:rotate-12" />
                               Assign Task
                             </button>
                           </div>

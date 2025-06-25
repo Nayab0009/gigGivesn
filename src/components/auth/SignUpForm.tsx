@@ -12,7 +12,7 @@ import Label from "@/components/form/Label"
 import { useAuth } from "@/context/AuthContext"
 import { toast, ToastContainer, type ToastOptions } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
-import { UserPlus, Mail } from 'lucide-react'
+import { UserPlus } from "lucide-react"
 
 // Update Role enum
 export enum Role {
@@ -64,8 +64,8 @@ export default function SignUpForm() {
     style: {
       background: "#ffffff",
       color: "#16a34a",
-      borderRadius: "8px",
-      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
+      borderRadius: "12px",
+      boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)",
       padding: "16px",
       fontWeight: "500",
       border: "1px solid #dcfce7",
@@ -80,8 +80,8 @@ export default function SignUpForm() {
     style: {
       background: "#ffffff",
       color: "#dc2626",
-      borderRadius: "8px",
-      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
+      borderRadius: "12px",
+      boxShadow: "0 8px 32px rgba(0, 0, 0, 0.12)",
       padding: "16px",
       fontWeight: "500",
       border: "1px solid #fee2e2",
@@ -348,11 +348,13 @@ export default function SignUpForm() {
       toast.error(
         <div className="flex flex-col">
           <span className="text-lg font-medium mb-1">Required Fields Missing</span>
-          <span className="text-sm opacity-90">Please enter your first and last name before viewing the agreement.</span>
+          <span className="text-sm opacity-90">
+            Please enter your first and last name before viewing the agreement.
+          </span>
         </div>,
-        errorToastStyle as ToastOptions
+        errorToastStyle as ToastOptions,
       )
-      
+
       // Set errors for empty fields
       const newErrors = { ...errors }
       if (!formData.firstName.trim()) {
@@ -362,10 +364,10 @@ export default function SignUpForm() {
         newErrors.lastName = "Last name is required to view the agreement"
       }
       setErrors(newErrors)
-      
+
       return
     }
-    
+
     // If both fields are filled, open the modal
     setShowTermsModal(true)
   }
@@ -376,14 +378,15 @@ export default function SignUpForm() {
     setErrors((prev) => ({ ...prev, terms: "" }))
   }
 
-  // Add this common class for all inputs
-  const commonInputClass = "w-full h-12 px-4 bg-white/5 text-white !rounded-lg border-white/20 focus:border-gray-400 focus:ring-gray-400 shadow-sm placeholder-gray-400"
+  const commonInputClass =
+    "w-full h-12 px-4 bg-white/5 text-white !rounded-lg border-white/20 focus:border-gray-400 focus:ring-gray-400 shadow-sm placeholder-gray-400"
 
   // For select dropdown
-  const commonSelectClass = "w-full h-12 px-4 !bg-white text-gray-700 !rounded-lg border-white/20 focus:border-gray-400 focus:ring-gray-400 shadow-sm"
+  const commonSelectClass =
+    "w-full h-12 px-4 !bg-white text-gray-700 !rounded-lg border-white/20 focus:border-gray-400 focus:ring-gray-400 shadow-sm"
 
   return (
-    <div className="flex min-h-screen w-full">
+    <div className="flex min-h-screen w-full bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-100 relative overflow-hidden">
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -398,66 +401,175 @@ export default function SignUpForm() {
         className="toast-container-custom"
       />
 
-      {/* Full width form section */}
-      <div className="w-full flex items-center justify-center bg-white min-h-screen py-8">
-        <div className="w-full max-w-2xl px-8 sm:px-12 py-8 mx-4 sm:mx-6 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 backdrop-blur-md rounded-xl border border-white/20 shadow-xl transition-all duration-300 hover:shadow-2xl">
-          <div className="mb-6 bg">
-            {/* Simple centered title without animation */}
-            <h1 className="mb-3 font-bold text-white text-2xl sm:text-3xl md:text-[28px] text-center">
-            GiGGives
-            </h1>
-            <p className="text-base text-gray-100 mt-2 text-center">Enter your details to create your account</p>
-            <div className="mt-4 mb-5 border-b border-white/20"></div>
+      {/* Left Side - Visual Design Elements */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
+        {/* Animated Background Patterns */}
+        <div className="absolute inset-0">
+          {/* Large geometric shapes */}
+          <div className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-teal-500/20 rounded-3xl rotate-12 animate-float"></div>
+          <div className="absolute top-40 right-32 w-24 h-24 bg-gradient-to-br from-teal-400/20 to-cyan-500/20 rounded-2xl -rotate-12 animate-float-delayed"></div>
+          <div className="absolute bottom-40 left-32 w-28 h-28 bg-gradient-to-br from-cyan-400/20 to-emerald-500/20 rounded-full animate-float-slow"></div>
+          <div className="absolute bottom-20 right-20 w-36 h-36 bg-gradient-to-br from-emerald-500/20 to-teal-400/20 rounded-3xl rotate-45 animate-float"></div>
+
+          {/* Medium geometric shapes */}
+          <div className="absolute top-60 left-40 w-16 h-16 bg-gradient-to-br from-teal-300/30 to-emerald-400/30 rounded-xl rotate-45 animate-float-delayed"></div>
+          <div className="absolute top-32 right-48 w-20 h-20 bg-gradient-to-br from-cyan-300/30 to-teal-400/30 rounded-2xl -rotate-12 animate-float-slow"></div>
+          <div className="absolute bottom-60 left-48 w-18 h-18 bg-gradient-to-br from-emerald-300/30 to-cyan-400/30 rounded-full animate-float"></div>
+
+          {/* Small decorative elements */}
+          <div className="absolute top-80 right-40 w-8 h-8 bg-emerald-400/40 rounded-full animate-pulse"></div>
+          <div className="absolute top-48 left-60 w-6 h-6 bg-teal-400/40 rounded-full animate-pulse delay-300"></div>
+          <div className="absolute bottom-80 right-60 w-10 h-10 bg-cyan-400/40 rounded-full animate-pulse delay-500"></div>
+          <div className="absolute bottom-48 left-56 w-4 h-4 bg-emerald-500/40 rounded-full animate-pulse delay-700"></div>
+        </div>
+
+        {/* Grid Pattern Overlay */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="grid grid-cols-12 grid-rows-12 h-full w-full gap-4 p-8">
+            {Array.from({ length: 144 }).map((_, i) => (
+              <div
+                key={i}
+                className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-sm opacity-20"
+                style={{
+                  animationDelay: `${i * 0.05}s`,
+                  animation: "fadeInOut 4s ease-in-out infinite",
+                }}
+              ></div>
+            ))}
           </div>
+        </div>
 
-          <div className="space-y-5">
-            {/* Google signup button */}
-            <button
-              type="button"
-              onClick={handleGoogleSignup}
-              className="w-full py-3 px-4 flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-all duration-200 shadow-sm"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-                <path
-                  fill="#4285F4"
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                />
-                <path
-                  fill="#34A853"
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                />
-                <path
-                  fill="#FBBC05"
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                />
-                <path
-                  fill="#EA4335"
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                />
-              </svg>
-              Sign up with Google
-            </button>
+        {/* Central Logo Design */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="relative">
+            {/* Outer rotating ring */}
+            <div className="w-80 h-80 border-4 border-emerald-300/30 rounded-full animate-spin-slow"></div>
 
-            {/* OR divider */}
-            <div className="relative flex items-center py-2">
-              <div className="flex-grow border-t border-gray-300"></div>
-              <span className="flex-shrink mx-4 text-gray-500 text-sm font-medium">OR</span>
-              <div className="flex-grow border-t border-gray-300"></div>
+            {/* Middle ring */}
+            <div className="absolute inset-8 border-2 border-teal-400/40 rounded-full animate-spin-reverse"></div>
+
+            {/* Inner circle with logo */}
+            <div className="absolute inset-16 bg-white/95 rounded-full flex items-center justify-center shadow-2xl backdrop-blur-sm">
+              <div className="w-36 h-36 flex items-center justify-center">
+                <Image
+                  src="/images/logo/gigjives-logo-new-2222.png"
+                  alt="GigJives Logo"
+                  width={120}
+                  height={120}
+                  className="object-contain drop-shadow-lg"
+                />
+              </div>
             </div>
 
-            {/* Form - Now always visible */}
-            <form
-              onSubmit={(e) => {
-                e.preventDefault()
-                handleSubmit(e)
-              }}
-              className="space-y-4"
-            >
-              {/* Form fields grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* First Name */}
-                <div className="w-full">
-                  <Label htmlFor="name" className="mb-1 text-gray-100 font-medium text-sm">
+            {/* Floating dots around logo */}
+            <div className="absolute top-4 left-1/2 w-3 h-3 bg-white/60 rounded-full animate-bounce"></div>
+            <div className="absolute bottom-4 left-1/2 w-3 h-3 bg-white/60 rounded-full animate-bounce delay-300"></div>
+            <div className="absolute left-4 top-1/2 w-3 h-3 bg-white/60 rounded-full animate-bounce delay-500"></div>
+            <div className="absolute right-4 top-1/2 w-3 h-3 bg-white/60 rounded-full animate-bounce delay-700"></div>
+          </div>
+        </div>
+
+        {/* Flowing lines */}
+        <div className="absolute inset-0 overflow-hidden">
+          <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 600">
+            <path
+              d="M0,300 Q200,100 400,300 T800,300"
+              stroke="url(#gradient1)"
+              strokeWidth="2"
+              fill="none"
+              className="animate-draw"
+            />
+            <path
+              d="M0,200 Q200,400 400,200 T800,200"
+              stroke="url(#gradient2)"
+              strokeWidth="2"
+              fill="none"
+              className="animate-draw-delayed"
+            />
+            <defs>
+              <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#10b981" stopOpacity="0.3" />
+                <stop offset="50%" stopColor="#14b8a6" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.3" />
+              </linearGradient>
+              <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.3" />
+                <stop offset="50%" stopColor="#14b8a6" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="#10b981" stopOpacity="0.3" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+      {/* Right Side - Sign Up Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center py-8 px-4 relative z-10">
+        <div className="w-full max-w-lg">
+          <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 sm:p-10">
+            {/* Mobile Logo */}
+            <div className="lg:hidden text-center mb-8">
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-slate-100 p-2">
+                  <Image
+                    src="/images/logo/Gigjives-Logo-final.png"
+                    alt="GigJives Logo"
+                    width={48}
+                    height={48}
+                    className="object-contain"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 text-center">Join GigJives</h2>
+              <p className="text-slate-600 text-center">Create your account to get started</p>
+            </div>
+
+            {/* Google Sign Up Button */}
+            <div className="mb-6">
+              <button
+                type="button"
+                onClick={handleGoogleSignup}
+                className="w-full py-3 px-4 flex items-center justify-center gap-3 bg-white border-2 border-slate-200 rounded-xl text-slate-700 font-medium hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md group"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+                  <path
+                    fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  />
+                </svg>
+                <span className="group-hover:text-slate-800 transition-colors">Sign up with Google</span>
+              </button>
+            </div>
+
+            {/* OR Separator */}
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-slate-200"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 text-slate-500 bg-white font-medium">OR</span>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {/* Name Fields */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="firstName" className="mb-2 text-slate-700 font-medium">
                     First Name<span className="text-red-500">*</span>
                   </Label>
                   <Input
@@ -466,15 +578,14 @@ export default function SignUpForm() {
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
-                    placeholder="Enter your first name"
+                    placeholder="Enter first name"
                     error={!!errors.firstName}
                     hint={errors.firstName}
-                    className={commonInputClass}
+                    className="w-full h-12 px-4 bg-white text-slate-900 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 shadow-sm placeholder-slate-400 transition-all duration-200"
                   />
                 </div>
-                {/* Last Name */}
-                <div className="w-full">
-                  <Label htmlFor="lastName" className="mb-1 text-gray-100 font-medium text-sm">
+                <div>
+                  <Label htmlFor="lastName" className="mb-2 text-slate-700 font-medium">
                     Last Name<span className="text-red-500">*</span>
                   </Label>
                   <Input
@@ -483,18 +594,18 @@ export default function SignUpForm() {
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
-                    placeholder="Enter your last name"
+                    placeholder="Enter last name"
                     error={!!errors.lastName}
                     hint={errors.lastName}
-                    className={commonInputClass}
+                    className="w-full h-12 px-4 bg-white text-slate-900 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 shadow-sm placeholder-slate-400 transition-all duration-200"
                   />
                 </div>
               </div>
 
               {/* Email */}
               <div>
-                <Label htmlFor="email" className="mb-1 text-gray-100 font-medium text-sm">
-                  Email<span className="text-red-500">*</span>
+                <Label htmlFor="email" className="mb-2 text-slate-700 font-medium">
+                  Email Address<span className="text-red-500">*</span>
                 </Label>
                 <Input
                   type="email"
@@ -505,13 +616,13 @@ export default function SignUpForm() {
                   placeholder="Enter your email"
                   error={!!errors.email}
                   hint={errors.email}
-                  className={`${commonInputClass} min-w-[300px]`}
+                  className="w-full h-12 px-4 bg-white text-slate-900 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 shadow-sm placeholder-slate-400 transition-all duration-200"
                 />
               </div>
 
               {/* Phone Number */}
               <div>
-                <Label htmlFor="phone" className="mb-1 text-gray-100 font-medium text-sm">
+                <Label htmlFor="phone" className="mb-2 text-slate-700 font-medium">
                   Phone Number<span className="text-red-500">*</span>
                 </Label>
                 <Input
@@ -520,16 +631,16 @@ export default function SignUpForm() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="Enter your phone number"
+                  placeholder="Enter phone number"
                   error={!!errors.phone}
                   hint={errors.phone}
-                  className={`${commonInputClass} min-w-[300px]`}
+                  className="w-full h-12 px-4 bg-white text-slate-900 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 shadow-sm placeholder-slate-400 transition-all duration-200"
                 />
               </div>
 
               {/* Role Selection */}
               <div>
-                <Label htmlFor="role" className="mb-1 text-gray-100 font-medium text-sm">
+                <Label htmlFor="role" className="mb-2 text-slate-700 font-medium">
                   Select Role<span className="text-red-500">*</span>
                 </Label>
                 <select
@@ -537,59 +648,61 @@ export default function SignUpForm() {
                   name="role"
                   value={formData.role}
                   onChange={handleChange}
-                  className={commonSelectClass}
+                  className="w-full h-12 px-4 bg-white text-slate-900 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 shadow-sm transition-all duration-200"
                 >
-                  <option value="" disabled>Select your role</option>
+                  <option value="" disabled>
+                    Select your role
+                  </option>
                   <option value={Role.MANAGER}>Manager</option>
                   <option value={Role.TEAM_MEMBER}>Team Member</option>
                 </select>
               </div>
 
-              {/* Password */}
-              <div>
-                <Label htmlFor="password" className="mb-1 text-gray-100 font-medium text-sm">
-                  Password<span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="Enter your password"
-                  error={!!errors.password}
-                  hint={errors.password}
-                  className={commonInputClass}
-                />
+              {/* Password Fields */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="password" className="mb-2 text-slate-700 font-medium">
+                    Password<span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Enter password"
+                    error={!!errors.password}
+                    hint={errors.password}
+                    className="w-full h-12 px-4 bg-white text-slate-900 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 shadow-sm placeholder-slate-400 transition-all duration-200"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="confirmPassword" className="mb-2 text-slate-700 font-medium">
+                    Confirm Password<span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="Confirm password"
+                    error={!!errors.confirmPassword}
+                    hint={errors.confirmPassword}
+                    className="w-full h-12 px-4 bg-white text-slate-900 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 shadow-sm placeholder-slate-400 transition-all duration-200"
+                  />
+                </div>
               </div>
 
-              {/* Confirm Password */}
-              <div>
-                <Label htmlFor="confirmPassword" className="mb-1 text-gray-100 font-medium text-sm">
-                  Confirm Password<span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  type={showPassword ? "text" : "password"}
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Confirm your password"
-                  error={!!errors.confirmPassword}
-                  hint={errors.confirmPassword}
-                  className={commonInputClass}
-                />
-              </div>
-
-              {/* Terms */}
-              <div className="flex items-center">
+              {/* Terms and Conditions */}
+              <div className="flex items-start space-x-3">
                 <Checkbox
                   checked={isChecked}
                   onChange={() => setIsChecked(!isChecked)}
-                  className="h-4 w-4 text-teal-700 rounded focus:ring-teal-600 border-gray-300"
+                  className="h-4 w-4 text-emerald-600 rounded focus:ring-emerald-500 border-slate-300 mt-1"
                 />
                 <label
-                  className="ml-2 block text-sm text-gray-100 cursor-pointer"
+                  className="text-sm text-slate-700 cursor-pointer leading-relaxed"
                   onClick={() => {
                     if (!isChecked) {
                       handleOpenTermsModal()
@@ -600,95 +713,109 @@ export default function SignUpForm() {
                   }}
                 >
                   I agree to the{" "}
-                  <span className="text-[#1e40af] underline">terms and conditions</span>
+                  <span className="text-emerald-600 font-medium hover:text-emerald-700 transition-colors">
+                    terms and conditions
+                  </span>
                 </label>
               </div>
-              {errors.terms && <p className="mt-1 text-xs text-red-500">{errors.terms}</p>}
+              {errors.terms && <p className="text-xs text-red-500 mt-1">{errors.terms}</p>}
 
-              {authError && <div className="p-3 text-sm text-red-500 bg-red-50 rounded-lg">{authError}</div>}
-
-              {errors.role && !selectedRoleFromQuery && (
-                <div className="p-3 text-sm text-red-500 bg-red-50 rounded-lg">{errors.role}</div>
+              {authError && (
+                <div className="p-4 text-sm text-red-700 bg-red-50 rounded-xl border border-red-200">{authError}</div>
               )}
 
-              <div className="pt-3 mt-3 flex justify-center">
-                <button
-                  type="submit"
-                  className="w-64 h-12 font-medium text-white transition-all duration-300 rounded-full bg-gradient-to-r from-slate-700 to-slate-800 hover:from-slate-800 hover:to-slate-900 hover:translate-y-1 hover:shadow-lg focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 shadow-md disabled:opacity-70 flex justify-center items-center gap-2"
-                  disabled={isSubmitting || authLoading}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <svg
-                        className="animate-spin h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      <span>Loading...</span>
-                    </>
-                  ) : authLoading ? (
-                    <>
-                      <svg
-                        className="animate-spin h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      <span>Processing...</span>
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus size={20} />
-                      <span>Sign Up</span>
-                    </>
-                  )}
-                </button>
-              </div>
+              {errors.role && !selectedRoleFromQuery && (
+                <div className="p-4 text-sm text-red-700 bg-red-50 rounded-xl border border-red-200">{errors.role}</div>
+              )}
+
+              <button
+                type="submit"
+                className="w-full h-12 font-semibold text-white transition-all duration-300 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 hover:shadow-lg hover:shadow-emerald-500/25 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 shadow-md disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 transform hover:scale-[1.02] active:scale-[0.98]"
+                disabled={isSubmitting || authLoading}
+              >
+                {isSubmitting ? (
+                  <>
+                    <svg
+                      className="animate-spin h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    <span>Creating Account...</span>
+                  </>
+                ) : authLoading ? (
+                  <>
+                    <svg
+                      className="animate-spin h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    <span>Processing...</span>
+                  </>
+                ) : (
+                  <>
+                    <UserPlus size={20} />
+                    <span>Create Account</span>
+                  </>
+                )}
+              </button>
+
+              <p className="text-sm text-center text-slate-600 mt-6">
+                Already have an account?{" "}
+                <Link href="/signin" className="font-medium text-emerald-600 transition-colors hover:text-emerald-700">
+                  Sign in here
+                </Link>
+              </p>
             </form>
           </div>
-          <p className="text-sm text-center text-gray-100 mt-4">
-            Already have an account?{" "}
-            <Link href="/signin" className="font-medium text-white transition-colors hover:text-white">
-              Sign in
-            </Link>
-          </p>
         </div>
       </div>
+
+      {/* Terms and Conditions Modal */}
+      {showTermsModal && (
+        <TermsAndConditionsModal
+          isOpen={showTermsModal}
+          onClose={() => setShowTermsModal(false)}
+          onAccept={handleAcceptTerms}
+          firstName={formData.firstName}
+          lastName={formData.lastName}
+        />
+      )}
 
       {/* Global styles */}
       <style jsx global>{`
         .toast-container-custom .Toastify__toast {
-          border-radius: 8px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+          border-radius: 12px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
           padding: 16px;
           margin-bottom: 16px;
         }
@@ -699,7 +826,7 @@ export default function SignUpForm() {
 
         .Toastify__progress-bar {
           height: 3px;
-          border-radius: 0 0 4px 4px;
+          border-radius: 0 0 8px 8px;
         }
 
         .Toastify__close-button {
@@ -711,54 +838,83 @@ export default function SignUpForm() {
           opacity: 1;
         }
 
-        /* Input and Select styling */
-        input, select {
-          background-color: white !important;
-          color: #1f2937 !important;
+        /* Custom animations */
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
 
-        input::placeholder, select::placeholder {
-          color: #9ca3af !important;
-          opacity: 1;
+        @keyframes scale-up {
+          from { opacity: 0; transform: scale(0.9) translateY(20px); }
+          to { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* Card styling */
-        .rounded-xl {
-          border-radius: 1rem;
+        @keyframes bounce-gentle {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
         }
 
-        .shadow-lg {
-          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        @keyframes float {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(5deg); }
         }
 
-        /* Form container hover effect */
-        .bg-white.rounded-xl {
-          transition: all 0.3s ease;
+        @keyframes float-delayed {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-15px) rotate(-3deg); }
         }
 
-        .bg-white.rounded-xl:hover {
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-          transform: translateY(-2px);
+        @keyframes float-slow {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-10px) rotate(2deg); }
         }
 
-        /* Improve input field focus states */
-        input:focus {
-          box-shadow: 0 0 0 2px rgba(54, 96, 132, 0.2) !important;
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
         }
 
-        /* Hide scrollbar but keep functionality */
-        .scrollbar-hide {
-          -ms-overflow-style: none;  /* IE and Edge */
-          scrollbar-width: none;  /* Firefox */
+        @keyframes spin-reverse {
+          from { transform: rotate(360deg); }
+          to { transform: rotate(0deg); }
         }
 
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;  /* Chrome, Safari and Opera */
+        @keyframes draw {
+          0% { stroke-dasharray: 0 1000; }
+          100% { stroke-dasharray: 1000 0; }
         }
 
-        /* Ensure content starts from the top */
-        .items-start {
-          align-items: flex-start;
+        @keyframes draw-delayed {
+          0%, 30% { stroke-dasharray: 0 1000; }
+          100% { stroke-dasharray: 1000 0; }
+        }
+
+        @keyframes fadeInOut {
+          0%, 100% { opacity: 0; }
+          50% { opacity: 0.3; }
+        }
+
+        .animate-fade-in { animation: fade-in 0.3s ease-out; }
+        .animate-scale-up { animation: scale-up 0.4s ease-out; }
+        .animate-bounce-gentle { animation: bounce-gentle 2s ease-in-out infinite; }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        .animate-float-delayed { animation: float-delayed 8s ease-in-out infinite; }
+        .animate-float-slow { animation: float-slow 10s ease-in-out infinite; }
+        .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+        .animate-spin-reverse { animation: spin-reverse 15s linear infinite; }
+        .animate-draw { animation: draw 4s ease-in-out infinite; }
+        .animate-draw-delayed { animation: draw-delayed 6s ease-in-out infinite; }
+
+        .animate-pulse { animation: pulse 1.5s ease-in-out infinite; }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+        .delay-500 { animation-delay: 0.5s; }
+        .delay-700 { animation-delay: 0.7s; }
+
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.3; }
         }
       `}</style>
     </div>

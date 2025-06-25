@@ -261,9 +261,9 @@ export default function SignInForm() {
 
             {/* Inner circle with logo */}
             <div className="absolute inset-16 bg-white/95 rounded-full flex items-center justify-center shadow-2xl backdrop-blur-sm">
-              <div className="w-32 h-32 flex items-center justify-center">
+              <div className="w-36 h-36 flex items-center justify-center">
                 <Image
-                  src="/images/logo/Gigjives-Logo-final.png"
+                  src="/images/logo/gigjives-logo-new-2222.png"
                   alt="GigJives Logo"
                   width={120}
                   height={120}
