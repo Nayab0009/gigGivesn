@@ -6,7 +6,7 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useSidebar } from "../context/SidebarContext"
 import { useAuth } from "../context/AuthContext"
-import { LayoutGrid, List, Users, FileText, ChevronLeft, ChevronRight, ChevronDown, Building2 } from "lucide-react"
+import { LayoutGrid, List, Users, FileText, ChevronLeft, ChevronRight, ChevronDown, Building2,Timer  } from "lucide-react"
 import { GridIcon, ListIcon, PaperPlaneIcon, TableIcon, UserCircleIcon, EnvelopeListIcon } from "../icons/index"
 
 // Add this constant for consistent mobile width
@@ -86,6 +86,11 @@ const managerNavItems: NavItem[] = [
     icon: <Users size={20} />,
     path: "/dashboard/admin/addemployee",
   },
+  {
+    name: " Sprints",
+    icon: <Timer  size={20} />,
+    path: "/dashboard/manager/showsprints",
+  },
 ]
 
 // Employee-specific navigation items (NEW)
@@ -99,6 +104,7 @@ const employeeNavItems: NavItem[] = [
     name: "My Projects",
     icon: <ListIcon />,
     path: "/dashboard/teammember/mytasks",
+
   },
 ]
 
