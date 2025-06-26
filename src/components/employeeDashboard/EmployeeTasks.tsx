@@ -67,9 +67,9 @@ interface ProjectWithTasks {
 const EmployeeTasks = () => {
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
-  const [allTasks, setAllTasks] = useState<TaskResponse[]>([]);
-  const [projectsWithTasks, setProjectsWithTasks] = useState<ProjectWithTasks[]>([]);
-  const [selectedProject, setSelectedProject] = useState<ProjectWithTasks | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [tasks, setTasks] = useState<TaskResponse[]>([]);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -81,78 +81,79 @@ const EmployeeTasks = () => {
   const [newStatus, setNewStatus] = useState('');
   const [updatingStatus, setUpdatingStatus] = useState(false);
 
-  // Fetch all tasks for the current user
-  const fetchUserTasks = async () => {
+  // Fetch projects for employee
+  const fetchEmployeeProjects = async () => {
     if (!isAuthenticated || !user?.id) {
       setError('User not authenticated');
       setIsLoading(false);
       return;
     }
-
     setIsLoading(true);
     setError(null);
-
     try {
-      console.log('Fetching tasks for user:', user.id);
-      
+      const response = await axiosInstance.get('/projects/employee/all');
+      const projectsData = Array.isArray(response.data) ? response.data : [];
+      setProjects(projectsData);
+    } catch (error: any) {
+      setError(
+        error.response?.data?.message ||
+        'Failed to load projects. Please try again.'
+      );
+      setProjects([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Fetch tasks for selected project
+  const fetchProjectTasks = async (projectId: number) => {
+    if (!isAuthenticated || !user?.id) {
+      setError('User not authenticated');
+      setIsLoading(false);
+      return;
+    }
+    setIsLoading(true);
+    setError(null);
+    try {
       const response = await axiosInstance.post('/tasks/user/all', {
         userId: user.id,
-        projectId: 3 // You can make this dynamic if needed
+        projectId,
       });
-
-      console.log('Tasks API Response:', response.data);
-      
       const tasksData = Array.isArray(response.data) ? response.data : [];
-      setAllTasks(tasksData);
-
-      // Group tasks by project
-      const projectMap = new Map<number, ProjectWithTasks>();
-      
-      tasksData.forEach((task) => {
-        const projectId = task.taskOf.id;
-        
-        if (!projectMap.has(projectId)) {
-          projectMap.set(projectId, {
-            project: task.taskOf,
-            tasks: []
-          });
-        }
-        
-        projectMap.get(projectId)!.tasks.push(task);
-      });
-      
-      const projectsArray = Array.from(projectMap.values());
-      setProjectsWithTasks(projectsArray);
-
+      setTasks(tasksData);
     } catch (error: any) {
-      console.error('Error fetching user tasks:', error);
       setError(
-        error.response?.data?.message || 
+        error.response?.data?.message ||
         'Failed to load tasks. Please try again.'
       );
-      setAllTasks([]);
-      setProjectsWithTasks([]);
+      setTasks([]);
     } finally {
       setIsLoading(false);
     }
   };
 
   // Handle project selection
-  const handleProjectSelect = (projectWithTasks: ProjectWithTasks) => {
-    setSelectedProject(projectWithTasks);
+  const handleProjectSelect = (project: Project) => {
+    setSelectedProject(project);
     setViewMode('tasks');
+    fetchProjectTasks(project.id);
   };
 
   // Go back to projects view
   const goBackToProjects = () => {
     setViewMode('projects');
     setSelectedProject(null);
+    setTasks([]);
   };
 
   // Refresh data
   const refreshData = async () => {
     setRefreshing(true);
-    await fetchUserTasks();
+    if (viewMode === 'projects') {
+      await fetchEmployeeProjects();
+    } else if (selectedProject) {
+      await fetchProjectTasks(selectedProject.id);
+    }
     setRefreshing(false);
   };
 
@@ -189,7 +190,7 @@ const EmployeeTasks = () => {
       
       closeUpdateStatusModal();
       // Refresh data to show updated status
-      await fetchUserTasks();
+      await fetchProjectTasks(selectedProject!.id);
     } catch (error: any) {
       console.error('Error updating task status:', error);
       setError(
@@ -277,7 +278,7 @@ const EmployeeTasks = () => {
   // Initial data fetch
   useEffect(() => {
     if (isAuthenticated && user?.id) {
-      fetchUserTasks();
+      fetchEmployeeProjects();
     }
   }, [isAuthenticated, user?.id]);
 
@@ -305,7 +306,7 @@ const EmployeeTasks = () => {
         <div className="mb-10">
           <div className="text-center mb-8">
             <h1 className="text-5xl sm:text-6xl font-bold bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent mb-4">
-              {viewMode === 'projects' ? 'My Projects' : selectedProject?.project.name}
+              {viewMode === 'projects' ? 'My Projects' : selectedProject?.name}
             </h1>
             <div className="w-24 h-1 bg-gradient-to-r from-emerald-500 to-teal-600 mx-auto rounded-full mb-6"></div>
             <p className="text-slate-600 text-xl max-w-2xl mx-auto">
@@ -316,7 +317,7 @@ const EmployeeTasks = () => {
                 </>
               ) : (
                 <>
-                  Tasks for project: <span className="font-semibold text-emerald-600">{selectedProject?.project.name}</span>
+                  Tasks for project: <span className="font-semibold text-emerald-600">{selectedProject?.name}</span>
                 </>
               )}
             </p>
@@ -353,7 +354,7 @@ const EmployeeTasks = () => {
                     {viewMode === 'projects' ? 'Total Projects' : 'Total Tasks'}
                   </p>
                   <p className="font-bold text-lg">
-                    {viewMode === 'projects' ? projectsWithTasks.length : selectedProject?.tasks.length || 0}
+                    {viewMode === 'projects' ? projects.length : tasks.length}
                   </p>
                 </div>
               </div>
@@ -367,8 +368,8 @@ const EmployeeTasks = () => {
                   </p>
                   <p className="font-bold text-lg">
                     {viewMode === 'projects' 
-                      ? allTasks.length
-                      : selectedProject?.tasks.filter(task => task.status.toLowerCase() === 'completed').length || 0
+                      ? tasks.length
+                      : tasks.filter(task => task.status.toLowerCase() === 'completed').length
                     }
                   </p>
                 </div>
@@ -415,7 +416,7 @@ const EmployeeTasks = () => {
             </div>
           ) : viewMode === 'projects' ? (
             // Projects View
-            projectsWithTasks.length === 0 ? (
+            projects.length === 0 ? (
               <div className="p-16 text-center">
                 <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center mb-6 mx-auto shadow-lg">
                   <Building2 className="w-10 h-10 text-white" />
@@ -426,16 +427,15 @@ const EmployeeTasks = () => {
             ) : (
               <div className="p-8">
                 <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                  {projectsWithTasks.map((projectWithTasks) => {
-                    const { project, tasks } = projectWithTasks;
+                  {projects.map((project) => {
                     const progress = getProjectProgress(project);
-                    const taskStats = getProjectTaskStats(tasks);
+                    const taskStats = getProjectTaskStats(tasks.filter(task => task.taskOf.id === project.id));
                     
                     return (
                       <div
                         key={project.id}
                         className="bg-gradient-to-br from-white to-emerald-50 rounded-2xl border-2 border-emerald-200 p-6 hover:shadow-2xl shadow-emerald-100 transition-all duration-500 backdrop-blur-sm transform hover:scale-105 hover:-translate-y-2 group cursor-pointer"
-                        onClick={() => handleProjectSelect(projectWithTasks)}
+                        onClick={() => handleProjectSelect(project)}
                       >
                         {/* Project Header */}
                         <div className="flex items-start justify-between mb-6">
@@ -551,7 +551,7 @@ const EmployeeTasks = () => {
                 <h3 className="text-2xl font-bold text-slate-900 mb-3">No Project Selected</h3>
                 <p className="text-slate-500 text-lg">Please select a project to view its tasks.</p>
               </div>
-            ) : selectedProject.tasks.length === 0 ? (
+            ) : tasks.length === 0 ? (
               <div className="p-16 text-center">
                 <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center mb-6 mx-auto shadow-lg">
                   <CheckCircle className="w-10 h-10 text-white" />
@@ -562,7 +562,7 @@ const EmployeeTasks = () => {
             ) : (
               <div className="p-8">
                 <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                  {selectedProject.tasks.map((task) => {
+                  {tasks.map((task) => {
                     const statusInfo = getStatusInfo(task.status);
                     
                     return (

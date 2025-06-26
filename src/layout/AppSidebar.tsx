@@ -96,7 +96,7 @@ const employeeNavItems: NavItem[] = [
     path: "/dashboard/teammember",
   },
   {
-    name: "My Tasks",
+    name: "My Projects",
     icon: <ListIcon />,
     path: "/dashboard/teammember/mytasks",
   },
