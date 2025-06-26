@@ -428,112 +428,33 @@ const EmployeeTasks = () => {
               <div className="p-8">
                 <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
                   {projects.map((project) => {
-                    const progress = getProjectProgress(project);
-                    const taskStats = getProjectTaskStats(tasks.filter(task => task.taskOf.id === project.id));
-                    
                     return (
                       <div
                         key={project.id}
-                        className="bg-gradient-to-br from-white to-emerald-50 rounded-2xl border-2 border-emerald-200 p-6 hover:shadow-2xl shadow-emerald-100 transition-all duration-500 backdrop-blur-sm transform hover:scale-105 hover:-translate-y-2 group cursor-pointer"
+                        className="bg-white/90 hover:bg-emerald-50 border border-emerald-100 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 p-4 sm:p-6 flex flex-col gap-4 cursor-pointer group min-h-[220px]"
                         onClick={() => handleProjectSelect(project)}
                       >
-                        {/* Project Header */}
-                        <div className="flex items-start justify-between mb-6">
-                          <div className="flex-1">
-                            <h3 className="text-xl font-bold text-slate-900 mb-3 line-clamp-2 group-hover:text-emerald-700 transition-colors duration-300">
-                              {project.name}
-                            </h3>
-                            <div className="flex items-center space-x-3">
-                              <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold ${
-                                project.isActive 
-                                  ? 'bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700 border-emerald-200' 
-                                  : 'bg-gradient-to-r from-slate-100 to-gray-100 text-slate-700 border-slate-200'
-                              } shadow-lg`}>
-                                {project.isActive ? (
-                                  <TrendingUp className="w-5 h-5" />
-                                ) : (
-                                  <AlertCircle className="w-5 h-5" />
-                                )}
-                                {project.isActive ? 'Active' : 'Inactive'}
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <button className="p-3 text-slate-400 hover:text-emerald-600 transition-all duration-300 rounded-xl hover:bg-white/50 transform hover:scale-110">
-                              <Eye className="w-5 h-5" />
-                            </button>
-                          </div>
+                        {/* Project Name & Status */}
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <h3 className="text-base sm:text-lg font-semibold text-slate-800 group-hover:text-emerald-700 truncate max-w-[70%]">{project.name}</h3>
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium border ${project.isActive ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>{project.isActive ? 'Active' : 'Inactive'}</span>
                         </div>
-
                         {/* Project Description */}
-                        <div className="mb-6">
-                          <p className="text-slate-600 line-clamp-3 leading-relaxed">
-                            {project.description || 'No description provided'}
-                          </p>
-                        </div>
-
-                        {/* Task Statistics */}
-                        <div className="mb-6 p-4 bg-emerald-50/50 rounded-xl border border-emerald-100">
-                          <div className="flex items-center space-x-3 mb-3">
-                            <ClipboardList className="w-5 h-5 text-emerald-600" />
-                            <span className="text-sm font-bold text-slate-700">Task Overview</span>
+                        <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 mb-2">{project.description || 'No description provided'}</p>
+                        {/* Dates */}
+                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-6 text-xs sm:text-sm text-slate-500">
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4 text-emerald-500" />
+                            <span>Start: {formatDate(project.startDate)}</span>
                           </div>
-                          <div className="grid grid-cols-4 gap-2 text-center">
-                            <div>
-                              <p className="text-lg font-bold text-emerald-600">{taskStats.total}</p>
-                              <p className="text-xs text-slate-600">Total</p>
-                            </div>
-                            <div>
-                              <p className="text-lg font-bold text-blue-600">{taskStats.inProgress}</p>
-                              <p className="text-xs text-slate-600">In Progress</p>
-                            </div>
-                            <div>
-                              <p className="text-lg font-bold text-green-600">{taskStats.completed}</p>
-                              <p className="text-xs text-slate-600">Completed</p>
-                            </div>
-                            <div>
-                              <p className="text-lg font-bold text-red-600">{taskStats.cancelled}</p>
-                              <p className="text-xs text-slate-600">Cancelled</p>
-                            </div>
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4 text-emerald-500" />
+                            <span>End: {formatDate(project.endDate)}</span>
                           </div>
                         </div>
-
-                        {/* Project Progress */}
-                        <div className="mb-6">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-semibold text-slate-700">Progress</span>
-                            <span className="text-sm font-bold text-emerald-600">{progress}%</span>
-                          </div>
-                          <div className="w-full bg-slate-200 rounded-full h-2">
-                            <div 
-                              className="bg-gradient-to-r from-emerald-500 to-teal-600 h-2 rounded-full transition-all duration-300"
-                              style={{ width: `${progress}%` }}
-                            ></div>
-                          </div>
-                        </div>
-
-                        {/* Project Dates */}
-                        <div className="mb-6 p-4 bg-slate-50/50 rounded-xl">
-                          <div className="space-y-3">
-                            <div className="flex items-center space-x-3 text-sm text-slate-600">
-                              <Calendar className="w-4 h-4 text-emerald-500" />
-                              <span>Start: {formatDate(project.startDate)}</span>
-                            </div>
-                            <div className="flex items-center space-x-3 text-sm text-slate-600">
-                              <Calendar className="w-4 h-4 text-emerald-500" />
-                              <span>End: {formatDate(project.endDate)}</span>
-                            </div>
-                            <div className="flex items-center space-x-3 text-sm text-slate-600">
-                              <Building2 className="w-4 h-4 text-emerald-500" />
-                              <span>Project ID: #{project.id}</span>
-                            </div>
-                          </div>
-                        </div>
-
                         {/* Action Button */}
-                        <button className="w-full px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center justify-center gap-2">
-                          <ClipboardList className="w-4 h-4" />
-                          View Tasks ({taskStats.total})
+                        <button className="mt-4 w-full px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl font-semibold text-xs sm:text-sm transition-all duration-300 shadow group-hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2">
+                          View Tasks
                         </button>
                       </div>
                     );
@@ -609,10 +530,7 @@ const EmployeeTasks = () => {
                               <span>Updated: {formatDate(task.updatedAt)}</span>
                             </div>
                           )}
-                          <div className="flex items-center space-x-3 text-sm text-slate-600">
-                            <FileText className="w-4 h-4 text-emerald-500" />
-                            <span>Task ID: #{task.id}</span>
-                          </div>
+                  
                         </div>
 
                         {/* Action Buttons */}

@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import React, { useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
@@ -33,23 +32,29 @@ export default function UserDropdown() {
     (user.name ? user.name : user.email.split('@')[0]) 
     : 'Guest User';
 
-  // Get user avatar based on role - using existing images from the project
-  const getUserAvatar = () => {
-    if (!user) return '/images/user/user-01.jpg';
+  // Generate initials from display name
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase())
+      .join('')
+      .slice(0, 2);
+  };
+
+  // Get background color based on role
+  const getAvatarColor = () => {
+    if (!user) return 'bg-emerald-600';
     
-    // Map roles to specific existing user images
     switch (user.role) {
       case 'admin':
-        return '/images/user/owner.jpg';
+        return 'bg-emerald-600';
       case 'teacher':
-        return '/images/user/user-02.jpg';
+        return 'bg-emerald-600';
       case 'student':
       default:
-        return '/images/user/user-01.jpg';
+        return 'bg-emerald-600';
     }
   };
-  
-  const userAvatar = getUserAvatar();
   
   return (
     <div className="relative">
@@ -57,13 +62,10 @@ export default function UserDropdown() {
         onClick={toggleDropdown} 
         className="flex items-center text-gray-700 dark:text-gray-400 dropdown-toggle"
       >
-        <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
-          <Image
-            width={44}
-            height={44}
-            src={userAvatar}
-            alt={displayName}
-          />
+        <span className="mr-3 overflow-hidden rounded-full h-11 w-11 flex items-center justify-center text-white font-semibold text-lg">
+          <div className={`${getAvatarColor()} w-full h-full rounded-full flex items-center justify-center`}>
+            {getInitials(displayName)}
+          </div>
         </span>
 
         <span className="block mr-1 font-medium text-theme-sm">{displayName}</span>
