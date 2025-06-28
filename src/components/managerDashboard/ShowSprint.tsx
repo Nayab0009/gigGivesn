@@ -4,6 +4,8 @@ import { getSprintsForManagers } from '@/lib/SprintService';
 import { useAuth } from '@/context/AuthContext';
 import { Calendar, Clock, Plus, Users, CheckCircle, Circle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { AssignTaskModal } from '../adminDashboard/AssignProjectTicket';
+import type { Task } from '@/types';
 
 const ManagerSprintsCards: React.FC = () => {
   const { user } = useAuth();
@@ -12,6 +14,23 @@ const ManagerSprintsCards: React.FC = () => {
   const [sprints, setSprints] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedSprintId, setSelectedSprintId] = useState<number | null>(null);
+  const [selectedSprintName, setSelectedSprintName] = useState<string>('');
+  
+  // Task state for the modal
+  const [task, setTask] = useState<Task>({
+    id: '',
+    title: '',
+    description: '',
+    status: 'pending',
+    priority: 'medium',
+    assignedTo: [],
+    dueDate: '',
+    estimatedHours: 0,
+  });
 
   // Helper function to get user status icon
   const getUserStatusIcon = (status: string) => {
@@ -43,6 +62,38 @@ const ManagerSprintsCards: React.FC = () => {
   const handleSprintClick = (sprint: any) => {
     const sprintName = encodeURIComponent(sprint.name);
     router.push(`/dashboard/manager/showSprinttasks/${sprint.id}?name=${sprintName}`);
+  };
+
+  // Handle add task button click
+  const handleAddTask = (sprint: any) => {
+    setSelectedSprintId(sprint.id);
+    setSelectedSprintName(sprint.name);
+    setIsModalOpen(true);
+    
+    // Reset task state
+    setTask({
+      id: '',
+      title: '',
+      description: '',
+      status: 'pending',
+      priority: 'medium',
+      assignedTo: [],
+      dueDate: '',
+      estimatedHours: 0,
+    });
+  };
+
+  // Handle modal close
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedSprintId(null);
+    setSelectedSprintName('');
+  };
+
+  // Handle task creation success
+  const handleTaskAdd = () => {
+    console.log('Tasks created successfully for sprint:', selectedSprintId);
+    // You can add additional logic here like showing a success toast
   };
 
   if (loading) return <p>Loading sprints...</p>;
@@ -79,7 +130,6 @@ const ManagerSprintsCards: React.FC = () => {
         {sprints.map((sprint) => (
           <div
             key={sprint.id}
-            onClick={() => handleSprintClick(sprint)}
             className="bg-white border border-emerald-200 rounded-2xl shadow-sm p-6 hover:shadow-xl hover:border-emerald-300 transition cursor-pointer transform hover:scale-105 group"
           >
             {/* Add visual indicator for clickability */}
@@ -113,16 +163,43 @@ const ManagerSprintsCards: React.FC = () => {
               </div>
             )}
             
-            {/* Click indicator */}
-            <div className="mt-4 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <span className="text-sm text-emerald-600 font-medium flex items-center gap-1">
+            {/* Action Buttons */}
+            <div className="mt-4 flex items-center gap-2">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleAddTask(sprint);
+                }}
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-xl transition shadow-sm"
+              >
+                <Plus className="w-4 h-4" />
+                Add Task
+              </button>
+              <button
+                onClick={() => handleSprintClick(sprint)}
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition shadow-sm"
+              >
                 <Users className="w-4 h-4" />
                 View Tasks
-              </span>
+              </button>
             </div>
           </div>
         ))}
       </div>
+
+      {/* Assign Task Modal */}
+      {selectedSprintId && (
+        <AssignTaskModal
+          open={isModalOpen}
+          onClose={handleModalClose}
+          onAdd={handleTaskAdd}
+          task={task}
+          setTask={setTask}
+          getUserStatusIcon={getUserStatusIcon}
+          projectId={sprints.find(s => s.id === selectedSprintId)?.project?.id}
+          sprintId={selectedSprintId}
+        />
+      )}
     </div>
   );
 };

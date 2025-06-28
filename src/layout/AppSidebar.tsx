@@ -43,6 +43,11 @@ const superAdminNavItems: NavItem[] = [
     icon: <Building2 size={20} />,
     path: "/dashboard/superadmin/organizations",
   },
+  {
+    name: "Create Admin",
+    icon: <Building2 size={20} />,
+    path: "/dashboard/superadmin/addadmin",
+  },
 ]
 
 // Admin-specific navigation items
