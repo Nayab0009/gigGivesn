@@ -11,7 +11,8 @@ interface AssignTaskModalProps {
   task: Task;
   setTask: (task: Task) => void;
   getUserStatusIcon: (status: string) => React.ReactElement;
-  projectId?: number; // Add projectId prop
+  projectId?: string | number; // Allow both string and number
+  sprintId?: string | number; // Add sprintId prop
 }
 
 // Helper function to generate avatar
@@ -33,6 +34,7 @@ export function AssignTaskModal({
   setTask,
   getUserStatusIcon,
   projectId,
+  sprintId, // Add sprintId parameter
 }: AssignTaskModalProps) {
   const { user, isAuthenticated } = useAuth();
   const [teams, setTeams] = useState<Team[]>([]);
@@ -151,6 +153,7 @@ export function AssignTaskModal({
           taskFor: parseInt(userId), // ID of the user the task is assigned to
           taskOf: projectId || 1, // ID of the project the task belongs to
           assignedBy: user?.id, // ID of the user who is assigning the task
+          sprint: sprintId ? { id: sprintId } : undefined, // Include sprint object if sprintId is provided
         };
 
         console.log('Sending task data:', taskData);

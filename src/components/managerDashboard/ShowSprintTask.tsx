@@ -1,0 +1,433 @@
+'use client';
+import React, { useEffect, useState } from 'react';
+import { useParams, useSearchParams } from 'next/navigation';
+import axiosInstance from '@/lib/axios';
+import { 
+  Clock, 
+  CheckCircle, 
+  AlertCircle, 
+  Loader2, 
+  RefreshCw, 
+  Calendar,
+  FileText,
+  AlertTriangle,
+  User,
+  Star,
+  ArrowLeft,
+  ClipboardList,
+  TrendingUp,
+  Send
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+// Interface for task response from backend
+interface TaskResponse {
+  id: number;
+  title: string;
+  description: string;
+  status: string;
+  priority?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  dueDate?: string;
+  comment?: string | null;
+  user?: {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    role: string;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+  taskOf?: {
+    id: number;
+    name: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+  sprint?: {
+    id: number;
+    name: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+  } | null;
+}
+
+const ShowSprintTask: React.FC = () => {
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const sprintId = params.id as string;
+  const sprintName = searchParams.get('name') ? decodeURIComponent(searchParams.get('name')!) : null;
+  
+  const [tasks, setTasks] = useState<TaskResponse[]>([]);
+  const [sprint, setSprint] = useState<TaskResponse['sprint'] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  
+  // Fetch tasks for the specific sprint
+  const fetchSprintTasks = async () => {
+    if (!sprintId) {
+      setError('Sprint ID is required');
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      console.log('Fetching tasks for sprint:', sprintId);
+      
+      const response = await axiosInstance.get(`/tasks/sprint/${sprintId}`);
+      console.log('Sprint Tasks API Response:', response.data);
+      
+      const tasksData = Array.isArray(response.data) ? response.data : [];
+      setTasks(tasksData);
+
+      // Extract sprint info from first task if available
+      if (tasksData.length > 0 && tasksData[0].sprint) {
+        setSprint(tasksData[0].sprint);
+      }
+
+    } catch (error: any) {
+      console.error('Error fetching sprint tasks:', error);
+      setError(
+        error.response?.data?.message || 
+        'Failed to load sprint tasks. Please try again.'
+      );
+      setTasks([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Refresh data
+  const refreshData = async () => {
+    setRefreshing(true);
+    await fetchSprintTasks();
+    setRefreshing(false);
+  };
+
+  // Get status color and icon
+  const getStatusInfo = (status: string | undefined | null) => {
+    if (!status) {
+      return {
+        color: 'bg-gradient-to-r from-slate-100 to-gray-100 text-slate-700 border-slate-200',
+        icon: <Clock className="w-5 h-5" />,
+        bgColor: 'bg-gradient-to-br from-slate-50 to-gray-50',
+        borderColor: 'border-slate-200',
+        glowColor: 'shadow-slate-100'
+      };
+    }
+    
+    switch (status.toLowerCase()) {
+      case 'completed':
+        return {
+          color: 'bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700 border-emerald-200',
+          icon: <CheckCircle className="w-5 h-5" />,
+          bgColor: 'bg-gradient-to-br from-emerald-50 to-green-50',
+          borderColor: 'border-emerald-200',
+          glowColor: 'shadow-emerald-100'
+        };
+      case 'inprogress':
+        return {
+          color: 'bg-gradient-to-r from-teal-100 to-cyan-100 text-teal-700 border-teal-200',
+          icon: <Clock className="w-5 h-5" />,
+          bgColor: 'bg-gradient-to-br from-teal-50 to-cyan-50',
+          borderColor: 'border-teal-200',
+          glowColor: 'shadow-teal-100'
+        };
+      case 'cancelled':
+        return {
+          color: 'bg-gradient-to-r from-red-100 to-rose-100 text-red-700 border-red-200',
+          icon: <AlertTriangle className="w-5 h-5" />,
+          bgColor: 'bg-gradient-to-br from-red-50 to-rose-50',
+          borderColor: 'border-red-200',
+          glowColor: 'shadow-red-100'
+        };
+      default:
+        return {
+          color: 'bg-gradient-to-r from-slate-100 to-gray-100 text-slate-700 border-slate-200',
+          icon: <Clock className="w-5 h-5" />,
+          bgColor: 'bg-gradient-to-br from-slate-50 to-gray-50',
+          borderColor: 'border-slate-200',
+          glowColor: 'shadow-slate-100'
+        };
+    }
+  };
+
+  // Get priority color
+  const getPriorityColor = (priority: string | undefined | null) => {
+    if (!priority) {
+      return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+    
+    switch (priority.toLowerCase()) {
+      case 'high':
+        return 'bg-red-100 text-red-800 border-red-200';
+      case 'medium':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'low':
+        return 'bg-green-100 text-green-800 border-green-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  // Format date
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  // Get task statistics
+  const getTaskStats = () => {
+    const total = tasks.length;
+    const completed = tasks.filter(task => task.status?.toLowerCase() === 'completed').length;
+    const inProgress = tasks.filter(task => task.status?.toLowerCase() === 'inprogress').length;
+    const cancelled = tasks.filter(task => task.status?.toLowerCase() === 'cancelled').length;
+    
+    return { total, completed, inProgress, cancelled };
+  };
+
+  // Initial data fetch
+  useEffect(() => {
+    if (sprintId) {
+      fetchSprintTasks();
+    }
+  }, [sprintId]);
+
+  const taskStats = getTaskStats();
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header */}
+        <div className="mb-10">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => router.back()}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-white/80 backdrop-blur-sm text-slate-700 rounded-2xl font-semibold transition-all duration-300 hover:bg-white hover:shadow-lg transform hover:scale-105"
+              >
+                <ArrowLeft className="w-5 h-5" />
+                Back
+              </button>
+            </div>
+            <button
+              onClick={refreshData}
+              disabled={refreshing || isLoading}
+              className="group inline-flex items-center gap-3 px-8 py-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-emerald-700 rounded-2xl text-sm font-semibold transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none border border-white/30"
+            >
+              <RefreshCw className={`w-5 h-5 transition-transform duration-300 ${refreshing ? 'animate-spin' : 'group-hover:rotate-180'}`} />
+              Refresh Tasks
+            </button>
+          </div>
+          
+          <div className="text-center mb-8">
+            <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent mb-4">
+              {sprintName || `Sprint ${sprintId}`}
+            </h1>
+            <div className="w-24 h-1 bg-gradient-to-r from-emerald-500 to-teal-600 mx-auto rounded-full mb-6"></div>
+            <p className="text-slate-600 text-xl max-w-2xl mx-auto">
+              {sprint?.description || 'Sprint tasks and progress overview'}
+            </p>
+          </div>
+        </div>
+
+        {/* Stats Bar */}
+        <div className="mb-8 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl shadow-2xl p-8 text-white">
+          <div className="flex flex-col sm:flex-row gap-6 items-center justify-between">
+            <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                  <ClipboardList className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-emerald-100">Total Tasks</p>
+                  <p className="font-bold text-lg">{taskStats.total}</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                  <CheckCircle className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-emerald-100">Completed</p>
+                  <p className="font-bold text-lg">{taskStats.completed}</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                  <Clock className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-emerald-100">In Progress</p>
+                  <p className="font-bold text-lg">{taskStats.inProgress}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-8 bg-red-50/80 backdrop-blur-sm border border-red-200 rounded-3xl p-6 shadow-lg">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 bg-red-100 rounded-2xl flex items-center justify-center">
+                <AlertCircle className="w-5 h-5 text-red-600" />
+              </div>
+              <p className="text-red-700 font-semibold text-lg">Error loading tasks</p>
+            </div>
+            <p className="text-red-600 mb-4 ml-13">{error}</p>
+            <button
+              onClick={refreshData}
+              className="ml-13 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl text-sm font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
+            >
+              Try Again
+            </button>
+          </div>
+        )}
+
+        {/* Content Container */}
+        <div className="bg-white/60 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
+          {isLoading ? (
+            <div className="p-16 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full mb-6">
+                <Loader2 className="w-8 h-8 text-white animate-spin" />
+              </div>
+              <p className="text-slate-600 text-xl font-medium">Loading sprint tasks...</p>
+            </div>
+          ) : tasks.length === 0 ? (
+            <div className="p-16 text-center">
+              <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center mb-6 mx-auto shadow-lg">
+                <ClipboardList className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-3">No Tasks Found</h3>
+              <p className="text-slate-500 text-lg">This sprint doesn't have any tasks assigned yet.</p>
+            </div>
+          ) : (
+            <div className="p-8">
+              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                {tasks.map((task) => {
+                  const statusInfo = getStatusInfo(task.status);
+                  
+                  return (
+                    <div
+                      key={task.id}
+                      className={`${statusInfo.bgColor} rounded-2xl border-2 ${statusInfo.borderColor} p-6 hover:shadow-2xl ${statusInfo.glowColor} transition-all duration-500 backdrop-blur-sm transform hover:scale-105 hover:-translate-y-2 group`}
+                    >
+                      {/* Task Header */}
+                      <div className="flex items-start justify-between mb-6">
+                        <div className="flex-1">
+                          <h3 className="text-xl font-bold text-slate-900 mb-3 line-clamp-2 group-hover:text-emerald-700 transition-colors duration-300">
+                            {task.title}
+                          </h3>
+                          <div className="flex items-center space-x-3">
+                            <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold ${statusInfo.color} shadow-lg`}>
+                              {statusInfo.icon}
+                              {task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1) : ''}
+                            </div>
+                            <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border ${getPriorityColor(task.priority)}`}>
+                              <Star className="w-4 h-4" />
+                              {task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : ''}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Task Description */}
+                      <div className="mb-6">
+                        <p className="text-slate-600 line-clamp-3 leading-relaxed">
+                          {task.description || 'No description provided'}
+                        </p>
+                      </div>
+
+                      {/* Assignee Info */}
+                      {task.user ? (
+                        <div className="mb-6 p-4 bg-slate-50/50 rounded-xl">
+                          <div className="flex items-center space-x-3 mb-3">
+                            <User className="w-4 h-4 text-emerald-500" />
+                            <span className="text-sm font-semibold text-slate-700">Assigned To</span>
+                          </div>
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
+                              <span className="text-sm font-semibold text-emerald-600">
+                                {task.user.name.charAt(0).toUpperCase()}
+                              </span>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-slate-900">{task.user.name}</p>
+                              <p className="text-xs text-slate-500">{task.user.role}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="mb-6 p-4 bg-slate-50/50 rounded-xl">
+                          <div className="flex items-center space-x-3 mb-3">
+                            <User className="w-4 h-4 text-slate-400" />
+                            <span className="text-sm font-semibold text-slate-500">Assignment</span>
+                          </div>
+                          <div className="flex items-center space-x-3 mb-4">
+                            <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center">
+                              <span className="text-sm font-semibold text-slate-500">?</span>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-slate-500">No assignee</p>
+                              <p className="text-xs text-slate-400">Task not yet assigned</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Task Meta Info */}
+                      <div className="space-y-3 mb-6 p-4 bg-slate-50/50 rounded-xl">
+                        <div className="flex items-center space-x-3 text-sm text-slate-600">
+                          <Calendar className="w-4 h-4 text-emerald-500" />
+                          <span>Created: {formatDate(task.createdAt)}</span>
+                        </div>
+                        {task.dueDate && (
+                          <div className="flex items-center space-x-3 text-sm text-slate-600">
+                            <Clock className="w-4 h-4 text-emerald-500" />
+                            <span>Due: {formatDate(task.dueDate)}</span>
+                          </div>
+                        )}
+                        {task.updatedAt !== task.createdAt && (
+                          <div className="flex items-center space-x-3 text-sm text-slate-600">
+                            <Clock className="w-4 h-4 text-emerald-500" />
+                            <span>Updated: {formatDate(task.updatedAt)}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ShowSprintTask;

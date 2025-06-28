@@ -90,8 +90,8 @@ export default function TeamListPage() {
 
         {/* Action Bar */}
         <div className="mb-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200 p-6">
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-            <div className="relative flex-1 max-w-md">
+          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+            <div className="relative flex-1 max-w-md w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
               <input
                 type="text"
@@ -101,7 +101,7 @@ export default function TeamListPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
               <div className="text-sm text-slate-600 bg-slate-100 px-4 py-2 rounded-full border border-slate-200">
                 <span className="font-semibold text-slate-800">{filteredMembers.length}</span> of {teamMembers.length}{" "}
                 employees

@@ -1,9 +1,7 @@
 "use client"
 import { useState, useEffect, useMemo } from "react"
-import { Search, Edit, Trash2, Eye, RefreshCw, AlertCircle, ChevronDown, Plus } from "lucide-react"
-import { getAllProjects } from "@/lib/ProjectService"
+import { Search, Edit, Trash2, Eye, RefreshCw, AlertCircle, ChevronDown, UserCheck, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
-
 import axiosInstance from "@/lib/axios"
 
 interface Manager {
@@ -164,7 +162,7 @@ export default function ProjectDashboard() {
     const fetchProjects = async () => {
       setIsLoading(true)
       try {
-        const response = await getAllProjects();
+        const response = await axiosInstance.get("/projects")
         setProjects(response.data || [])
       } catch (error) {
         console.error("Error fetching projects:", error)

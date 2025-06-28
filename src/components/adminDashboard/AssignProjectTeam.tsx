@@ -140,9 +140,9 @@ export function AssignTeamModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-gradient-to-br from-white to-emerald-50/30 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] overflow-hidden border border-white/50 backdrop-blur-sm">
+      <div className="bg-gradient-to-br from-white to-emerald-50/30 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] overflow-hidden border border-white/50 backdrop-blur-sm flex flex-col">
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-white">
+        <div className="bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-white flex-shrink-0">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold mb-1">Assign Team Members</h2>
@@ -157,7 +157,7 @@ export function AssignTeamModal({
             </div>
             <button 
               onClick={onClose} 
-              className="p-2 rounded-full hover:bg-white/20 transition-colors"
+              className="p-2 rounded-full hover:bg-white/20 transition-colors flex-shrink-0"
             >
               <X className="w-6 h-6" />
             </button>
@@ -166,9 +166,8 @@ export function AssignTeamModal({
 
         {/* Content with hidden scrollbar */}
         <div 
-          className="p-6 space-y-4 overflow-y-auto scrollbar-hide"
+          className="p-6 space-y-4 overflow-y-auto scrollbar-hide flex-1"
           style={{
-            maxHeight: 'calc(85vh - 120px)',
             scrollbarWidth: 'none', // Firefox
             msOverflowStyle: 'none', // IE/Edge
           }}
@@ -290,9 +289,9 @@ export function AssignTeamModal({
           )}
         </div>
 
-        {/* Footer */}
-        <div className="border-t border-emerald-200 bg-emerald-50/50 px-6 py-4">
-          <div className="flex justify-between items-center">
+        {/* Footer - Fixed at bottom */}
+        <div className="border-t border-emerald-200 bg-emerald-50/50 px-6 py-4 flex-shrink-0">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex items-center space-x-4">
               <p className="text-sm text-gray-600">
                 {selectedMembers.length > 0 
@@ -301,17 +300,17 @@ export function AssignTeamModal({
                 }
               </p>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 w-full sm:w-auto">
               <button
                 onClick={onClose}
-                className="px-6 py-2.5 border border-emerald-300 rounded-xl text-gray-700 font-medium hover:bg-white hover:shadow-sm transition-all duration-200"
+                className="flex-1 sm:flex-none px-6 py-2.5 border border-emerald-300 rounded-xl text-gray-700 font-medium hover:bg-white hover:shadow-sm transition-all duration-200"
               >
                 Cancel
               </button>
               <button
                 onClick={assignTeamMembers}
                 disabled={selectedMembers.length === 0 || isAssigning}
-                className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                className="flex-1 sm:flex-none px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 whitespace-nowrap"
               >
                 {isAssigning && <Loader2 className="w-4 h-4 animate-spin" />}
                 <span>{isAssigning ? 'Assigning...' : 'Assign Members'}</span>
