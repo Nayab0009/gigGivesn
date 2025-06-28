@@ -3,7 +3,6 @@ import { X, Check, Clock, Users, AlertTriangle, Loader2, AlertCircle } from "luc
 import axiosInstance from "@/lib/axios";
 import type { Project, Task, User, Team } from "@/types";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/router";
 
 interface AssignTaskModalProps {
   open: boolean;
@@ -43,7 +42,6 @@ export function AssignTaskModal({
   const [error, setError] = useState<string | null>(null);
   const [allMembers, setAllMembers] = useState<User[]>([]);
   const [isCreating, setIsCreating] = useState(false);
-  const router = useRouter();
 
   // Check if user is authorized to assign tasks
   const isAuthorizedToAssignTasks = () => {
@@ -214,11 +212,6 @@ export function AssignTaskModal({
       fetchTeams();
     }
   }, [open]);
-
-  const handleSprintClick = (sprint: any) => {
-    const sprintName = encodeURIComponent(sprint.name);
-    router.push(`/dashboard/manager/showSprinttasks/${sprint.id}?name=${sprintName}`);
-  };
 
   if (!open) return null;
 
