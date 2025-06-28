@@ -10,7 +10,7 @@ const AddSprint: React.FC = () => {
      const { user } = useAuth();       
   const [projects, setProjects] = useState<{id: string | number, name: string}[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
-  const [form, setForm] = useState({
+  const [form, setForm] = useState({    
     title: '',
     description: '',
     startDate: '',

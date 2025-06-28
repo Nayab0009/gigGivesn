@@ -1,5 +1,5 @@
 import axiosInstance from "./axios";
-export  const  getProjectsForManagers=async (managerId:String)=> {
+export  const  getProjectsForManagers=async (managerId:string)=> {
     const { data } = await axiosInstance.get(`/projects/manager/all?managerId=${managerId}`)
     return data
 }
@@ -8,7 +8,7 @@ export const createSprint = async (sprintData:any) => {
         const response = await axiosInstance.post(`/sprint`, sprintData);
         return response.data;
     }
-    catch (error) {
+    catch (error) { 
         console.error('Error Creating Sprint');
         throw error;
     }

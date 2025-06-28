@@ -1,5 +1,4 @@
 "use client"
-import { ThemeToggleButton } from "@/components/common/ThemeToggleButton"
 import UserDropdown from "@/components/header/UserDropdown"
 import { useAuth } from "@/context/AuthContext"
 import { useSidebar } from "@/context/SidebarContext"

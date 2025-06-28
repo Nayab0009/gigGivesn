@@ -3,6 +3,10 @@ import { useState, useEffect, useMemo } from "react"
 import { Search, RefreshCw, AlertCircle, Users, X, Loader2, Trash2, Edit } from "lucide-react"
 import { AssignTeamModal } from "../adminDashboard/AssignProjectTeam"
 import { AssignTaskModal } from "../adminDashboard/AssignProjectTicket"
+import { getProjectsForManagers } from "@/lib/SprintService"
+import { getProjectTeam } from "@/lib/ProjectService"
+import { updateProjectStatus } from "@/lib/ProjectService"
+import { deleteProject } from "@/lib/ProjectService"
 import { useAuth } from "@/context/AuthContext"
 import axiosInstance from "@/lib/axios"
 import type { Task, Team } from "@/types"
@@ -221,7 +225,7 @@ function ViewTeamModal({
     setError(null)
 
     try {
-      const response = await axiosInstance.get(`/projects/${projectId}`)
+      const response = await getProjectTeam(String(projectId))
       console.log("Project team response:", response.data)
       setProject(response.data)
     } catch (error) {
@@ -389,11 +393,8 @@ export default function ProjectDashboard() {
 
     try {
       console.log("Fetching projects for manager:", user.id)
-      const response = await axiosInstance.get("/projects/manager/all")
-      console.log("API Response:", response.data)
-
-      const projectsData = Array.isArray(response.data) ? response.data : []
-      setProjects(projectsData)
+      const projectsData = await getProjectsForManagers(user.id)
+      setProjects(Array.isArray(projectsData) ? projectsData : [])
     } catch (error) {
       console.error("Error fetching manager projects:", error)
       setError("Failed to load projects. Please try again.")
@@ -416,11 +417,11 @@ export default function ProjectDashboard() {
   }
 
   // Delete project function
-  const deleteProject = async (projectId: number) => {
+  const handleDeleteProject = async (projectId: number) => {
     setIsDeleting(projectId)
 
     try {
-      await axiosInstance.delete(`/projects/${projectId}`)
+      await deleteProject(projectId)
 
       // Remove the project from the local state
       setProjects((prev) => prev.filter((p) => p.id !== projectId))
@@ -436,20 +437,32 @@ export default function ProjectDashboard() {
   }
 
   // Update project status function
-  const updateProjectStatus = async (projectId: number, status: string) => {
+  const handleUpdatedProjectStatus = async (
+    projectId: number,
+    newStatus: string
+  ) => {
+    setIsLoading(true);
+    setError(null);
+  
     try {
-      await axiosInstance.patch(`/projects/${projectId}`, { status })
-
-      // Update the project in the local state
-      setProjects((prev) => prev.map((p) => (p.id === projectId ? { ...p, status } : p)))
-
-      console.log("Project status updated successfully")
+      await updateProjectStatus(projectId, newStatus);
+  
+      setProjects((prev) =>
+        prev.map((p) =>
+          p.id === projectId ? { ...p, status: newStatus } : p
+        )
+      );
+  
+      console.log("Project status updated successfully");
     } catch (error) {
-      console.error("Error updating project status:", error)
-      setError("Failed to update project status. Please try again.")
-      throw error
+      console.error("Error updating project status:", error);
+      setError("Failed to update project status. Please try again.");
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
-  }
+  };
+  
 
   // Filter projects based on search and filters
   const filteredProjects = useMemo(() => {
@@ -568,150 +581,150 @@ export default function ProjectDashboard() {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-emerald-200">
-                <thead className="bg-gradient-to-r from-emerald-100 to-teal-100">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Description
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Start Date
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      End Date
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[120px]">
-                      Status
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[200px]">
-                      Actions
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      View Team
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Settings
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white/80 divide-y divide-emerald-100">
-                  {filteredProjects.length === 0 ? (
+                <table className="min-w-full divide-y divide-emerald-200">
+                  <thead className="bg-gradient-to-r from-emerald-100 to-teal-100">
                     <tr>
-                      <td colSpan={8} className="px-6 py-12 text-center">
-                        <div className="flex flex-col items-center justify-center">
-                          <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
-                            <AlertCircle className="w-8 h-8 text-emerald-500" />
-                          </div>
-                          <p className="text-gray-600 text-lg font-medium mb-1">
-                            {error ? "Unable to load projects" : "No projects found"}
-                          </p>
-                          <p className="text-gray-500">
-                            {error
-                              ? "Please try refreshing the page"
-                              : "You have no assigned projects matching the current filters"}
-                          </p>
-                        </div>
-                      </td>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Name
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Description
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Start Date
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        End Date
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[120px]">
+                        Status
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider min-w-[200px]">
+                        Actions
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        View Team
+                      </th>
+                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                        Settings
+                      </th>
                     </tr>
-                  ) : (
-                    filteredProjects.map((project, index) => (
-                      <tr
-                        key={project.id.toString()}
-                        className={`hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50/50 transition-all duration-300 ${
-                          index % 2 === 0 ? "bg-white/60" : "bg-emerald-50/30"
-                        }`}
-                      >
-                        <td className="px-6 py-6">
-                          <h3 className="text-lg font-semibold text-gray-900 leading-tight">{project.name}</h3>
-                        </td>
-                        <td className="px-6 py-6">
-                          <p className="text-gray-600 text-sm leading-relaxed max-w-xs">{project.description}</p>
-                        </td>
-                        <td className="px-6 py-6">
-                          <span className="text-gray-700 text-sm">
-                            {new Date(project.startDate).toLocaleDateString()}
-                          </span>
-                        </td>
-                        <td className="px-6 py-6">
-                          <span className="text-gray-700 text-sm">
-                            {new Date(project.endDate).toLocaleDateString()}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          {project.status ? (
-                            <span
-                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize whitespace-nowrap ${getStatusColor(project.status)}`}
-                            >
-                              {project.status === "inprogress"
-                                ? "In Progress"
-                                : project.status
-                                    .replace(/([A-Z])/g, " $1")
-                                    .replace(/^./, (str) => str.toUpperCase())
-                                    .trim()}
-                            </span>
-                          ) : (
-                            <span
-                              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${project.isActive ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-700"}`}
-                            >
-                              {project.isActive ? "Active" : "Inactive"}
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-6 py-6">
-                          <div className="flex flex-row gap-2">
-                            <button
-                              className="px-4 py-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-                              onClick={() => setAssignTeamProjectId(project.id.toString())}
-                            >
-                              Assign Team
-                            </button>
-                            <button
-                              className="px-4 py-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-                              onClick={() => setAssignTaskProjectId(project.id.toString())}
-                            >
-                              Assign Task
-                            </button>
-                          </div>
-                        </td>
-                        <td className="px-6 py-6">
-                          <div className="flex items-center gap-2">
-                            <button
-                              className="group inline-flex items-center justify-center w-8 h-8 text-teal-600 hover:text-white bg-teal-50 hover:bg-gradient-to-r hover:from-teal-500 hover:to-teal-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110"
-                              onClick={() => setViewTeamProjectId(project.id)}
-                            >
-                              <Users className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
-                        <td className="px-6 py-6">
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => setEditStatusProjectId(project.id)}
-                              className="group inline-flex items-center justify-center w-8 h-8 text-blue-600 hover:text-white bg-blue-50 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110"
-                            >
-                              <Edit className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => deleteProject(project.id)}
-                              disabled={isDeleting === project.id}
-                              className="group inline-flex items-center justify-center w-8 h-8 text-red-600 hover:text-white bg-red-50 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              {isDeleting === project.id ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                              ) : (
-                                <Trash2 className="w-4 h-4" />
-                              )}
-                            </button>
+                  </thead>
+                  <tbody className="bg-white/80 divide-y divide-emerald-100">
+                    {filteredProjects.length === 0 ? (
+                      <tr>
+                        <td colSpan={8} className="px-6 py-12 text-center">
+                          <div className="flex flex-col items-center justify-center">
+                            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+                              <AlertCircle className="w-8 h-8 text-emerald-500" />
+                            </div>
+                            <p className="text-gray-600 text-lg font-medium mb-1">
+                              {error ? "Unable to load projects" : "No projects found"}
+                            </p>
+                            <p className="text-gray-500">
+                              {error
+                                ? "Please try refreshing the page"
+                                : "You have no assigned projects matching the current filters"}
+                            </p>
                           </div>
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+                    ) : (
+                      filteredProjects.map((project, index) => (
+                        <tr
+                          key={project.id.toString()}
+                          className={`hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50/50 transition-all duration-300 ${
+                            index % 2 === 0 ? "bg-white/60" : "bg-emerald-50/30"
+                          }`}
+                        >
+                          <td className="px-6 py-6">
+                            <h3 className="text-lg font-semibold text-gray-900 leading-tight">{project.name}</h3>
+                          </td>
+                          <td className="px-6 py-6">
+                            <p className="text-gray-600 text-sm leading-relaxed max-w-xs">{project.description}</p>
+                          </td>
+                          <td className="px-6 py-6">
+                            <span className="text-gray-700 text-sm">
+                              {new Date(project.startDate).toLocaleDateString()}
+                            </span>
+                          </td>
+                          <td className="px-6 py-6">
+                            <span className="text-gray-700 text-sm">
+                              {new Date(project.endDate).toLocaleDateString()}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            {project.status ? (
+                              <span
+                                className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize whitespace-nowrap ${getStatusColor(project.status)}`}
+                              >
+                                {project.status === "inprogress"
+                                  ? "In Progress"
+                                  : project.status
+                                      .replace(/([A-Z])/g, " $1")
+                                      .replace(/^./, (str) => str.toUpperCase())
+                                      .trim()}
+                              </span>
+                            ) : (
+                              <span
+                                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${project.isActive ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-700"}`}
+                              >
+                                {project.isActive ? "Active" : "Inactive"}
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-6 py-6">
+                            <div className="flex flex-row gap-2">
+                              <button
+                                className="px-4 py-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+                                onClick={() => setAssignTeamProjectId(project.id.toString())}
+                              >
+                                Assign Team
+                              </button>
+                              <button
+                                className="px-4 py-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+                                onClick={() => setAssignTaskProjectId(project.id.toString())}
+                              >
+                                Assign Task
+                              </button>
+                            </div>
+                          </td>
+                          <td className="px-6 py-6">
+                            <div className="flex items-center gap-2">
+                              <button
+                                className="group inline-flex items-center justify-center w-8 h-8 text-teal-600 hover:text-white bg-teal-50 hover:bg-gradient-to-r hover:from-teal-500 hover:to-teal-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110"
+                                onClick={() => setViewTeamProjectId(project.id)}
+                              >
+                                <Users className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                          <td className="px-6 py-6">
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => setEditStatusProjectId(project.id)}
+                                className="group inline-flex items-center justify-center w-8 h-8 text-blue-600 hover:text-white bg-blue-50 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110"
+                              >
+                                <Edit className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteProject(project.id)}
+                                disabled={isDeleting === project.id}
+                                className="group inline-flex items-center justify-center w-8 h-8 text-red-600 hover:text-white bg-red-50 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                {isDeleting === project.id ? (
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                  <Trash2 className="w-4 h-4" />
+                                )}
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
             </div>
           )}
         </div>

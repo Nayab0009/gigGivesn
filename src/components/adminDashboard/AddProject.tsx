@@ -2,7 +2,7 @@
 import type React from "react"
 import { useState } from "react"
 import { Loader2, CalendarDays, FileText, Plus, Sparkles } from "lucide-react"
-import axiosInstance from "@/lib/axios"
+import { createProject } from "@/lib/ProjectService"
 
 // You can install and use react-datepicker for a better UX:
 // npm install react-datepicker
@@ -37,35 +37,33 @@ const AddProject: React.FC = () => {
 
   // --- API POST handler ---
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    setError(null)
-    setSuccess(null)
-
-    // Build payload - FIXED: Changed 'title' to 'name' to match backend expectation
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+    setSuccess(null);
+  
     const payload = {
-      name: form.title, // Changed from 'title' to 'name'
+      name: form.title,
       description: form.description,
       startDate: form.startDate ? form.startDate.toISOString() : undefined,
       endDate: form.endDate ? form.endDate.toISOString() : undefined,
-    }
-
+    };
+  
     try {
-      const response = await axiosInstance.post("/projects", payload)
+      const response = await createProject(payload);
       setForm({
         title: "",
         description: "",
         startDate: null,
         endDate: null,
-      })
-      setSuccess("Project added successfully!")
+      });
+      setSuccess("Project added successfully!");
     } catch (err: any) {
-      setError(err?.response?.data?.message || "Failed to add project")
+      setError(err?.response?.data?.message || "Failed to add project");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
-
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-emerald-50 to-teal-50 flex items-center justify-center p-4 sm:p-6 ml-6">
       {/* Background decoration */}
