@@ -6,7 +6,7 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useSidebar } from "../context/SidebarContext"
 import { useAuth } from "../context/AuthContext"
-import { LayoutGrid, List, Users, FileText, ChevronLeft, ChevronRight, ChevronDown, Building2,Timer  } from "lucide-react"
+import { LayoutGrid, List, Users, FileText, ChevronLeft, ChevronRight, ChevronDown, Building,Timer,MessageCircle ,Folder ,UserPlus   } from "lucide-react"
 import { GridIcon, ListIcon, PaperPlaneIcon, TableIcon, UserCircleIcon, EnvelopeListIcon } from "../icons/index"
 import { colors } from "@/colors"
 
@@ -41,12 +41,12 @@ const superAdminNavItems: NavItem[] = [
   },
   {
     name: "Organizations",
-    icon: <Building2 size={20} />,
+    icon: <Building size={20} />,
     path: "/dashboard/superadmin/organizations",
   },
   {
     name: "Create Admin",
-    icon: <Building2 size={20} />,
+    icon: <UserPlus size={20} />,
     path: "/dashboard/superadmin/addadmin",
   },
 ]
@@ -60,7 +60,7 @@ const adminNavItems: NavItem[] = [
   },
   {
     name: "Projects",
-    icon: <List size={20} />,
+    icon: <Folder size={20} />,
     path: "/dashboard/admin/projects",
   },
   {
@@ -84,7 +84,7 @@ const managerNavItems: NavItem[] = [
   },
   {
     name: "Projects",
-    icon: <List size={20} />,
+    icon: <Folder size={20} />,
     path: "/dashboard/manager/addproject",
   },
   {
@@ -99,7 +99,7 @@ const managerNavItems: NavItem[] = [
   },
   {
     name: " Chats",
-    icon: <Timer  size={20} />,
+    icon: <MessageCircle  size={20} />,
     path: "/dashboard/manager/chat",
   },
 ]
