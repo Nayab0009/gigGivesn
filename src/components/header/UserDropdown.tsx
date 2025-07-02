@@ -4,6 +4,7 @@ import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { colors } from "@/colors";
 
 export default function UserDropdown() {
   const { user, signout } = useAuth();
@@ -43,17 +44,9 @@ export default function UserDropdown() {
 
   // Get background color based on role
   const getAvatarColor = () => {
-    if (!user) return 'bg-emerald-600';
-    
-    switch (user.role) {
-      case 'admin':
-        return 'bg-emerald-600';
-      case 'teacher':
-        return 'bg-emerald-600';
-      case 'student':
-      default:
-        return 'bg-emerald-600';
-    }
+    return {
+      background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`
+    };
   };
   
   return (
@@ -62,12 +55,14 @@ export default function UserDropdown() {
         onClick={toggleDropdown} 
         className="flex items-center text-gray-700 dark:text-gray-400 dropdown-toggle"
       >
-        <span className="mr-3 overflow-hidden rounded-full h-11 w-11 flex items-center justify-center text-white font-semibold text-lg">
-          <div className={`${getAvatarColor()} w-full h-full rounded-full flex items-center justify-center`}>
-            {getInitials(displayName)}
-          </div>
-        </span>
-
+       <span className="mr-3 overflow-hidden rounded-full h-11 w-11 flex items-center justify-center text-white font-semibold text-lg">
+  <div 
+    className="w-full h-full rounded-full flex items-center justify-center"
+    style={getAvatarColor()}
+  >
+    {getInitials(displayName)}
+  </div>
+</span>
         <span className="block mr-1 font-medium text-theme-sm">{displayName}</span>
 
         <svg

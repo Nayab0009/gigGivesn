@@ -19,6 +19,7 @@ import {
   Send
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { colors } from "@/colors";
 
 // Interface for task response from backend
 interface TaskResponse {
@@ -62,6 +63,11 @@ interface TaskResponse {
     isActive: boolean;
     createdAt: string;
     updatedAt: string;
+  } | null;
+  taskFor?: {
+    id: number;
+    name: string;
+    role: string;
   } | null;
 }
 
@@ -126,46 +132,46 @@ const ShowSprintTask: React.FC = () => {
   const getStatusInfo = (status: string | undefined | null) => {
     if (!status) {
       return {
-        color: 'bg-gradient-to-r from-slate-100 to-gray-100 text-slate-700 border-slate-200',
-        icon: <Clock className="w-5 h-5" />,
-        bgColor: 'bg-gradient-to-br from-slate-50 to-gray-50',
-        borderColor: 'border-slate-200',
-        glowColor: 'shadow-slate-100'
+        color: '',
+        icon: <Clock className="w-5 h-5" style={{ color: colors.primary.hex }} />,
+        bgColor: '',
+        borderColor: '',
+        glowColor: ''
       };
     }
     
     switch (status.toLowerCase()) {
       case 'completed':
         return {
-          color: 'bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700 border-emerald-200',
-          icon: <CheckCircle className="w-5 h-5" />,
-          bgColor: 'bg-gradient-to-br from-emerald-50 to-green-50',
-          borderColor: 'border-emerald-200',
-          glowColor: 'shadow-emerald-100'
+          color: '',
+          icon: <CheckCircle className="w-5 h-5" style={{ color: colors.primary.hex }} />,
+          bgColor: '',
+          borderColor: '',
+          glowColor: ''
         };
       case 'inprogress':
         return {
-          color: 'bg-gradient-to-r from-teal-100 to-cyan-100 text-teal-700 border-teal-200',
-          icon: <Clock className="w-5 h-5" />,
-          bgColor: 'bg-gradient-to-br from-teal-50 to-cyan-50',
-          borderColor: 'border-teal-200',
-          glowColor: 'shadow-teal-100'
+          color: '',
+          icon: <Clock className="w-5 h-5" style={{ color: colors.primary.hex }} />,
+          bgColor: '',
+          borderColor: '',
+          glowColor: ''
         };
       case 'cancelled':
         return {
-          color: 'bg-gradient-to-r from-red-100 to-rose-100 text-red-700 border-red-200',
-          icon: <AlertTriangle className="w-5 h-5" />,
-          bgColor: 'bg-gradient-to-br from-red-50 to-rose-50',
-          borderColor: 'border-red-200',
-          glowColor: 'shadow-red-100'
+          color: '',
+          icon: <AlertTriangle className="w-5 h-5 text-red-700" />,
+          bgColor: '',
+          borderColor: '',
+          glowColor: ''
         };
       default:
         return {
-          color: 'bg-gradient-to-r from-slate-100 to-gray-100 text-slate-700 border-slate-200',
-          icon: <Clock className="w-5 h-5" />,
-          bgColor: 'bg-gradient-to-br from-slate-50 to-gray-50',
-          borderColor: 'border-slate-200',
-          glowColor: 'shadow-slate-100'
+          color: '',
+          icon: <Clock className="w-5 h-5" style={{ color: colors.primary.hex }} />,
+          bgColor: '',
+          borderColor: '',
+          glowColor: ''
         };
     }
   };
@@ -244,23 +250,25 @@ const ShowSprintTask: React.FC = () => {
           </div>
           
           <div className="text-center mb-8">
-            <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent mb-4">
+            <h1 className="text-3xl sm:text-4xl font-bold mb-4" style={{ color: colors.primary.hex }}>
               {sprintName || `Sprint ${sprintId}`}
             </h1>
-            <div className="w-24 h-1 bg-gradient-to-r from-emerald-500 to-teal-600 mx-auto rounded-full mb-6"></div>
-            <p className="text-slate-600 text-xl max-w-2xl mx-auto">
+            <div className="w-24 h-1 mx-auto rounded-full mb-6" style={{ background: colors.primary.hex }}></div>
+            <p className="text-xl max-w-2xl mx-auto" style={{ color: colors.primary.hex }}>
               {sprint?.description || 'Sprint tasks and progress overview'}
             </p>
           </div>
         </div>
 
         {/* Stats Bar */}
-        <div className="mb-8 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl shadow-2xl p-8 text-white">
+        <div className="mb-8  rounded-3xl shadow-2xl p-8 text-white"  style={{
+            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+          }}>
           <div className="flex flex-col sm:flex-row gap-6 items-center justify-between">
             <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                  <ClipboardList className="w-6 h-6 text-white" />
+                  <ClipboardList className="w-6 h-6" style={{ color: colors.primary.hex }} />
                 </div>
                 <div>
                   <p className="text-sm text-emerald-100">Total Tasks</p>
@@ -269,7 +277,7 @@ const ShowSprintTask: React.FC = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                  <CheckCircle className="w-6 h-6 text-white" />
+                  <CheckCircle className="w-6 h-6" style={{ color: colors.primary.hex }} />
                 </div>
                 <div>
                   <p className="text-sm text-emerald-100">Completed</p>
@@ -278,7 +286,7 @@ const ShowSprintTask: React.FC = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                  <Clock className="w-6 h-6 text-white" />
+                  <Clock className="w-6 h-6" style={{ color: colors.primary.hex }} />
                 </div>
                 <div>
                   <p className="text-sm text-emerald-100">In Progress</p>
@@ -312,15 +320,15 @@ const ShowSprintTask: React.FC = () => {
         <div className="bg-white/60 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
           {isLoading ? (
             <div className="p-16 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full mb-6">
-                <Loader2 className="w-8 h-8 text-white animate-spin" />
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-6" style={{ background: colors.accent.hex }}>
+                <Loader2 className="w-8 h-8 animate-spin" style={{ color: colors.primary.hex }} />
               </div>
               <p className="text-slate-600 text-xl font-medium">Loading sprint tasks...</p>
             </div>
           ) : tasks.length === 0 ? (
             <div className="p-16 text-center">
-              <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center mb-6 mx-auto shadow-lg">
-                <ClipboardList className="w-10 h-10 text-white" />
+              <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6 mx-auto shadow-lg" style={{ background: colors.accent.hex }}>
+                <ClipboardList className="w-10 h-10" style={{ color: colors.primary.hex }} />
               </div>
               <h3 className="text-2xl font-bold text-slate-900 mb-3">No Tasks Found</h3>
               <p className="text-slate-500 text-lg">This sprint doesn't have any tasks assigned yet.</p>
@@ -339,16 +347,16 @@ const ShowSprintTask: React.FC = () => {
                       {/* Task Header */}
                       <div className="flex items-start justify-between mb-6">
                         <div className="flex-1">
-                          <h3 className="text-xl font-bold text-slate-900 mb-3 line-clamp-2 group-hover:text-emerald-700 transition-colors duration-300">
-                            {task.title}
+                          <h3 className="text-xl font-bold mb-3 line-clamp-2">
+                            <span style={{ color: colors.primary.hex }}>{task.title}</span>
                           </h3>
                           <div className="flex items-center space-x-3">
                             <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold ${statusInfo.color} shadow-lg`}>
                               {statusInfo.icon}
-                              {task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1) : ''}
+                              <span style={{ color: colors.primary.hex }}>{task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1) : ''}</span>
                             </div>
                             <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border ${getPriorityColor(task.priority)}`}>
-                              <Star className="w-4 h-4" />
+                              <Star className="w-4 h-4" style={{ color: colors.primary.hex }} />
                               {task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : ''}
                             </div>
                           </div>
@@ -363,21 +371,39 @@ const ShowSprintTask: React.FC = () => {
                       </div>
 
                       {/* Assignee Info */}
-                      {task.user ? (
+                      {task.taskFor ? (
                         <div className="mb-6 p-4 bg-slate-50/50 rounded-xl">
                           <div className="flex items-center space-x-3 mb-3">
-                            <User className="w-4 h-4 text-emerald-500" />
-                            <span className="text-sm font-semibold text-slate-700">Assigned To</span>
+                            <User className="w-4 h-4" style={{ color: colors.primary.hex }} />
+                            <span className="text-sm font-semibold" style={{ color: colors.primary.hex }}>Assigned To</span>
                           </div>
                           <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center">
-                              <span className="text-sm font-semibold text-emerald-600">
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: colors.accent.hex }}>
+                              <span style={{ color: colors.primary.hex }} className="text-sm font-semibold">
+                                {task.taskFor.name.charAt(0).toUpperCase()}
+                              </span>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium" style={{ color: colors.primary.hex }}>{task.taskFor.name}</p>
+                              <p className="text-xs" style={{ color: colors.secondary.hex }}>{task.taskFor.role}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ) : task.user ? (
+                        <div className="mb-6 p-4 bg-slate-50/50 rounded-xl">
+                          <div className="flex items-center space-x-3 mb-3">
+                            <User className="w-4 h-4" style={{ color: colors.primary.hex }} />
+                            <span className="text-sm font-semibold" style={{ color: colors.primary.hex }}>Assigned To</span>
+                          </div>
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: colors.accent.hex }}>
+                              <span style={{ color: colors.primary.hex }} className="text-sm font-semibold">
                                 {task.user.name.charAt(0).toUpperCase()}
                               </span>
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-slate-900">{task.user.name}</p>
-                              <p className="text-xs text-slate-500">{task.user.role}</p>
+                              <p className="text-sm font-medium" style={{ color: colors.primary.hex }}>{task.user.name}</p>
+                              <p className="text-xs" style={{ color: colors.secondary.hex }}>{task.user.role}</p>
                             </div>
                           </div>
                         </div>
@@ -402,18 +428,18 @@ const ShowSprintTask: React.FC = () => {
                       {/* Task Meta Info */}
                       <div className="space-y-3 mb-6 p-4 bg-slate-50/50 rounded-xl">
                         <div className="flex items-center space-x-3 text-sm text-slate-600">
-                          <Calendar className="w-4 h-4 text-emerald-500" />
+                          <Calendar className="w-4 h-4" style={{ color: colors.primary.hex }} />
                           <span>Created: {formatDate(task.createdAt)}</span>
                         </div>
                         {task.dueDate && (
                           <div className="flex items-center space-x-3 text-sm text-slate-600">
-                            <Clock className="w-4 h-4 text-emerald-500" />
+                            <Clock className="w-4 h-4" style={{ color: colors.primary.hex }} />
                             <span>Due: {formatDate(task.dueDate)}</span>
                           </div>
                         )}
                         {task.updatedAt !== task.createdAt && (
                           <div className="flex items-center space-x-3 text-sm text-slate-600">
-                            <Clock className="w-4 h-4 text-emerald-500" />
+                            <Clock className="w-4 h-4" style={{ color: colors.primary.hex }} />
                             <span>Updated: {formatDate(task.updatedAt)}</span>
                           </div>
                         )}

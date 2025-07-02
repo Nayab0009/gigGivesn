@@ -20,6 +20,7 @@ import {
 } from "lucide-react"
 import axiosInstance from "@/lib/axios"
 import { useAuth } from "@/context/AuthContext" // Import your AuthContext
+import { colors } from "@/colors"
 
 // Static team members data (you can replace with API call later)
 const staticTeamMembers = [
@@ -266,10 +267,10 @@ export default function ManagerDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-white via-emerald-50 to-teal-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})` }}>
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-full mb-4">
-            <RefreshCw className="w-8 h-8 text-emerald-600 animate-spin" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style={{ background: colors.accent.hex }}>
+            <RefreshCw className="w-8 h-8" style={{ color: colors.primary.hex }} />
           </div>
           <p className="text-gray-600 text-lg">Loading your dashboard...</p>
         </div>
@@ -278,13 +279,13 @@ export default function ManagerDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-emerald-50 to-teal-50 pb-12">
+    <div className="min-h-screen pb-12" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})` }}>
       {/* Header */}
-      <header className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white px-6 py-10 rounded-b-3xl shadow-xl mb-8 ml-6 mr-6">
+      <header className="px-6 py-10 rounded-b-3xl shadow-xl mb-8 ml-6 mr-6" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`, color: colors.highlight.hex }}>
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Manager Dashboard</h1>
-            <p className="text-emerald-200 text-sm md:text-base mt-1">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight" style={{ color: colors.highlight.hex }}>Manager Dashboard</h1>
+            <p className="text-sm md:text-base mt-1" style={{ color: colors.accent.hex }}>
               Welcome back, {user?.name || 'Manager'}! Oversee your assigned projects and manage your team effectively
             </p>
           </div>
@@ -307,48 +308,48 @@ export default function ManagerDashboard() {
 
         {/* Analytics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl shadow-lg p-6 hover:shadow-xl transition border border-white/50">
+          <div className="rounded-2xl shadow-lg p-6 hover:shadow-xl transition border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex }}>
             <div className="flex items-center justify-between mb-4">
-              <div className="bg-emerald-200 text-emerald-800 rounded-full p-3">
-                <FolderKanban className="w-6 h-6" />
+              <div className="rounded-full p-3" style={{ background: colors.secondary.hex, color: colors.primary.hex }}>
+                <FolderKanban className="w-6 h-6" style={{ color: colors.primary.hex }} />
               </div>
-              <TrendingUp className="w-5 h-5 text-emerald-600" />
+              <TrendingUp className="w-5 h-5" style={{ color: colors.primary.hex }} />
             </div>
-            <div className="text-3xl font-bold text-gray-900">{analytics.totalProjects}</div>
-            <div className="text-gray-600 text-sm mt-1 font-medium">Total Projects</div>
+            <div className="text-3xl font-bold" style={{ color: colors.secondary.hex }}>{analytics.totalProjects}</div>
+            <div className="text-sm mt-1 font-medium" style={{ color: colors.secondary.hex }}>Total Projects</div>
           </div>
 
-          <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl shadow-lg p-6 hover:shadow-xl transition border border-white/50">
+          <div className="rounded-2xl shadow-lg p-6 hover:shadow-xl transition border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex }}>
             <div className="flex items-center justify-between mb-4">
-              <div className="bg-teal-200 text-teal-800 rounded-full p-3">
-                <Target className="w-6 h-6" />
+              <div className="rounded-full p-3" style={{ background: colors.secondary.hex, color: colors.primary.hex }}>
+                <Target className="w-6 h-6" style={{ color: colors.primary.hex }} />
               </div>
-              <Clock className="w-5 h-5 text-teal-600" />
+              <Clock className="w-5 h-5" style={{ color: colors.primary.hex }} />
             </div>
-            <div className="text-3xl font-bold text-gray-900">{analytics.activeProjects}</div>
-            <div className="text-gray-600 text-sm mt-1 font-medium">Active Projects</div>
+            <div className="text-3xl font-bold" style={{ color: colors.secondary.hex }}>{analytics.activeProjects}</div>
+            <div className="text-sm mt-1 font-medium" style={{ color: colors.secondary.hex }}>Active Projects</div>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl shadow-lg p-6 hover:shadow-xl transition border border-white/50">
+          <div className="rounded-2xl shadow-lg p-6 hover:shadow-xl transition border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex }}>
             <div className="flex items-center justify-between mb-4">
-              <div className="bg-blue-200 text-blue-800 rounded-full p-3">
-                <CheckCircle className="w-6 h-6" />
+              <div className="rounded-full p-3" style={{ background: colors.secondary.hex, color: colors.primary.hex }}>
+                <CheckCircle className="w-6 h-6" style={{ color: colors.primary.hex }} />
               </div>
-              <Award className="w-5 h-5 text-blue-600" />
+              <Award className="w-5 h-5" style={{ color: colors.primary.hex }} />
             </div>
-            <div className="text-3xl font-bold text-gray-900">{analytics.completedProjects}</div>
-            <div className="text-gray-600 text-sm mt-1 font-medium">Completed Projects</div>
+            <div className="text-3xl font-bold" style={{ color: colors.secondary.hex }}>{analytics.completedProjects}</div>
+            <div className="text-sm mt-1 font-medium" style={{ color: colors.secondary.hex }}>Completed Projects</div>
           </div>
 
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl shadow-lg p-6 hover:shadow-xl transition border border-white/50">
+          <div className="rounded-2xl shadow-lg p-6 hover:shadow-xl transition border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex }}>
             <div className="flex items-center justify-between mb-4">
-              <div className="bg-purple-200 text-purple-800 rounded-full p-3">
-                <Users className="w-6 h-6" />
+              <div className="rounded-full p-3" style={{ background: colors.secondary.hex, color: colors.primary.hex }}>
+                <Users className="w-6 h-6" style={{ color: colors.primary.hex }} />
               </div>
-              <Star className="w-5 h-5 text-amber-500" />
+              <Star className="w-5 h-5" style={{ color: colors.primary.hex }} />
             </div>
-            <div className="text-3xl font-bold text-gray-900">{analytics.teamMembers}</div>
-            <div className="text-gray-600 text-sm mt-1 font-medium">Team Members</div>
+            <div className="text-3xl font-bold" style={{ color: colors.secondary.hex }}>{analytics.teamMembers}</div>
+            <div className="text-sm mt-1 font-medium" style={{ color: colors.secondary.hex }}>Team Members</div>
           </div>
         </div>
 
@@ -357,12 +358,13 @@ export default function ManagerDashboard() {
           {/* Projects Section */}
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">Your Assigned Projects</h2>
+              <h2 className="text-2xl font-bold" style={{ color: colors.primary.hex }}>Your Assigned Projects</h2>
               <button
                 onClick={() => window.location.reload()}
-                className="text-emerald-600 hover:text-emerald-700 text-sm font-medium flex items-center gap-1"
+                className="text-sm font-medium flex items-center gap-1"
+                style={{ color: colors.primary.hex }}
               >
-                <RefreshCw className="w-4 h-4" />
+                <RefreshCw className="w-4 h-4" style={{ color: colors.primary.hex }} />
                 Refresh
               </button>
             </div>
@@ -370,32 +372,33 @@ export default function ManagerDashboard() {
             <div className="space-y-6">
               {activeProjects.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <FolderKanban className="w-8 h-8 text-emerald-500" />
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: colors.accent.hex }}>
+                    <FolderKanban className="w-8 h-8" style={{ color: colors.primary.hex }} />
                   </div>
-                  <p className="text-gray-600 text-lg font-medium mb-1">No Active Projects</p>
+                  <p className="text-lg font-medium mb-1" style={{ color: colors.primary.hex }}>No Active Projects</p>
                   <p className="text-gray-500">You don't have any active projects assigned yet.</p>
                 </div>
               ) : (
                 activeProjects.map((project, index) => (
                   <div
                     key={project.id}
-                    className={`${getCardBackground(index)} rounded-xl shadow-lg hover:shadow-xl transition p-6 border border-white/50`}
+                    className="rounded-xl shadow-lg hover:shadow-xl transition p-6 border"
+                    style={{ background: colors.accent.hex, borderColor: colors.primary.hex }}
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <h3 className="font-bold text-lg text-gray-900 mb-2">
+                        <h3 className="font-bold text-lg mb-2" style={{ color: colors.primary.hex }}>
                           {project.name || project.title}
                         </h3>
-                        <p className="text-gray-700 text-sm mb-3">{project.description}</p>
-                        <div className="flex items-center gap-4 text-xs text-gray-600">
+                        <p className="text-sm mb-3" style={{ color: colors.secondary.hex }}>{project.description}</p>
+                        <div className="flex items-center gap-4 text-xs" style={{ color: colors.primary.hex }}>
                           <span className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" />
+                            <Calendar className="w-3 h-3" style={{ color: colors.primary.hex }} />
                             Start: {project.startDate && new Date(project.startDate).toLocaleDateString()}
                           </span>
                           {project.endDate && (
                             <span className="flex items-center gap-1">
-                              <Calendar className="w-3 h-3" />
+                              <Calendar className="w-3 h-3" style={{ color: colors.primary.hex }} />
                               Due: {new Date(project.endDate).toLocaleDateString()}
                             </span>
                           )}
@@ -406,13 +409,15 @@ export default function ManagerDashboard() {
                       </div>
                       <div className="flex flex-col gap-2 items-end">
                         <span
-                          className={`text-xs font-semibold px-3 py-1 rounded-full ${getStatusColor(project.status)}`}
+                          className="text-xs font-semibold px-3 py-1 rounded-full"
+                          style={{ background: colors.primary.hex, color: colors.highlight.hex }}
                         >
                           {project.status?.replace('-', ' ')}
                         </span>
                         {project.priority && (
                           <span
-                            className={`text-xs font-medium px-2 py-1 rounded-md border ${getPriorityColor(project.priority)}`}
+                            className="text-xs font-medium px-2 py-1 rounded-md border"
+                            style={{ background: colors.highlight.hex, color: colors.warning.hex, borderColor: colors.warning.hex }}
                           >
                             {project.priority}
                           </span>
@@ -422,16 +427,16 @@ export default function ManagerDashboard() {
 
                     {(project.progress !== undefined || project.completion !== undefined) && (
                       <div>
-                        <div className="flex justify-between text-sm mb-2">
-                          <span className="text-gray-700">Progress</span>
-                          <span className="font-medium text-gray-800">
+                        <div className="flex justify-between text-sm mb-2" style={{ color: colors.primary.hex }}>
+                          <span>Progress</span>
+                          <span className="font-medium" style={{ color: colors.primary.hex }}>
                             {project.progress || project.completion || 0}%
                           </span>
                         </div>
                         <div className="w-full bg-white/60 rounded-full h-2">
                           <div
-                            className="bg-gradient-to-r from-emerald-500 to-teal-600 h-2 rounded-full transition-all duration-500"
-                            style={{ width: `${project.progress || project.completion || 0}%` }}
+                            className="h-2 rounded-full transition-all duration-500"
+                            style={{ width: `${project.progress || project.completion || 0}%`, background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})` }}
                           />
                         </div>
                       </div>
@@ -445,23 +450,23 @@ export default function ManagerDashboard() {
           {/* Right Sidebar */}
           <div className="space-y-6">
             {/* Team Performance */}
-            <div className="bg-gradient-to-br from-rose-50 to-pink-100 rounded-2xl shadow-lg px-6 py-8 border border-white/50">
-              <h3 className="font-bold text-lg mb-4 text-gray-900">Team Performance</h3>
+            <div className="rounded-2xl shadow-lg px-6 py-8 border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex }}>
+              <h3 className="font-bold text-lg mb-4" style={{ color: colors.primary.hex }}>Team Performance</h3>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-700">Total Tasks Completed</span>
-                  <span className="font-bold text-emerald-600">{analytics.totalTasks}</span>
+                  <span className="text-sm" style={{ color: colors.primary.hex }}>Total Tasks Completed</span>
+                  <span className="font-bold" style={{ color: colors.primary.hex }}>{analytics.totalTasks}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-700">Average Rating</span>
-                  <span className="font-bold text-yellow-600 flex items-center gap-1">
-                    <Star className="w-4 h-4 fill-current" />
+                  <span className="text-sm" style={{ color: colors.primary.hex }}>Average Rating</span>
+                  <span className="font-bold flex items-center gap-1" style={{ color: colors.warning.hex }}>
+                    <Star className="w-4 h-4 fill-current" style={{ color: colors.warning.hex }} />
                     {analytics.avgTeamRating}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-700">Active Members</span>
-                  <span className="font-bold text-emerald-600">
+                  <span className="text-sm" style={{ color: colors.primary.hex }}>Active Members</span>
+                  <span className="font-bold" style={{ color: colors.primary.hex }}>
                     {teamMembers.filter((m) => m.status === "online").length}
                   </span>
                 </div>
@@ -469,10 +474,10 @@ export default function ManagerDashboard() {
             </div>
 
             {/* Recent Team Activity */}
-            <div className="bg-gradient-to-br from-indigo-50 to-blue-100 rounded-2xl shadow-lg px-6 py-8 border border-white/50">
+            <div className="rounded-2xl shadow-lg px-6 py-8 border" style={{ background: colors.accent.hex, borderColor: colors.primary.hex }}>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-lg text-gray-900">Team Members</h3>
-                <a href="#" className="text-emerald-600 text-xs font-medium hover:underline">
+                <h3 className="font-bold text-lg" style={{ color: colors.primary.hex }}>Team Members</h3>
+                <a href="#" className="text-xs font-medium hover:underline" style={{ color: colors.primary.hex }}>
                   View all
                 </a>
               </div>
@@ -480,41 +485,42 @@ export default function ManagerDashboard() {
                 {teamMembers.slice(0, 4).map((member) => (
                   <div key={member.id} className="flex items-center gap-3">
                     <div className="relative">
-                      <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-sm font-bold text-white">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: colors.primary.hex, color: colors.highlight.hex }}>
                         {member.avatar}
                       </div>
                       <div
-                        className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 ${getStatusDot(member.status)} rounded-full border-2 border-white`}
+                        className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white"
+                        style={{ background: member.status === 'online' ? colors.primary.hex : member.status === 'away' ? colors.warning.hex : '#ccc' }}
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm text-gray-900 truncate">{member.name}</div>
-                      <div className="text-xs text-gray-600 truncate">{member.role}</div>
+                      <div className="font-medium text-sm truncate" style={{ color: colors.primary.hex }}>{member.name}</div>
+                      <div className="text-xs truncate" style={{ color: colors.secondary.hex }}>{member.role}</div>
                     </div>
-                    <div className="text-xs text-emerald-600 font-medium">{member.tasksCompleted} tasks</div>
+                    <div className="text-xs font-medium" style={{ color: colors.primary.hex }}>{member.tasksCompleted} tasks</div>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Quick Actions */}
-            <div className="bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl shadow-lg px-6 py-7 text-white">
+            <div className="rounded-2xl shadow-lg px-6 py-7" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`, color: colors.highlight.hex }}>
               <h3 className="font-semibold text-lg mb-4">Quick Actions</h3>
               <div className="space-y-3">
-                <button className="w-full text-left hover:bg-white/10 rounded-lg p-2 transition flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4" />
+                <button className="w-full text-left hover:bg-white/10 rounded-lg p-2 transition flex items-center gap-2" style={{ color: colors.highlight.hex }}>
+                  <MessageSquare className="h-4 w-4" style={{ color: colors.highlight.hex }} />
                   <span className="text-sm">Team Meeting</span>
                 </button>
-                <button className="w-full text-left hover:bg-white/10 rounded-lg p-2 transition flex items-center gap-2">
-                  <BarChart2 className="h-4 w-4" />
+                <button className="w-full text-left hover:bg-white/10 rounded-lg p-2 transition flex items-center gap-2" style={{ color: colors.highlight.hex }}>
+                  <BarChart2 className="h-4 w-4" style={{ color: colors.highlight.hex }} />
                   <span className="text-sm">View Reports</span>
                 </button>
-                <button className="w-full text-left hover:bg-white/10 rounded-lg p-2 transition flex items-center gap-2">
-                  <Settings className="h-4 w-4" />
+                <button className="w-full text-left hover:bg-white/10 rounded-lg p-2 transition flex items-center gap-2" style={{ color: colors.highlight.hex }}>
+                  <Settings className="h-4 w-4" style={{ color: colors.highlight.hex }} />
                   <span className="text-sm">Project Settings</span>
                 </button>
-                <button className="w-full text-left hover:bg-white/10 rounded-lg p-2 transition flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
+                <button className="w-full text-left hover:bg-white/10 rounded-lg p-2 transition flex items-center gap-2" style={{ color: colors.highlight.hex }}>
+                  <Calendar className="h-4 w-4" style={{ color: colors.highlight.hex }} />
                   <span className="text-sm">Schedule Review</span>
                 </button>
               </div>

@@ -3,7 +3,7 @@ import type React from "react"
 import { useState } from "react"
 import { Loader2, CalendarDays, FileText, Plus, Sparkles } from "lucide-react"
 import { createProject } from "@/lib/ProjectService"
-
+import { colors } from "@/colors"
 // You can install and use react-datepicker for a better UX:
 // npm install react-datepicker
 import DatePicker from "react-datepicker"
@@ -64,6 +64,7 @@ const AddProject: React.FC = () => {
       setIsSubmitting(false);
     }
   };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-emerald-50 to-teal-50 flex items-center justify-center p-4 sm:p-6 ml-6">
       {/* Background decoration */}
@@ -76,10 +77,22 @@ const AddProject: React.FC = () => {
       <div className="relative w-full max-w-4xl bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 sm:p-10">
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-600 to-teal-700 rounded-2xl mb-6 shadow-lg">
+          <div 
+            className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg"
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+            }}
+          >
             <Sparkles className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent mb-3">
+          <h1 
+            className="text-4xl font-bold bg-clip-text text-transparent mb-3"
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
             Create New Project
           </h1>
           <p className="text-gray-600 text-lg font-medium">Transform your ideas into reality</p>
@@ -90,7 +103,12 @@ const AddProject: React.FC = () => {
             {/* Project Title */}
             <div className="group">
               <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg shadow-sm">
+                <div 
+                  className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
+                  style={{
+                    background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                  }}
+                >
                   <FileText className="w-4 h-4 text-white" />
                 </div>
                 <span className="text-lg">Project Title</span>
@@ -103,16 +121,35 @@ const AddProject: React.FC = () => {
                   onChange={handleChange}
                   required
                   placeholder="Enter your amazing project title..."
-                  className="w-full border-2 border-emerald-200 rounded-2xl px-6 py-4 text-lg focus:ring-4 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md group-hover:border-emerald-300"
+                  className="w-full border-2 border-emerald-200 rounded-2xl px-6 py-4 text-lg focus:ring-4 transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md group-hover:border-emerald-300"
+                  style={{
+                    '--tw-ring-color': `${colors.primary.hex}33`,
+                    borderColor: `${colors.primary.hex}40`,
+                  } as React.CSSProperties}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = colors.primary.hex;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = `${colors.primary.hex}40`;
+                  }}
                 />
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  style={{
+                    background: `linear-gradient(to right, ${colors.primary.hex}0D, ${colors.secondary.hex}0D)`,
+                  }}
+                ></div>
               </div>
             </div>
 
             {/* Description */}
             <div className="group">
               <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-teal-500 to-teal-600 rounded-lg shadow-sm">
+                <div 
+                  className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
+                  style={{
+                    background: `linear-gradient(to right, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                  }}
+                >
                   <FileText className="w-4 h-4 text-white" />
                 </div>
                 <span className="text-lg">Project Description</span>
@@ -125,9 +162,23 @@ const AddProject: React.FC = () => {
                   required
                   placeholder="Describe your project vision, goals, and key features..."
                   rows={5}
-                  className="w-full border-2 border-teal-200 rounded-2xl px-6 py-4 text-lg focus:ring-4 focus:ring-teal-500/20 focus:border-teal-500 transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md resize-none group-hover:border-teal-300"
+                  className="w-full border-2 border-teal-200 rounded-2xl px-6 py-4 text-lg focus:ring-4 transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md resize-none group-hover:border-teal-300"
+                  style={{
+                    '--tw-ring-color': `${colors.secondary.hex}33`,
+                    borderColor: `${colors.secondary.hex}40`,
+                  } as React.CSSProperties}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = colors.secondary.hex;
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = `${colors.secondary.hex}40`;
+                  }}
                 />
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-teal-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  style={{
+                    background: `linear-gradient(to right, ${colors.secondary.hex}0D, ${colors.accent.hex}0D)`,
+                  }}
+                ></div>
               </div>
             </div>
 
@@ -136,50 +187,97 @@ const AddProject: React.FC = () => {
               {/* Start Date */}
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg shadow-sm">
+                  <div 
+                    className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
+                    style={{
+                      background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.accent.hex})`,
+                    }}
+                  >
                     <CalendarDays className="w-4 h-4 text-white" />
                   </div>
                   <span className="text-lg">Start Date</span>
                   <span className="text-sm text-gray-500 font-normal">(optional)</span>
                 </label>
                 <div className="relative">
-                  <div className="relative bg-white/70 backdrop-blur-sm rounded-2xl border-2 border-green-200 shadow-sm hover:shadow-md transition-all duration-300 group-hover:border-green-300">
+                  <div 
+                    className="relative bg-white/70 backdrop-blur-sm rounded-2xl border-2 shadow-sm hover:shadow-md transition-all duration-300"
+                    style={{
+                      borderColor: `${colors.primary.hex}40`,
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = `${colors.primary.hex}66`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = `${colors.primary.hex}40`;
+                    }}
+                  >
                     <DatePicker
                       selected={form.startDate}
                       onChange={(date) => handleDateChange(date, "startDate")}
-                      className="w-full px-6 py-4 text-lg bg-transparent border-none rounded-2xl focus:ring-4 focus:ring-green-500/20 focus:outline-none"
+                      className="w-full px-6 py-4 text-lg bg-transparent border-none rounded-2xl focus:ring-4 focus:outline-none"
                       placeholderText="Select project start date"
                       dateFormat="MMM dd, yyyy"
                       isClearable
                       showMonthDropdown
                       showYearDropdown
                       dropdownMode="select"
+                      style={{
+                        '--tw-ring-color': `${colors.primary.hex}33`,
+                      } as React.CSSProperties}
                     />
                     <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                      <div className="flex items-center justify-center w-8 h-8 bg-green-100 rounded-lg">
-                        <CalendarDays className="w-4 h-4 text-green-600" />
+                      <div 
+                        className="flex items-center justify-center w-8 h-8 rounded-lg"
+                        style={{
+                          backgroundColor: `${colors.primary.hex}1A`,
+                        }}
+                      >
+                        <CalendarDays 
+                          className="w-4 h-4"
+                          style={{ color: colors.primary.hex }}
+                        />
                       </div>
                     </div>
                   </div>
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                    style={{
+                      background: `linear-gradient(to right, ${colors.primary.hex}0D, ${colors.accent.hex}0D)`,
+                    }}
+                  ></div>
                 </div>
               </div>
 
               {/* End Date */}
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-lg shadow-sm">
+                  <div 
+                    className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
+                    style={{
+                      background: `linear-gradient(to right, ${colors.secondary.hex}, ${colors.primary.hex})`,
+                    }}
+                  >
                     <CalendarDays className="w-4 h-4 text-white" />
                   </div>
                   <span className="text-lg">End Date</span>
                   <span className="text-sm text-gray-500 font-normal">(optional)</span>
                 </label>
                 <div className="relative">
-                  <div className="relative bg-white/70 backdrop-blur-sm rounded-2xl border-2 border-cyan-200 shadow-sm hover:shadow-md transition-all duration-300 group-hover:border-cyan-300">
+                  <div 
+                    className="relative bg-white/70 backdrop-blur-sm rounded-2xl border-2 shadow-sm hover:shadow-md transition-all duration-300"
+                    style={{
+                      borderColor: `${colors.secondary.hex}40`,
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = `${colors.secondary.hex}66`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = `${colors.secondary.hex}40`;
+                    }}
+                  >
                     <DatePicker
                       selected={form.endDate}
                       onChange={(date) => handleDateChange(date, "endDate")}
-                      className="w-full px-6 py-4 text-lg bg-transparent border-none rounded-2xl focus:ring-4 focus:ring-cyan-500/20 focus:outline-none"
+                      className="w-full px-6 py-4 text-lg bg-transparent border-none rounded-2xl focus:ring-4 focus:outline-none"
                       placeholderText="Select project end date"
                       dateFormat="MMM dd, yyyy"
                       isClearable
@@ -187,14 +285,29 @@ const AddProject: React.FC = () => {
                       showMonthDropdown
                       showYearDropdown
                       dropdownMode="select"
+                      style={{
+                        '--tw-ring-color': `${colors.secondary.hex}33`,
+                      } as React.CSSProperties}
                     />
                     <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                      <div className="flex items-center justify-center w-8 h-8 bg-cyan-100 rounded-lg">
-                        <CalendarDays className="w-4 h-4 text-cyan-600" />
+                      <div 
+                        className="flex items-center justify-center w-8 h-8 rounded-lg"
+                        style={{
+                          backgroundColor: `${colors.secondary.hex}1A`,
+                        }}
+                      >
+                        <CalendarDays 
+                          className="w-4 h-4"
+                          style={{ color: colors.secondary.hex }}
+                        />
                       </div>
                     </div>
                   </div>
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500/5 to-teal-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                    style={{
+                      background: `linear-gradient(to right, ${colors.secondary.hex}0D, ${colors.primary.hex}0D)`,
+                    }}
+                  ></div>
                 </div>
               </div>
             </div>
@@ -206,8 +319,17 @@ const AddProject: React.FC = () => {
               </div>
             )}
             {success && (
-              <div className="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-4 text-center">
-                <div className="text-emerald-700 font-semibold text-lg flex items-center justify-center space-x-2">
+              <div 
+                className="border-2 rounded-2xl p-4 text-center"
+                style={{
+                  backgroundColor: `${colors.accent.hex}1A`,
+                  borderColor: `${colors.accent.hex}40`,
+                }}
+              >
+                <div 
+                  className="font-semibold text-lg flex items-center justify-center space-x-2"
+                  style={{ color: colors.accent.hex }}
+                >
                   <Sparkles className="w-5 h-5" />
                   <span>{success}</span>
                 </div>
@@ -219,9 +341,27 @@ const AddProject: React.FC = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="group relative overflow-hidden bg-gradient-to-r from-emerald-600 via-emerald-700 to-teal-700 text-white font-bold py-4 px-12 rounded-full hover:from-emerald-700 hover:via-teal-700 hover:to-teal-800 transition-all duration-300 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed text-lg transform hover:scale-105 active:scale-95 min-w-[200px]"
+                className="group relative overflow-hidden text-white font-bold py-4 px-12 rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed text-lg transform hover:scale-105 active:scale-95 min-w-[200px]"
+                style={{
+                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                }}
+                onMouseEnter={(e) => {
+                  if (!isSubmitting) {
+                    e.currentTarget.style.background = `linear-gradient(to right, ${colors.primary.hex}E6, ${colors.secondary.hex}E6, ${colors.accent.hex}E6)`;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isSubmitting) {
+                    e.currentTarget.style.background = `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`;
+                  }
+                }}
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600/20 to-teal-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div 
+                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    background: `linear-gradient(to right, ${colors.primary.hex}33, ${colors.secondary.hex}33, ${colors.accent.hex}33)`,
+                  }}
+                ></div>
                 <div className="relative flex items-center justify-center">
                   {isSubmitting ? (
                     <>

@@ -6,14 +6,18 @@ import { Calendar, Clock, Plus, Users, CheckCircle, Circle } from 'lucide-react'
 import { useRouter } from 'next/navigation';
 import { AssignTaskModal } from '../adminDashboard/AssignProjectTicket';
 import type { Task } from '@/types';
+import { colors } from "@/colors"
+import axiosInstance from '@/lib/axios';
 
 const ManagerSprintsCards: React.FC = () => {
   const { user } = useAuth();
   const router = useRouter();
 
+  const [projects, setProjects] = useState<any[]>([]);
   const [sprints, setSprints] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedProject, setSelectedProject] = useState<any | null>(null);
   
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,7 +40,7 @@ const ManagerSprintsCards: React.FC = () => {
   const getUserStatusIcon = (status: string) => {
     switch (status.toLowerCase()) {
       case 'active':
-        return <CheckCircle className="w-3 h-3 text-green-500" />;
+        return <CheckCircle className="w-3 h-3" style={{ color: colors.primary.hex }} />;
       case 'busy':
         return <Clock className="w-3 h-3 text-yellow-500" />;
       case 'offline':
@@ -46,17 +50,40 @@ const ManagerSprintsCards: React.FC = () => {
     }
   };
 
+  // Fetch projects for manager on mount
   useEffect(() => {
     if (user?.id) {
-      getSprintsForManagers(String(user.id))
-        .then((data) => setSprints(data))
-        .catch((err) => {
-          console.error('Error fetching sprints:', err);
-          setError('Failed to load sprints.');
-        })
-        .finally(() => setLoading(false));
+      setLoading(true);
+      setError(null);
+      setSelectedProject(null);
+      setSprints([]);
+      import('@/lib/SprintService').then(({ getProjectsForManagers }) => {
+        getProjectsForManagers(String(user.id))
+          .then((data) => setProjects(data))
+          .catch((err) => {
+            setError('Failed to load projects.');
+            setProjects([]);
+          })
+          .finally(() => setLoading(false));
+      });
     }
   }, [user?.id]);
+
+  // Fetch sprints for selected project
+  const handleProjectClick = async (project: any) => {
+    setSelectedProject(project);
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await axiosInstance.get(`/sprint/project/${project.id}`);
+      setSprints(data);
+    } catch (err) {
+      setError('Failed to load sprints.');
+      setSprints([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Handle sprint card click - navigate to sprint tasks page
   const handleSprintClick = (sprint: any) => {
@@ -96,99 +123,151 @@ const ManagerSprintsCards: React.FC = () => {
     // You can add additional logic here like showing a success toast
   };
 
-  if (loading) return <p>Loading sprints...</p>;
+  if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
-  if (sprints.length === 0)
+
+  // Show projects if no project is selected
+  if (!selectedProject) {
+    if (projects.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center gap-4">
+          <p>No projects found.</p>
+        </div>
+      );
+    }
     return (
-      <div className="flex flex-col items-center justify-center gap-4">
-        <p>No sprints found.</p>
-        <button
-          onClick={() => router.push('/dashboard/manager/addsprints')}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition"
-        >
-          <Plus className="w-4 h-4" />
-          Add Sprint
-        </button>
+      <div>
+        <div className="flex justify-end mb-6">
+          <button
+            onClick={() => router.push('/dashboard/manager/addproject')}
+            className="inline-flex items-center gap-2 px-4 py-2 text-white font-medium rounded-xl transition shadow-sm"
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+            }}
+          >
+            <Plus className="w-4 h-4" />
+            Add Project
+          </button>
+        </div>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {projects.map((project) => (
+            <div
+              key={project.id}
+              className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-xl transition cursor-pointer transform hover:scale-105 group"
+              style={{ borderColor: colors.primary.hex, borderWidth: 1, borderStyle: 'solid' }}
+              onClick={() => handleProjectClick(project)}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-xl font-bold transition" style={{ color: colors.primary.hex }}>
+                  {project.name}
+                </h2>
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Users className="w-5 h-5" style={{ color: colors.primary.hex }} />
+                </div>
+              </div>
+              <p className="mb-4 line-clamp-3" style={{ color: colors.secondary.hex }}>
+                {project.description}
+              </p>
+              <div className="flex items-center gap-4 text-sm mb-4" style={{ color: colors.secondary.hex }}>
+                <span className="flex items-center gap-1">
+                  <Calendar className="w-4 h-4" style={{ color: colors.primary.hex }} />
+                  {project.startDate && new Date(project.startDate).toLocaleDateString()}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Clock className="w-4 h-4" style={{ color: colors.primary.hex }} />
+                  {project.endDate && new Date(project.endDate).toLocaleDateString()}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
+  }
 
+  // Show sprints for selected project
   return (
     <div>
-      {/* Top right "Add Sprint" button */}
-      <div className="flex justify-end mb-6">
-        <button
-          onClick={() => router.push('/dashboard/manager/addsprints')}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition shadow-sm"
-        >
-          <Plus className="w-4 h-4" />
-          Add Sprint
-        </button>
-      </div>
-
-      {/* Sprints Cards */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {sprints.map((sprint) => (
-          <div
-            key={sprint.id}
-            className="bg-white border border-emerald-200 rounded-2xl shadow-sm p-6 hover:shadow-xl hover:border-emerald-300 transition cursor-pointer transform hover:scale-105 group"
-          >
-            {/* Add visual indicator for clickability */}
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="text-xl font-bold text-emerald-700 group-hover:text-emerald-800 transition">
-                {sprint.name}
-              </h2>
-              <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                <Users className="w-5 h-5 text-emerald-600" />
+      <button
+        onClick={() => {
+          setSelectedProject(null);
+          setSprints([]);
+        }}
+        className="mb-6 px-4 py-2 rounded-xl text-white font-medium"
+        style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})` }}
+      >
+        Back to Projects
+      </button>
+      <h2 className="text-2xl font-bold mb-6" style={{ color: colors.primary.hex }}>{selectedProject.name} Sprints</h2>
+      {sprints.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-4">
+          <p>No sprints found for this project.</p>
+        </div>
+      ) : (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {sprints.map((sprint) => (
+            <div
+              key={sprint.id}
+              className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-xl transition cursor-pointer transform hover:scale-105 group"
+              style={{ borderColor: colors.primary.hex, borderWidth: 1, borderStyle: 'solid' }}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-xl font-bold transition" style={{ color: colors.primary.hex }}>
+                  {sprint.name}
+                </h2>
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Users className="w-5 h-5" style={{ color: colors.primary.hex }} />
+                </div>
+              </div>
+              <p className="mb-4 line-clamp-3" style={{ color: colors.secondary.hex }}>
+                {sprint.description}
+              </p>
+              <div className="flex items-center gap-4 text-sm mb-4" style={{ color: colors.secondary.hex }}>
+                <span className="flex items-center gap-1">
+                  <Calendar className="w-4 h-4" style={{ color: colors.primary.hex }} />
+                  {sprint.startDate && new Date(sprint.startDate).toLocaleDateString()}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Clock className="w-4 h-4" style={{ color: colors.primary.hex }} />
+                  {sprint.endDate && new Date(sprint.endDate).toLocaleDateString()}
+                </span>
+              </div>
+              {sprint.project && (
+                <div className="mt-2 text-sm font-semibold inline-block px-3 py-1 rounded-full" style={{ color: colors.primary.hex, background: colors.accent.hex }}>
+                  Project: {sprint.project.name}
+                </div>
+              )}
+              <div className="mt-4 flex items-center gap-2">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddTask(sprint);
+                  }}
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 text-white font-medium rounded-xl transition shadow-sm"
+                  style={{
+                    background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                  }}
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Task
+                </button>
+                <button
+                  onClick={() => handleSprintClick(sprint)}
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 text-white font-medium rounded-xl transition shadow-sm"
+                  style={{
+                    background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                  }}
+                >
+                  <Users className="w-4 h-4" />
+                  View Tasks
+                </button>
               </div>
             </div>
-            
-            <p className="text-gray-600 mb-4 line-clamp-3">
-              {sprint.description}
-            </p>
-            
-            <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
-              <span className="flex items-center gap-1">
-                <Calendar className="w-4 h-4 text-emerald-500" />
-                {new Date(sprint.startDate).toLocaleDateString()}
-              </span>
-              <span className="flex items-center gap-1">
-                <Clock className="w-4 h-4 text-emerald-500" />
-                {new Date(sprint.endDate).toLocaleDateString()}
-              </span>
-            </div>
-            
-            {sprint.project && (
-              <div className="mt-2 text-sm font-semibold text-emerald-600 bg-emerald-100 inline-block px-3 py-1 rounded-full">
-                Project: {sprint.project.name}
-              </div>
-            )}
-            
-            {/* Action Buttons */}
-            <div className="mt-4 flex items-center gap-2">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAddTask(sprint);
-                }}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-xl transition shadow-sm"
-              >
-                <Plus className="w-4 h-4" />
-                Add Task
-              </button>
-              <button
-                onClick={() => handleSprintClick(sprint)}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl transition shadow-sm"
-              >
-                <Users className="w-4 h-4" />
-                View Tasks
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Assign Task Modal */}
-      {selectedSprintId && (
+          ))}
+        </div>
+      )}
+      {/* Assign Task Modal for sprints */}
+      {typeof selectedSprintId === 'number' && (
         <AssignTaskModal
           open={isModalOpen}
           onClose={handleModalClose}
@@ -196,7 +275,7 @@ const ManagerSprintsCards: React.FC = () => {
           task={task}
           setTask={setTask}
           getUserStatusIcon={getUserStatusIcon}
-          projectId={sprints.find(s => s.id === selectedSprintId)?.project?.id}
+          projectId={selectedProject.id}
           sprintId={selectedSprintId}
         />
       )}

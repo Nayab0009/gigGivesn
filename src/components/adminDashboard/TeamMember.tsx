@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react"
 import { Search, Plus, RefreshCw, AlertCircle, Edit, Trash2, Eye } from "lucide-react"
 import { useRouter } from "next/navigation"
 import axiosInstance from "@/lib/axios"
+import { colors } from "@/colors"
 
 interface TeamMember {
   id?: string | number
@@ -80,42 +81,96 @@ export default function TeamListPage() {
   }, [teamMembers, searchTerm])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-4 sm:p-6 lg:p-8">
+    <div
+  
+      className="p-4 sm:p-6 lg:p-8"
+    >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent mb-2">Team Members</h1>
-          <p className="text-slate-600 text-lg">Manage and track all team members</p>
+          <h1
+            className="text-3xl sm:text-4xl font-bold mb-2"
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+            }}
+          >
+            Team Members
+          </h1>
+          <p
+            className="text-lg"
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+            }}
+          >
+            Manage and track all team members
+          </p>
         </div>
 
         {/* Action Bar */}
-        <div className="mb-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200 p-6">
+        <div
+          className="mb-8 rounded-2xl shadow-lg border p-6"
+          style={{
+            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+            color: '#fff',
+            borderColor: colors.primary.hex,
+          }}
+        >
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             <div className="relative flex-1 max-w-md w-full">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+              <Search
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5"
+                style={{ color: colors.accent.hex }}
+              />
               <input
                 type="text"
                 placeholder="Search employees by name, email or ID..."
-                className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 text-slate-900 placeholder-slate-500 shadow-sm focus:shadow-md"
+                className="w-full pl-10 pr-4 py-3 rounded-2xl focus:ring-2 transition-all duration-300 shadow-sm focus:shadow-md"
+                style={{
+                  background: '#fff',
+                  color: colors.primary.hex,
+                  border: `1px solid ${colors.primary.hex}`,
+                }}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
-              <div className="text-sm text-slate-600 bg-slate-100 px-4 py-2 rounded-full border border-slate-200">
-                <span className="font-semibold text-slate-800">{filteredMembers.length}</span> of {teamMembers.length}{" "}
-                employees
+              <div
+                className="text-sm px-4 py-2 rounded-full border"
+                style={{
+                  background: colors.accent.hex,
+                  color: colors.primary.hex,
+                  borderColor: colors.primary.hex,
+                }}
+              >
+                <span className="font-semibold" style={{ color: colors.primary.hex }}>{filteredMembers.length}</span> of {teamMembers.length} employees
               </div>
               <button
                 type="button"
-                className="group inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
+                className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
+                style={{
+                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                  color: '#fff',
+                  border: `1px solid ${colors.primary.hex}`,
+                }}
                 onClick={() => router.push("/dashboard/admin/addemployee")}
               >
-                <Plus className="w-4 h-4 transition-transform duration-300 group-hover:rotate-90" />
+                <Plus className="w-4 h-4" style={{ color: colors.highlight.hex }} />
                 Add Employee
               </button>
-              <button className="group inline-flex items-center gap-2 px-6 py-3 bg-white hover:bg-slate-50 border border-slate-300 hover:border-slate-400 text-slate-700 hover:text-slate-800 rounded-full text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105">
-                <RefreshCw className="w-4 h-4 transition-transform duration-300 group-hover:rotate-180" />
+              <button
+                className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
+                style={{
+                  background: '#fff',
+                  color: colors.primary.hex,
+                  border: `1px solid ${colors.primary.hex}`,
+                }}
+              >
+                <RefreshCw className="w-4 h-4" style={{ color: colors.secondary.hex }} />
                 Refresh
               </button>
             </div>
@@ -123,31 +178,31 @@ export default function TeamListPage() {
         </div>
 
         {/* Table Container */}
-        <div className="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden backdrop-blur-sm">
+        <div
+          className="rounded-2xl shadow-lg border overflow-hidden"
+          style={{
+            background: '#fff',
+            borderColor: colors.primary.hex,
+          }}
+        >
           {isLoading ? (
             <div className="p-12 text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
-                <RefreshCw className="w-6 h-6 text-emerald-600 animate-spin" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4"
+                style={{ background: colors.accent.hex }}
+              >
+                <RefreshCw className="w-6 h-6 animate-spin" style={{ color: colors.primary.hex }} />
               </div>
-              <p className="text-slate-600 text-lg">Loading team members...</p>
+              <p className="text-lg" style={{ color: colors.primary.hex }}>Loading team members...</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-slate-200">
-                <thead className="bg-slate-50">
+              <table className="min-w-full divide-y" style={{ borderColor: colors.primary.hex }}>
+                <thead style={{ background: colors.accent.hex }}>
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                      Employee Details
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                      Role
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                      Contact Information
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-slate-700 uppercase tracking-wider">
-                      Actions
-                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Employee Details</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Role</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Contact Information</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-slate-200">
@@ -167,21 +222,29 @@ export default function TeamListPage() {
                     filteredMembers.map((member, index) => (
                       <tr
                         key={member.id || index}
-                        className={`hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50/30 transition-all duration-300 ${index % 2 === 0 ? "bg-white" : "bg-slate-25"}`}
+                        className={
+                          `bg-white transition-all duration-300 hover:bg-gradient-to-r hover:from-[${colors.primary.hex}] hover:to-[${colors.secondary.hex}] hover:text-white`
+                        }
                       >
                         <td className="px-6 py-6">
                           <div className="space-y-2">
                             <div className="flex items-center gap-3">
-                              <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                              <div
+                                className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-lg"
+                                style={{
+                                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                                  color: '#fff',
+                                }}
+                              >
                                 {member.name.charAt(0).toUpperCase()}
                               </div>
                               <div>
-                                <h3 className="text-lg font-semibold text-slate-900 leading-tight">{member.name}</h3>
+                                <h3 className="text-lg font-semibold leading-tight" style={{ color: colors.primary.hex }}>{member.name}</h3>
                                 <div className="flex items-center gap-2 mt-1">
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-slate-100 text-slate-700">
+                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium" style={{ background: colors.accent.hex, color: colors.primary.hex }}>
                                     ID: {member.id || "N/A"}
                                   </span>
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-emerald-100 text-emerald-700">
+                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium" style={{ background: colors.highlight.hex, color: colors.primary.hex }}>
                                     Team Member
                                   </span>
                                 </div>
@@ -191,7 +254,11 @@ export default function TeamListPage() {
                         </td>
                         <td className="px-6 py-6">
                           <span
-                            className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium capitalize ${getRoleColor(member.role)}`}
+                            className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium capitalize"
+                            style={{
+                              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                              color: '#fff',
+                            }}
                           >
                             {member.role || "Employee"}
                           </span>
@@ -199,16 +266,16 @@ export default function TeamListPage() {
                         <td className="px-6 py-6">
                           <div className="space-y-2">
                             <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                              <span className="text-sm font-medium text-slate-900">{member.email}</span>
+                              <div className="w-2 h-2 rounded-full" style={{ background: colors.primary.hex }}></div>
+                              <span className="text-sm font-medium" style={{ color: colors.primary.hex }}>{member.email}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                              <span className="text-sm text-slate-600">{member.phone}</span>
+                              <div className="w-2 h-2 rounded-full" style={{ background: colors.secondary.hex }}></div>
+                              <span className="text-sm" style={{ color: colors.secondary.hex }}>{member.phone}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-cyan-500 rounded-full"></div>
-                              <span className="text-sm text-slate-600 max-w-xs truncate" title={member.address}>
+                              <div className="w-2 h-2 rounded-full" style={{ background: colors.accent.hex }}></div>
+                              <span className="text-sm max-w-xs truncate" title={member.address} style={{ color: colors.accent.hex }}>
                                 {member.address}
                               </span>
                             </div>
@@ -216,14 +283,32 @@ export default function TeamListPage() {
                         </td>
                         <td className="px-6 py-6">
                           <div className="flex items-center gap-2">
-                            <button className="group inline-flex items-center justify-center w-10 h-10 text-emerald-600 hover:text-white bg-emerald-50 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-emerald-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1">
-                              <Eye className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                            <button
+                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
+                              style={{
+                                background: colors.accent.hex,
+                                color: colors.primary.hex,
+                              }}
+                            >
+                              <Eye className="w-4 h-4" style={{ color: colors.primary.hex }} />
                             </button>
-                            <button className="group inline-flex items-center justify-center w-10 h-10 text-teal-600 hover:text-white bg-teal-50 hover:bg-gradient-to-r hover:from-teal-500 hover:to-teal-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1">
-                              <Edit className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                            <button
+                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
+                              style={{
+                                background: colors.highlight.hex,
+                                color: colors.primary.hex,
+                              }}
+                            >
+                              <Edit className="w-4 h-4" style={{ color: colors.primary.hex }} />
                             </button>
-                            <button className="group inline-flex items-center justify-center w-10 h-10 text-rose-600 hover:text-white bg-rose-50 hover:bg-gradient-to-r hover:from-rose-500 hover:to-rose-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1">
-                              <Trash2 className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                            <button
+                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
+                              style={{
+                                background: colors.warning.hex,
+                                color: '#fff',
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4" style={{ color: '#fff' }} />
                             </button>
                           </div>
                         </td>
@@ -238,29 +323,36 @@ export default function TeamListPage() {
 
         {/* Summary Footer */}
         {!isLoading && (
-          <div className="mt-8 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-200 p-6">
+          <div
+            className="mt-8 rounded-2xl shadow-lg border p-6"
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+              color: '#fff',
+              borderColor: colors.primary.hex,
+            }}
+          >
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-6">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-slate-900">{teamMembers.length}</div>
-                  <div className="text-sm text-slate-600">Total Employees</div>
+                  <div className="text-2xl font-bold">{teamMembers.length}</div>
+                  <div className="text-sm">Total Employees</div>
                 </div>
-                <div className="w-px h-12 bg-slate-200"></div>
+                <div className="w-px h-12" style={{ background: colors.accent.hex }}></div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-emerald-600">{filteredMembers.length}</div>
-                  <div className="text-sm text-slate-600">Filtered Results</div>
+                  <div className="text-2xl font-bold">{filteredMembers.length}</div>
+                  <div className="text-sm">Filtered Results</div>
                 </div>
-                <div className="w-px h-12 bg-slate-200"></div>
+                <div className="w-px h-12" style={{ background: colors.accent.hex }}></div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-teal-600">
+                  <div className="text-2xl font-bold">
                     {teamMembers.filter((member) => member.role?.toLowerCase() === "employee").length}
                   </div>
-                  <div className="text-sm text-slate-600">Active Employees</div>
+                  <div className="text-sm">Active Employees</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
-                <span className="text-sm text-slate-600">System Active</span>
+                <div className="w-3 h-3 rounded-full animate-pulse" style={{ background: colors.highlight.hex }}></div>
+                <span className="text-sm">System Active</span>
               </div>
             </div>
           </div>

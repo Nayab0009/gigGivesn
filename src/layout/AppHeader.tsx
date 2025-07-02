@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext"
 import { useSidebar } from "@/context/SidebarContext"
 import type React from "react"
 import { useEffect, useState } from "react"
+import { colors } from "@/colors"
 
 const AppHeader: React.FC = () => {
   const { user } = useAuth()
@@ -33,6 +34,14 @@ const AppHeader: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [prevScrollPos, visible])
 
+  const getTextGradient = () => {
+    return {
+      background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+      WebkitBackgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+      backgroundClip: 'text'
+    };
+  };
   // --- LIGHT BACKGROUND with emerald accent ---
   return (
     <header
@@ -71,19 +80,18 @@ const AppHeader: React.FC = () => {
               >
                 Welcome
               </span>
-              <span
-                className={`
-                  ml-2 font-black bg-gradient-to-r from-emerald-700 via-teal-600 to-emerald-500 bg-clip-text text-transparent 
-                  drop-shadow-lg transition-all duration-500 ease-in-out
-                  ${hasMoreSpace ? "text-2xl" : "text-xl"}
-                `}
-                style={{
-                  textShadow: "0 0 8px rgba(16, 185, 129, 0.15)",
-                }}
-              >
-                {displayName}
-              </span>
-            </div>
+<span
+  className={`
+    ml-2 font-black drop-shadow-lg transition-all duration-500 ease-in-out
+    ${hasMoreSpace ? "text-2xl" : "text-xl"}
+  `}
+  style={{
+    ...getTextGradient(),
+    textShadow: "0 0 8px rgba(16, 185, 129, 0.15)",
+  }}
+>
+  {displayName}
+</span>            </div>
           </div>
         </div>
 
@@ -118,7 +126,7 @@ const AppHeader: React.FC = () => {
           </span>
           <span
             className={`
-              ml-1 font-black bg-gradient-to-r from-emerald-700 via-teal-600 to-emerald-500 bg-clip-text text-transparent 
+              ml-1 font-black bg-gradient-to-r from-blue-900 via-blue-600 to-blue-400 bg-clip-text text-transparent 
               drop-shadow-lg transition-all duration-500 ease-in-out
               ${hasMoreSpace ? "text-xl" : "text-lg"}
             `}

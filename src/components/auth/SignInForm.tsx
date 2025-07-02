@@ -1,4 +1,5 @@
 "use client"
+
 import { useState, useEffect } from "react"
 import type React from "react"
 import { useRouter } from "next/navigation"
@@ -23,7 +24,6 @@ interface CustomToastStyle extends Omit<ToastOptions, "icon"> {
 export default function SignInForm() {
   const router = useRouter()
   const { signin, error: authError, isAuthenticated, getRedirectPath } = useAuth()
-
   const [showPassword, setShowPassword] = useState(false)
   const [isChecked, setIsChecked] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -63,6 +63,7 @@ export default function SignInForm() {
         const redirectPath = getRedirectPath() || "/dashboard"
         router.push(redirectPath)
       }, 1000)
+
       return () => clearTimeout(redirectTimeout)
     }
   }, [isAuthenticated, signInAttempted, getRedirectPath, router, isSubmitting])
@@ -133,7 +134,6 @@ export default function SignInForm() {
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
     if (!validateForm()) {
       return
     }
@@ -158,7 +158,6 @@ export default function SignInForm() {
       console.error("Signin failed:", error)
       // Reset the sign-in attempt flag if there was an error
       setSignInAttempted(false)
-
       // Show error toast
       toast.error(
         <div className="flex flex-col">
@@ -173,7 +172,7 @@ export default function SignInForm() {
   }
 
   return (
-    <div className="flex min-h-screen w-full bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-100 relative overflow-hidden">
+    <div className="flex min-h-screen w-full bg-gradient-to-br from-blue-50 via-slate-50 to-indigo-50 relative overflow-hidden">
       <ToastContainer
         position="top-right"
         autoClose={5000}
@@ -191,20 +190,21 @@ export default function SignInForm() {
       {/* Success Overlay */}
       {showSuccessOverlay && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in">
-          <div className="bg-white rounded-3xl p-8 max-w-md mx-4 text-center shadow-2xl transform animate-scale-up border border-emerald-200">
+          <div className="bg-white rounded-3xl p-8 max-w-md mx-4 text-center shadow-2xl transform animate-scale-up border border-amber-200">
             <div className="mb-6">
-              <div className="w-20 h-20 bg-gradient-to-r from-emerald-100 to-teal-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce-gentle">
-                <CheckCircle className="w-10 h-10 text-emerald-600" />
+              <div className="w-20 h-20 bg-gradient-to-r from-blue-900 to-blue-400 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce-gentle">
+                <CheckCircle className="w-10 h-10 text-white" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-2">Welcome Back!</h2>
+              <h2 className="text-2xl font-bold bg-gradient-to-r from-[#9b6400] to-[#ffe26f] bg-clip-text text-transparent mb-2">
+                Welcome Back!
+              </h2>
               <p className="text-slate-600">You have successfully signed in.</p>
             </div>
-
             <div className="flex items-center justify-center space-x-2 text-sm text-slate-500">
               <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse delay-100"></div>
-                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse delay-200"></div>
+                <div className="w-2 h-2 bg-gradient-to-r from-blue-900 to-blue-400 rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-gradient-to-r from-blue-600 to-blue-900 rounded-full animate-pulse delay-100"></div>
+                <div className="w-2 h-2 bg-gradient-to-r from-[#9b6400] to-[#ffe26f] rounded-full animate-pulse delay-200"></div>
               </div>
               <span>Redirecting to dashboard...</span>
             </div>
@@ -217,21 +217,21 @@ export default function SignInForm() {
         {/* Animated Background Patterns */}
         <div className="absolute inset-0">
           {/* Large geometric shapes */}
-          <div className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-br from-emerald-400/20 to-teal-500/20 rounded-3xl rotate-12 animate-float"></div>
-          <div className="absolute top-40 right-32 w-24 h-24 bg-gradient-to-br from-teal-400/20 to-cyan-500/20 rounded-2xl -rotate-12 animate-float-delayed"></div>
-          <div className="absolute bottom-40 left-32 w-28 h-28 bg-gradient-to-br from-cyan-400/20 to-emerald-500/20 rounded-full animate-float-slow"></div>
-          <div className="absolute bottom-20 right-20 w-36 h-36 bg-gradient-to-br from-emerald-500/20 to-teal-400/20 rounded-3xl rotate-45 animate-float"></div>
+          <div className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-br from-blue-900/20 to-blue-400/20 rounded-3xl rotate-12 animate-float"></div>
+          <div className="absolute top-40 right-32 w-24 h-24 bg-gradient-to-br from-[#9b6400]/20 to-[#ffe26f]/20 rounded-2xl -rotate-12 animate-float-delayed"></div>
+          <div className="absolute bottom-40 left-32 w-28 h-28 bg-gradient-to-br from-blue-600/20 to-blue-900/20 rounded-full animate-float-slow"></div>
+          <div className="absolute bottom-20 right-20 w-36 h-36 bg-gradient-to-br from-[#ffe26f]/20 to-[#9b6400]/20 rounded-3xl rotate-45 animate-float"></div>
 
           {/* Medium geometric shapes */}
-          <div className="absolute top-60 left-40 w-16 h-16 bg-gradient-to-br from-teal-300/30 to-emerald-400/30 rounded-xl rotate-45 animate-float-delayed"></div>
-          <div className="absolute top-32 right-48 w-20 h-20 bg-gradient-to-br from-cyan-300/30 to-teal-400/30 rounded-2xl -rotate-12 animate-float-slow"></div>
-          <div className="absolute bottom-60 left-48 w-18 h-18 bg-gradient-to-br from-emerald-300/30 to-cyan-400/30 rounded-full animate-float"></div>
+          <div className="absolute top-60 left-40 w-16 h-16 bg-gradient-to-br from-blue-900/30 to-blue-400/30 rounded-xl rotate-45 animate-float-delayed"></div>
+          <div className="absolute top-32 right-48 w-20 h-20 bg-gradient-to-br from-[#9b6400]/30 to-[#ffe26f]/30 rounded-2xl -rotate-12 animate-float-slow"></div>
+          <div className="absolute bottom-60 left-48 w-18 h-18 bg-gradient-to-br from-blue-400/30 to-blue-900/30 rounded-full animate-float"></div>
 
           {/* Small decorative elements */}
-          <div className="absolute top-80 right-40 w-8 h-8 bg-emerald-400/40 rounded-full animate-pulse"></div>
-          <div className="absolute top-48 left-60 w-6 h-6 bg-teal-400/40 rounded-full animate-pulse delay-300"></div>
-          <div className="absolute bottom-80 right-60 w-10 h-10 bg-cyan-400/40 rounded-full animate-pulse delay-500"></div>
-          <div className="absolute bottom-48 left-56 w-4 h-4 bg-emerald-500/40 rounded-full animate-pulse delay-700"></div>
+          <div className="absolute top-80 right-40 w-8 h-8 bg-gradient-to-r from-blue-900 to-blue-400 rounded-full animate-pulse"></div>
+          <div className="absolute top-48 left-60 w-6 h-6 bg-gradient-to-r from-[#9b6400] to-[#ffe26f] rounded-full animate-pulse delay-300"></div>
+          <div className="absolute bottom-80 right-60 w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-900 rounded-full animate-pulse delay-500"></div>
+          <div className="absolute bottom-48 left-56 w-4 h-4 bg-gradient-to-r from-[#ffe26f] to-[#9b6400] rounded-full animate-pulse delay-700"></div>
         </div>
 
         {/* Grid Pattern Overlay */}
@@ -240,7 +240,11 @@ export default function SignInForm() {
             {Array.from({ length: 144 }).map((_, i) => (
               <div
                 key={i}
-                className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-sm opacity-20"
+                className={`rounded-sm opacity-20 ${
+                  i % 4 === 0 || i % 4 === 1 || i % 4 === 2
+                    ? "bg-gradient-to-br from-blue-900 to-blue-400"
+                    : "bg-gradient-to-br from-[#9b6400] to-[#ffe26f]"
+                }`}
                 style={{
                   animationDelay: `${i * 0.05}s`,
                   animation: "fadeInOut 4s ease-in-out infinite",
@@ -254,29 +258,43 @@ export default function SignInForm() {
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="relative">
             {/* Outer rotating ring */}
-            <div className="w-80 h-80 border-4 border-emerald-300/30 rounded-full animate-spin-slow"></div>
+            <div
+              className="w-80 h-80 border-2 rounded-full animate-spin-slow"
+              style={{
+                background: "conic-gradient(from 0deg, #1e3a8a, #3b82f6, #60a5fa, #1e3a8a)",
+                WebkitMask: "radial-gradient(circle, transparent 138px, black 139px)",
+                mask: "radial-gradient(circle, transparent 138px, black 139px)",
+              }}
+            ></div>
 
             {/* Middle ring */}
-            <div className="absolute inset-8 border-2 border-teal-400/40 rounded-full animate-spin-reverse"></div>
+            <div
+              className="absolute inset-8 rounded-full animate-spin-reverse"
+              style={{
+                background: "conic-gradient(from 180deg, #1e3a8a, #3b82f6, #60a5fa, #1e3a8a)",
+                WebkitMask: "radial-gradient(circle, transparent 118px, black 119px)",
+                mask: "radial-gradient(circle, transparent 118px, black 119px)",
+              }}
+            ></div>
 
             {/* Inner circle with logo */}
-            <div className="absolute inset-16 bg-white/95 rounded-full flex items-center justify-center shadow-2xl backdrop-blur-sm">
-              <div className="w-36 h-36 flex items-center justify-center">
+            <div className="absolute inset-16 bg-white/95 rounded-full flex items-center justify-center shadow-2xl backdrop-blur-sm border-2 border-gradient-to-r from-blue-900 to-blue-400">
+              <div className="w-40 h-40 flex items-center justify-center">
                 <Image
-                  src="/images/logo/gigjives-logo-new-2222.png"
+                  src="/images/logo/giggives_logo.png"
                   alt="GigJives Logo"
-                  width={120}
-                  height={120}
+                  width={140}
+                  height={140}
                   className="object-contain drop-shadow-lg"
                 />
               </div>
             </div>
 
             {/* Floating dots around logo */}
-            <div className="absolute top-4 left-1/2 w-3 h-3 bg-white/60 rounded-full animate-bounce"></div>
-            <div className="absolute bottom-4 left-1/2 w-3 h-3 bg-white/60 rounded-full animate-bounce delay-300"></div>
-            <div className="absolute left-4 top-1/2 w-3 h-3 bg-white/60 rounded-full animate-bounce delay-500"></div>
-            <div className="absolute right-4 top-1/2 w-3 h-3 bg-white/60 rounded-full animate-bounce delay-700"></div>
+            <div className="absolute top-4 left-1/2 w-3 h-3 bg-gradient-to-r from-blue-900 to-blue-400 rounded-full animate-bounce"></div>
+            <div className="absolute bottom-4 left-1/2 w-3 h-3 bg-gradient-to-r from-[#9b6400] to-[#ffe26f] rounded-full animate-bounce delay-300"></div>
+            <div className="absolute left-4 top-1/2 w-3 h-3 bg-gradient-to-r from-blue-600 to-blue-900 rounded-full animate-bounce delay-500"></div>
+            <div className="absolute right-4 top-1/2 w-3 h-3 bg-gradient-to-r from-[#ffe26f] to-[#9b6400] rounded-full animate-bounce delay-700"></div>
           </div>
         </div>
 
@@ -299,14 +317,14 @@ export default function SignInForm() {
             />
             <defs>
               <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#10b981" stopOpacity="0.3" />
-                <stop offset="50%" stopColor="#14b8a6" stopOpacity="0.6" />
-                <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.3" />
+                <stop offset="0%" stopColor="#1e3a8a" stopOpacity="0.3" />
+                <stop offset="50%" stopColor="#3b82f6" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="#60a5fa" stopOpacity="0.3" />
               </linearGradient>
               <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.3" />
-                <stop offset="50%" stopColor="#14b8a6" stopOpacity="0.6" />
-                <stop offset="100%" stopColor="#10b981" stopOpacity="0.3" />
+                <stop offset="0%" stopColor="#9b6400" stopOpacity="0.3" />
+                <stop offset="50%" stopColor="#ffe26f" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="#9b6400" stopOpacity="0.3" />
               </linearGradient>
             </defs>
           </svg>
@@ -316,13 +334,19 @@ export default function SignInForm() {
       {/* Right Side - Sign In Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center py-8 px-4 relative z-10">
         <div className="w-full max-w-md">
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 sm:p-10">
+          <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 p-8 sm:p-10 relative overflow-hidden">
+            {/* Subtle background pattern */}
+            <div className="absolute inset-0 opacity-5">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-900 to-blue-400 rounded-full -translate-y-16 translate-x-16"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-br from-[#9b6400] to-[#ffe26f] rounded-full translate-y-12 -translate-x-12"></div>
+            </div>
+
             {/* Mobile Logo */}
-            <div className="lg:hidden text-center mb-8">
+            <div className="lg:hidden text-center mb-8 relative z-10">
               <div className="flex items-center justify-center mb-4">
-                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-lg border border-slate-100 p-2">
+                <div className="w-16 h-16 bg-gradient-to-r from-blue-900 to-blue-400 rounded-2xl flex items-center justify-center shadow-lg border border-amber-200 p-2">
                   <Image
-                    src="/images/logo/Gigjives-Logo-final.png"
+                    src="/images/logo/giggives_logo.png"
                     alt="GigJives Logo"
                     width={48}
                     height={48}
@@ -332,19 +356,30 @@ export default function SignInForm() {
               </div>
             </div>
 
-            <div className="mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-2 text-center">Welcome Back</h2>
-              <p className="text-slate-600 text-center">Sign in to continue your journey</p>
+            <div className="mb-8 relative z-10">
+              <h2 className="text-4xl text-center font-bold bg-gradient-to-r from-[#9b6400] to-[#ffe26f] bg-clip-text text-transparent mb-2">
+                Welcome Back
+              </h2>
+              <p className="bg-gradient-to-r from-[#9b6400]/80 to-[#ffe26f]/80 bg-clip-text text-transparent text-center font-medium">
+                Sign in to continue your journey
+              </p>
             </div>
 
             {/* Google Sign In Button */}
-            <div className="mb-6">
+            <div className="mb-6 relative z-10">
               <button
                 type="button"
                 onClick={handleGoogleSignup}
-                className="w-full py-3 px-4 flex items-center justify-center gap-3 bg-white border-2 border-slate-200 rounded-xl text-slate-700 font-medium hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 shadow-sm hover:shadow-md group"
+                className="w-full py-3 px-4 flex items-center justify-center gap-3 bg-white border-2 border-amber-200 rounded-xl text-[#9b6400] font-medium hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:border-blue-300 transition-all duration-200 shadow-sm hover:shadow-md group relative overflow-hidden"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-900/5 to-blue-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  className="relative z-10"
+                >
                   <path
                     fill="#4285F4"
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -362,23 +397,28 @@ export default function SignInForm() {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                <span className="group-hover:text-slate-800 transition-colors">Continue with Google</span>
+                <span className="group-hover:text-[#9b6400] transition-colors relative z-10">Continue with Google</span>
               </button>
             </div>
 
             {/* OR Separator */}
-            <div className="relative my-6">
+            <div className="relative my-6 z-10">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-200"></div>
+                <div className="w-full border-t border-blue-200"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 text-slate-500 bg-white font-medium">OR</span>
+                <span className="px-4 bg-gradient-to-r from-[#9b6400] to-[#ffe26f] bg-clip-text text-transparent bg-white font-semibold">
+                  OR
+                </span>
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
               <div>
-                <Label htmlFor="email" className="mb-2 text-slate-700 font-medium">
+                <Label
+                  htmlFor="email"
+                  className="mb-2 bg-gradient-to-r from-[#9b6400] to-[#ffe26f] bg-clip-text text-transparent font-semibold"
+                >
                   Email Address
                 </Label>
                 <Input
@@ -390,12 +430,15 @@ export default function SignInForm() {
                   onChange={handleChange}
                   error={!!errors.email}
                   hint={errors.email}
-                  className="w-full h-12 px-4 bg-white text-slate-900 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 shadow-sm placeholder-slate-400 transition-all duration-200"
+                  className="w-full h-12 px-4 bg-white text-slate-900 rounded-xl border-2 border-blue-200 focus:border-blue-600 focus:ring-blue-600 shadow-sm placeholder-slate-400 transition-all duration-200 hover:border-blue-300"
                 />
               </div>
 
               <div>
-                <Label htmlFor="password" className="mb-2 text-slate-700 font-medium">
+                <Label
+                  htmlFor="password"
+                  className="mb-2 bg-gradient-to-r from-[#9b6400] to-[#ffe26f] bg-clip-text text-transparent font-semibold"
+                >
                   Password
                 </Label>
                 <div className="relative">
@@ -408,11 +451,11 @@ export default function SignInForm() {
                     onChange={handleChange}
                     error={!!errors.password}
                     hint={errors.password}
-                    className="w-full h-12 px-4 bg-white text-slate-900 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 shadow-sm placeholder-slate-400 transition-all duration-200"
+                    className="w-full h-12 px-4 bg-white text-slate-900 rounded-xl border-2 border-blue-200 focus:border-blue-600 focus:ring-blue-600 shadow-sm placeholder-slate-400 transition-all duration-200 hover:border-blue-300"
                   />
                   <button
                     type="button"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-600 hover:text-blue-800 transition-colors"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <EyeCloseIcon /> : <EyeIcon />}
@@ -426,12 +469,11 @@ export default function SignInForm() {
                   label="Remember me"
                   checked={isChecked}
                   onChange={() => setIsChecked(!isChecked)}
-                  className="text-slate-700"
+                  className="text-[#9b6400]"
                 />
-
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-emerald-600 font-medium transition-colors hover:text-emerald-700"
+                  className="text-sm bg-gradient-to-r from-[#9b6400] to-[#ffe26f] bg-clip-text text-transparent font-semibold transition-all hover:from-[#ffe26f] hover:to-[#9b6400]"
                 >
                   Forgot password?
                 </Link>
@@ -443,13 +485,14 @@ export default function SignInForm() {
 
               <button
                 type="submit"
-                className="w-full h-12 font-semibold text-white transition-all duration-300 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 hover:shadow-lg hover:shadow-emerald-500/25 focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 shadow-md disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 transform hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full h-12 font-semibold text-white transition-all duration-300 rounded-xl bg-gradient-to-r from-blue-900 via-blue-600 to-blue-400 hover:from-blue-800 hover:via-blue-500 hover:to-blue-300 hover:shadow-lg hover:shadow-blue-500/25 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-md disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 transform hover:scale-[1.02] active:scale-[0.98] relative overflow-hidden group"
                 disabled={isSubmitting}
               >
+                <div className="absolute inset-0 bg-gradient-to-r from-[#9b6400]/10 to-[#ffe26f]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 {isSubmitting ? (
                   <>
                     <svg
-                      className="animate-spin h-5 w-5 text-white"
+                      className="animate-spin h-5 w-5 text-white relative z-10"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
@@ -468,19 +511,22 @@ export default function SignInForm() {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    <span>Signing In...</span>
+                    <span className="relative z-10">Signing In...</span>
                   </>
                 ) : (
                   <>
-                    <LogIn size={20} />
-                    <span>Sign In to GigJives</span>
+                    <LogIn size={20} className="relative z-10" />
+                    <span className="relative z-10">Sign In to GigJives</span>
                   </>
                 )}
               </button>
 
               <p className="text-sm text-center text-slate-600 mt-6">
                 New to GigJives?{" "}
-                <Link href="/signup" className="font-medium text-emerald-600 transition-colors hover:text-emerald-700">
+                <Link
+                  href="/signup"
+                  className="font-semibold bg-gradient-to-r from-[#9b6400] to-[#ffe26f] bg-clip-text text-transparent transition-all hover:from-[#ffe26f] hover:to-[#9b6400]"
+                >
                   Create an account
                 </Link>
               </p>
@@ -501,17 +547,14 @@ export default function SignInForm() {
         .Toastify__toast-body {
           font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
-
         .Toastify__progress-bar {
           height: 3px;
           border-radius: 0 0 8px 8px;
         }
-
         .Toastify__close-button {
           opacity: 0.7;
           transition: opacity 0.2s;
         }
-
         .Toastify__close-button:hover {
           opacity: 1;
         }
@@ -521,52 +564,42 @@ export default function SignInForm() {
           from { opacity: 0; }
           to { opacity: 1; }
         }
-
         @keyframes scale-up {
           from { opacity: 0; transform: scale(0.9) translateY(20px); }
           to { opacity: 1; transform: scale(1) translateY(0); }
         }
-
         @keyframes bounce-gentle {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-10px); }
         }
-
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
           50% { transform: translateY(-20px) rotate(5deg); }
         }
-
         @keyframes float-delayed {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
           50% { transform: translateY(-15px) rotate(-3deg); }
         }
-
         @keyframes float-slow {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
           50% { transform: translateY(-10px) rotate(2deg); }
         }
-
         @keyframes spin-slow {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
-
         @keyframes spin-reverse {
           from { transform: rotate(360deg); }
           to { transform: rotate(0deg); }
         }
-
         @keyframes draw {
           0% { stroke-dasharray: 0 1000; }
           100% { stroke-dasharray: 1000 0; }
         }
-
         @keyframes draw-delayed {
           0%, 30% { stroke-dasharray: 0 1000; }
           100% { stroke-dasharray: 1000 0; }
         }
-
         @keyframes fadeInOut {
           0%, 100% { opacity: 0; }
           50% { opacity: 0.3; }
@@ -582,7 +615,6 @@ export default function SignInForm() {
         .animate-spin-reverse { animation: spin-reverse 15s linear infinite; }
         .animate-draw { animation: draw 4s ease-in-out infinite; }
         .animate-draw-delayed { animation: draw-delayed 6s ease-in-out infinite; }
-
         .animate-pulse { animation: pulse 1.5s ease-in-out infinite; }
         .delay-100 { animation-delay: 0.1s; }
         .delay-200 { animation-delay: 0.2s; }

@@ -8,6 +8,7 @@ import { useSidebar } from "../context/SidebarContext"
 import { useAuth } from "../context/AuthContext"
 import { LayoutGrid, List, Users, FileText, ChevronLeft, ChevronRight, ChevronDown, Building2,Timer  } from "lucide-react"
 import { GridIcon, ListIcon, PaperPlaneIcon, TableIcon, UserCircleIcon, EnvelopeListIcon } from "../icons/index"
+import { colors } from "@/colors"
 
 // Add this constant for consistent mobile width
 const SIDEBAR_WIDTH_MOBILE = "280px"
@@ -95,6 +96,11 @@ const managerNavItems: NavItem[] = [
     name: " Sprints",
     icon: <Timer  size={20} />,
     path: "/dashboard/manager/showsprints",
+  },
+  {
+    name: " Chats",
+    icon: <Timer  size={20} />,
+    path: "/dashboard/manager/chat",
   },
 ]
 
@@ -195,15 +201,16 @@ const AppSidebar: React.FC = () => {
               onClick={() => handleSubmenuToggle(index, menuType)}
               className={`menu-item group w-full transition-all duration-200 ease-in-out ${
                 openSubmenu?.type === menuType && openSubmenu?.index === index
-                  ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/25"
-                  : "text-slate-600 hover:bg-gradient-to-r hover:from-slate-100 hover:to-emerald-50 hover:text-emerald-700"
+                  ? "text-white shadow-lg"
+                  : "text-slate-600 hover:text-blue-700"
               } cursor-pointer rounded-xl p-3 flex items-center gap-3 ${!isExpanded ? "lg:justify-center" : "lg:justify-start"}`}
+              style={openSubmenu?.type === menuType && openSubmenu?.index === index ? { background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})` } : {}}
             >
               <span
                 className={`transition-all duration-200 ease-in-out flex-shrink-0 ${
                   openSubmenu?.type === menuType && openSubmenu?.index === index
                     ? "text-white"
-                    : "text-slate-500 group-hover:text-emerald-600"
+                    : "text-slate-500 group-hover:text-blue-700"
                 }`}
               >
                 {nav.icon}
@@ -214,7 +221,7 @@ const AppSidebar: React.FC = () => {
                     className={`font-medium text-sm flex-1 text-left transition-all duration-200 ease-in-out ${
                       openSubmenu?.type === menuType && openSubmenu?.index === index
                         ? "text-white"
-                        : "text-slate-700 group-hover:text-emerald-700"
+                        : "text-slate-700 group-hover:text-blue-700"
                     }`}
                   >
                     {nav.name}
@@ -223,7 +230,7 @@ const AppSidebar: React.FC = () => {
                     className={`w-4 h-4 transition-all duration-200 ease-in-out flex-shrink-0 ${
                       openSubmenu?.type === menuType && openSubmenu?.index === index
                         ? "rotate-180 text-white"
-                        : "text-slate-400 group-hover:text-emerald-600"
+                        : "text-slate-400 group-hover:text-blue-700"
                     }`}
                   />
                 </>
@@ -235,13 +242,14 @@ const AppSidebar: React.FC = () => {
                 href={nav.path}
                 className={`menu-item group transition-all duration-200 ease-in-out rounded-xl p-3 flex items-center gap-3 ${
                   isActive(nav.path)
-                    ? "bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/25"
-                    : "text-slate-600 hover:bg-gradient-to-r hover:from-slate-100 hover:to-emerald-50 hover:text-emerald-700"
+                    ? "text-white shadow-lg"
+                    : "text-slate-600 hover:text-blue-700"
                 } ${!isExpanded ? "lg:justify-center" : "lg:justify-start"}`}
+                style={isActive(nav.path) ? { background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})` } : {}}
               >
                 <span
                   className={`transition-all duration-200 ease-in-out flex-shrink-0 ${
-                    isActive(nav.path) ? "text-white" : "text-slate-500 group-hover:text-emerald-600"
+                    isActive(nav.path) ? "text-white" : "text-slate-500 group-hover:text-blue-700"
                   }`}
                 >
                   {nav.icon}
@@ -249,7 +257,7 @@ const AppSidebar: React.FC = () => {
                 {(isExpanded || isMobileOpen) && (
                   <span
                     className={`font-medium text-sm transition-all duration-200 ease-in-out ${
-                      isActive(nav.path) ? "text-white" : "text-slate-700 group-hover:text-emerald-700"
+                      isActive(nav.path) ? "text-white" : "text-slate-700 group-hover:text-blue-700"
                     }`}
                   >
                     {nav.name}
@@ -279,14 +287,14 @@ const AppSidebar: React.FC = () => {
                       href={subItem.path}
                       className={`menu-dropdown-item transition-all duration-200 ease-in-out font-medium text-sm block py-2.5 px-3 rounded-lg flex items-center justify-between ${
                         isActive(subItem.path)
-                          ? "bg-emerald-100 text-emerald-700 border-l-2 border-emerald-500"
-                          : "text-slate-600 hover:bg-slate-50 hover:text-emerald-600 border-l-2 border-transparent hover:border-emerald-300"
+                          ? "bg-blue-100 text-blue-700 border-l-2 border-blue-500"
+                          : "text-slate-600 hover:bg-slate-50 hover:text-blue-600 border-l-2 border-transparent hover:border-blue-300"
                       }`}
                     >
                       <span>{subItem.name}</span>
                       <div className="flex items-center gap-1">
                         {subItem.new && (
-                          <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-teal-100 text-teal-700">
+                          <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
                             new
                           </span>
                         )}
@@ -393,7 +401,7 @@ const AppSidebar: React.FC = () => {
             <div className="flex items-center gap-3 w-full">
               <div className="w-full h-16 flex items-center justify-center rounded-lg p-2">
                 <Image
-                  src="/images/logo/gigjives-logo-new-2222.png"
+                  src="/images/logo/giggives_logo.png"
                   alt="GigJives Logo"
                   width={200}
                   height={60}
@@ -407,7 +415,7 @@ const AppSidebar: React.FC = () => {
           {!isExpanded && !isMobileOpen && (
             <div className="w-10 h-10 flex items-center justify-center">
               <Image
-                src="/images/logo/gigjives-logo-new-2222.png"
+                src="/images/logo/giggives_logo.png"
                 alt="GigJives Logo"
                 width={80}
                 height={80}
@@ -436,21 +444,21 @@ const AppSidebar: React.FC = () => {
 
           {/* Footer */}
           <div className="p-5 border-t border-slate-200">
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-gradient-to-r from-slate-50 to-emerald-50">
+            <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: colors.accent.hex }}>
               {isExpanded || isMobileOpen ? (
                 <>
-                  <div className="w-9 h-9 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})` }}>
                     <span className="text-white text-sm font-semibold">
                       {user?.name?.charAt(0)?.toUpperCase() || "U"}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-900 truncate">{user?.name || "User"}</p>
-                    <p className="text-xs text-slate-500 truncate capitalize">{user?.role || "Member"}</p>
+                    <p className="text-sm font-medium truncate" style={{ color: colors.primary.hex }}>{user?.name || "User"}</p>
+                    <p className="text-xs truncate capitalize" style={{ color: colors.secondary.hex }}>{user?.role || "Member"}</p>
                   </div>
                 </>
               ) : (
-                <div className="w-9 h-9 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center mx-auto">
+                <div className="w-9 h-9 rounded-full flex items-center justify-center mx-auto" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})` }}>
                   <span className="text-white text-sm font-semibold">
                     {user?.name?.charAt(0)?.toUpperCase() || "U"}
                   </span>
@@ -464,7 +472,8 @@ const AppSidebar: React.FC = () => {
         {!isExpanded && !isMobileOpen && (
           <button
             onClick={toggleSidebar}
-            className="absolute -right-3 top-20 w-6 h-6 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
+            className="absolute -right-3 top-20 w-6 h-6 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 ease-in-out transform hover:scale-110 focus:outline-none"
+            style={{ background: colors.primary.hex }}
             aria-label="Expand Sidebar"
           >
             <ChevronRight size={12} />

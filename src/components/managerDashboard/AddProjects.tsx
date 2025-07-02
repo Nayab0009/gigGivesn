@@ -10,6 +10,7 @@ import { deleteProject } from "@/lib/ProjectService"
 import { useAuth } from "@/context/AuthContext"
 import axiosInstance from "@/lib/axios"
 import type { Task, Team } from "@/types"
+import { colors } from "@/colors"
 
 // Project status enum
 enum ProjectStatus {
@@ -139,7 +140,9 @@ function EditStatusModal({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-gradient-to-br from-white to-blue-50/30 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-white/50 backdrop-blur-sm">
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-600 to-teal-700  p-6 text-white">
+        <div className="  p-6 text-white"  style={{
+                                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                                }} >
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-xl font-bold mb-1">Update Project Status</h2>
@@ -192,7 +195,10 @@ function EditStatusModal({
             <button
               onClick={handleUpdate}
               disabled={isUpdating || selectedStatus === project.status}
-              className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-700  text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-4 py-2   text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            style={{
+                                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                                }}
             >
               {isUpdating && <Loader2 className="w-4 h-4 animate-spin" />}
               Update Status
@@ -248,7 +254,9 @@ function ViewTeamModal({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-gradient-to-br from-white to-emerald-50/30 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden border border-white/50 backdrop-blur-sm">
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-white">
+        <div className=" p-6 text-white"  style={{
+                                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                                }}>
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold mb-1">Project Team</h2>
@@ -560,7 +568,10 @@ export default function ProjectDashboard() {
             <button
               onClick={refreshData}
               disabled={isLoading}
-              className="group inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              style={{
+                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+              }}
+              className="group inline-flex items-center gap-2 px-6 py-3 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               <RefreshCw
                 className={`w-4 h-4 transition-transform duration-300 ${isLoading ? "animate-spin" : "group-hover:rotate-180"}`}
@@ -676,13 +687,19 @@ export default function ProjectDashboard() {
                           <td className="px-6 py-6">
                             <div className="flex flex-row gap-2">
                               <button
-                                className="px-4 py-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+                                className="px-4 py-2 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+                                style={{
+                                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                                }}
                                 onClick={() => setAssignTeamProjectId(project.id.toString())}
                               >
                                 Assign Team
                               </button>
                               <button
-                                className="px-4 py-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+                                className="px-4 py-2 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+                                style={{
+                                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                                }}
                                 onClick={() => setAssignTaskProjectId(project.id.toString())}
                               >
                                 Assign Task
@@ -692,7 +709,10 @@ export default function ProjectDashboard() {
                           <td className="px-6 py-6">
                             <div className="flex items-center gap-2">
                               <button
-                                className="group inline-flex items-center justify-center w-8 h-8 text-teal-600 hover:text-white bg-teal-50 hover:bg-gradient-to-r hover:from-teal-500 hover:to-teal-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110"
+                                className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110"
+                                style={{
+                                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                                }}
                                 onClick={() => setViewTeamProjectId(project.id)}
                               >
                                 <Users className="w-4 h-4" />
@@ -702,15 +722,21 @@ export default function ProjectDashboard() {
                           <td className="px-6 py-6">
                             <div className="flex items-center gap-2">
                               <button
+                                className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110"
+                                style={{
+                                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                                }}
                                 onClick={() => setEditStatusProjectId(project.id)}
-                                className="group inline-flex items-center justify-center w-8 h-8 text-blue-600 hover:text-white bg-blue-50 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110"
                               >
                                 <Edit className="w-4 h-4" />
                               </button>
                               <button
+                                className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
+                                style={{
+                                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                                }}
                                 onClick={() => handleDeleteProject(project.id)}
                                 disabled={isDeleting === project.id}
-                                className="group inline-flex items-center justify-center w-8 h-8 text-red-600 hover:text-white bg-red-50 hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 {isDeleting === project.id ? (
                                   <Loader2 className="w-4 h-4 animate-spin" />

@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react"
 import { Search, Plus, RefreshCw, Edit, Trash2, Eye, AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import axiosInstance from "@/lib/axios"
+import { colors } from "@/colors"
 
 interface Manager {
   id?: string
@@ -105,48 +106,95 @@ export default function EnhancedManagersTable() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-emerald-50 to-teal-50 p-4 sm:p-6 lg:p-8 ml-6">
+    <div className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Managers Dashboard</h1>
-          <p className="text-gray-600 text-lg">Manage and track all project managers</p>
+          <h1
+            className="text-3xl sm:text-4xl font-bold mb-2"
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+            }}
+          >
+            Managers Dashboard
+          </h1>
+          <p
+            className="text-lg"
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+            }}
+          >
+            Manage and track all project managers
+          </p>
         </div>
 
         {/* Action Bar */}
-        <div className="mb-8 bg-gradient-to-r from-emerald-50 to-teal-100 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-6">
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+        <div
+          className="mb-8 rounded-2xl shadow-lg border p-6"
+          style={{
+            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+            color: '#fff',
+            borderColor: colors.primary.hex,
+          }}
+        >
+          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+            <div className="relative flex-1 max-w-md w-full">
+              <Search
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5"
+                style={{ color: colors.accent.hex }}
+              />
               <input
                 type="text"
                 placeholder="Search managers by name, email or ID..."
-                className="w-full pl-10 pr-4 py-3 border border-emerald-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 text-gray-900 placeholder-gray-500 shadow-sm focus:shadow-md bg-white/80"
+                className="w-full pl-10 pr-4 py-3 rounded-2xl focus:ring-2 transition-all duration-300 shadow-sm focus:shadow-md"
+                style={{
+                  background: '#fff',
+                  color: colors.primary.hex,
+                  border: `1px solid ${colors.primary.hex}`,
+                }}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-sm text-gray-700 bg-white/60 px-4 py-2 rounded-full border border-emerald-200">
-                <span className="font-semibold text-gray-800">{filteredManagers.length}</span> of {managers.length}{" "}
-                managers
+            <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
+              <div
+                className="text-sm px-4 py-2 rounded-full border"
+                style={{
+                  background: colors.accent.hex,
+                  color: colors.primary.hex,
+                  borderColor: colors.primary.hex,
+                }}
+              >
+                <span className="font-semibold" style={{ color: colors.primary.hex }}>{filteredManagers.length}</span> of {managers.length} managers
               </div>
               <button
                 type="button"
-                className="group inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
+                className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
+                style={{
+                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                  color: '#fff',
+                  border: `1px solid ${colors.primary.hex}`,
+                }}
                 onClick={() => router.push("/dashboard/admin/addmanager")}
               >
-                <Plus className="w-4 h-4 transition-transform duration-300 group-hover:rotate-90" />
+                <Plus className="w-4 h-4" style={{ color: colors.highlight.hex }} />
                 Add Manager
               </button>
               <button
-                className="group inline-flex items-center gap-2 px-6 py-3 bg-white/80 hover:bg-white border border-emerald-200 hover:border-emerald-300 text-gray-700 hover:text-gray-800 rounded-full text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
+                className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
+                style={{
+                  background: '#fff',
+                  color: colors.primary.hex,
+                  border: `1px solid ${colors.primary.hex}`,
+                }}
                 onClick={handleRefresh}
                 disabled={isLoading}
               >
-                <RefreshCw
-                  className={`w-4 h-4 transition-transform duration-300 ${isLoading ? "animate-spin" : "group-hover:rotate-180"}`}
-                />
+                <RefreshCw className="w-4 h-4" style={{ color: colors.secondary.hex }} />
                 Refresh
               </button>
             </div>
@@ -154,43 +202,43 @@ export default function EnhancedManagersTable() {
         </div>
 
         {/* Table Container */}
-        <div className="bg-gradient-to-br from-white to-emerald-50/30 rounded-2xl shadow-lg border border-white/50 overflow-hidden backdrop-blur-sm">
+        <div
+          className="rounded-2xl shadow-lg border overflow-hidden"
+          style={{
+            background: '#fff',
+            borderColor: colors.primary.hex,
+          }}
+        >
           {isLoading ? (
             <div className="p-12 text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
-                <RefreshCw className="w-6 h-6 text-emerald-600 animate-spin" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4"
+                style={{ background: colors.accent.hex }}
+              >
+                <RefreshCw className="w-6 h-6 animate-spin" style={{ color: colors.primary.hex }} />
               </div>
-              <p className="text-gray-600 text-lg">Loading managers...</p>
+              <p className="text-lg" style={{ color: colors.primary.hex }}>Loading managers...</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-emerald-200">
-                <thead className="bg-gradient-to-r from-emerald-100 to-teal-100">
+              <table className="min-w-full divide-y" style={{ borderColor: colors.primary.hex }}>
+                <thead style={{ background: colors.accent.hex }}>
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Manager Details
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Contact Info
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Team Members
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Actions
-                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Manager Details</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Contact Info</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Team Members</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Actions</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white/80 divide-y divide-emerald-100">
+                <tbody className="bg-white divide-y divide-slate-200">
                   {filteredManagers.length === 0 ? (
                     <tr>
                       <td colSpan={4} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center justify-center">
-                          <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
-                            <AlertCircle className="w-8 h-8 text-emerald-500" />
+                          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                            <AlertCircle className="w-8 h-8 text-slate-400" />
                           </div>
-                          <p className="text-gray-600 text-lg font-medium mb-1">No managers found</p>
-                          <p className="text-gray-500">Try adjusting your search criteria</p>
+                          <p className="text-slate-600 text-lg font-medium mb-1">No managers found</p>
+                          <p className="text-slate-500">Try adjusting your search criteria</p>
                         </div>
                       </td>
                     </tr>
@@ -198,23 +246,29 @@ export default function EnhancedManagersTable() {
                     filteredManagers.map((manager, index) => (
                       <tr
                         key={manager.id || index}
-                        className={`hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50/50 transition-all duration-300 ${
-                          index % 2 === 0 ? "bg-white/60" : "bg-emerald-50/30"
-                        }`}
+                        className={
+                          `bg-white transition-all duration-300 hover:bg-gradient-to-r hover:from-[${colors.primary.hex}] hover:to-[${colors.secondary.hex}] hover:text-white`
+                        }
                       >
                         <td className="px-6 py-6">
                           <div className="space-y-2">
                             <div className="flex items-center gap-3">
-                              <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                              <div
+                                className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-lg"
+                                style={{
+                                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                                  color: '#fff',
+                                }}
+                              >
                                 {manager.name.charAt(0).toUpperCase()}
                               </div>
                               <div>
-                                <h3 className="text-lg font-semibold text-gray-900 leading-tight">{manager.name}</h3>
+                                <h3 className="text-lg font-semibold leading-tight" style={{ color: colors.primary.hex }}>{manager.name}</h3>
                                 <div className="flex items-center gap-2 mt-1">
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-gray-100 text-gray-700">
+                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium" style={{ background: colors.accent.hex, color: colors.primary.hex }}>
                                     ID: {manager.id || "N/A"}
                                   </span>
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-emerald-100 text-emerald-700">
+                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium" style={{ background: colors.highlight.hex, color: colors.primary.hex }}>
                                     Manager
                                   </span>
                                 </div>
@@ -225,16 +279,16 @@ export default function EnhancedManagersTable() {
                         <td className="px-6 py-6">
                           <div className="space-y-2">
                             <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                              <span className="text-sm font-medium text-gray-900">{manager.email}</span>
+                              <div className="w-2 h-2 rounded-full" style={{ background: colors.primary.hex }}></div>
+                              <span className="text-sm font-medium" style={{ color: colors.primary.hex }}>{manager.email}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
-                              <span className="text-sm text-gray-600">{manager.phone}</span>
+                              <div className="w-2 h-2 rounded-full" style={{ background: colors.secondary.hex }}></div>
+                              <span className="text-sm" style={{ color: colors.secondary.hex }}>{manager.phone}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
-                              <span className="text-sm text-gray-600 max-w-xs truncate" title={manager.address}>
+                              <div className="w-2 h-2 rounded-full" style={{ background: colors.accent.hex }}></div>
+                              <span className="text-sm max-w-xs truncate" title={manager.address} style={{ color: colors.accent.hex }}>
                                 {manager.address}
                               </span>
                             </div>
@@ -260,22 +314,25 @@ export default function EnhancedManagersTable() {
                                   </div>
                                 ))}
                                 {manager.team && manager.team.length > 4 && (
-                                  <div className="w-8 h-8 rounded-full bg-emerald-100 border-2 border-white flex items-center justify-center text-xs font-medium text-emerald-700 shadow-sm">
+                                  <div className="w-8 h-8 rounded-full" style={{ background: colors.accent.hex, color: colors.primary.hex, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 500, border: `2px solid #fff` }}>
                                     +{manager.team.length - 4}
                                   </div>
                                 )}
                               </div>
-                              <span className="text-sm text-gray-500">
+                              <span className="text-sm" style={{ color: colors.secondary.hex }}>
                                 {manager.team?.length || 0} member{(manager.team?.length || 0) !== 1 ? "s" : ""}
                               </span>
                             </div>
                             {manager.team && manager.team.length > 0 && (
-                              <div className="w-full bg-emerald-200/50 rounded-full h-2 shadow-inner">
+                              <div className="w-full rounded-full h-2 shadow-inner" style={{ background: colors.accent.hex }}>
                                 <div
-                                  className="bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 h-2 rounded-full transition-all duration-500 shadow-sm relative overflow-hidden"
-                                  style={{ width: `${Math.min((manager.team.length / 10) * 100, 100)}%` }}
+                                  className="h-2 rounded-full transition-all duration-500 shadow-sm relative overflow-hidden"
+                                  style={{
+                                    background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                                    width: `${Math.min((manager.team.length / 10) * 100, 100)}%`,
+                                  }}
                                 >
-                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
+                                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, transparent, #fff3, transparent)', animation: 'pulse 2s infinite' }}></div>
                                 </div>
                               </div>
                             )}
@@ -283,14 +340,32 @@ export default function EnhancedManagersTable() {
                         </td>
                         <td className="px-6 py-6">
                           <div className="flex items-center gap-2">
-                            <button className="group inline-flex items-center justify-center w-10 h-10 text-teal-600 hover:text-white bg-teal-50 hover:bg-gradient-to-r hover:from-teal-500 hover:to-teal-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1">
-                              <Eye className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                            <button
+                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
+                              style={{
+                                background: colors.accent.hex,
+                                color: colors.primary.hex,
+                              }}
+                            >
+                              <Eye className="w-4 h-4" style={{ color: colors.primary.hex }} />
                             </button>
-                            <button className="group inline-flex items-center justify-center w-10 h-10 text-amber-600 hover:text-white bg-amber-50 hover:bg-gradient-to-r hover:from-amber-500 hover:to-amber-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1">
-                              <Edit className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                            <button
+                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
+                              style={{
+                                background: colors.highlight.hex,
+                                color: colors.primary.hex,
+                              }}
+                            >
+                              <Edit className="w-4 h-4" style={{ color: colors.primary.hex }} />
                             </button>
-                            <button className="group inline-flex items-center justify-center w-10 h-10 text-rose-600 hover:text-white bg-rose-50 hover:bg-gradient-to-r hover:from-rose-500 hover:to-rose-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1">
-                              <Trash2 className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                            <button
+                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
+                              style={{
+                                background: colors.warning.hex,
+                                color: '#fff',
+                              }}
+                            >
+                              <Trash2 className="w-4 h-4" style={{ color: '#fff' }} />
                             </button>
                           </div>
                         </td>
@@ -305,29 +380,36 @@ export default function EnhancedManagersTable() {
 
         {/* Summary Footer */}
         {!isLoading && (
-          <div className="mt-8 bg-gradient-to-r from-emerald-50 to-teal-100 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-6">
+          <div
+            className="mt-8 rounded-2xl shadow-lg border p-6"
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+              color: '#fff',
+              borderColor: colors.primary.hex,
+            }}
+          >
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-6">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-gray-900">{managers.length}</div>
-                  <div className="text-sm text-gray-600">Total Managers</div>
+                  <div className="text-2xl font-bold">{managers.length}</div>
+                  <div className="text-sm">Total Managers</div>
                 </div>
-                <div className="w-px h-12 bg-emerald-200"></div>
+                <div className="w-px h-12" style={{ background: colors.accent.hex }}></div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-emerald-600">{filteredManagers.length}</div>
-                  <div className="text-sm text-gray-600">Filtered Results</div>
+                  <div className="text-2xl font-bold">{filteredManagers.length}</div>
+                  <div className="text-sm">Filtered Results</div>
                 </div>
-                <div className="w-px h-12 bg-emerald-200"></div>
+                <div className="w-px h-12" style={{ background: colors.accent.hex }}></div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-teal-600">
+                  <div className="text-2xl font-bold">
                     {managers.reduce((acc, manager) => acc + (manager.team?.length || 0), 0)}
                   </div>
-                  <div className="text-sm text-gray-600">Team Members</div>
+                  <div className="text-sm">Team Members</div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
-                <span className="text-sm text-gray-600">SyTestem Active</span>
+                <div className="w-3 h-3 rounded-full animate-pulse" style={{ background: colors.highlight.hex }}></div>
+                <span className="text-sm">System Active</span>
               </div>
             </div>
           </div>

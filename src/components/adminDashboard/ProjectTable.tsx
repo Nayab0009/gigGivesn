@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from "react"
 import { Search, Edit, Trash2, Eye, RefreshCw, AlertCircle, ChevronDown, UserCheck, Plus } from "lucide-react"
 import { useRouter } from "next/navigation"
 import axiosInstance from "@/lib/axios"
-
+import { colors } from "@/colors"
 interface Manager {
   id: string
   name: string
@@ -116,6 +116,7 @@ function AssignManagerModal({
                 <button
                   className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   disabled={!!assigningManagerId}
+                  
                 >
                   {assigningManagerId === manager.id ? (
                     <>
@@ -254,49 +255,90 @@ export default function ProjectDashboard() {
   const currentProject = assignManagerProjectId ? projects.find((p) => p.id === assignManagerProjectId) : null
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-emerald-50 to-teal-50 p-4 sm:p-6 lg:p-8 ml-6">
+    <div className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">Project Dashboard</h1>
-          <p className="text-gray-600 text-lg">Manage and track your project progress</p>
+          <h1
+            className="text-3xl sm:text-4xl font-bold mb-2"
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+            }}
+          >
+            Project Dashboard
+          </h1>
+          <p
+            className="text-lg"
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+            }}
+          >
+            Manage and track your project progress
+          </p>
         </div>
 
         {/* Action Bar */}
-        <div className="mb-8 bg-gradient-to-r from-emerald-50 to-teal-100 backdrop-blur-sm rounded-2xl shadow-lg border border-white/50 p-6">
-          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+        <div
+          className="mb-8 rounded-2xl shadow-lg border p-6"
+          style={{
+            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+            color: '#fff',
+            borderColor: colors.primary.hex,
+          }}
+        >
+          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+            <div className="relative flex-1 max-w-md w-full">
+              <Search
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5"
+                style={{ color: colors.accent.hex }}
+              />
               <input
                 type="text"
                 placeholder="Search projects by name or description..."
-                className="w-full pl-10 pr-4 py-3 border border-emerald-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 text-gray-900 placeholder-gray-500 shadow-sm focus:shadow-md bg-white/80"
+                className="w-full pl-10 pr-4 py-3 rounded-2xl focus:ring-2 transition-all duration-300 shadow-sm focus:shadow-md"
+                style={{
+                  background: '#fff',
+                  color: colors.primary.hex,
+                  border: `1px solid ${colors.primary.hex}`,
+                }}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <div className="relative">
-                  <select
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="appearance-none bg-white/80 border border-emerald-200 rounded-2xl px-4 py-3 pr-10 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 text-gray-900 min-w-[140px] shadow-sm focus:shadow-md"
-                  >
-                    <option value="all">All Status</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5 pointer-events-none" />
-                </div>
-              </div>  
+            <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
+              <div className="relative">
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="appearance-none rounded-2xl px-4 py-3 pr-10 min-w-[140px] shadow-sm focus:shadow-md"
+                  style={{
+                    background: '#fff',
+                    color: colors.primary.hex,
+                    border: `1px solid ${colors.primary.hex}`,
+                  }}
+                >
+                  <option value="all">All Status</option>
+                  <option value="in-progress">In Progress</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" style={{ color: colors.secondary.hex }} />
+              </div>
               <button
                 type="button"
-                className="group inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
+                className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
+                style={{
+                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                  color: '#fff',
+                  border: `1px solid ${colors.primary.hex}`,
+                }}
                 onClick={() => router.push("/dashboard/admin/addProject")}
               >
-                <Plus className="w-4 h-4 transition-transform duration-300 group-hover:rotate-90" />
+                <Plus className="w-4 h-4" style={{ color: colors.highlight.hex }} />
                 Add Project
               </button>
             </div>
@@ -304,49 +346,45 @@ export default function ProjectDashboard() {
         </div>
 
         {/* Table Container */}
-        <div className="bg-gradient-to-br from-white to-emerald-50/30 rounded-2xl shadow-lg border border-white/50 overflow-hidden backdrop-blur-sm">
+        <div
+          className="rounded-2xl shadow-lg border overflow-hidden"
+          style={{
+            background: '#fff',
+            borderColor: colors.primary.hex,
+          }}
+        >
           {isLoading ? (
             <div className="p-12 text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
-                <RefreshCw className="w-6 h-6 text-emerald-600 animate-spin" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4"
+                style={{ background: colors.accent.hex }}
+              >
+                <RefreshCw className="w-6 h-6 animate-spin" style={{ color: colors.primary.hex }} />
               </div>
-              <p className="text-gray-600 text-lg">Loading projects...</p>
+              <p className="text-lg" style={{ color: colors.primary.hex }}>Loading projects...</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-emerald-200">
-                <thead className="bg-gradient-to-r from-emerald-100 to-teal-100">
+              <table className="min-w-full divide-y" style={{ borderColor: colors.primary.hex }}>
+                <thead style={{ background: colors.accent.hex }}>
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Description
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-      Status
-    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Manager
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Progress
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Actions
-                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Name</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Description</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Status</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Manager</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Progress</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Actions</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white/80 divide-y divide-emerald-100">
+                <tbody className="bg-white divide-y divide-slate-200">
                   {filteredProjects.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center">
+                      <td colSpan={6} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center justify-center">
-                          <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
-                            <AlertCircle className="w-8 h-8 text-emerald-500" />
+                          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+                            <AlertCircle className="w-8 h-8 text-slate-400" />
                           </div>
-                          <p className="text-gray-600 text-lg font-medium mb-1">No projects found</p>
-                          <p className="text-gray-500">Try adjusting your search or filter criteria</p>
+                          <p className="text-slate-600 text-lg font-medium mb-1">No projects found</p>
+                          <p className="text-slate-500">Try adjusting your search or filter criteria</p>
                         </div>
                       </td>
                     </tr>
@@ -354,54 +392,56 @@ export default function ProjectDashboard() {
                     filteredProjects.map((project, index) => (
                       <tr
                         key={project.id}
-                        className={`hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50/50 transition-all duration-300 ${
-                          index % 2 === 0 ? "bg-white/60" : "bg-emerald-50/30"
-                        }`}
+                        className={`bg-white transition-all duration-300 hover:bg-gradient-to-r hover:from-[${colors.primary.hex}] hover:to-[${colors.secondary.hex}] hover:text-white`}
                       >
                         <td className="px-6 py-6">
                           <div className="space-y-2">
-                            <h3 className="text-lg font-semibold text-gray-900 leading-tight">{project.name}</h3>
+                            <h3 className="text-lg font-semibold leading-tight" style={{ color: colors.primary.hex }}>{project.name}</h3>
                             <div className="flex items-center gap-2">
                               {project.budget && (
-                                <span className="text-gray-500 text-sm">${project.budget.toLocaleString()}</span>
+                                <span className="text-sm" style={{ color: colors.secondary.hex }}>${project.budget.toLocaleString()}</span>
                               )}
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-6">
-                          <p className="text-gray-600 text-sm leading-relaxed max-w-xs">{project.description}</p>
+                          <p className="text-sm leading-relaxed max-w-xs" style={{ color: colors.secondary.hex }}>{project.description}</p>
                         </td>
                         <td className="px-6 py-6">
-          {project.status ? (
-            <span
-              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize ${getStatusColor(
-                // Map "inprogress" or any similar backend value to "in-progress"
-                project.status.replace(/in[\s-]?progress/i, "in-progress")
-              )}`}
-            >
-              {/* Display in a friendly way: */}
-              {(() => {
-                const status = project.status.toLowerCase();
-                if (status === "inprogress" || status === "in-progress") return "In Progress";
-                if (status === "onhold" || status === "on-hold") return "On Hold";
-                // Capitalize first letter
-                return status.charAt(0).toUpperCase() + status.slice(1);
-              })()}
-            </span>
-          ) : (
-            <span className="text-gray-400 text-xs">—</span>
-          )}
-        </td>
+                          {project.status ? (
+                            <span
+                              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize"
+                              style={{
+                                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                                color: '#fff',
+                              }}
+                            >
+                              {(() => {
+                                const status = project.status.toLowerCase();
+                                if (status === "inprogress" || status === "in-progress") return "In Progress";
+                                if (status === "onhold" || status === "on-hold") return "On Hold";
+                                return status.charAt(0).toUpperCase() + status.slice(1);
+                              })()}
+                            </span>
+                          ) : (
+                            <span className="text-xs" style={{ color: colors.secondary.hex }}>—</span>
+                          )}
+                        </td>
                         <td className="px-6 py-6">
                           {project.manager ? (
-                            <span className="font-semibold text-gray-900">{project.manager.name}</span>
+                            <span className="font-semibold" style={{ color: colors.primary.hex }}>{project.manager.name}</span>
                           ) : (
                             <div className="flex items-center gap-2">
-                              <span className="text-gray-500 text-sm">No manager</span>
+                              <span className="text-sm" style={{ color: colors.secondary.hex }}>No manager</span>
                               <button
-                                className="ml-2 px-3 py-1.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-full text-xs font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="ml-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                                 onClick={() => setAssignManagerProjectId(project.id)}
                                 disabled={isAssigning}
+                                style={{
+                                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                                  color: '#fff',
+                                  border: `1px solid ${colors.primary.hex}`,
+                                }}
                               >
                                 Assign
                               </button>
@@ -411,35 +451,54 @@ export default function ProjectDashboard() {
                         <td className="px-6 py-6">
                           <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                              <span className="text-sm font-medium text-gray-900">{project.completion || 0}%</span>
+                              <span className="text-sm font-medium" style={{ color: colors.primary.hex }}>{project.completion || 0}%</span>
                             </div>
-                            <div className="w-full bg-emerald-200/50 rounded-full h-2 shadow-inner">
+                            <div className="w-full rounded-full h-2 shadow-inner" style={{ background: colors.accent.hex }}>
                               <div
-                                className="bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 h-2 rounded-full transition-all duration-500 shadow-sm relative overflow-hidden"
-                                style={{ width: `${project.completion || 0}%` }}
+                                className="h-2 rounded-full transition-all duration-500 shadow-sm relative overflow-hidden"
+                                style={{
+                                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                                  width: `${project.completion || 0}%`,
+                                }}
                               >
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
+                                <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, transparent, #fff3, transparent)', animation: 'pulse 2s infinite' }}></div>
                               </div>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-6">
                           <div className="flex items-center gap-2">
-                            <button className="group inline-flex items-center justify-center w-8 h-8 text-teal-600 hover:text-white bg-teal-50 hover:bg-gradient-to-r hover:from-teal-500 hover:to-teal-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110">
-                              <Eye className="w-4 h-4" />
+                            <button
+                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
+                              style={{
+                                background: colors.accent.hex,
+                                color: colors.primary.hex,
+                              }}
+                            >
+                              <Eye className="w-4 h-4" style={{ color: colors.primary.hex }} />
                             </button>
-                            <button className="group inline-flex items-center justify-center w-8 h-8 text-amber-600 hover:text-white bg-amber-50 hover:bg-gradient-to-r hover:from-amber-500 hover:to-amber-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110">
-                              <Edit className="w-4 h-4" />
+                            <button
+                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
+                              style={{
+                                background: colors.highlight.hex,
+                                color: colors.primary.hex,
+                              }}
+                            >
+                              <Edit className="w-4 h-4" style={{ color: colors.primary.hex }} />
                             </button>
-                            <button 
+                            <button
                               onClick={() => deleteProject(project.id)}
                               disabled={isDeleting === project.id}
-                              className="group inline-flex items-center justify-center w-8 h-8 text-rose-600 hover:text-white bg-rose-50 hover:bg-gradient-to-r hover:from-rose-500 hover:to-rose-600 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                              style={{
+                                background: colors.warning.hex,
+                                color: '#fff',
+                              }}
                             >
                               {isDeleting === project.id ? (
-                                <RefreshCw className="w-4 h-4 animate-spin" />
+                                <RefreshCw className="w-4 h-4 animate-spin" style={{ color: '#fff' }} />
                               ) : (
-                                <Trash2 className="w-4 h-4" />
+                                <Trash2 className="w-4 h-4" style={{ color: '#fff' }} />
                               )}
                             </button>
                           </div>
