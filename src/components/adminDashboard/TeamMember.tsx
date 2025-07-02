@@ -2,6 +2,7 @@
 import { useState, useEffect, useMemo } from "react"
 import { Search, Plus, RefreshCw, AlertCircle, Edit, Trash2, Eye } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { deleteEmployee } from "@/lib/TeamService"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
 
@@ -79,7 +80,19 @@ export default function TeamListPage() {
         (member.id?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ?? false),
     )
   }, [teamMembers, searchTerm])
-
+  const handleEmployeeDelete = async (teamId: string)=>{
+    if (!teamId) return;
+    const confirmDelete = window.confirm("Are you sure you want to delete this employee?");
+    if (!confirmDelete) return;
+    try {
+      await deleteEmployee(teamId);
+      setTeamMembers((prev)=>prev.filter((team)=>team.id!==teamId))
+    }
+    catch (error) {
+      console.error("Error deleting manager:", error);
+      alert("Failed to delete manager. Please try again.");
+    }
+}
   return (
     <div
   
@@ -241,9 +254,7 @@ export default function TeamListPage() {
                               <div>
                                 <h3 className="text-lg font-semibold leading-tight" style={{ color: colors.primary.hex }}>{member.name}</h3>
                                 <div className="flex items-center gap-2 mt-1">
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium" style={{ background: colors.accent.hex, color: colors.primary.hex }}>
-                                    ID: {member.id || "N/A"}
-                                  </span>
+                                
                                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium" style={{ background: colors.highlight.hex, color: colors.primary.hex }}>
                                     Team Member
                                   </span>
@@ -283,15 +294,7 @@ export default function TeamListPage() {
                         </td>
                         <td className="px-6 py-6">
                           <div className="flex items-center gap-2">
-                            <button
-                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
-                              style={{
-                                background: colors.accent.hex,
-                                color: colors.primary.hex,
-                              }}
-                            >
-                              <Eye className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                            </button>
+                        
                             <button
                               className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
                               style={{
@@ -302,6 +305,7 @@ export default function TeamListPage() {
                               <Edit className="w-4 h-4" style={{ color: colors.primary.hex }} />
                             </button>
                             <button
+                              onClick={()=>handleEmployeeDelete(member.id)}
                               className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
                               style={{
                                 background: colors.warning.hex,

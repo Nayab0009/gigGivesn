@@ -471,15 +471,6 @@ export default function ProjectDashboard() {
                             <button
                               className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
                               style={{
-                                background: colors.accent.hex,
-                                color: colors.primary.hex,
-                              }}
-                            >
-                              <Eye className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                            </button>
-                            <button
-                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
-                              style={{
                                 background: colors.highlight.hex,
                                 color: colors.primary.hex,
                               }}
