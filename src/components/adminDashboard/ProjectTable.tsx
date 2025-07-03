@@ -4,6 +4,8 @@ import { Search, Edit, Trash2, Eye, RefreshCw, AlertCircle, ChevronDown, UserChe
 import { useRouter } from "next/navigation"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
+import Pagination from "../pagination"
+
 interface Manager {
   id: string
   name: string
@@ -157,6 +159,8 @@ export default function ProjectDashboard() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [assignManagerProjectId, setAssignManagerProjectId] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   // Fetch projects from API
   useEffect(() => {
@@ -202,6 +206,12 @@ export default function ProjectDashboard() {
       return matchesSearch && matchesStatus
     })
   }, [projects, searchTerm, statusFilter])
+
+  // Pagination logic
+  const paginatedProjects = filteredProjects.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   // Assign manager to project with API call
   const assignManager = async (projectId: string, manager: Manager) => {
@@ -376,7 +386,7 @@ export default function ProjectDashboard() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-slate-200">
-                  {filteredProjects.length === 0 ? (
+                  {paginatedProjects.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center justify-center">
@@ -389,7 +399,7 @@ export default function ProjectDashboard() {
                       </td>
                     </tr>
                   ) : (
-                    filteredProjects.map((project, index) => (
+                    paginatedProjects.map((project, index) => (
                       <tr
                         key={project.id}
                         className={`bg-white transition-all duration-300 hover:bg-gradient-to-r hover:from-[${colors.primary.hex}] hover:to-[${colors.secondary.hex}] hover:text-white`}
@@ -502,6 +512,18 @@ export default function ProjectDashboard() {
             </div>
           )}
         </div>
+
+        {/* Pagination */}
+        {!isLoading && filteredProjects.length > itemsPerPage && (
+          <div className="flex justify-center my-6">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.max(Math.ceil(filteredProjects.length / itemsPerPage), 1)}
+              onPageChange={setCurrentPage}
+              colors={colors}
+            />
+          </div>
+        )}
 
         {/* Assign Manager Modal */}
         <AssignManagerModal

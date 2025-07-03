@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { deleteEmployee } from "@/lib/TeamService"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
+import Pagination from "../pagination"
 
 interface TeamMember {
   id?: string | number
@@ -46,6 +47,17 @@ export default function TeamListPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const router = useRouter()
 
+  // Pagination logic
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const paginatedMembers = teamMembers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [teamMembers]);
+
   useEffect(() => {
     const fetchEmployees = async () => {
       setIsLoading(true)
@@ -80,6 +92,7 @@ export default function TeamListPage() {
         (member.id?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ?? false),
     )
   }, [teamMembers, searchTerm])
+
   const handleEmployeeDelete = async (teamId: string)=>{
     if (!teamId) return;
     const confirmDelete = window.confirm("Are you sure you want to delete this employee?");
@@ -219,7 +232,7 @@ export default function TeamListPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-slate-200">
-                  {filteredMembers.length === 0 ? (
+                  {paginatedMembers.length === 0 ? (
                     <tr>
                       <td colSpan={4} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center justify-center">
@@ -232,7 +245,7 @@ export default function TeamListPage() {
                       </td>
                     </tr>
                   ) : (
-                    filteredMembers.map((member, index) => (
+                    paginatedMembers.map((member, index) => (
                       <tr
                         key={member.id || index}
                         className={
@@ -305,7 +318,7 @@ export default function TeamListPage() {
                               <Edit className="w-4 h-4" style={{ color: colors.primary.hex }} />
                             </button>
                             <button
-                              onClick={()=>handleEmployeeDelete(member.id)}
+                              onClick={()=>handleEmployeeDelete(String(member.id))}
                               className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
                               style={{
                                 background: colors.warning.hex,
@@ -324,6 +337,18 @@ export default function TeamListPage() {
             </div>
           )}
         </div>
+
+        {/* Pagination */}
+        {!isLoading && filteredMembers.length > itemsPerPage && (
+          <div className="flex justify-center my-6">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.max(Math.ceil(filteredMembers.length / itemsPerPage), 1)}
+              onPageChange={setCurrentPage}
+              colors={colors}
+            />
+          </div>
+        )}
 
         {/* Summary Footer */}
         {!isLoading && (

@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
 import { deleteManager } from "@/lib/ManagerService"
- import { updateManager } from "@/lib/ManagerService"
+import { updateManager } from "@/lib/ManagerService"
+import Pagination from "../pagination"
+
 interface Manager {
   id?: string
   name: string
@@ -38,6 +40,8 @@ export default function EnhancedManagersTable() {
     address:"",
   })
   const [isUpdating, setIsUpdating] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
   const router = useRouter()
 
   useEffect(() => {
@@ -80,6 +84,7 @@ export default function EnhancedManagersTable() {
       [e.target.name]: e.target.value
     }));
   };
+
   // Filter data
   const filteredManagers = useMemo(() => {
     return managers.filter((manager) => {
@@ -90,6 +95,17 @@ export default function EnhancedManagersTable() {
       return matchesSearch
     })
   }, [managers, searchTerm])
+
+  // Calculate pagin
+  const totalPages = Math.ceil(filteredManagers.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedManagers = filteredManagers.slice(startIndex, endIndex)
+
+  // Reset to first page when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   // Function to refresh data
   const handleRefresh = async () => {
@@ -120,29 +136,32 @@ export default function EnhancedManagersTable() {
       setIsLoading(false)
     }
   }
+
   const handleEditClick = (manager: Manager) => {
-  setEditManager(manager);
-  setEditForm({
-    name: manager.name,
-    email: manager.email,
-    phone: manager.phone,
-    address: manager.address,
-  });
-  setShowEditModal(true);
-};
-const handleUpdateManager = async () => {
-  if (!editManager?.id) return;
-  setIsUpdating(true);
-  try {
-    await updateManager(editManager.id, editForm);
-    setManagers(prev => prev.map(m => m.id === editManager.id ? { ...m, ...editForm } : m));
-    setShowEditModal(false);
-  } catch (err) {
-    alert("Failed to update manager.");
-  } finally {
-    setIsUpdating(false);
-  }
-};
+    setEditManager(manager);
+    setEditForm({
+      name: manager.name,
+      email: manager.email,
+      phone: manager.phone,
+      address: manager.address,
+    });
+    setShowEditModal(true);
+  };
+
+  const handleUpdateManager = async () => {
+    if (!editManager?.id) return;
+    setIsUpdating(true);
+    try {
+      await updateManager(editManager.id, editForm);
+      setManagers(prev => prev.map(m => m.id === editManager.id ? { ...m, ...editForm } : m));
+      setShowEditModal(false);
+    } catch (err) {
+      alert("Failed to update manager.");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   const handleDelete = async (managerId: string|undefined) => {
     if (!managerId) return;
     const confirmDelete = window.confirm("Are you sure you want to delete this manager?");
@@ -294,7 +313,7 @@ const handleUpdateManager = async () => {
                       </td>
                     </tr>
                   ) : (
-                    filteredManagers.map((manager, index) => (
+                    paginatedManagers.map((manager, index) => (
                       <tr
                         key={manager.id || index}
                         className={
@@ -420,65 +439,78 @@ const handleUpdateManager = async () => {
             </div>
           )}
         </div>
+
+        {/* Pagination */}
+        {!isLoading && filteredManagers.length > 0 && totalPages > 1 && (
+          <div className="flex justify-center my-6">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              colors={colors}
+            />
+          </div>
+        )}
+
         {showEditModal && (
-  <div
-    className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-opacity-60"
-    style={{
-      background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-    }}
-  >
-    <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 w-full max-w-md transition-all">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Edit Manager</h2>
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-opacity-60"
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+            }}
+          >
+            <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 w-full max-w-md transition-all">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Edit Manager</h2>
 
-      <div className="space-y-4">
-        <input
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          name="name"
-          value={editForm.name}
-          onChange={handleEditFormChange}
-          placeholder="Name"
-        />
-        <input
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          name="email"
-          value={editForm.email}
-          onChange={handleEditFormChange}
-          placeholder="Email"
-        />
-        <input
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          name="phone"
-          value={editForm.phone}
-          onChange={handleEditFormChange}
-          placeholder="Phone"
-        />
-        <input
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          name="address"
-          value={editForm.address}
-          onChange={handleEditFormChange}
-          placeholder="Address"
-        />
-      </div>
+              <div className="space-y-4">
+                <input
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  name="name"
+                  value={editForm.name}
+                  onChange={handleEditFormChange}
+                  placeholder="Name"
+                />
+                <input
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  name="email"
+                  value={editForm.email}
+                  onChange={handleEditFormChange}
+                  placeholder="Email"
+                />
+                <input
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  name="phone"
+                  value={editForm.phone}
+                  onChange={handleEditFormChange}
+                  placeholder="Phone"
+                />
+                <input
+                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  name="address"
+                  value={editForm.address}
+                  onChange={handleEditFormChange}
+                  placeholder="Address"
+                />
+              </div>
 
-      <div className="flex justify-end gap-3 mt-8">
-        <button
-          className="px-4 py-2 rounded-lg border border-gray-400 text-gray-700 hover:bg-gray-100 transition"
-          onClick={() => setShowEditModal(false)}
-        >
-          Cancel
-        </button>
-        <button
-          className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition disabled:opacity-60"
-          onClick={handleUpdateManager}
-          disabled={isUpdating}
-        >
-          {isUpdating ? "Updating..." : "Update"}
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+              <div className="flex justify-end gap-3 mt-8">
+                <button
+                  className="px-4 py-2 rounded-lg border border-gray-400 text-gray-700 hover:bg-gray-100 transition"
+                  onClick={() => setShowEditModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition disabled:opacity-60"
+                  onClick={handleUpdateManager}
+                  disabled={isUpdating}
+                >
+                  {isUpdating ? "Updating..." : "Update"}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Summary Footer */}
         {!isLoading && (

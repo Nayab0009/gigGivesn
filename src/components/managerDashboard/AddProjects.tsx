@@ -11,6 +11,7 @@ import { useAuth } from "@/context/AuthContext"
 import axiosInstance from "@/lib/axios"
 import type { Task, Team } from "@/types"
 import { colors } from "@/colors"
+import Pagination from "../pagination"
 
 // Project status enum
 enum ProjectStatus {
@@ -389,8 +390,13 @@ export default function ProjectDashboard() {
     status: "pending",
     dueDate: "",
     estimatedHours: 0,
+    priority: "medium",
   })
   const [isDeleting, setIsDeleting] = useState<number | null>(null)
+
+  // Pagination logic
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   // Fetch manager projects function
   const fetchManagerProjects = async () => {
@@ -483,6 +489,15 @@ export default function ProjectDashboard() {
     })
   }, [projects, searchTerm])
 
+  // Pagination logic
+  const paginatedProjects = filteredProjects.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredProjects]);
+
   // --- Assign Team Logic ---
   const assignTeam = (projectId: string, team: Team) => {
     setAssignTeamProjectId(null)
@@ -504,7 +519,7 @@ export default function ProjectDashboard() {
       ? projects.find((p) => p.id.toString() === assignTaskProjectId)
       : null
 
-  const editProject = editStatusProjectId ? projects.find((p) => p.id === editStatusProjectId) : null
+  const editProject = editStatusProjectId ? (projects.find((p) => p.id === editStatusProjectId) ?? null) : null
 
   // Show authentication error if user is not logged in
   if (!user?.id) {
@@ -641,7 +656,7 @@ export default function ProjectDashboard() {
                         </td>
                       </tr>
                     ) : (
-                      filteredProjects.map((project, index) => (
+                      paginatedProjects.map((project, index) => (
                         <tr
                           key={project.id.toString()}
                           className={`hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50/50 transition-all duration-300 ${
@@ -691,7 +706,7 @@ export default function ProjectDashboard() {
                                 style={{
                                   background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
                                 }}
-                                onClick={() => setAssignTeamProjectId(project.id.toString())}
+                                onClick={() => setAssignTeamProjectId(String(project.id))}
                               >
                                 Assign Team
                               </button>
@@ -700,7 +715,7 @@ export default function ProjectDashboard() {
                                 style={{
                                   background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
                                 }}
-                                onClick={() => setAssignTaskProjectId(project.id.toString())}
+                                onClick={() => setAssignTaskProjectId(String(project.id))}
                               >
                                 Assign Task
                               </button>
@@ -755,6 +770,18 @@ export default function ProjectDashboard() {
           )}
         </div>
 
+        {/* Pagination */}
+        {!isLoading && filteredProjects.length > itemsPerPage && (
+          <div className="flex justify-center my-6">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={Math.max(Math.ceil(filteredProjects.length / itemsPerPage), 1)}
+              onPageChange={setCurrentPage}
+              colors={colors}
+            />
+          </div>
+        )}
+
         {/* MODALS */}
         <AssignTeamModal
           open={!!assignTeamProjectId}
@@ -772,6 +799,7 @@ export default function ProjectDashboard() {
                   budget: 0,
                   completion: 0,
                   tasks: [],
+                  priority: "medium",
                 }
               : null
           }
