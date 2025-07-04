@@ -3,15 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Send, Settings, User, Moon, Sun, Bell, BellOff, Palette, MessageCircle, Search, MoreVertical, Smile } from "lucide-react";
 import { colors } from "@/colors";
-
+import { ShowEmployee } from "@/lib/TeamService";
 export default function ChatPage() {
-  const users = [
-    { name: "Alice", status: "online", avatar: "A", lastSeen: "now", unread: 2 },
-    { name: "Bob", status: "away", avatar: "B", lastSeen: "5m ago", unread: 0 },
-    { name: "Charlie", status: "offline", avatar: "C", lastSeen: "1h ago", unread: 1 },
-    { name: "Diana", status: "online", avatar: "D", lastSeen: "now", unread: 0 },
-  ];
-
   type Message = {
     sender: string;
     text: string;
@@ -19,27 +12,42 @@ export default function ChatPage() {
     status: 'sent' | 'delivered' | 'read';
   };
 
-  const [messages, setMessages] = useState<Message[]>([
-    { sender: "Alice", text: "Hey there! How's your day going?", timestamp: new Date(Date.now() - 300000), status: 'read' },
-    { sender: "Me", text: "Hi Alice! It's going great, thanks for asking!", timestamp: new Date(Date.now() - 240000), status: 'delivered' },
-    { sender: "Alice", text: "That's wonderful to hear! Are you free for a quick call later?", timestamp: new Date(Date.now() - 180000), status: 'read' },
-    { sender: "Me", text: "Sure! What time works for you?", timestamp: new Date(Date.now() - 120000), status: 'delivered' },
-  ]);
 
   const [message, setMessage] = useState("");
-  const [selectedUser, setSelectedUser] = useState("Alice");
+  const [selectedUser, setSelectedUser] = useState<string>("");
   const [showSettings, setShowSettings] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [theme, setTheme] = useState("light");
   const [notifications, setNotifications] = useState(true);
   const [fontSize, setFontSize] = useState("medium");
   const [isTyping, setIsTyping] = useState(false);
+  const [user, setUsers] = useState<any[]>([]);
+   const [messages, setMessages] = useState<Message[]>([]);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await ShowEmployee("employee");
+        setUsers(response?.data || []);
+      }
+      catch (error) {
+        setUsers([]);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  useEffect(() => {
+    if (user.length > 0 && !selectedUser) {
+      setSelectedUser(user[0].name);
+    }
+  }, [user, selectedUser]);
 
   useEffect(() => {
     scrollToBottom();
@@ -86,7 +94,7 @@ export default function ChatPage() {
     }
   };
 
-  const filteredUsers = users.filter(user =>
+  const filteredUsers = user.filter(user =>
     user.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -140,7 +148,7 @@ export default function ChatPage() {
         <div className="flex-1 overflow-y-auto">
           {filteredUsers.map((user) => (
             <div
-              key={user.name}
+              key={user.id || user.name}
               onClick={() => setSelectedUser(user.name)}
               className={`p-4 cursor-pointer transition-all duration-200 border-b hover:bg-[${colors.accent.hex}22] ${
                 selectedUser === user.name ? `bg-[${colors.primary.hex}11] border-r-2 border-r-[${colors.primary.hex}]` : ''
@@ -151,9 +159,9 @@ export default function ChatPage() {
                 <div className="relative">
                   <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold text-lg"
                     style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
-                    {user.avatar}
+                    {user.avatar ? user.avatar : user.name?.[0]?.toUpperCase() || "?"}
                   </div>
-                  <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${getStatusColor(user.status)}`}></div>
+                  <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${getStatusColor(user.status || 'online')}`}></div>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
@@ -165,7 +173,7 @@ export default function ChatPage() {
                     )}
                   </div>
                   <p className="text-sm" style={{ color: colors.secondary.hex }}>
-                    {user.status} • {user.lastSeen}
+                    {(user.status || 'online')} • {(user.lastSeen || 'now')}
                   </p>
                 </div>
               </div>

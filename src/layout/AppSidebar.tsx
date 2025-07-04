@@ -6,7 +6,7 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useSidebar } from "../context/SidebarContext"
 import { useAuth } from "../context/AuthContext"
-import { LayoutGrid, List, Users, FileText, ChevronLeft, ChevronRight, ChevronDown, Building,Timer,MessageCircle ,Folder ,UserPlus   } from "lucide-react"
+import { LayoutGrid, List, Users, FileText, ChevronLeft, ChevronRight, ChevronDown, Building,Timer,MessageCircle ,Folder ,UserPlus  ,MessagesSquare  } from "lucide-react"
 import { GridIcon, ListIcon, PaperPlaneIcon, TableIcon, UserCircleIcon, EnvelopeListIcon } from "../icons/index"
 import { colors } from "@/colors"
 
@@ -73,6 +73,12 @@ const adminNavItems: NavItem[] = [
     name: "Teams",
     path: "/dashboard/admin/team/list",
   },
+   {
+    name: "Discussions",
+    icon: <MessagesSquare />,
+    path: "/dashboard/teammember/discussions",
+
+  },
 ]
 
 // Manager-specific navigation items
@@ -102,6 +108,12 @@ const managerNavItems: NavItem[] = [
     icon: <MessageCircle  size={20} />,
     path: "/dashboard/manager/chat",
   },
+   {
+    name: "Discussions",
+    icon: <MessagesSquare />,
+    path: "/dashboard/teammember/discussions",
+
+  },
 ]
 
 // Employee-specific navigation items (NEW)
@@ -115,6 +127,12 @@ const employeeNavItems: NavItem[] = [
     name: "My Projects",
     icon: <ListIcon />,
     path: "/dashboard/teammember/mytasks",
+
+  },
+  {
+    name: "Discussions",
+    icon: <MessagesSquare />,
+    path: "/dashboard/teammember/discussions",
 
   },
 ]
