@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from "react"
 import { Search, Plus, RefreshCw, AlertCircle, Edit, Trash2, Eye } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { deleteEmployee } from "@/lib/TeamService"
+import { ShowEmployee } from "@/lib/TeamService"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
 import Pagination from "../pagination"
@@ -45,15 +46,12 @@ export default function TeamListPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
   const [searchTerm, setSearchTerm] = useState("")
+  
   const router = useRouter()
 
   // Pagination logic
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const paginatedMembers = teamMembers.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
   useEffect(() => {
     setCurrentPage(1);
   }, [teamMembers]);
@@ -62,7 +60,7 @@ export default function TeamListPage() {
     const fetchEmployees = async () => {
       setIsLoading(true)
       try {
-        const res = await axiosInstance.get("/user?role=employee")
+        const res = await ShowEmployee('employee');
         let membersData: TeamMember[] = []
         if (Array.isArray(res.data)) {
           membersData = res.data
@@ -92,20 +90,26 @@ export default function TeamListPage() {
         (member.id?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ?? false),
     )
   }, [teamMembers, searchTerm])
-
-  const handleEmployeeDelete = async (teamId: string)=>{
+  const paginatedMembers = filteredMembers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const handleEmployeeDelete = async (teamId: string | number) => {
     if (!teamId) return;
     const confirmDelete = window.confirm("Are you sure you want to delete this employee?");
     if (!confirmDelete) return;
     try {
       await deleteEmployee(teamId);
-      setTeamMembers((prev)=>prev.filter((team)=>team.id!==teamId))
-    }
-    catch (error) {
+      setTeamMembers((prev) => {
+        const updated = prev.filter((team) => String(team.id) !== String(teamId));
+        // If the current page is now empty, go to the previous page (if not on page 1)
+        if ((currentPage - 1) * itemsPerPage >= updated.length && currentPage > 1) {
+          setCurrentPage(currentPage - 1);
+        }
+        return updated;
+      });
+    } catch (error) {
       console.error("Error deleting manager:", error);
       alert("Failed to delete manager. Please try again.");
     }
-}
+  };
   return (
     <div
   

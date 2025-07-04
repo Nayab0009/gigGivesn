@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { X, UserCheck, Users, Crown, ChevronRight, Loader2, AlertCircle, Check } from "lucide-react";
 import axiosInstance from "@/lib/axios";
 import type { Team, Project } from "@/types";
-
+import { colors } from "@/colors";
 interface AssignTeamModalProps {
   open: boolean;
   onClose: () => void;
@@ -142,7 +142,9 @@ export function AssignTeamModal({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-gradient-to-br from-white to-emerald-50/30 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] overflow-hidden border border-white/50 backdrop-blur-sm flex flex-col">
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-600 to-teal-700 p-6 text-white flex-shrink-0">
+        <div className=" p-6 text-white flex-shrink-0" style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+            }}>
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold mb-1">Assign Team Members</h2>
@@ -181,7 +183,7 @@ export function AssignTeamModal({
           {/* Loading State */}
           {isLoading && (
             <div className="text-center py-12">
-              <Loader2 className="w-8 h-8 text-emerald-600 animate-spin mx-auto mb-4" />
+              <Loader2 className="w-8 h-8" style={{ color: colors.primary.hex }} />
               <h3 className="text-lg font-medium text-gray-900 mb-2">Loading Teams...</h3>
               <p className="text-gray-500">Fetching available teams from the backend.</p>
             </div>
@@ -195,7 +197,10 @@ export function AssignTeamModal({
               <p className="text-gray-500 mb-4">{error}</p>
               <button
                 onClick={fetchTeams}
-                className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                className="px-4 py-2 rounded-lg transition-colors text-white"
+                style={{
+                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                }}
               >
                 Try Again
               </button>
@@ -206,13 +211,21 @@ export function AssignTeamModal({
           {!isLoading && !error && teams.map((team, index) => (
             <div
               key={team.id}
-              className="border border-emerald-200 rounded-xl p-6 hover:border-emerald-300 hover:shadow-lg transition-all duration-300 relative overflow-hidden"
+              className="border rounded-xl p-6 hover:shadow-lg transition-all duration-300 relative overflow-hidden"
+              style={{
+                borderColor: colors.primary.hex,
+                background: colors.accent.hex + '20',
+              }}
             >
               {/* Team Header */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center space-x-4">
-                  <div className="p-3 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-xl">
-                    <Users className="w-6 h-6 text-emerald-600" />
+                  <div className="p-3 rounded-xl"
+                    style={{
+                      background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                    }}
+                  >
+                    <Users className="w-6 h-6" style={{ color: '#fff' }} />
                   </div>
                   <div>
                     <h3 className="font-bold text-xl text-gray-900">
@@ -224,7 +237,13 @@ export function AssignTeamModal({
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <span className="bg-gradient-to-r from-emerald-100 to-teal-100 text-emerald-800 text-sm px-4 py-2 rounded-full font-semibold border border-emerald-200">
+                  <span className="text-sm px-4 py-2 rounded-full font-semibold border"
+                    style={{
+                      background: colors.accent.hex + '40',
+                      color: colors.primary.hex,
+                      borderColor: colors.primary.hex,
+                    }}
+                  >
                     {team.members.length} member{team.members.length !== 1 ? 's' : ''}
                   </span>
                 </div>
@@ -233,7 +252,7 @@ export function AssignTeamModal({
               {/* Team Members */}
               <div>
                 <div className="flex items-center space-x-2 mb-4">
-                  <Users className="w-4 h-4 text-emerald-500" />
+                  <Users className="w-4 h-4" style={{ color: colors.primary.hex }} />
                   <span className="font-semibold text-sm text-gray-700">Select Team Members</span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -242,15 +261,23 @@ export function AssignTeamModal({
                       key={member.id}
                       className={`relative flex items-center space-x-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer ${
                         selectedMembers.includes(member.id)
-                          ? 'bg-emerald-100 border-emerald-300 shadow-md'
-                          : 'bg-emerald-50 hover:bg-emerald-100 border-emerald-200 hover:border-emerald-300'
+                          ? 'shadow-md'
+                          : 'hover:shadow'
                       }`}
+                      style={{
+                        background: selectedMembers.includes(member.id)
+                          ? colors.highlight.hex + '20'
+                          : colors.accent.hex + '20',
+                        borderColor: colors.primary.hex,
+                      }}
                       onClick={() => toggleMemberSelection(member.id)}
                     >
                       {/* Selection indicator */}
                       {selectedMembers.includes(member.id) && (
-                        <div className="absolute top-2 right-2 w-5 h-5 bg-emerald-600 rounded-full flex items-center justify-center">
-                          <Check className="w-3 h-3 text-white" />
+                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center"
+                          style={{ background: colors.primary.hex }}
+                        >
+                          <Check className="w-3 h-3" style={{ color: '#fff' }} />
                         </div>
                       )}
                       
@@ -282,7 +309,7 @@ export function AssignTeamModal({
           {/* No Teams State */}
           {!isLoading && !error && teams.length === 0 && (
             <div className="text-center py-12">
-              <Users className="w-16 h-16 text-emerald-300 mx-auto mb-4" />
+              <Users className="w-16 h-16" style={{ color: colors.accent.hex }} />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No Teams Available</h3>
               <p className="text-gray-500">No employees found to create teams from.</p>
             </div>
@@ -290,10 +317,15 @@ export function AssignTeamModal({
         </div>
 
         {/* Footer - Fixed at bottom */}
-        <div className="border-t border-emerald-200 bg-emerald-50/50 px-6 py-4 flex-shrink-0">
+        <div className="border-t px-6 py-4 flex-shrink-0"
+          style={{
+            borderColor: colors.primary.hex,
+            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+          }}
+        >
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex items-center space-x-4">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-white">
                 {selectedMembers.length > 0 
                   ? `${selectedMembers.length} member${selectedMembers.length !== 1 ? 's' : ''} selected`
                   : 'Select team members to assign to your project'
@@ -303,16 +335,26 @@ export function AssignTeamModal({
             <div className="flex items-center space-x-3 w-full sm:w-auto">
               <button
                 onClick={onClose}
-                className="flex-1 sm:flex-none px-6 py-2.5 border border-emerald-300 rounded-xl text-gray-700 font-medium hover:bg-white hover:shadow-sm transition-all duration-200"
+                className="flex-1 sm:flex-none px-6 py-2.5 border rounded-xl font-medium hover:bg-white hover:shadow-sm transition-all duration-200"
+                style={{
+                  borderColor: colors.primary.hex,
+                  color: colors.primary.hex,
+                  background: '#fff',
+                }}
               >
                 Cancel
               </button>
               <button
                 onClick={assignTeamMembers}
                 disabled={selectedMembers.length === 0 || isAssigning}
-                className="flex-1 sm:flex-none px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 whitespace-nowrap"
+                className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 whitespace-nowrap"
+                style={
+                  selectedMembers.length === 0 || isAssigning
+                    ? { background: '#ccc', color: '#fff' }
+                    : { background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`, color: '#fff' }
+                }
               >
-                {isAssigning && <Loader2 className="w-4 h-4 animate-spin" />}
+                {isAssigning && <Loader2 className="w-4 h-4 animate-spin" style={{ color: '#fff' }} />}
                 <span>{isAssigning ? 'Assigning...' : 'Assign Members'}</span>
               </button>
             </div>

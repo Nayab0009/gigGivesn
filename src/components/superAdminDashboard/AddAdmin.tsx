@@ -5,7 +5,7 @@ import { User, Mail, Phone, Loader2, KeyRound, MapPin, Building2, UserPlus, Spar
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
 
-const AddManager: React.FC = () => {
+const AddAdmin: React.FC = () => {
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -412,4 +412,4 @@ const AddManager: React.FC = () => {
   )
 }
 
-export default AddManager
+export default AddAdmin
