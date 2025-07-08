@@ -153,7 +153,8 @@ export function AssignTaskModal({
           taskFor: parseInt(userId), // ID of the user the task is assigned to
           taskOf: projectId || 1, // ID of the project the task belongs to
           assignedBy: user?.id, // ID of the user who is assigning the task
-          sprint: sprintId ? { id: sprintId } : undefined, // Include sprint object if sprintId is provided
+          sprint: sprintId ? { id: sprintId } : undefined,
+          taskDate: task.dueDate ? new Date(task.dueDate).toISOString() : undefined,
         };
 
         console.log('Sending task data:', taskData);
@@ -180,7 +181,8 @@ export function AssignTaskModal({
         ...task,
         title: '',
         description: '',
-        assignedTo: []
+        assignedTo: [],
+        dueDate: '',
       });
 
     } catch (error: any) {
@@ -338,6 +340,27 @@ export function AssignTaskModal({
               placeholder="Describe the task details and requirements..."
               rows={3}
               disabled={isCreating}
+            />
+          </div>
+
+          {/* Task Due Date Picker */}
+          <div className="group">
+            <label htmlFor="task-due-date" className="block text-sm font-semibold text-gray-800 mb-2">
+              Task Due Date*
+            </label>
+            <input
+              id="task-due-date"
+              type="date"
+              value={task.dueDate ? task.dueDate.substring(0, 10) : ''}
+              onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
+              className="w-full px-4 py-3 border rounded-xl focus:outline-none transition-all duration-200"
+              style={{
+                borderColor: colors.primary.hex,
+                background: colors.accent.hex + '30',
+                color: colors.primary.hex,
+              }}
+              disabled={isCreating}
+              placeholder="Select due date for the task"
             />
           </div>
 

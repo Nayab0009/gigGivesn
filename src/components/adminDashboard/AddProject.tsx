@@ -8,8 +8,10 @@ import { colors } from "@/colors"
 // npm install react-datepicker
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
+import { useRouter } from "next/navigation"
 
 const AddProject: React.FC = () => {
+  const router = useRouter();
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -45,8 +47,8 @@ const AddProject: React.FC = () => {
     const payload = {
       name: form.title,
       description: form.description,
-      startDate: form.startDate ? form.startDate.toISOString() : undefined,
-      endDate: form.endDate ? form.endDate.toISOString() : undefined,
+      startDate: form.startDate ? form.startDate.toISOString() : '',
+      endDate: form.endDate ? form.endDate.toISOString() : '',
     };
   
     try {
@@ -58,6 +60,9 @@ const AddProject: React.FC = () => {
         endDate: null,
       });
       setSuccess("Project added successfully!");
+      setTimeout(() => {
+        router.push("/dashboard/admin/projects");
+      }, 1200);
     } catch (err: any) {
       setError(err?.response?.data?.message || "Failed to add project");
     } finally {
@@ -221,9 +226,6 @@ const AddProject: React.FC = () => {
                       showMonthDropdown
                       showYearDropdown
                       dropdownMode="select"
-                      style={{
-                        '--tw-ring-color': `${colors.primary.hex}33`,
-                      } as React.CSSProperties}
                     />
                     <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
                       <div 
@@ -285,9 +287,6 @@ const AddProject: React.FC = () => {
                       showMonthDropdown
                       showYearDropdown
                       dropdownMode="select"
-                      style={{
-                        '--tw-ring-color': `${colors.secondary.hex}33`,
-                      } as React.CSSProperties}
                     />
                     <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
                       <div 

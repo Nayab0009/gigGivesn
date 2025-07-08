@@ -92,9 +92,15 @@ function AssignManagerModal({
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
-        <div className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-6">
+        <div
+          className="p-6"
+          style={{
+            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+            color: '#fff',
+          }}
+        >
           <h2 className="text-2xl font-bold">Assign Manager to {project.name}</h2>
-          <p className="text-emerald-200 mt-1">Select a manager to oversee this project</p>
+          <p className="mt-1 text-white" >Select a manager to oversee this project</p>
         </div>
 
         <div className="p-6 max-h-96 overflow-y-auto">
@@ -106,7 +112,12 @@ function AssignManagerModal({
                 onClick={() => !assigningManagerId && handleAssign(manager)}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                  <div
+                    className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg"
+                    style={{
+                      background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                    }}
+                  >
                     {manager.name.charAt(0).toUpperCase()}
                   </div>
                   <div>
@@ -116,9 +127,12 @@ function AssignManagerModal({
                   </div>
                 </div>
                 <button
-                  className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  className="px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  style={{
+                    background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                    color: '#fff',
+                  }}
                   disabled={!!assigningManagerId}
-                  
                 >
                   {assigningManagerId === manager.id ? (
                     <>
@@ -137,7 +151,12 @@ function AssignManagerModal({
         <div className="p-6 border-t border-gray-200 flex justify-end">
           <button
             onClick={onClose}
-            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+            className="px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
+            style={{
+              background: '#fff',
+              color: colors.primary.hex,
+              border: `1px solid ${colors.primary.hex}`,
+            }}
             disabled={!!assigningManagerId}
           >
             Cancel
@@ -481,18 +500,18 @@ export default function ProjectDashboard() {
                             <button
                               className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
                               style={{
-                                background: colors.highlight.hex,
-                                color: colors.primary.hex,
+                                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                                color: '#fff',
                               }}
                             >
-                              <Edit className="w-4 h-4" style={{ color: colors.primary.hex }} />
+                              <Edit className="w-4 h-4" style={{ color: '#fff' }} />
                             </button>
                             <button
                               onClick={() => deleteProject(project.id)}
                               disabled={isDeleting === project.id}
                               className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
                               style={{
-                                background: colors.warning.hex,
+                                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
                                 color: '#fff',
                               }}
                             >

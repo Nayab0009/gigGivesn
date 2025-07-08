@@ -33,12 +33,18 @@ export default function EnhancedManagersTable() {
   const [searchTerm, setSearchTerm] = useState("")
   const [showEditModal, setShowEditModal] = useState(false)
   const [editManager, setEditManager] = useState<Manager | null>(null)
-  const [editForm,setEditForm]=useState({
-    name:"",
-    email:"",
+  const [editForm, setEditForm] = useState({
+    name: "",
+    email: "",
     phone: "",
-    address:"",
+    address: "",
   })
+  const [editFormErrors, setEditFormErrors] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+  });
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -82,6 +88,10 @@ export default function EnhancedManagersTable() {
     setEditForm(prev => ({
       ...prev,
       [e.target.name]: e.target.value
+    }));
+    setEditFormErrors(prev => ({
+      ...prev,
+      [e.target.name]: '',
     }));
   };
 
@@ -145,11 +155,33 @@ export default function EnhancedManagersTable() {
       phone: manager.phone,
       address: manager.address,
     });
+    setEditFormErrors({ name: '', email: '', phone: '', address: '' });
     setShowEditModal(true);
   };
 
   const handleUpdateManager = async () => {
     if (!editManager?.id) return;
+    // Validate fields
+    const errors: typeof editFormErrors = { name: '', email: '', phone: '', address: '' };
+    let hasError = false;
+    if (!editForm.name.trim()) {
+      errors.name = 'Name is required.';
+      hasError = true;
+    }
+    if (!editForm.email.trim()) {
+      errors.email = 'Email is required.';
+      hasError = true;
+    }
+    if (!editForm.phone.trim()) {
+      errors.phone = 'Phone is required.';
+      hasError = true;
+    }
+    if (!editForm.address.trim()) {
+      errors.address = 'Address is required.';
+      hasError = true;
+    }
+    setEditFormErrors(errors);
+    if (hasError) return;
     setIsUpdating(true);
     try {
       await updateManager(editManager.id, editForm);
@@ -470,6 +502,9 @@ export default function EnhancedManagersTable() {
                   onChange={handleEditFormChange}
                   placeholder="Name"
                 />
+                {editFormErrors.name && (
+                  <div className="text-red-600 text-xs mt-1">{editFormErrors.name}</div>
+                )}
                 <input
                   className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   name="email"
@@ -477,6 +512,9 @@ export default function EnhancedManagersTable() {
                   onChange={handleEditFormChange}
                   placeholder="Email"
                 />
+                {editFormErrors.email && (
+                  <div className="text-red-600 text-xs mt-1">{editFormErrors.email}</div>
+                )}
                 <input
                   className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   name="phone"
@@ -484,6 +522,9 @@ export default function EnhancedManagersTable() {
                   onChange={handleEditFormChange}
                   placeholder="Phone"
                 />
+                {editFormErrors.phone && (
+                  <div className="text-red-600 text-xs mt-1">{editFormErrors.phone}</div>
+                )}
                 <input
                   className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   name="address"
@@ -491,12 +532,18 @@ export default function EnhancedManagersTable() {
                   onChange={handleEditFormChange}
                   placeholder="Address"
                 />
+                {editFormErrors.address && (
+                  <div className="text-red-600 text-xs mt-1">{editFormErrors.address}</div>
+                )}
               </div>
 
               <div className="flex justify-end gap-3 mt-8">
                 <button
                   className="px-4 py-2 rounded-lg border border-gray-400 text-gray-700 hover:bg-gray-100 transition"
-                  onClick={() => setShowEditModal(false)}
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setEditFormErrors({ name: '', email: '', phone: '', address: '' });
+                  }}
                 >
                   Cancel
                 </button>

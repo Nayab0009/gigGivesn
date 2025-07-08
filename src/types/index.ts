@@ -25,7 +25,7 @@ export interface Task {
   assignedTo: string[];
   status: "pending" | "in-progress" | "completed" | "blocked";
   priority: "low" | "medium" | "high" | "critical";
-  dueDate: string;
+  dueDate?: string;
   estimatedHours: number;
 }
 
