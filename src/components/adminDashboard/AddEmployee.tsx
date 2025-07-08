@@ -4,8 +4,10 @@ import { useState } from "react"
 import { User, Mail, Phone, Loader2, KeyRound, MapPin, Building2, UserPlus, Sparkles } from "lucide-react"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
+import { useRouter } from "next/navigation"
 
 const AddEmployee: React.FC = () => {
+  const router = useRouter();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -55,6 +57,9 @@ const AddEmployee: React.FC = () => {
         organization: "",
       })
       setSuccess("Employee added successfully!")
+      setTimeout(() => {
+        router.push("/dashboard/admin/team/list")
+      }, 1200)
     } catch (err: any) {
       setError(err?.response?.data?.message || "Failed to add employee")
     } finally {

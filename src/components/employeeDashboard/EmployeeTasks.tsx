@@ -639,12 +639,6 @@ const EmployeeTasks = () => {
                     >
                       Created
                     </th>
-                    <th
-                      className="text-center p-6 font-bold text-lg hidden lg:table-cell"
-                      style={{ color: colors.primary.hex }}
-                    >
-                      Updated
-                    </th>
                     <th className="text-center p-6 font-bold text-lg" style={{ color: colors.primary.hex }}>
                       Actions
                     </th>
@@ -696,15 +690,6 @@ const EmployeeTasks = () => {
                           >
                             <Calendar className="w-4 h-4" style={{ color: colors.primary.hex }} />
                             {formatDate(task.createdAt)}
-                          </div>
-                        </td>
-                        <td className="p-6 text-center hidden lg:table-cell">
-                          <div
-                            className="flex items-center justify-center gap-2 text-sm"
-                            style={{ color: colors.secondary.hex }}
-                          >
-                            <Clock className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                            {task.updatedAt !== task.createdAt ? formatDate(task.updatedAt) : "Not updated"}
                           </div>
                         </td>
                         <td className="p-6 text-center">

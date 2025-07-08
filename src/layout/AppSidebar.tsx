@@ -97,7 +97,7 @@ const managerNavItems: NavItem[] = [
   {
     name: " Team Members",
     icon: <Users size={20} />,
-    path: "/dashboard/admin/addemployee",
+    path: "/dashboard/admin/team/list",
   },
   {
     name: " Sprints",

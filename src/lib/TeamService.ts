@@ -6,7 +6,7 @@ export const deleteEmployee = async (teamId: string) => {
 }
     export const ShowEmployee = async (role: string): Promise<any> => {
         try {
-            const response = axiosInstance.get('/users', { params: { role: role } });
+            const response = axiosInstance.get('/user', { params: { role: role } });
             return response;
         }
         catch (error){
