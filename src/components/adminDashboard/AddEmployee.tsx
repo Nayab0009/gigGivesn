@@ -155,7 +155,7 @@ const AddEmployee: React.FC = () => {
 
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm" style={{ background: colors.warning.hex }}>
+                  <div className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm" style={{ background: colors.primary.hex  }}>
                     <Phone className="w-4 h-4" style={{ color: colors.highlight.hex }} />
                   </div>
                   <span className="text-lg">Phone Number</span>
