@@ -7,6 +7,7 @@ import { ShowEmployee } from "@/lib/TeamService"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
 import Pagination from "../pagination"
+import { useAuth } from "@/context/AuthContext";
 
 interface TeamMember {
   id?: string | number
@@ -48,6 +49,8 @@ export default function TeamListPage() {
   const [searchTerm, setSearchTerm] = useState("")
   
   const router = useRouter()
+  const { user } = useAuth();
+  const userRole = user?.role?.toLowerCase();
 
   // Pagination logic
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,29 +59,30 @@ export default function TeamListPage() {
     setCurrentPage(1);
   }, [teamMembers]);
 
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      setIsLoading(true)
-      try {
-        const res = await ShowEmployee('employee');
-        let membersData: TeamMember[] = []
-        if (Array.isArray(res.data)) {
-          membersData = res.data
-        } else {
-          membersData = [res.data]
-        }
-        // Add mock roles for better visualization
-        membersData = membersData.map((member, idx) => ({
-          ...member,
-          role: member.role || ["Employee", "Developer", "Designer", "QA Engineer"][idx % 4],
-        }))
-        setTeamMembers(membersData)
-      } catch (e) {
-        setTeamMembers([])
-      } finally {
-        setIsLoading(false)
+  const fetchEmployees = async () => {
+    setIsLoading(true)
+    try {
+      const res = await ShowEmployee('employee');
+      let membersData: TeamMember[] = []
+      if (Array.isArray(res.data)) {
+        membersData = res.data
+      } else {
+        membersData = [res.data]
       }
+      // Add mock roles for better visualization
+      membersData = membersData.map((member, idx) => ({
+        ...member,
+        role: member.role || ["Employee", "Developer", "Designer", "QA Engineer"][idx % 4],
+      }))
+      setTeamMembers(membersData)
+    } catch (e) {
+      setTeamMembers([])
+    } finally {
+      setIsLoading(false)
     }
+  }
+
+  useEffect(() => {
     fetchEmployees()
   }, [])
 
@@ -179,28 +183,32 @@ export default function TeamListPage() {
               >
                 <span className="font-semibold" style={{ color: colors.primary.hex }}>{filteredMembers.length}</span> of {teamMembers.length} employees
               </div>
+              {userRole === "manager" && (
+                <button
+                  type="button"
+                  className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
+                  style={{
+                    background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                    color: '#fff',
+                    border: `1px solid ${colors.primary.hex}`,
+                  }}
+                  onClick={() => router.push("/dashboard/admin/addemployee")}
+                >
+                  <Plus className="w-4 h-4" style={{ color: colors.highlight.hex }} />
+                  Add Employee
+                </button>
+              )}
               <button
-                type="button"
-                className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
-                style={{
-                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                  color: '#fff',
-                  border: `1px solid ${colors.primary.hex}`,
-                }}
-                onClick={() => router.push("/dashboard/admin/addemployee")}
-              >
-                <Plus className="w-4 h-4" style={{ color: colors.highlight.hex }} />
-                Add Employee
-              </button>
-              <button
-                className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
+                className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
                   background: '#fff',
                   color: colors.primary.hex,
                   border: `1px solid ${colors.primary.hex}`,
                 }}
+                onClick={fetchEmployees}
+                disabled={isLoading}
               >
-                <RefreshCw className="w-4 h-4" style={{ color: colors.secondary.hex }} />
+                <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} style={{ color: colors.secondary.hex }} />
                 Refresh
               </button>
             </div>
@@ -232,7 +240,9 @@ export default function TeamListPage() {
                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Employee Details</th>
                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Role</th>
                     <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Contact Information</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Actions</th>
+                    {userRole === "manager" && (
+                      <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Actions</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-slate-200">
@@ -309,30 +319,31 @@ export default function TeamListPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-6">
-                          <div className="flex items-center gap-2">
-                        
-                            <button
-                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
-                              style={{
-                                background: colors.highlight.hex,
-                                color: colors.primary.hex,
-                              }}
-                            >
-                              <Edit className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                            </button>
-                            <button
-                              onClick={()=>handleEmployeeDelete(String(member.id))}
-                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
-                              style={{
-                                background: colors.warning.hex,
-                                color: '#fff',
-                              }}
-                            >
-                              <Trash2 className="w-4 h-4" style={{ color: '#fff' }} />
-                            </button>
-                          </div>
-                        </td>
+                        {userRole === "manager" && (
+                          <td className="px-6 py-6">
+                            <div className="flex items-center gap-2">
+                              <button
+                                className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
+                                style={{
+                                  background: colors.highlight.hex,
+                                  color: colors.primary.hex,
+                                }}
+                              >
+                                <Edit className="w-4 h-4" style={{ color: colors.primary.hex }} />
+                              </button>
+                              <button
+                                onClick={() => handleEmployeeDelete(String(member.id))}
+                                className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
+                                style={{
+                                  background: colors.warning.hex,
+                                  color: '#fff',
+                                }}
+                              >
+                                <Trash2 className="w-4 h-4" style={{ color: '#fff' }} />
+                              </button>
+                            </div>
+                          </td>
+                        )}
                       </tr>
                     ))
                   )}
