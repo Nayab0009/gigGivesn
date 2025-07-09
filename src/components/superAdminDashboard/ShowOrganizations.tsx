@@ -52,8 +52,8 @@ const ShowOrganizations: React.FC = () => {
       const matchesSearch =
         org.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         org.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        org.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        org.number?.toLowerCase().includes(searchTerm.toLowerCase());
+        (typeof org.id === 'string' ? org.id : String(org.id)).toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (typeof org.number === 'string' ? org.number : String(org.number)).toLowerCase().includes(searchTerm.toLowerCase());
       return matchesSearch;
     });
   }, [organizations, searchTerm]);

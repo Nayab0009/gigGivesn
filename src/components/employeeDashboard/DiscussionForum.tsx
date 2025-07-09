@@ -16,7 +16,10 @@ type Discussion = {
   id: number
   title: string
   description: string
-  discussionBy: number
+  discussionBy: {
+    id: number
+    name:string
+  }
   isActive: boolean
   createdAt: string
   updatedAt: string
@@ -284,7 +287,7 @@ export default function ForumPage() {
                         <User size={16} className="text-gray-500 group-hover:text-blue-600" />
                       </div>
                       <span className="text-sm font-semibold text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
-                        Started by {thread.discussionBy ? `User #${thread.discussionBy}` : "Unknown"}
+                        Started by {thread.discussionBy?.name || "Unknown"}
                       </span>
                     </div>
 
@@ -340,7 +343,7 @@ export default function ForumPage() {
                   <User size={24} className="text-gray-600" />
                 </div>
                 <span className="text-xl font-semibold text-gray-700">
-                  {selectedThread.discussionBy ? `User #${selectedThread.discussionBy}` : "Unknown"}
+                  {selectedThread.discussionBy?.name || "Unknown"}
                 </span>
               </div>
               <div className="prose prose-xl max-w-none">
@@ -382,10 +385,6 @@ export default function ForumPage() {
                         </div>
                         <span className="font-bold text-gray-900 text-lg">
                           {comment.commentedBy?.name ||
-                            comment.authorName ||
-                            comment.author ||
-                            comment.userName ||
-                            comment.user ||
                             "Unknown"}
                         </span>
                         {comment.createdAt && (
