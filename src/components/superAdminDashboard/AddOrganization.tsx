@@ -1,8 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Building2, Mail, Phone, Loader2, MapPin, Plus, Sparkles } from "lucide-react";
 import axiosInstance from "@/lib/axios"; // Adjust the import if axiosInstance is in a different path
 import { colors } from "@/colors";
+import { useRouter } from "next/navigation";
 
 type OrgFormData = {
   name: string;
@@ -23,6 +24,14 @@ const AddOrganization: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const router = useRouter();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({
@@ -40,6 +49,14 @@ const AddOrganization: React.FC = () => {
       await axiosInstance.post("/user/Organization", form);
       setSuccess("Organization added successfully!");
       setForm(initialForm);
+
+      // Immediately navigate to the organizations route
+      router.push("/dashboard/superadmin/organizations");
+      // If you want to show success message for a split second before navigating, use the below instead:
+      // timeoutRef.current = setTimeout(() => {
+      //   router.push("/dashboard/superadmin/organizations");
+      // }, 500);
+
     } catch (err: any) {
       setError(
         err.response?.data?.message ||

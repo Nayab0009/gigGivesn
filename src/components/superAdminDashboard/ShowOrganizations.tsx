@@ -22,6 +22,7 @@ const ShowOrganizations: React.FC = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [editErrors, setEditErrors] = useState<{ [key in keyof Organization]?: string }>({});
   const router = useRouter();
 
   useEffect(() => {
@@ -85,6 +86,15 @@ const ShowOrganizations: React.FC = () => {
   const handleSaveEdit = async () => {
     if (!editingOrg) return;
 
+    // Validate fields
+    const errors: { [key in keyof Organization]?: string } = {};
+    if (!editingOrg.name.trim()) errors.name = "Name is required.";
+    if (!editingOrg.email.trim()) errors.email = "Email is required.";
+    if (!editingOrg.number.trim()) errors.number = "Phone number is required.";
+    if (!editingOrg.address.trim()) errors.address = "Address is required.";
+    setEditErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+
     setIsSaving(true);
     try {
       const res = await axiosInstance.patch(`/user/Organization/${editingOrg.id}`, {
@@ -101,6 +111,7 @@ const ShowOrganizations: React.FC = () => {
 
       setIsEditModalOpen(false);
       setEditingOrg(null);
+      setEditErrors({});
       alert("Organization updated successfully!");
     } catch (err: any) {
       alert(
@@ -141,6 +152,7 @@ const ShowOrganizations: React.FC = () => {
   const handleEditInputChange = (field: keyof Organization, value: string) => {
     if (editingOrg) {
       setEditingOrg({ ...editingOrg, [field]: value });
+      setEditErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
@@ -456,6 +468,9 @@ const ShowOrganizations: React.FC = () => {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
                       placeholder="Enter organization name"
                     />
+                    {editErrors.name && (
+                      <div className="text-red-600 text-xs mt-1">{editErrors.name}</div>
+                    )}
                   </div>
 
                   <div>
@@ -469,6 +484,9 @@ const ShowOrganizations: React.FC = () => {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
                       placeholder="Enter email address"
                     />
+                    {editErrors.email && (
+                      <div className="text-red-600 text-xs mt-1">{editErrors.email}</div>
+                    )}
                   </div>
 
                   <div>
@@ -482,6 +500,9 @@ const ShowOrganizations: React.FC = () => {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
                       placeholder="Enter phone number"
                     />
+                    {editErrors.number && (
+                      <div className="text-red-600 text-xs mt-1">{editErrors.number}</div>
+                    )}
                   </div>
 
                   <div>
@@ -495,6 +516,9 @@ const ShowOrganizations: React.FC = () => {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200"
                       placeholder="Enter address"
                     />
+                    {editErrors.address && (
+                      <div className="text-red-600 text-xs mt-1">{editErrors.address}</div>
+                    )}
                   </div>
                 </div>
 
