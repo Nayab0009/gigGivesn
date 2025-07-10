@@ -710,7 +710,7 @@ export default function ProjectDashboard() {
                               >
                                 Assign Team
                               </button>
-                              <button
+                              {/* <button
                                 className="px-4 py-2 text-white rounded-lg text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
                                 style={{
                                   background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
@@ -718,7 +718,7 @@ export default function ProjectDashboard() {
                                 onClick={() => setAssignTaskProjectId(String(project.id))}
                               >
                                 Assign Task
-                              </button>
+                              </button> */}
                             </div>
                           </td>
                           <td className="px-6 py-6">

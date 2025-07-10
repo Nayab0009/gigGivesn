@@ -139,14 +139,14 @@ const ManagerSprintsCards: React.FC = () => {
       <div>
         <div className="flex justify-end mb-6">
           <button
-            onClick={() => router.push('/dashboard/manager/addproject')}
+            onClick={() => router.push('/dashboard/manager/addsprints')}
             className="inline-flex items-center gap-2 px-4 py-2 text-white font-medium rounded-xl transition shadow-sm"
             style={{
               background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
             }}
           >
             <Plus className="w-4 h-4" />
-            Add Project
+            Add Sprint
           </button>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
