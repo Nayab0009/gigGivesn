@@ -4,9 +4,13 @@ import { useState, useEffect, useRef } from "react";
 import { Send, Settings, User, Moon, Sun, Bell, BellOff, Palette, MessageCircle, Search, MoreVertical, Smile } from "lucide-react";
 import { colors } from "@/colors";
 import { ShowEmployee } from "@/lib/TeamService";
+import { useAuth } from "@/context/AuthContext";
+import { initiateSocket, getSocket } from "@/lib/socket";
+
 export default function ChatPage() {
   type Message = {
     sender: string;
+    receiver: string;
     text: string;
     timestamp: Date;
     status: 'sent' | 'delivered' | 'read';
@@ -21,7 +25,9 @@ export default function ChatPage() {
   const [notifications, setNotifications] = useState(true);
   const [fontSize, setFontSize] = useState("medium");
   const [isTyping, setIsTyping] = useState(false);
-  const [user, setUsers] = useState<any[]>([]);
+  const { user: currentUser } = useAuth();
+  const currentRole = currentUser?.role;
+  const [contacts, setContacts] = useState<any[]>([]);
    const [messages, setMessages] = useState<Message[]>([]);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -31,23 +37,27 @@ export default function ChatPage() {
   };
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchContacts = async () => {
       try {
-        const response = await ShowEmployee("employee");
-        setUsers(response?.data || []);
-      }
-      catch (error) {
-        setUsers([]);
+        let response;
+        if (currentRole === "manager") {
+          response = await ShowEmployee("employee");
+        } else if (currentRole === "employee") {
+          response = await ShowEmployee("manager");
+        }
+        setContacts(response?.data || []);
+      } catch (error) {
+        setContacts([]);
       }
     };
-    fetchUsers();
-  }, []);
+    if (currentRole) fetchContacts();
+  }, [currentRole]);
 
   useEffect(() => {
-    if (user.length > 0 && !selectedUser) {
-      setSelectedUser(user[0].name);
+    if (contacts.length > 0 && !selectedUser) {
+      setSelectedUser(contacts[0].name);
     }
-  }, [user, selectedUser]);
+  }, [contacts, selectedUser]);
 
   useEffect(() => {
     scrollToBottom();
@@ -62,23 +72,57 @@ export default function ChatPage() {
     }
   }, [message]);
 
+  useEffect(() => {
+    initiateSocket();
+    const socket = getSocket();
+    if (socket) {
+      console.log("Socket instance:", socket);
+      socket.on("connect", () => {
+        console.log("Socket connected:", socket.id);
+      });
+      socket.on("connect_error", (err) => {
+        console.error("Socket connection error:", err);
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    const handleIncomingMessage = (msg: Message) => {
+      // Only add if the message is for the current chat
+      if (
+        (msg.sender === selectedUser && msg.receiver === currentUser.name) ||
+        (msg.sender === currentUser.name && msg.receiver === selectedUser)
+      ) {
+        setMessages(prev => [...prev, msg]);
+      }
+    };
+
+    socket.on("private_message", handleIncomingMessage);
+
+    return () => {
+      socket.off("private_message", handleIncomingMessage);
+    };
+  }, [selectedUser, currentUser]);
+
   const handleSend = () => {
-    if (message.trim()) {
+    if (message.trim() && selectedUser) {
+      const socket = getSocket();
       const newMessage: Message = {
-        sender: "Me",
+        sender: currentUser.name,
+        receiver: selectedUser,
         text: message.trim(),
         timestamp: new Date(),
         status: 'sent'
       };
       setMessages([...messages, newMessage]);
       setMessage("");
-      
-      // Simulate message status updates
-      setTimeout(() => {
-        setMessages(prev => prev.map(msg => 
-          msg === newMessage ? { ...msg, status: 'delivered' } : msg
-        ));
-      }, 1000);
+
+      if (socket) {
+        socket.emit("private_message", newMessage);
+      }
     }
   };
 
@@ -94,8 +138,8 @@ export default function ChatPage() {
     }
   };
 
-  const filteredUsers = user.filter(user =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredContacts = contacts.filter(contact =>
+    contact.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const themeClasses = theme === 'dark' 
@@ -105,6 +149,19 @@ export default function ChatPage() {
   const sidebarClasses = theme === 'dark'
     ? `bg-[${colors.secondary.hex}] border-[${colors.primary.hex}]`
     : `bg-white border-[${colors.primary.hex}]`;
+
+  const fetchChatHistory = async (userA, userB) => {
+    // Replace with your actual API endpoint and params
+    const res = await fetch(`/api/messages?userA=${userA}&userB=${userB}`);
+    const data = await res.json();
+    setMessages(data.messages || []);
+  };
+
+  useEffect(() => {
+    if (currentUser?.name && selectedUser) {
+      fetchChatHistory(currentUser.name, selectedUser);
+    }
+  }, [selectedUser, currentUser]);
 
   return (
     <div className={`flex h-screen ${themeClasses} transition-colors duration-200`}>
@@ -145,13 +202,14 @@ export default function ChatPage() {
         </div>
 
         {/* User List */}
+        
         <div className="flex-1 overflow-y-auto">
-          {filteredUsers.map((user) => (
+          {filteredContacts.map((contact) => (
             <div
-              key={user.id || user.name}
-              onClick={() => setSelectedUser(user.name)}
+              key={contact.id || contact.name}
+              onClick={() => setSelectedUser(contact.name)}
               className={`p-4 cursor-pointer transition-all duration-200 border-b hover:bg-[${colors.accent.hex}22] ${
-                selectedUser === user.name ? `bg-[${colors.primary.hex}11] border-r-2 border-r-[${colors.primary.hex}]` : ''
+                selectedUser === contact.name ? `bg-[${colors.primary.hex}11] border-r-2 border-r-[${colors.primary.hex}]` : ''
               }`}
               style={{ borderColor: colors.primary.hex }}
             >
@@ -159,21 +217,21 @@ export default function ChatPage() {
                 <div className="relative">
                   <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold text-lg"
                     style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
-                    {user.avatar ? user.avatar : user.name?.[0]?.toUpperCase() || "?"}
+                    {contact.avatar ? contact.avatar : contact.name?.[0]?.toUpperCase() || "?"}
                   </div>
-                  <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${getStatusColor(user.status || 'online')}`}></div>
+                  <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${getStatusColor(contact.status || 'online')}`}></div>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold truncate" style={{ color: colors.primary.hex }}>{user.name}</h3>
-                    {user.unread > 0 && (
+                    <h3 className="font-semibold truncate" style={{ color: colors.primary.hex }}>{contact.name}</h3>
+                    {contact.unread > 0 && (
                       <span className="bg-[${colors.warning.hex}] text-white text-xs rounded-full px-2 py-1 min-w-[20px] text-center">
-                        {user.unread}
+                        {contact.unread}
                       </span>
                     )}
                   </div>
                   <p className="text-sm" style={{ color: colors.secondary.hex }}>
-                    {(user.status || 'online')} • {(user.lastSeen || 'now')}
+                    {(contact.status || 'online')} • {(contact.lastSeen || 'now')}
                   </p>
                 </div>
               </div>

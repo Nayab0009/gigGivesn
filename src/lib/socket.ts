@@ -7,16 +7,13 @@ export const initiateSocket = (): void => {
     console.log("🔄 Creating new socket connection...");
     
     socket = io("https://geekjives-26190134d520.herokuapp.com", {
-      transports: ['websocket', 'polling'], // Add polling as fallback
+      transports: ['websocket', 'polling'], 
       withCredentials: true,
-      autoConnect: true, // Ensure auto-connect is enabled
-      reconnection: true, // Enable reconnection
-      reconnectionAttempts: 5, // Limit reconnection attempts
-      reconnectionDelay: 1000, // Delay between reconnection attempts
-      timeout: 10000, // Connection timeout
+      autoConnect: true, 
+      reconnection: true,
     });
 
-    // Add connection event listeners for debugging
+
     socket.on("connect", () => {
       console.log("✅ Socket connected successfully:", socket?.id);
     });

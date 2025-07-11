@@ -17,6 +17,7 @@ import {
   User,
   X
 } from 'lucide-react';
+import { colors } from '@/colors';
 
 // Interface for task response from backend
 interface TaskResponse {
@@ -143,30 +144,30 @@ const SubmitTaskReport = () => {
     switch (status.toLowerCase()) {
       case 'completed':
         return {
-          color: 'bg-gradient-to-r from-emerald-100 to-green-100 text-emerald-700 border-emerald-200',
-          icon: <CheckCircle className="w-5 h-5" />
+          color: `bg-[${colors.accent.hex}22] text-[${colors.primary.hex}] border-[${colors.accent.hex}]`,
+          icon: <CheckCircle className="w-5 h-5" style={{ color: colors.accent.hex }} />
         };
       case 'inprogress':
       case 'in-progress':
       case 'active':
         return {
-          color: 'bg-gradient-to-r from-teal-100 to-cyan-100 text-teal-700 border-teal-200',
-          icon: <Clock className="w-5 h-5" />
+          color: `bg-[${colors.primary.hex}22] text-[${colors.primary.hex}] border-[${colors.primary.hex}]`,
+          icon: <Clock className="w-5 h-5" style={{ color: colors.primary.hex }} />
         };
       case 'pending':
         return {
-          color: 'bg-gradient-to-r from-amber-100 to-yellow-100 text-amber-700 border-amber-200',
-          icon: <AlertCircle className="w-5 h-5" />
+          color: `bg-[${colors.warning.hex}22] text-[${colors.warning.hex}] border-[${colors.warning.hex}]`,
+          icon: <AlertCircle className="w-5 h-5" style={{ color: colors.warning.hex }} />
         };
       case 'blocked':
         return {
-          color: 'bg-gradient-to-r from-red-100 to-rose-100 text-red-700 border-red-200',
-          icon: <AlertTriangle className="w-5 h-5" />
+          color: 'bg-red-100 text-red-700 border-red-200',
+          icon: <AlertTriangle className="w-5 h-5 text-red-600" />
         };
       default:
         return {
-          color: 'bg-gradient-to-r from-slate-100 to-gray-100 text-slate-700 border-slate-200',
-          icon: <Clock className="w-5 h-5" />
+          color: `bg-[${colors.secondary.hex}22] text-[${colors.secondary.hex}] border-[${colors.secondary.hex}]`,
+          icon: <Clock className="w-5 h-5" style={{ color: colors.secondary.hex }} />
         };
     }
   };
@@ -207,25 +208,26 @@ const SubmitTaskReport = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen p-4 sm:p-6 lg:p-8" style={{ background: `${colors.accent.hex}11` }}>
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-6">
             <button
-              onClick={() => router.push('/dashboard/teammember')}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-white/80 backdrop-blur-sm text-slate-700 rounded-2xl font-semibold transition-all duration-300 hover:bg-white hover:shadow-lg transform hover:scale-105"
+              onClick={() => router.push(`/dashboard/teammember/mytasks?projectId=${projectId}`)}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
+              style={{ background: '#fff', color: colors.primary.hex, border: `1px solid ${colors.primary.hex}` }}
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-5 h-5" style={{ color: colors.primary.hex }} />
               Back to Tasks
             </button>
           </div>
           
           <div className="text-center mb-8">
-            <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent mb-4">
+            <h1 className="text-3xl sm:text-4xl font-bold mb-4" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               Submit Task Report
             </h1>
-            <div className="w-24 h-1 bg-gradient-to-r from-emerald-500 to-teal-600 mx-auto rounded-full mb-6"></div>
+            <div className="w-24 h-1 mx-auto rounded-full mb-6" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}></div>
             <p className="text-slate-600 text-lg max-w-xl mx-auto">
               Add a comment about your task progress
             </p>
@@ -252,7 +254,7 @@ const SubmitTaskReport = () => {
         )}
 
         {/* Content Container */}
-        <div className="bg-white/60 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
+        <div className="bg-white/60 backdrop-blur-xl rounded-3xl shadow-2xl border overflow-hidden" style={{ borderColor: colors.primary.hex }}>
           {isLoading ? (
             <div className="p-16 text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full mb-6">
@@ -271,12 +273,12 @@ const SubmitTaskReport = () => {
           ) : (
             <div className="p-8">
               {/* Task Information Card */}
-              <div className="mb-8 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border-2 border-emerald-200 p-6">
-                <h3 className="text-xl font-bold text-slate-900 mb-4">Task Information</h3>
+              <div className="mb-8 rounded-2xl border-2 p-6" style={{ background: `${colors.accent.hex}11`, borderColor: colors.accent.hex }}>
+                <h3 className="text-xl font-bold mb-4" style={{ color: colors.primary.hex }}>Task Information</h3>
                 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-lg font-semibold text-slate-800 mb-2">{task.title}</h4>
+                    <h4 className="text-lg font-semibold mb-2" style={{ color: colors.primary.hex }}>{task.title}</h4>
                     <p className="text-slate-600 mb-3">{task.description}</p>
                   </div>
                   
@@ -285,12 +287,12 @@ const SubmitTaskReport = () => {
                       {getStatusInfo(task.status).icon}
                       {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
                     </div>
-                    <div className="text-sm text-slate-600">
+                    <div className="text-sm" style={{ color: colors.secondary.hex }}>
                       Task ID: #{task.id}
                     </div>
                   </div>
                   
-                  <div className="text-sm text-slate-600">
+                  <div className="text-sm" style={{ color: colors.secondary.hex }}>
                     Project: {task.taskOf.name}
                   </div>
                 </div>
@@ -316,15 +318,17 @@ const SubmitTaskReport = () => {
                 {/* Action Buttons */}
                 <div className="flex space-x-4 pt-6">
                   <button
-                    onClick={() => router.push('/dashboard/teammember')}
-                    className="flex-1 px-6 py-3 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl font-semibold transition-all duration-300"
+                    onClick={() => router.push(`/dashboard/teammember/mytasks?projectId=${projectId}`)}
+                    className="flex-1 px-6 py-3 rounded-xl font-semibold transition-all duration-300"
+                    style={{ background: `${colors.accent.hex}11`, color: colors.primary.hex, border: `1px solid ${colors.primary.hex}` }}
                   >
                     Cancel
                   </button>
                   <button
                     onClick={submitReport}
                     disabled={!comment.trim() || submitting}
-                    className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                    className="flex-1 px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+                    style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`, color: '#fff' }}
                   >
                     {submitting ? (
                       <>
