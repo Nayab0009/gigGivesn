@@ -90,42 +90,83 @@ export default function ChatPage() {
     const socket = getSocket();
     if (!socket) return;
 
-    const handleIncomingMessage = (msg: Message) => {
-      // Only add if the message is for the current chat
-      if (
-        (msg.sender === selectedUser && msg.receiver === currentUser.name) ||
-        (msg.sender === currentUser.name && msg.receiver === selectedUser)
-      ) {
-        setMessages(prev => [...prev, msg]);
-      }
-    };
+    // socket.on('message', (data: Message) => {
+    //   // Log the received message
+    //   console.log(`[RECEIVE] ${data.sender} -> ${data.receiver}: ${data.text}`);
+    //   if (
+    //     currentUser &&
+    //     ((data.sender === selectedUser && data.receiver === currentUser.name) ||
+    //     (data.sender === currentUser.name && data.receiver === selectedUser))
+    //   ) {
+    //     setMessages((prev) => [...prev, data]);
+    //   }
+    // });
+socket.on("message", (payload: { username: string; text: string }) => {
+  console.log("Received payload:", payload);
 
-    socket.on("private_message", handleIncomingMessage);
+  if (!currentUser?.name || !selectedUser) {
+    console.log("No current user or selected user yet!");
+    return;
+  }
+
+  setMessages((prev) => [
+    ...prev,
+    {
+      sender: payload.username,
+      receiver: currentUser.name,
+      text: payload.text,
+      timestamp: new Date(),
+      status: "sent"
+    }
+  ]);
+});
+
 
     return () => {
-      socket.off("private_message", handleIncomingMessage);
+      socket.off('message');
     };
   }, [selectedUser, currentUser]);
 
-  const handleSend = () => {
-    if (message.trim() && selectedUser) {
-      const socket = getSocket();
-      const newMessage: Message = {
-        sender: currentUser.name,
+// const sendMessage = () => {
+//   const socket = getSocket();
+//   if (socket && message.trim() && selectedUser && currentUser?.name) {
+//     const payload: Message = {
+//       sender: currentUser.name,
+//       receiver: selectedUser,
+//       text: message.trim(),
+//       timestamp: new Date(),
+//       status: 'sent'
+//     };
+
+//     socket.emit('message', payload);
+//     // ✅ Immediately add message locally
+//     setMessages((prev) => [...prev, payload]);
+//     // Log the sent message
+//     console.log(`[SEND] ${payload.sender} -> ${payload.receiver}: ${payload.text}`);
+//     setMessage("");
+//   }
+// };
+
+const sendMessage = () => {
+  const socket = getSocket();
+  if (socket && message.trim()) {
+    socket.emit("message", message.trim());
+    console.log(`[SEND] ${message.trim()}`);
+    setMessage("");
+
+    // Optionally add to local UI
+    setMessages((prev) => [
+      ...prev,
+      {
+        sender: currentUser?.name || "",
         receiver: selectedUser,
         text: message.trim(),
         timestamp: new Date(),
         status: 'sent'
-      };
-      setMessages([...messages, newMessage]);
-      setMessage("");
-
-      if (socket) {
-        socket.emit("private_message", newMessage);
       }
-    }
-  };
-
+    ]);
+  }
+};
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   };
@@ -150,7 +191,7 @@ export default function ChatPage() {
     ? `bg-[${colors.secondary.hex}] border-[${colors.primary.hex}]`
     : `bg-white border-[${colors.primary.hex}]`;
 
-  const fetchChatHistory = async (userA, userB) => {
+  const fetchChatHistory = async (userA: string, userB: string) => {
     // Replace with your actual API endpoint and params
     const res = await fetch(`/api/messages?userA=${userA}&userB=${userB}`);
     const data = await res.json();
@@ -271,10 +312,10 @@ export default function ChatPage() {
           {messages.map((msg, i) => (
             <div
               key={i}
-              className={`flex ${msg.sender === "Me" ? "justify-end" : "justify-start"}`}
+              className={`flex ${currentUser && msg.sender === currentUser.name ? "justify-end" : "justify-start"}`}
             >
-              <div className={`max-w-xs lg:max-w-md ${msg.sender !== "Me" ? "order-2" : ""}`}>
-                {msg.sender !== "Me" && (
+              <div className={`max-w-xs lg:max-w-md ${currentUser && msg.sender !== currentUser.name ? "order-2" : ""}`}>
+                {currentUser && msg.sender !== currentUser.name && (
                   <div className="flex items-center gap-2 mb-1">
                     <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
                       style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
@@ -285,21 +326,21 @@ export default function ChatPage() {
                 )}
                 <div
                   className={`px-4 py-3 rounded-2xl shadow-sm ${
-                    msg.sender === "Me"
+                    currentUser && msg.sender === currentUser.name
                       ? "text-white rounded-br-sm"
                       : "bg-white text-gray-900 rounded-bl-sm border"
                   } ${fontSize === 'small' ? 'text-sm' : fontSize === 'large' ? 'text-lg' : 'text-base'}`}
                   style={
-                    msg.sender === "Me"
+                    currentUser && msg.sender === currentUser.name
                       ? { background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }
                       : { borderColor: colors.primary.hex }
                   }
                 >
                   <p>{msg.text}</p>
                   <div className={`flex items-center gap-1 mt-1 text-xs ${
-                    msg.sender === "Me" ? "text-white justify-end" : "text-gray-500"
+                    currentUser && msg.sender === currentUser.name ? "text-white justify-end" : "text-gray-500"
                   }`}>
-                    <span>{formatTime(msg.timestamp)}</span>
+                    <span>{formatTime(new Date(msg.timestamp))}</span>
                   </div>
                 </div>
               </div>
@@ -324,14 +365,14 @@ export default function ChatPage() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
-                    handleSend();
+                    sendMessage();
                   }
                 }}
                 rows={1}
               />
             </div>
             <button
-              onClick={handleSend}
+              onClick={sendMessage}
               disabled={!message.trim()}
               className="p-3 rounded-full transition-all duration-200 hover:scale-105"
               style={{

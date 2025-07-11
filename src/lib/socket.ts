@@ -10,7 +10,7 @@ export const initiateSocket = (): void => {
       transports: ['websocket', 'polling'], 
       withCredentials: true,
       autoConnect: true, 
-      reconnection: true,
+      reconnection: true, 
     });
 
 
