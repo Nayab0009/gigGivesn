@@ -828,7 +828,7 @@ export default function ProjectDashboard() {
           open={!!editStatusProjectId}
           onClose={() => setEditStatusProjectId(null)}
           project={editProject}
-          onUpdate={updateProjectStatus}
+          onUpdate={handleUpdatedProjectStatus}
         />
       </div>
     </div>
