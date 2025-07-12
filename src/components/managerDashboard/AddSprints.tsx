@@ -1,5 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Plus, X, Calendar, Users, Target, CheckCircle2, Clock, Briefcase } from 'lucide-react';
 import { getProjectsForManagers } from '@/lib/SprintService';
 import { createSprint } from '@/lib/SprintService';
@@ -8,7 +9,8 @@ import { colors } from "@/colors";
 
 
 const AddSprint: React.FC = () => {
-     const { user } = useAuth();       
+     const { user } = useAuth();
+     const router = useRouter();
   const [projects, setProjects] = useState<{id: string | number, name: string}[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
   const [form, setForm] = useState({    
@@ -43,6 +45,9 @@ useEffect(() => {
           const createdSprint = await createSprint(payload);
           console.log('Sprint Created:', createdSprint);
           setForm({ title: '', description: '', startDate: '', endDate: '', project: '' });
+          
+          // Navigate to showsprints page after successful creation
+          router.push('/dashboard/manager/showsprints');
       }
           catch (error) {
           console.log('Error to create Sprint', error);       
