@@ -2,36 +2,50 @@ import { io, Socket } from "socket.io-client";
 
 let socket: Socket | undefined;
 
-export const initiateSocket = (): void => {
+const getUserIdFromLocalStorage = (): string | undefined => {
+  const userStr = localStorage.getItem("user");
+  if (!userStr) return undefined;
+  try {
+    const user = JSON.parse(userStr);
+    return user?.id?.toString();
+  } catch {
+    return undefined;
+  }
+};
+
+export const initiateSocket = (userId?: string): void => {
+  // If userId is not provided, try to get it from localStorage
+  const id = userId || getUserIdFromLocalStorage();
+  if (!id) {
+    console.error("❌ No userId found for socket connection.");
+    return;
+  }
+
   if (!socket) {
     console.log("🔄 Creating new socket connection...");
-    
+
     socket = io("https://geekjives-26190134d520.herokuapp.com", {
-      transports: ['websocket', 'polling'], 
+      transports: ['websocket', 'polling'],
       withCredentials: true,
-      autoConnect: true, 
-      reconnection: true, 
+      autoConnect: true,
+      reconnection: true,
+      auth: {
+        userId: id,
+      },
     });
 
+    console.log("👉 Sending userId to socket server in backend:", id);
 
     socket.on("connect", () => {
-      console.log("✅ Socket connected successfully:", socket?.id);
+      console.log(
+        `✅ Socket connected successfully. Socket ID: ${socket?.id}, User ID: ${id}`
+      );
+      // Emit user_connected event with userId
+      socket?.emit("user_connected", { userId: id });
     });
 
     socket.on("connect_error", (error) => {
       console.error("❌ Socket connection error:", error);
-    });
-
-    socket.on("disconnect", (reason) => {
-      console.log("🔴 Socket disconnected:", reason);
-    });
-
-    socket.on("reconnect", (attemptNumber) => {
-      console.log("🔄 Socket reconnected after", attemptNumber, "attempts");
-    });
-
-    socket.on("reconnect_error", (error) => {
-      console.error("❌ Socket reconnection error:", error);
     });
 
     console.log("🚀 Socket instance created");

@@ -1,7 +1,6 @@
-"use client";
-
+'use client';
 import { useState, useEffect, useRef } from "react";
-import { Send, Settings, User, Moon, Sun, Bell, BellOff, Palette, MessageCircle, Search, MoreVertical, Smile } from "lucide-react";
+import { Send, Settings, User, Moon, Sun, Bell, BellOff, Palette, MessageCircle, Search, MoreVertical, Smile } from 'lucide-react';
 import { colors } from "@/colors";
 import { ShowEmployee } from "@/lib/TeamService";
 import { useAuth } from "@/context/AuthContext";
@@ -9,16 +8,15 @@ import { initiateSocket, getSocket } from "@/lib/socket";
 
 export default function ChatPage() {
   type Message = {
-    sender: string;
-    receiver: string;
-    text: string;
-    timestamp: Date;
-    status: 'sent' | 'delivered' | 'read';
+    message: string;
+    timestamp?: number;
+    userId?: string;
+    username?: string;
   };
-
 
   const [message, setMessage] = useState("");
   const [selectedUser, setSelectedUser] = useState<string>("");
+  const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [showSettings, setShowSettings] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [theme, setTheme] = useState("light");
@@ -28,10 +26,9 @@ export default function ChatPage() {
   const { user: currentUser } = useAuth();
   const currentRole = currentUser?.role;
   const [contacts, setContacts] = useState<any[]>([]);
-   const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -56,6 +53,7 @@ export default function ChatPage() {
   useEffect(() => {
     if (contacts.length > 0 && !selectedUser) {
       setSelectedUser(contacts[0].name);
+      setSelectedUserId(contacts[0].id);
     }
   }, [contacts, selectedUser]);
 
@@ -72,101 +70,49 @@ export default function ChatPage() {
     }
   }, [message]);
 
+  // Initialize socket connection
   useEffect(() => {
     initiateSocket();
     const socket = getSocket();
-    if (socket) {
-      console.log("Socket instance:", socket);
+    if (!socket) return;
+
       socket.on("connect", () => {
         console.log("Socket connected:", socket.id);
       });
+
       socket.on("connect_error", (err) => {
         console.error("Socket connection error:", err);
       });
-    }
-  }, []);
 
-  useEffect(() => {
-    const socket = getSocket();
-    if (!socket) return;
+    const handleMessage = (data: any) => {
+      console.log("✅ Message received from server:", data);
+      if (data && typeof data === 'object' && typeof data.message === 'string') {
+        setMessages((prev) => [...prev, data]);
+      }
+    };
 
-    // socket.on('message', (data: Message) => {
-    //   // Log the received message
-    //   console.log(`[RECEIVE] ${data.sender} -> ${data.receiver}: ${data.text}`);
-    //   if (
-    //     currentUser &&
-    //     ((data.sender === selectedUser && data.receiver === currentUser.name) ||
-    //     (data.sender === currentUser.name && data.receiver === selectedUser))
-    //   ) {
-    //     setMessages((prev) => [...prev, data]);
-    //   }
-    // });
-socket.on("message", (payload: { username: string; text: string }) => {
-  console.log("Received payload:", payload);
-
-  if (!currentUser?.name || !selectedUser) {
-    console.log("No current user or selected user yet!");
-    return;
-  }
-
-  setMessages((prev) => [
-    ...prev,
-    {
-      sender: payload.username,
-      receiver: currentUser.name,
-      text: payload.text,
-      timestamp: new Date(),
-      status: "sent"
-    }
-  ]);
-});
-
+    socket.on("message", handleMessage);
 
     return () => {
-      socket.off('message');
+      socket.off("message", handleMessage);
     };
-  }, [selectedUser, currentUser]);
+  }, []);
 
-// const sendMessage = () => {
-//   const socket = getSocket();
-//   if (socket && message.trim() && selectedUser && currentUser?.name) {
-//     const payload: Message = {
-//       sender: currentUser.name,
-//       receiver: selectedUser,
-//       text: message.trim(),
-//       timestamp: new Date(),
-//       status: 'sent'
-//     };
+  const sendMessage = () => {
+    const socket = getSocket();
+    if (socket && message.trim() !== "") {
+      const messageData = {
+        message: message.trim(),
+        timestamp: Date.now(),
+        userId: currentUser?.id ? currentUser.id.toString() : undefined,
+        username: currentUser?.name || undefined,
+      };
+      socket.emit("message", messageData);
+      setMessages((prev) => [...prev, messageData]);
+      setMessage("");
+    }
+  };
 
-//     socket.emit('message', payload);
-//     // ✅ Immediately add message locally
-//     setMessages((prev) => [...prev, payload]);
-//     // Log the sent message
-//     console.log(`[SEND] ${payload.sender} -> ${payload.receiver}: ${payload.text}`);
-//     setMessage("");
-//   }
-// };
-
-const sendMessage = () => {
-  const socket = getSocket();
-  if (socket && message.trim()) {
-    socket.emit("message", message.trim());
-    console.log(`[SEND] ${message.trim()}`);
-    setMessage("");
-
-    // Optionally add to local UI
-    setMessages((prev) => [
-      ...prev,
-      {
-        sender: currentUser?.name || "",
-        receiver: selectedUser,
-        text: message.trim(),
-        timestamp: new Date(),
-        status: 'sent'
-      }
-    ]);
-  }
-};
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   };
@@ -186,7 +132,6 @@ const sendMessage = () => {
   const themeClasses = theme === 'dark' 
     ? `bg-[${colors.primary.hex}] text-white` 
     : 'bg-white text-gray-900';
-
   const sidebarClasses = theme === 'dark'
     ? `bg-[${colors.secondary.hex}] border-[${colors.primary.hex}]`
     : `bg-white border-[${colors.primary.hex}]`;
@@ -199,10 +144,17 @@ const sendMessage = () => {
   };
 
   useEffect(() => {
-    if (currentUser?.name && selectedUser) {
-      fetchChatHistory(currentUser.name, selectedUser);
+    if (currentUser?.id && selectedUserId) {
+      fetchChatHistory(currentUser.id.toString(), selectedUserId.toString());
     }
-  }, [selectedUser, currentUser]);
+  }, [selectedUserId, currentUser]);
+
+  // Helper function to get user name by ID
+  const getUserNameById = (userId: string) => {
+    if (currentUser && userId === (currentUser.id ? currentUser.id.toString() : '')) return currentUser.name;
+    const contact = contacts.find(c => c.id.toString() === userId);
+    return contact?.name || userId;
+  };
 
   return (
     <div className={`flex h-screen ${themeClasses} transition-colors duration-200`}>
@@ -223,7 +175,6 @@ const sendMessage = () => {
               <Settings className="w-5 h-5" />
             </button>
           </div>
-          
           {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" style={{ color: colors.secondary.hex }} />
@@ -241,14 +192,15 @@ const sendMessage = () => {
             />
           </div>
         </div>
-
         {/* User List */}
-        
         <div className="flex-1 overflow-y-auto">
           {filteredContacts.map((contact) => (
             <div
               key={contact.id || contact.name}
-              onClick={() => setSelectedUser(contact.name)}
+              onClick={() => {
+                setSelectedUser(contact.name);
+                setSelectedUserId(contact.id);
+              }}
               className={`p-4 cursor-pointer transition-all duration-200 border-b hover:bg-[${colors.accent.hex}22] ${
                 selectedUser === contact.name ? `bg-[${colors.primary.hex}11] border-r-2 border-r-[${colors.primary.hex}]` : ''
               }`}
@@ -280,7 +232,6 @@ const sendMessage = () => {
           ))}
         </div>
       </aside>
-
       {/* Main Chat Area */}
       <main className="flex flex-col flex-1">
         {/* Chat Header */}
@@ -306,49 +257,25 @@ const sendMessage = () => {
             </button>
           </div>
         </header>
-
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ background: colors.accent.hex + '11' }}>
           {messages.map((msg, i) => (
             <div
               key={i}
-              className={`flex ${currentUser && msg.sender === currentUser.name ? "justify-end" : "justify-start"}`}
+              className="flex justify-start"
             >
-              <div className={`max-w-xs lg:max-w-md ${currentUser && msg.sender !== currentUser.name ? "order-2" : ""}`}>
-                {currentUser && msg.sender !== currentUser.name && (
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
-                      style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
-                      {msg.sender[0]}
-                    </div>
-                    <span className="text-xs" style={{ color: colors.secondary.hex }}>{msg.sender}</span>
-                  </div>
-                )}
+              <div className="max-w-xs lg:max-w-md">
                 <div
-                  className={`px-4 py-3 rounded-2xl shadow-sm ${
-                    currentUser && msg.sender === currentUser.name
-                      ? "text-white rounded-br-sm"
-                      : "bg-white text-gray-900 rounded-bl-sm border"
-                  } ${fontSize === 'small' ? 'text-sm' : fontSize === 'large' ? 'text-lg' : 'text-base'}`}
-                  style={
-                    currentUser && msg.sender === currentUser.name
-                      ? { background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }
-                      : { borderColor: colors.primary.hex }
-                  }
+                  className={`px-4 py-3 rounded-2xl shadow-sm bg-white text-gray-900 rounded-bl-sm border ${fontSize === 'small' ? 'text-sm' : fontSize === 'large' ? 'text-lg' : 'text-base'}`}
+                  style={{ borderColor: colors.primary.hex }}
                 >
-                  <p>{msg.text}</p>
-                  <div className={`flex items-center gap-1 mt-1 text-xs ${
-                    currentUser && msg.sender === currentUser.name ? "text-white justify-end" : "text-gray-500"
-                  }`}>
-                    <span>{formatTime(new Date(msg.timestamp))}</span>
-                  </div>
+                  <p>{msg.message}</p>
                 </div>
               </div>
             </div>
           ))}
           <div ref={messagesEndRef} />
         </div>
-
         {/* Chat Input */}
         <div className="p-4 bg-white border-t" style={{ borderColor: colors.primary.hex }}>
           <div className="flex items-end gap-3">
@@ -387,7 +314,6 @@ const sendMessage = () => {
           </div>
         </div>
       </main>
-
       {/* Settings Panel */}
       {showSettings && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -401,7 +327,6 @@ const sendMessage = () => {
                 ✕
               </button>
             </div>
-
             <div className="space-y-6">
               {/* Theme Settings */}
               <div>
@@ -434,7 +359,6 @@ const sendMessage = () => {
                   </div>
                 </div>
               </div>
-
               {/* Notification Settings */}
               <div>
                 <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -451,7 +375,6 @@ const sendMessage = () => {
                   </button>
                 </div>
               </div>
-
               {/* Profile Settings */}
               <div>
                 <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -471,7 +394,6 @@ const sendMessage = () => {
                 </div>
               </div>
             </div>
-
             <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
               <button
                 onClick={() => setShowSettings(false)}
