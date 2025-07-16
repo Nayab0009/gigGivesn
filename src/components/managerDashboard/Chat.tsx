@@ -26,6 +26,8 @@ export default function ChatPage() {
     timestamp?: number
     userId?: string
     username?: string
+    senderId?: string
+    receiverId?: string
   }
 
   const [message, setMessage] = useState("")
@@ -138,6 +140,7 @@ export default function ChatPage() {
 
     const handleMessage = (data: any) => {
       console.log("✅ Message received from server:", data)
+      console.log("[RECEIVED PAYLOAD]", data)
       if (data && typeof data === "object" && typeof data.message === "string") {
         setMessages((prev) => [...prev, data])
       }
@@ -158,7 +161,10 @@ export default function ChatPage() {
         timestamp: Date.now(),
         userId: currentUser?.id ? currentUser.id.toString() : undefined,
         username: currentUser?.name || undefined,
+        senderId: currentUser?.id ? currentUser.id.toString() : undefined,
+        receiverId: selectedUserId ? selectedUserId.toString() : undefined,
       }
+      console.log("[SEND PAYLOAD]", messageData)
       socket.emit("message", messageData)
       setMessages((prev) => [...prev, messageData])
       setMessage("")
