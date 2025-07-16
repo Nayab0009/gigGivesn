@@ -240,9 +240,9 @@ export default function ChatPage() {
                   >
                     {contact.avatar ? contact.avatar : contact.name?.[0]?.toUpperCase() || "?"}
                   </div>
-                  <div
+                  {/* <div
                     className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${getStatusColor(contact.status || "online")}`}
-                  ></div>
+                  ></div> */}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
@@ -255,9 +255,9 @@ export default function ChatPage() {
                       </span>
                     )}
                   </div>
-                  <p className="text-sm" style={{ color: colors.secondary.hex }}>
+                  {/* <p className="text-sm" style={{ color: colors.secondary.hex }}>
                     {contact.status || "online"} • {contact.lastSeen || "now"}
-                  </p>
+                  </p> */}
                 </div>
               </div>
             </div>
@@ -278,17 +278,17 @@ export default function ChatPage() {
                 >
                   {selectedUser[0]}
                 </div>
-                <div
+                {/* <div
                   className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${getStatusColor("online")}`}
-                ></div>
+                ></div> */}
               </div>
               <div>
                 <h2 className="font-semibold" style={{ color: colors.primary.hex }}>
                   {selectedUser}
                 </h2>
-                <p className="text-sm" style={{ color: colors.secondary.hex }}>
+                {/* <p className="text-sm" style={{ color: colors.secondary.hex }}>
                   {isTyping ? "typing..." : "Online"}
-                </p>
+                </p> */}
               </div>
             </div>
             <button className="p-2 rounded-full hover:bg-gray-100" style={{ color: colors.primary.hex }}>
