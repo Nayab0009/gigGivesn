@@ -19,6 +19,7 @@ import { colors } from "@/colors" // Assuming this file exists and exports color
 import { ShowEmployee } from "@/lib/TeamService" // Assuming this service exists
 import { useAuth } from "@/context/AuthContext" // Assuming this context exists
 import { initiateSocket, getSocket } from "@/lib/socket" // Assuming these socket functions exist
+import { sendMessage as fetchChatHistoryAPI } from "@/lib/chatService" // Use the chatService sendMessage for fetching history
 
 export default function ChatPage() {
   type Message = {
@@ -74,11 +75,23 @@ export default function ChatPage() {
       ? `bg-[${colors.secondary.hex}] border-[${colors.primary.hex}]`
       : `bg-white border-[${colors.primary.hex}]`
 
-  const fetchChatHistory = async (userA: string, userB: string) => {
-    // Replace with your actual API endpoint and params
-    const res = await fetch(`/api/messages?userA=${userA}&userB=${userB}`)
-    const data = await res.json()
-    setMessages(data.messages || [])
+  const fetchChatHistory = async (receiverId: string, senderId: string) => {
+    // Use the chatService POST function to fetch messages
+    try {
+      const data = await fetchChatHistoryAPI(senderId, receiverId)
+      // Assume the response is an array of messages or has a messages property
+      const messagesArray = Array.isArray(data) ? data : data.messages || []
+      const mappedMessages = messagesArray.map((msg: any) => ({
+        message: msg.messageBody,
+        senderId: msg.sendBy?.id?.toString(),
+        receiverId: msg.receivedBy?.id?.toString(),
+        username: msg.sendBy?.name,
+        timestamp: msg.createdAt ? new Date(msg.createdAt).getTime() : undefined,
+      }))
+      setMessages(mappedMessages)
+    } catch (error) {
+      setMessages([])
+    }
   }
 
   const getUserNameById = (userId: string) => {
@@ -173,6 +186,7 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (currentUser?.id && selectedUserId) {
+      // Fetch messages where current user is receiver and selected user is sender
       fetchChatHistory(currentUser.id.toString(), selectedUserId.toString())
     }
   }, [selectedUserId, currentUser])
@@ -300,17 +314,30 @@ export default function ChatPage() {
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ background: colors.accent.hex + "11" }}>
           {messages.map((msg, i) => {
-            const isCurrentUserMessage = msg.userId === (currentUser?.id ? currentUser.id.toString() : "")
-            const messageBubbleBg = isCurrentUserMessage
-              ? `bg-[#0056b3] text-white` // Darker blue for sent messages, white text
-              : `bg-[#1a2b3c] text-gray-200` // Dark blue for received messages, light gray text
-            const messageBubbleRounded = isCurrentUserMessage ? "rounded-br-sm" : "rounded-bl-sm"
-
+            const isSentByMe = msg.senderId === (currentUser?.id ? currentUser.id.toString() : undefined)
+            let senderName = ''
+            if (!isSentByMe && msg.senderId) {
+              const contact = contacts.find(c => c.id.toString() === msg.senderId)
+              senderName = contact?.name || msg.username || msg.senderId
+            }
             return (
-              <div key={i} className={`flex ${isCurrentUserMessage ? "justify-end" : "justify-start"}`}>
-                <div className="max-w-xs lg:max-w-md">
+              <div
+                key={i}
+                className={`flex ${isSentByMe ? 'justify-end' : 'justify-start'}`}
+              >
+                <div className={`max-w-xs lg:max-w-md ${!isSentByMe ? 'order-2' : ''}`}>
+                  {/* Show sender name for received messages */}
+                  {!isSentByMe && senderName && (
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
+                        style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
+                        {senderName[0]}
+                      </div>
+                      <span className="text-xs" style={{ color: colors.secondary.hex }}>{senderName}</span>
+                    </div>
+                  )}
                   <div
-                    className={`px-4 py-3 rounded-2xl shadow-sm border ${fontSize === "small" ? "text-sm" : fontSize === "large" ? "text-lg" : "text-base"} ${messageBubbleBg} ${messageBubbleRounded}`}
+                    className={`px-4 py-3 rounded-2xl shadow-sm bg-white text-gray-900 rounded-bl-sm border ${fontSize === 'small' ? 'text-sm' : fontSize === 'large' ? 'text-lg' : 'text-base'}`}
                     style={{ borderColor: colors.primary.hex }}
                   >
                     <p>{msg.message}</p>

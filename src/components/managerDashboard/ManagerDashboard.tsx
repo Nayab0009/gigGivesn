@@ -279,13 +279,13 @@ export default function ManagerDashboard() {
   }
 
   return (
-    <div className="min-h-screen pb-12" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})` }}>
+    <div className="min-h-screen pb-12" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`, color: '#fff' }}>
       {/* Header */}
-      <header className="px-6 py-10 rounded-b-3xl shadow-xl mb-8 ml-6 mr-6" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`, color: colors.highlight.hex }}>
+      <header className="px-6 py-10 rounded-b-3xl shadow-xl mb-8 ml-6 mr-6" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`, color: '#fff' }}>
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight" style={{ color: colors.highlight.hex }}>Manager Dashboard</h1>
-            <p className="text-sm md:text-base mt-1" style={{ color: colors.accent.hex }}>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight" style={{ color: '#fff' }}>Manager Dashboard</h1>
+            <p className="text-sm md:text-base mt-1" style={{ color: '#fff' }}>
               Welcome back, {user?.name || 'Manager'}! Oversee your assigned projects and manage your team effectively
             </p>
           </div>
@@ -295,7 +295,7 @@ export default function ManagerDashboard() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-10">
+      <div className="max-w-7xl mx-auto px-10" style={{ color: '#fff' }}>
         {/* Error Message */}
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -308,57 +308,57 @@ export default function ManagerDashboard() {
 
         {/* Analytics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          <div className="rounded-2xl shadow-lg p-6 hover:shadow-xl transition border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex }}>
+          <div className="rounded-2xl shadow-lg p-6 hover:shadow-xl transition border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex, color: '#fff' }}>
             <div className="flex items-center justify-between mb-4">
-              <div className="rounded-full p-3" style={{ background: colors.secondary.hex, color: colors.primary.hex }}>
-                <FolderKanban className="w-6 h-6" style={{ color: colors.primary.hex }} />
+              <div className="rounded-full p-3" style={{ background: colors.secondary.hex, color: '#fff' }}>
+                <FolderKanban className="w-6 h-6" style={{ color: '#fff' }} />
               </div>
-              <TrendingUp className="w-5 h-5" style={{ color: colors.primary.hex }} />
+              <TrendingUp className="w-5 h-5" style={{ color: '#fff' }} />
             </div>
-            <div className="text-3xl font-bold" style={{ color: colors.secondary.hex }}>{analytics.totalProjects}</div>
-            <div className="text-sm mt-1 font-medium" style={{ color: colors.secondary.hex }}>Total Projects</div>
+            <div className="text-3xl font-bold" style={{ color: '#fff' }}>{analytics.totalProjects}</div>
+            <div className="text-sm mt-1 font-medium" style={{ color: '#fff' }}>Total Projects</div>
           </div>
 
-          <div className="rounded-2xl shadow-lg p-6 hover:shadow-xl transition border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex }}>
+          <div className="rounded-2xl shadow-lg p-6 hover:shadow-xl transition border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex, color: '#fff' }}>
             <div className="flex items-center justify-between mb-4">
-              <div className="rounded-full p-3" style={{ background: colors.secondary.hex, color: colors.primary.hex }}>
-                <Target className="w-6 h-6" style={{ color: colors.primary.hex }} />
+              <div className="rounded-full p-3" style={{ background: colors.secondary.hex, color: '#fff' }}>
+                <Target className="w-6 h-6" style={{ color: '#fff' }} />
               </div>
-              <Clock className="w-5 h-5" style={{ color: colors.primary.hex }} />
+              <Clock className="w-5 h-5" style={{ color: '#fff' }} />
             </div>
-            <div className="text-3xl font-bold" style={{ color: colors.secondary.hex }}>{analytics.activeProjects}</div>
-            <div className="text-sm mt-1 font-medium" style={{ color: colors.secondary.hex }}>Active Projects</div>
+            <div className="text-3xl font-bold" style={{ color: '#fff' }}>{analytics.activeProjects}</div>
+            <div className="text-sm mt-1 font-medium" style={{ color: '#fff' }}>Active Projects</div>
           </div>
 
-          <div className="rounded-2xl shadow-lg p-6 hover:shadow-xl transition border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex }}>
+          <div className="rounded-2xl shadow-lg p-6 hover:shadow-xl transition border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex, color: '#fff' }}>
             <div className="flex items-center justify-between mb-4">
-              <div className="rounded-full p-3" style={{ background: colors.secondary.hex, color: colors.primary.hex }}>
-                <CheckCircle className="w-6 h-6" style={{ color: colors.primary.hex }} />
+              <div className="rounded-full p-3" style={{ background: colors.secondary.hex, color: '#fff' }}>
+                <CheckCircle className="w-6 h-6" style={{ color: '#fff' }} />
               </div>
-              <Award className="w-5 h-5" style={{ color: colors.primary.hex }} />
+              <Award className="w-5 h-5" style={{ color: '#fff' }} />
             </div>
-            <div className="text-3xl font-bold" style={{ color: colors.secondary.hex }}>{analytics.completedProjects}</div>
-            <div className="text-sm mt-1 font-medium" style={{ color: colors.secondary.hex }}>Completed Projects</div>
+            <div className="text-3xl font-bold" style={{ color: '#fff' }}>{analytics.completedProjects}</div>
+            <div className="text-sm mt-1 font-medium" style={{ color: '#fff' }}>Completed Projects</div>
           </div>
 
-          <div className="rounded-2xl shadow-lg p-6 hover:shadow-xl transition border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex }}>
+          <div className="rounded-2xl shadow-lg p-6 hover:shadow-xl transition border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex, color: '#fff' }}>
             <div className="flex items-center justify-between mb-4">
-              <div className="rounded-full p-3" style={{ background: colors.secondary.hex, color: colors.primary.hex }}>
-                <Users className="w-6 h-6" style={{ color: colors.primary.hex }} />
+              <div className="rounded-full p-3" style={{ background: colors.secondary.hex, color: '#fff' }}>
+                <Users className="w-6 h-6" style={{ color: '#fff' }} />
               </div>
-              <Star className="w-5 h-5" style={{ color: colors.primary.hex }} />
+              <Star className="w-5 h-5" style={{ color: '#fff' }} />
             </div>
-            <div className="text-3xl font-bold" style={{ color: colors.secondary.hex }}>{analytics.teamMembers}</div>
-            <div className="text-sm mt-1 font-medium" style={{ color: colors.secondary.hex }}>Team Members</div>
+            <div className="text-3xl font-bold" style={{ color: '#fff' }}>{analytics.teamMembers}</div>
+            <div className="text-sm mt-1 font-medium" style={{ color: '#fff' }}>Team Members</div>
           </div>
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10" style={{ color: '#fff' }}>
           {/* Projects Section */}
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold" style={{ color: colors.primary.hex }}>Your Assigned Projects</h2>
+              <h2 className="text-2xl font-bold" style={{ color: '#fff' }}>Your Assigned Projects</h2>
               <button
                 onClick={() => window.location.reload()}
                 className="text-sm font-medium flex items-center gap-1"

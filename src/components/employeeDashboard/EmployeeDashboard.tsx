@@ -127,9 +127,9 @@ const upcomingEvents = [
 
 export default function Dashboard() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-emerald-50 to-teal-50 pb-12">
+    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-blue-100 pb-12">
       {/* Header Hero */}
-      <header className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white px-6 py-10 rounded-b-3xl shadow-xl ml-6 mr-6">
+      <header className="bg-gradient-to-r from-blue-700 to-blue-900 text-white px-6 py-10 rounded-b-3xl shadow-xl ml-6 mr-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-4">
             <Image
@@ -141,14 +141,14 @@ export default function Dashboard() {
             />
             <div>
               <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Welcome back, Saad!</h1>
-              <p className="text-emerald-200 text-sm md:text-base mt-1">Ready to tackle today's challenges?</p>
+              <p className="text-blue-200 text-sm md:text-base mt-1">Ready to tackle today's challenges?</p>
             </div>
           </div>
           <div className="flex gap-4">
-            <button className="flex items-center gap-2 px-5 py-2 bg-white text-emerald-700 rounded-xl font-semibold shadow hover:bg-emerald-50 transition">
+            <button className="flex items-center gap-2 px-5 py-2 bg-white text-blue-700 rounded-xl font-semibold shadow hover:bg-blue-50 transition">
               <Plus className="h-5 w-5" /> New Task
             </button>
-            <button className="flex items-center gap-2 px-5 py-2 bg-emerald-500 rounded-xl font-semibold shadow hover:bg-emerald-600 transition">
+            <button className="flex items-center gap-2 px-5 py-2 bg-blue-600 rounded-xl font-semibold shadow hover:bg-blue-700 transition">
               <Calendar className="h-5 w-5" /> View Calendar
             </button>
           </div>
@@ -160,11 +160,11 @@ export default function Dashboard() {
         {analytics.map((a) => (
           <div
             key={a.label}
-            className={`${a.cardBg} rounded-2xl shadow-lg flex flex-col items-center py-6 px-4 hover:shadow-xl transition group border border-white/50`}
+            className={`bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl shadow-lg flex flex-col items-center py-6 px-4 hover:shadow-xl transition group border border-white/50`}
           >
-            <div className={`${a.color} rounded-full p-3 mb-2`}>{a.icon}</div>
-            <div className="text-3xl font-bold group-hover:text-emerald-700 transition text-gray-800">{a.value}</div>
-            <div className="text-gray-600 text-sm mt-1 font-medium">{a.label}</div>
+            <div className={`bg-blue-100 text-blue-800 rounded-full p-3 mb-2`}>{a.icon}</div>
+            <div className="text-3xl font-bold group-hover:text-blue-700 transition text-blue-800">{a.value}</div>
+            <div className="text-blue-600 text-sm mt-1 font-medium">{a.label}</div>
           </div>
         ))}
       </section>
@@ -174,8 +174,8 @@ export default function Dashboard() {
         {/* Tasks */}
         <section className="lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">My Tasks</h2>
-            <a href="#" className="text-emerald-600 hover:underline text-sm font-medium">
+            <h2 className="text-xl font-bold text-blue-900">My Tasks</h2>
+            <a href="#" className="text-blue-600 hover:underline text-sm font-medium">
               View all tasks
             </a>
           </div>
@@ -183,17 +183,17 @@ export default function Dashboard() {
             {tasks.map((task) => (
               <div
                 key={task.id}
-                className={`${task.cardBg} rounded-xl shadow-lg flex items-center justify-between p-5 hover:shadow-xl transition border border-white/50`}
+                className={`bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl shadow-lg flex items-center justify-between p-5 hover:shadow-xl transition border border-white/50`}
               >
                 <div className="flex-1">
-                  <div className="font-semibold text-gray-900 mb-1">{task.title}</div>
-                  <div className="flex gap-4 text-xs text-gray-600">
+                  <div className="font-semibold text-blue-900 mb-1">{task.title}</div>
+                  <div className="flex gap-4 text-xs text-blue-600">
                     <span className="flex items-center gap-1">
-                      <FileText className="h-3 w-3 text-emerald-500" />
+                      <FileText className="h-3 w-3 text-blue-500" />
                       {task.project}
                     </span>
                     <span className="flex items-center gap-1">
-                      <Clock className="h-3 w-3 text-amber-500" />
+                      <Clock className="h-3 w-3 text-blue-400" />
                       Due: {task.due}
                     </span>
                     <span
@@ -202,7 +202,7 @@ export default function Dashboard() {
                           ? "bg-red-100 text-red-700"
                           : task.priority === "Medium"
                             ? "bg-yellow-100 text-yellow-700"
-                            : "bg-gray-100 text-gray-600"
+                            : "bg-blue-100 text-blue-600"
                       }`}
                     >
                       {task.priority}
@@ -213,24 +213,24 @@ export default function Dashboard() {
                   <span
                     className={`text-xs font-bold px-3 py-1 rounded-full ${
                       task.status === "Completed"
-                        ? "bg-emerald-100 text-emerald-700"
+                        ? "bg-blue-100 text-blue-700"
                         : task.status === "In Progress"
-                          ? "bg-teal-100 text-teal-700"
+                          ? "bg-blue-200 text-blue-800"
                           : task.status === "Scheduled"
                             ? "bg-blue-100 text-blue-700"
-                            : "bg-gray-100 text-gray-500"
+                            : "bg-blue-50 text-blue-500"
                     }`}
                   >
                     {task.status}
                   </span>
                   {task.status === "Completed" ? (
-                    <CheckCircle className="h-5 w-5 text-emerald-500" />
+                    <CheckCircle className="h-5 w-5 text-blue-500" />
                   ) : task.status === "In Progress" ? (
-                    <TrendingUp className="h-5 w-5 text-teal-500" />
+                    <TrendingUp className="h-5 w-5 text-blue-700" />
                   ) : task.status === "Scheduled" ? (
-                    <Calendar className="h-5 w-5 text-blue-500" />
+                    <Calendar className="h-5 w-5 text-blue-400" />
                   ) : (
-                    <ListTodo className="h-5 w-5 text-gray-400" />
+                    <ListTodo className="h-5 w-5 text-blue-300" />
                   )}
                 </div>
               </div>
@@ -241,10 +241,10 @@ export default function Dashboard() {
         {/* Right Sidebar */}
         <aside className="space-y-6">
           {/* My Projects */}
-          <div className="bg-gradient-to-br from-rose-50 to-pink-100 rounded-2xl shadow-lg px-6 py-8 border border-white/50">
+          <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl shadow-lg px-6 py-8 border border-white/50">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900">My Projects</h2>
-              <a href="#" className="text-emerald-600 text-xs font-medium hover:underline">
+              <h2 className="text-lg font-bold text-blue-900">My Projects</h2>
+              <a href="#" className="text-blue-600 text-xs font-medium hover:underline">
                 View all
               </a>
             </div>
@@ -252,20 +252,20 @@ export default function Dashboard() {
               {projects.map((project) => (
                 <div key={project.id}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-semibold text-gray-800 flex items-center gap-2">
+                    <span className="font-semibold text-blue-800 flex items-center gap-2">
                       <span className={`inline-block w-2 h-2 rounded-full ${project.color}`} />
                       {project.name}
                     </span>
-                    <span className="text-xs text-gray-500">{project.team} members</span>
+                    <span className="text-xs text-blue-400">{project.team} members</span>
                   </div>
-                  <div className="text-xs text-emerald-600 font-medium mb-2">{project.role}</div>
+                  <div className="text-xs text-blue-600 font-medium mb-2">{project.role}</div>
                   <div className="w-full h-2 bg-white/60 rounded-full">
                     <div
-                      className={`${project.color} h-2 rounded-full transition-all`}
+                      className={`bg-blue-600 h-2 rounded-full transition-all`}
                       style={{ width: `${project.progress}%` }}
                     />
                   </div>
-                  <div className="flex justify-between text-xs text-gray-600 mt-1">
+                  <div className="flex justify-between text-xs text-blue-600 mt-1">
                     <span>{project.progress}% complete</span>
                     <span>{project.status}</span>
                   </div>
@@ -275,23 +275,23 @@ export default function Dashboard() {
           </div>
 
           {/* Upcoming Events */}
-          <div className="bg-gradient-to-br from-violet-50 to-purple-100 rounded-2xl shadow-lg px-6 py-8 border border-white/50">
-            <h3 className="font-bold text-lg mb-4 text-gray-900">Upcoming</h3>
+          <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl shadow-lg px-6 py-8 border border-white/50">
+            <h3 className="font-bold text-lg mb-4 text-blue-900">Upcoming</h3>
             <div className="space-y-3">
               {upcomingEvents.map((event) => (
                 <div key={event.id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/40 transition">
                   <div
                     className={`w-2 h-2 rounded-full ${
                       event.type === "meeting"
-                        ? "bg-emerald-500"
+                        ? "bg-blue-500"
                         : event.type === "review"
-                          ? "bg-teal-500"
-                          : "bg-red-500"
+                          ? "bg-blue-400"
+                          : "bg-blue-700"
                     }`}
                   />
                   <div className="flex-1">
-                    <div className="font-medium text-sm text-gray-900">{event.title}</div>
-                    <div className="text-xs text-gray-600">
+                    <div className="font-medium text-sm text-blue-900">{event.title}</div>
+                    <div className="text-xs text-blue-600">
                       {event.date} at {event.time}
                     </div>
                   </div>
@@ -301,7 +301,7 @@ export default function Dashboard() {
           </div>
 
           {/* Quick Actions */}
-          <div className="bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl shadow-lg px-6 py-7 text-white">
+          <div className="bg-gradient-to-r from-blue-700 to-blue-900 rounded-2xl shadow-lg px-6 py-7 text-white">
             <h3 className="font-semibold text-lg mb-4">Quick Actions</h3>
             <div className="space-y-3">
               <button className="w-full text-left hover:bg-white/10 rounded-lg p-2 transition flex items-center gap-2">
