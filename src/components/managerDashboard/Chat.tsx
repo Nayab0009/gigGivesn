@@ -31,10 +31,21 @@ export default function ChatPage() {
     receiverId?: string
   }
 
+  type EnhancedContact = {
+    id: string | number
+    name: string
+    avatar?: string
+    status?: string
+    lastMessage?: string
+    lastMessageTimestamp?: number
+    unread: number
+  }
+
   const [message, setMessage] = useState("")
   const [selectedUser, setSelectedUser] = useState<string>("")
-  const [selectedUserId, setSelectedUserId] = useState<string>("")
+  const [selectedUserId, setSelectedUserId] = useState<string | number>("")
   const [showSettings, setShowSettings] = useState(false)
+  const [showDebug, setShowDebug] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [theme, setTheme] = useState("light")
   const [notifications, setNotifications] = useState(true)
@@ -42,8 +53,10 @@ export default function ChatPage() {
   const [isTyping, setIsTyping] = useState(false)
   const { user: currentUser } = useAuth()
   const currentRole = currentUser?.role
-  const [contacts, setContacts] = useState<any[]>([])
+  const [contacts, setContacts] = useState<EnhancedContact[]>([])
   const [messages, setMessages] = useState<Message[]>([])
+  const [messageCounter, setMessageCounter] = useState(0)
+  const [contactMessages, setContactMessages] = useState<{[key: string]: Message[]}>({})
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -52,7 +65,17 @@ export default function ChatPage() {
   }
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
+    const yesterday = today - 86400000 // 24 hours in milliseconds
+    
+    if (date.getTime() >= today) {
+      return date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+    } else if (date.getTime() >= yesterday) {
+      return "Yesterday"
+    } else {
+      return date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
+    }
   }
 
   const getStatusColor = (status: string) => {
@@ -66,7 +89,20 @@ export default function ChatPage() {
     }
   }
 
-  const filteredContacts = contacts.filter((contact) => contact.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  // Sort contacts by most recent message first, then filter by search
+  const filteredContacts = contacts
+    .sort((a, b) => {
+      // Sort by last message timestamp (most recent first)
+      const timeA = a.lastMessageTimestamp || 0
+      const timeB = b.lastMessageTimestamp || 0
+      
+      // If someone has unread messages, prioritize them
+      if (a.unread > 0 && b.unread === 0) return -1
+      if (b.unread > 0 && a.unread === 0) return 1
+      
+      return timeB - timeA
+    })
+    .filter((contact) => contact.name.toLowerCase().includes(searchQuery.toLowerCase()))
 
   const themeClasses = theme === "dark" ? `bg-[${colors.primary.hex}] text-white` : "bg-white text-gray-900"
 
@@ -88,7 +124,35 @@ export default function ChatPage() {
         username: msg.sendBy?.name,
         timestamp: msg.createdAt ? new Date(msg.createdAt).getTime() : undefined,
       }))
+      
+      // Update current conversation messages
       setMessages(mappedMessages)
+      
+      // Update contact messages store
+      if (mappedMessages.length > 0) {
+        setContactMessages(prev => ({
+          ...prev,
+          [selectedUserId.toString()]: mappedMessages
+        }))
+        
+        // Update the contact with last message info
+        const lastMessage = mappedMessages[mappedMessages.length - 1]
+        if (lastMessage) {
+          setContacts(prevContacts => {
+            return prevContacts.map(contact => {
+              if (contact.id.toString() === selectedUserId.toString()) {
+                return {
+                  ...contact,
+                  lastMessage: lastMessage.message,
+                  lastMessageTimestamp: lastMessage.timestamp,
+                  unread: 0 // Reset unread when viewing history
+                }
+              }
+              return contact
+            })
+          })
+        }
+      }
     } catch (error) {
       setMessages([])
     }
@@ -109,7 +173,16 @@ export default function ChatPage() {
         } else if (currentRole === "employee") {
           response = await ShowEmployee("manager")
         }
-        setContacts(response?.data || [])
+        
+        // Enhance contacts with message data
+        const enhancedContacts = (response?.data || []).map((contact: any) => ({
+          ...contact,
+          lastMessage: '',
+          lastMessageTimestamp: undefined,
+          unread: 0
+        }))
+        
+        setContacts(enhancedContacts)
       } catch (error) {
         setContacts([])
       }
@@ -154,8 +227,66 @@ export default function ChatPage() {
     const handleMessage = (data: any) => {
       console.log("✅ Message received from server:", data)
       console.log("[RECEIVED PAYLOAD]", data)
+      // Increment message counter for tracking
+      setMessageCounter(prev => prev + 1)
+      
+      // Only add messages where current user is either the sender or receiver
       if (data && typeof data === "object" && typeof data.message === "string") {
-        setMessages((prev) => [...prev, data])
+        const currentUserId = currentUser?.id?.toString()
+        
+        // Update contact messages for all relevant contacts
+        if (data.senderId === currentUserId || data.receiverId === currentUserId) {
+          // Determine which contact this message belongs to
+          const contactId = data.senderId === currentUserId ? data.receiverId : data.senderId
+          
+          // Update contact messages
+          setContactMessages(prev => {
+            const existingMessages = prev[contactId] || []
+            return {
+              ...prev,
+              [contactId]: [...existingMessages, data]
+            }
+          })
+          
+          // Update contacts list with last message
+          setContacts(prevContacts => {
+            return prevContacts.map(contact => {
+              if (contact.id.toString() === contactId) {
+                // If message is from someone else to current user, increment unread
+                const isUnread = data.senderId !== currentUserId && 
+                                 contact.id.toString() !== selectedUserId.toString()
+                return {
+                  ...contact,
+                  lastMessage: data.message,
+                  lastMessageTimestamp: data.timestamp,
+                  unread: isUnread ? (contact.unread || 0) + 1 : contact.unread
+                }
+              }
+              return contact
+            })
+          })
+        }
+        
+        // Only show messages in the current conversation
+        if (
+          (data.senderId === currentUserId || data.receiverId === currentUserId) &&
+          (data.senderId === selectedUserId.toString() || data.receiverId === selectedUserId.toString())
+        ) {
+          console.log(`Message #${messageCounter} accepted: currentUserId=${currentUserId}, senderId=${data.senderId}, receiverId=${data.receiverId}`)
+          setMessages((prev) => [...prev, data])
+          
+          // Reset unread for this contact when it's the selected one
+          setContacts(prevContacts => {
+            return prevContacts.map(contact => {
+              if (contact.id.toString() === selectedUserId.toString()) {
+                return { ...contact, unread: 0 }
+              }
+              return contact
+            })
+          })
+        } else {
+          console.log(`Message #${messageCounter} filtered out: currentUserId=${currentUserId}, senderId=${data.senderId}, receiverId=${data.receiverId}`)
+        }
       }
     }
 
@@ -164,7 +295,7 @@ export default function ChatPage() {
     return () => {
       socket.off("message", handleMessage)
     }
-  }, [])
+  }, [selectedUserId, currentUser])
 
   const sendMessage = () => {
     const socket = getSocket()
@@ -179,17 +310,46 @@ export default function ChatPage() {
       }
       console.log("[SEND PAYLOAD]", messageData)
       socket.emit("message", messageData)
+      
+      // Update messages in the current conversation
       setMessages((prev) => [...prev, messageData])
+      
+      // Update contact messages
+      if (selectedUserId) {
+        setContactMessages(prev => {
+          const existingMessages = prev[selectedUserId.toString()] || []
+          return {
+            ...prev,
+            [selectedUserId.toString()]: [...existingMessages, messageData]
+          }
+        })
+        
+        // Update contacts list with last message
+        setContacts(prevContacts => {
+          return prevContacts.map(contact => {
+            if (contact.id.toString() === selectedUserId.toString()) {
+              return {
+                ...contact,
+                lastMessage: messageData.message,
+                lastMessageTimestamp: messageData.timestamp
+              }
+            }
+            return contact
+          })
+        })
+      }
+      
       setMessage("")
     }
   }
 
   useEffect(() => {
     if (currentUser?.id && selectedUserId) {
-      // Fetch messages where current user is receiver and selected user is sender
+      // Fetch messages for the conversation between current user and selected user
+      console.log(`Fetching chat history between users ${currentUser.id} and ${selectedUserId}`)
       fetchChatHistory(currentUser.id.toString(), selectedUserId.toString())
     }
-  }, [selectedUserId, currentUser])
+  }, [selectedUserId, currentUser?.id])
 
   return (
     <div className={`flex h-screen ${themeClasses} transition-colors duration-200`}>
@@ -238,6 +398,12 @@ export default function ChatPage() {
               onClick={() => {
                 setSelectedUser(contact.name)
                 setSelectedUserId(contact.id)
+                // Reset unread when selecting a contact
+                setContacts(prevContacts => 
+                  prevContacts.map(c => 
+                    c.id === contact.id ? {...c, unread: 0} : c
+                  )
+                )
               }}
               className={`p-4 cursor-pointer transition-all duration-200 border-b hover:bg-[${colors.accent.hex}22] ${
                 selectedUser === contact.name
@@ -254,24 +420,43 @@ export default function ChatPage() {
                   >
                     {contact.avatar ? contact.avatar : contact.name?.[0]?.toUpperCase() || "?"}
                   </div>
-                  {/* <div
-                    className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${getStatusColor(contact.status || "online")}`}
-                  ></div> */}
+                  {contact.status && (
+                    <div
+                      className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${getStatusColor(contact.status)}`}
+                    ></div>
+                  )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between mb-1">
                     <h3 className="font-semibold truncate" style={{ color: colors.primary.hex }}>
                       {contact.name}
                     </h3>
-                    {contact.unread > 0 && (
-                      <span className="bg-[${colors.warning.hex}] text-white text-xs rounded-full px-2 py-1 min-w-[20px] text-center">
-                        {contact.unread}
-                      </span>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {contact.lastMessageTimestamp && (
+                        <span className="text-xs text-gray-500">
+                          {formatTime(new Date(contact.lastMessageTimestamp))}
+                        </span>
+                      )}
+                      {contact.unread > 0 && (
+                        <span className="text-white text-xs rounded-full px-2 py-1 min-w-[20px] text-center" style={{ backgroundColor: colors.primary.hex }}>
+                          {contact.unread}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  {/* <p className="text-sm" style={{ color: colors.secondary.hex }}>
-                    {contact.status || "online"} • {contact.lastSeen || "now"}
-                  </p> */}
+                  <p className="text-sm truncate text-gray-600" style={{ 
+                    fontWeight: contact.unread > 0 ? 'bold' : 'normal',
+                    color: contact.unread > 0 ? colors.primary.hex : 'inherit'
+                  }}>
+                    {contact.lastMessage ? (
+                      <>
+                        {contact.lastMessageTimestamp && getUserNameById(contact.id.toString()) !== selectedUser ? (
+                          <span className="font-medium mr-1">You:</span>
+                        ) : null}
+                        {contact.lastMessage}
+                      </>
+                    ) : "No messages yet"}
+                  </p>
                 </div>
               </div>
             </div>
@@ -298,16 +483,28 @@ export default function ChatPage() {
               </div>
               <div>
                 <h2 className="font-semibold" style={{ color: colors.primary.hex }}>
-                  {selectedUser}
+                  {selectedUser} 
                 </h2>
                 {/* <p className="text-sm" style={{ color: colors.secondary.hex }}>
                   {isTyping ? "typing..." : "Online"}
                 </p> */}
               </div>
             </div>
-            <button className="p-2 rounded-full hover:bg-gray-100" style={{ color: colors.primary.hex }}>
-              <MoreVertical className="w-5 h-5" />
-            </button>
+            {/* <div className="flex items-center">
+              <button 
+                onClick={() => setShowDebug(!showDebug)}
+                className="p-2 rounded-full hover:bg-gray-100 mr-2" 
+                title="Show debug info"
+                style={{ color: colors.secondary.hex }}
+              >
+                <div className="flex items-center">
+                  <span className="text-xs mr-1">💬 {messageCounter}</span>
+                </div>
+              </button>
+              <button className="p-2 rounded-full hover:bg-gray-100" style={{ color: colors.primary.hex }}>
+                <MoreVertical className="w-5 h-5" />
+              </button>
+            </div> */}
           </div>
         </header>
 
@@ -318,7 +515,7 @@ export default function ChatPage() {
             let senderName = ''
             if (!isSentByMe && msg.senderId) {
               const contact = contacts.find(c => c.id.toString() === msg.senderId)
-              senderName = contact?.name || msg.username || msg.senderId
+              senderName = contact?.name || msg.username || `User ${msg.senderId}`
             }
             return (
               <div
@@ -326,21 +523,28 @@ export default function ChatPage() {
                 className={`flex ${isSentByMe ? 'justify-end' : 'justify-start'}`}
               >
                 <div className={`max-w-xs lg:max-w-md ${!isSentByMe ? 'order-2' : ''}`}>
-                  {/* Show sender name for received messages */}
-                  {!isSentByMe && senderName && (
+                  {/* Show sender name and ID for received messages */}
+                  {!isSentByMe && (
                     <div className="flex items-center gap-2 mb-1">
                       <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
                         style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
-                        {senderName[0]}
+                        {senderName[0] || '?'}
                       </div>
-                      <span className="text-xs" style={{ color: colors.secondary.hex }}>{senderName}</span>
+                      <span className="text-xs" style={{ color: colors.secondary.hex }}>
+                        {senderName} 
+                      </span>
                     </div>
                   )}
                   <div
-                    className={`px-4 py-3 rounded-2xl shadow-sm bg-white text-gray-900 rounded-bl-sm border ${fontSize === 'small' ? 'text-sm' : fontSize === 'large' ? 'text-lg' : 'text-base'}`}
+                    className={`px-4 py-3 rounded-2xl shadow-sm ${isSentByMe ? 'bg-blue-100' : 'bg-white'} text-gray-900 rounded-bl-sm border ${fontSize === 'small' ? 'text-sm' : fontSize === 'large' ? 'text-lg' : 'text-base'}`}
                     style={{ borderColor: colors.primary.hex }}
                   >
                     <p>{msg.message}</p>
+                    {msg.timestamp && (
+                      <p className="text-xs text-right mt-1 text-gray-500">
+                        {new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -352,12 +556,12 @@ export default function ChatPage() {
         {/* Chat Input */}
         <div className="p-4 bg-white border-t" style={{ borderColor: colors.primary.hex }}>
           <div className="flex items-end gap-3">
-            <button
+            {/* <button
               className="p-2 rounded-full hover:bg-gray-100 transition-colors"
               style={{ color: colors.secondary.hex }}
             >
               <Smile className="w-5 h-5" />
-            </button>
+            </button> */}
             <div className="flex-1">
               <textarea
                 className="w-full px-4 py-3 rounded-2xl border bg-white focus:ring-2 resize-none max-h-32"
@@ -482,6 +686,32 @@ export default function ChatPage() {
           </div>
         </div>
       )}
+
+      {/* Debug Panel */}
+      {/* {showDebug && (
+        <div className="fixed bottom-0 right-0 bg-black bg-opacity-80 text-white p-4 rounded-tl-lg max-w-md max-h-[40vh] overflow-auto z-50 font-mono text-xs">
+          <div className="flex justify-between items-center mb-2">
+            <h3>Debug Information</h3>
+            <button onClick={() => setShowDebug(false)} className="text-white hover:text-red-400">✕</button>
+          </div>
+          <div className="space-y-2">
+            <p>Current User ID: {currentUser?.id}</p>
+            <p>Selected User ID: {selectedUserId}</p>
+            <p>Messages Received: {messageCounter}</p>
+            <p>Messages Displayed: {messages.length}</p>
+            <div className="mt-2 pt-2 border-t border-gray-600">
+              <p className="font-bold">Message IDs:</p>
+              <ul className="list-disc pl-4 mt-1">
+                {messages.slice(-5).map((msg, i) => (
+                  <li key={i}>
+                    From: {msg.senderId} → To: {msg.receiverId} ({new Date(msg.timestamp || 0).toLocaleTimeString()})
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )} */}
     </div>
   )
 }
