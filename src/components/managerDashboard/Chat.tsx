@@ -61,7 +61,34 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    messagesEndRef.current?.scrollIntoView({ behavior: "auto" })
+  }
+  
+  // Helper functions to save and load read status
+  const saveReadStatus = (contactId: string | number) => {
+    try {
+      // Get existing read status
+      const savedReadStatus = localStorage.getItem('chatReadStatus') || '{}'
+      const readStatus = JSON.parse(savedReadStatus)
+      
+      // Mark this contact as read
+      readStatus[contactId.toString()] = true
+      
+      // Save back to localStorage
+      localStorage.setItem('chatReadStatus', JSON.stringify(readStatus))
+    } catch (error) {
+      console.error('Error saving read status:', error)
+    }
+  }
+  
+  const loadReadStatus = () => {
+    try {
+      const savedReadStatus = localStorage.getItem('chatReadStatus') || '{}'
+      return JSON.parse(savedReadStatus)
+    } catch (error) {
+      console.error('Error loading read status:', error)
+      return {}
+    }
   }
 
   const formatTime = (date: Date) => {
@@ -138,6 +165,9 @@ export default function ChatPage() {
         // Update the contact with last message info
         const lastMessage = mappedMessages[mappedMessages.length - 1]
         if (lastMessage) {
+          // Mark this contact as read when viewing history
+          saveReadStatus(selectedUserId)
+          
           setContacts(prevContacts => {
             return prevContacts.map(contact => {
               if (contact.id.toString() === selectedUserId.toString()) {
@@ -164,6 +194,28 @@ export default function ChatPage() {
     return contact?.name || userId
   }
 
+  // Helper function to fetch latest message for a contact
+  const fetchLatestMessage = async (userId: string, contactId: string) => {
+    try {
+      const data = await fetchChatHistoryAPI(userId, contactId)
+      const messagesArray = Array.isArray(data) ? data : data.messages || []
+      
+      if (messagesArray.length > 0) {
+        // Get the most recent message
+        const latestMsg = messagesArray[messagesArray.length - 1]
+        return {
+          message: latestMsg.messageBody,
+          senderId: latestMsg.sendBy?.id?.toString(),
+          timestamp: latestMsg.createdAt ? new Date(latestMsg.createdAt).getTime() : Date.now(),
+        }
+      }
+      return null
+    } catch (error) {
+      console.error("Error fetching latest message:", error)
+      return null
+    }
+  }
+  
   useEffect(() => {
     const fetchContacts = async () => {
       try {
@@ -174,21 +226,56 @@ export default function ChatPage() {
           response = await ShowEmployee("manager")
         }
         
-        // Enhance contacts with message data
-        const enhancedContacts = (response?.data || []).map((contact: any) => ({
+        // First set basic contacts to prevent long loading
+        const basicContacts = (response?.data || []).map((contact: any) => ({
           ...contact,
           lastMessage: '',
           lastMessageTimestamp: undefined,
           unread: 0
         }))
         
-        setContacts(enhancedContacts)
+        setContacts(basicContacts)
+        
+        // Then fetch last message for each contact
+        if (currentUser?.id) {
+          const userId = currentUser.id.toString()
+          const updatedContacts = [...basicContacts]
+          
+          // Load saved read status
+          const readStatus = loadReadStatus()
+          
+          // Using Promise.all to fetch all messages in parallel
+          const messagePromises = basicContacts.map(async (contact: EnhancedContact, index: number) => {
+            const latestMessage = await fetchLatestMessage(userId, contact.id.toString())
+            if (latestMessage) {
+              // Check if this contact is marked as read in localStorage
+              const isRead = readStatus[contact.id.toString()] === true
+              
+              updatedContacts[index] = {
+                ...updatedContacts[index],
+                lastMessage: latestMessage.message,
+                lastMessageTimestamp: latestMessage.timestamp,
+                // If the last message is from the other person and not read, mark as unread
+                unread: (latestMessage.senderId !== userId && !isRead) ? 1 : 0
+              }
+            }
+            return null // Just to satisfy the promise mapping
+          })
+          
+          // Wait for all message fetches to complete
+          await Promise.all(messagePromises)
+          
+          // Update contacts with the latest messages
+          setContacts(updatedContacts)
+        }
       } catch (error) {
+        console.error("Error fetching contacts:", error)
         setContacts([])
       }
     }
-    if (currentRole) fetchContacts()
-  }, [currentRole])
+    
+    if (currentRole && currentUser?.id) fetchContacts()
+  }, [currentRole, currentUser?.id])
 
   useEffect(() => {
     if (contacts.length > 0 && !selectedUser) {
@@ -198,6 +285,7 @@ export default function ChatPage() {
   }, [contacts, selectedUser])
 
   useEffect(() => {
+    // Always scroll to bottom when messages change
     scrollToBottom()
   }, [messages])
 
@@ -253,8 +341,15 @@ export default function ChatPage() {
             return prevContacts.map(contact => {
               if (contact.id.toString() === contactId) {
                 // If message is from someone else to current user, increment unread
+                // But only if this contact is not currently selected
                 const isUnread = data.senderId !== currentUserId && 
                                  contact.id.toString() !== selectedUserId.toString()
+                                 
+                // If this is the selected contact, mark it as read in localStorage
+                if (contact.id.toString() === selectedUserId.toString()) {
+                  saveReadStatus(contact.id)
+                }
+                
                 return {
                   ...contact,
                   lastMessage: data.message,
@@ -279,6 +374,8 @@ export default function ChatPage() {
           setContacts(prevContacts => {
             return prevContacts.map(contact => {
               if (contact.id.toString() === selectedUserId.toString()) {
+                // Mark as read in localStorage
+                saveReadStatus(contact.id)
                 return { ...contact, unread: 0 }
               }
               return contact
@@ -314,6 +411,14 @@ export default function ChatPage() {
       // Update messages in the current conversation
       setMessages((prev) => [...prev, messageData])
       
+      // Ensure scrolling to the bottom after sending a message
+      setTimeout(scrollToBottom, 0)
+      
+      // Mark the conversation as read when sending a message
+      if (selectedUserId) {
+        saveReadStatus(selectedUserId)
+      }
+      
       // Update contact messages
       if (selectedUserId) {
         setContactMessages(prev => {
@@ -347,7 +452,22 @@ export default function ChatPage() {
     if (currentUser?.id && selectedUserId) {
       // Fetch messages for the conversation between current user and selected user
       console.log(`Fetching chat history between users ${currentUser.id} and ${selectedUserId}`)
+      
+      // First check if we already have messages in contactMessages
+      const existingMessages = contactMessages[selectedUserId.toString()]
+      if (existingMessages && existingMessages.length > 0) {
+        // Use cached messages to prevent flickering
+        setMessages(existingMessages)
+        // Immediately scroll to bottom when changing users
+        setTimeout(scrollToBottom, 0)
+      }
+      
+      // Always fetch fresh data from the server
       fetchChatHistory(currentUser.id.toString(), selectedUserId.toString())
+        .then(() => {
+          // Scroll to bottom after fetching new messages
+          setTimeout(scrollToBottom, 0)
+        })
     }
   }, [selectedUserId, currentUser?.id])
 
@@ -356,16 +476,16 @@ export default function ChatPage() {
       {/* Sidebar */}
       <aside className={`w-80 ${sidebarClasses} border-r flex flex-col`}>
         {/* Header */}
-        <div className="p-4 border-b" style={{ borderColor: colors.primary.hex }}>
+        <div className="p-4">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl font-bold flex items-center gap-2">
-              <MessageCircle className="w-6 h-6" style={{ color: colors.primary.hex }} />
-              <span style={{ color: colors.primary.hex }}>ChatPro</span>
+              <MessageCircle className="w-6 h-6" style={{ color: '#006699' }} />
+              <span style={{ color: '#006699' }}>Messages</span>
             </h1>
             <button
               onClick={() => setShowSettings(!showSettings)}
               className="p-2 rounded-full hover:bg-gray-200 transition-colors"
-              style={{ color: colors.primary.hex }}
+              style={{ color: '#006699' }}
             >
               <Settings className="w-5 h-5" />
             </button>
@@ -381,7 +501,7 @@ export default function ChatPage() {
               placeholder="Search conversations..."
               className="w-full pl-10 pr-4 py-2 rounded-lg border"
               style={{
-                borderColor: colors.primary.hex,
+                borderColor: '#eaeaea',
                 background: "#fff",
                 color: colors.primary.hex,
               }}
@@ -391,13 +511,17 @@ export default function ChatPage() {
           </div>
         </div>
         {/* User List */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto border-t border-[#eaeaea]">
           {filteredContacts.map((contact) => (
             <div
               key={contact.id || contact.name}
               onClick={() => {
                 setSelectedUser(contact.name)
                 setSelectedUserId(contact.id)
+                
+                // Save this contact as read in localStorage
+                saveReadStatus(contact.id)
+                
                 // Reset unread when selecting a contact
                 setContacts(prevContacts => 
                   prevContacts.map(c => 
@@ -405,49 +529,50 @@ export default function ChatPage() {
                   )
                 )
               }}
-              className={`p-4 cursor-pointer transition-all duration-200 border-b hover:bg-[${colors.accent.hex}22] ${
+              className={`py-4 px-6 cursor-pointer transition-all duration-200 border-b hover:bg-blue-50 ${
                 selectedUser === contact.name
-                  ? `bg-[${colors.primary.hex}11] border-r-2 border-r-[${colors.primary.hex}]`
+                  ? `bg-blue-50 border-l-4 shadow-sm`
                   : ""
               }`}
-              style={{ borderColor: colors.primary.hex }}
+              style={{ 
+                borderColor: "#eaeaea", 
+                borderLeftColor: selectedUser === contact.name ? '#006699' : 'transparent'
+              }}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-start gap-4">
                 <div className="relative">
                   <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold text-lg"
-                    style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}
+                    className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold text-lg ${
+                      selectedUser === contact.name ? 'ring-2 ring-offset-2 ring-blue-500' : ''
+                    }`}
+                    style={{ 
+                      backgroundColor: selectedUser === contact.name ? '#004d73' : '#006699',
+                      color: 'white',
+                      boxShadow: selectedUser === contact.name ? '0 0 0 2px rgba(0, 102, 153, 0.3)' : 'none'
+                    }}
                   >
-                    {contact.avatar ? contact.avatar : contact.name?.[0]?.toUpperCase() || "?"}
+                    {contact.name?.[0]?.toUpperCase() || "?"}
                   </div>
-                  {contact.status && (
-                    <div
-                      className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${getStatusColor(contact.status)}`}
-                    ></div>
-                  )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <h3 className="font-semibold truncate" style={{ color: colors.primary.hex }}>
+                  <div className="flex items-center justify-between">
+                    <h3 className={`${selectedUser === contact.name ? 'font-semibold' : 'font-medium'} text-[15px]`} 
+                        style={{ 
+                          color: selectedUser === contact.name ? '#004d73' : '#006699'
+                        }}>
                       {contact.name}
                     </h3>
-                    <div className="flex items-center gap-2">
-                      {contact.lastMessageTimestamp && (
-                        <span className="text-xs text-gray-500">
-                          {formatTime(new Date(contact.lastMessageTimestamp))}
-                        </span>
-                      )}
-                      {contact.unread > 0 && (
-                        <span className="text-white text-xs rounded-full px-2 py-1 min-w-[20px] text-center" style={{ backgroundColor: colors.primary.hex }}>
-                          {contact.unread}
-                        </span>
-                      )}
-                    </div>
+                    {contact.lastMessageTimestamp && (
+                      <span className="text-xs text-gray-500 ml-2">
+                        {formatTime(new Date(contact.lastMessageTimestamp))}
+                      </span>
+                    )}
                   </div>
-                  <p className="text-sm truncate text-gray-600" style={{ 
-                    fontWeight: contact.unread > 0 ? 'bold' : 'normal',
-                    color: contact.unread > 0 ? colors.primary.hex : 'inherit'
-                  }}>
+                  <p className="text-sm truncate mt-1" 
+                     style={{ 
+                      fontWeight: contact.unread > 0 ? 'medium' : 'normal',
+                      color: selectedUser === contact.name ? '#333333' : '#666666'
+                    }}>
                     {contact.lastMessage ? (
                       <>
                         {contact.lastMessageTimestamp && getUserNameById(contact.id.toString()) !== selectedUser ? (
@@ -457,6 +582,13 @@ export default function ChatPage() {
                       </>
                     ) : "No messages yet"}
                   </p>
+                  {contact.unread > 0 && (
+                    <div className="mt-1">
+                      <span className="bg-green-500 text-white text-xs rounded-full px-2 py-0.5 text-center">
+                        {contact.unread}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -509,8 +641,9 @@ export default function ChatPage() {
         </header>
 
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ background: colors.accent.hex + "11" }}>
-          {messages.map((msg, i) => {
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col-reverse" style={{ background: colors.accent.hex + "11" }}>
+          <div ref={messagesEndRef} />
+          {messages.slice().reverse().map((msg, i) => {
             const isSentByMe = msg.senderId === (currentUser?.id ? currentUser.id.toString() : undefined)
             let senderName = ''
             if (!isSentByMe && msg.senderId) {
@@ -550,7 +683,6 @@ export default function ChatPage() {
               </div>
             )
           })}
-          <div ref={messagesEndRef} />
         </div>
 
         {/* Chat Input */}

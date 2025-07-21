@@ -132,13 +132,16 @@ export default function Dashboard() {
       <header className="bg-gradient-to-r from-blue-700 to-blue-900 text-white px-6 py-10 rounded-b-3xl shadow-xl ml-6 mr-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <Image
-              src="https://randomuser.me/api/portraits/men/32.jpg"
-              alt="User Avatar"
-              width={64}
-              height={64}
-              className="rounded-full shadow-lg border-4 border-white"
-            />
+            <div className="rounded-full shadow-lg border-4 border-white overflow-hidden w-16 h-16 flex-shrink-0">
+              <Image
+                src="https://randomuser.me/api/portraits/men/32.jpg"
+                alt="User Avatar"
+                width={64}
+                height={64}
+                className="w-full h-full object-cover"
+                unoptimized
+              />
+            </div>
             <div>
               <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Welcome back, Saad!</h1>
               <p className="text-blue-200 text-sm md:text-base mt-1">Ready to tackle today's challenges?</p>

@@ -12,6 +12,15 @@ const nextConfig: NextConfig = {
     });
     return config;
   },
+  images: {
+    domains: ['randomuser.me', 'localhost'], // Allow images from randomuser.me and localhost
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+  },
   experimental: {
     typedRoutes: false,
     optimizeCss: false // Disable lightningcss optimizer
@@ -31,16 +40,6 @@ const nextConfig: NextConfig = {
   // Remove custom distDir to prevent routes-manifest.json error
   // distDir: '.vercel_build_output',
   
-  // Additional configuration specific to Vercel deployment
-  images: {
-    domains: ['localhost'],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
-  },
 };
 
 export default nextConfig;
