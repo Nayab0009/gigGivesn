@@ -215,7 +215,7 @@ export default function ChatPage() {
       return null
     }
   }
-  
+
   useEffect(() => {
     const fetchContacts = async () => {
       try {
@@ -304,11 +304,11 @@ export default function ChatPage() {
     const socket = getSocket()
     if (!socket) return
 
-    socket.on("connect", () => {
+      socket.on("connect", () => {
       console.log("Socket connected:", socket.id)
     })
 
-    socket.on("connect_error", (err) => {
+      socket.on("connect_error", (err) => {
       console.error("Socket connection error:", err)
     })
 
@@ -424,7 +424,7 @@ export default function ChatPage() {
         setContactMessages(prev => {
           const existingMessages = prev[selectedUserId.toString()] || []
           return {
-            ...prev,
+        ...prev,
             [selectedUserId.toString()]: [...existingMessages, messageData]
           }
         })
@@ -633,9 +633,9 @@ export default function ChatPage() {
                   <span className="text-xs mr-1">💬 {messageCounter}</span>
                 </div>
               </button>
-              <button className="p-2 rounded-full hover:bg-gray-100" style={{ color: colors.primary.hex }}>
-                <MoreVertical className="w-5 h-5" />
-              </button>
+            <button className="p-2 rounded-full hover:bg-gray-100" style={{ color: colors.primary.hex }}>
+              <MoreVertical className="w-5 h-5" />
+            </button>
             </div> */}
           </div>
         </header>
@@ -651,24 +651,24 @@ export default function ChatPage() {
               senderName = contact?.name || msg.username || `User ${msg.senderId}`
             }
             return (
-              <div
-                key={i}
+            <div
+              key={i}
                 className={`flex ${isSentByMe ? 'justify-end' : 'justify-start'}`}
-              >
+            >
                 <div className={`max-w-xs lg:max-w-md ${!isSentByMe ? 'order-2' : ''}`}>
                   {/* Show sender name and ID for received messages */}
                   {!isSentByMe && (
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
-                        style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
+                      style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
                         {senderName[0] || '?'}
                       </div>
                       <span className="text-xs" style={{ color: colors.secondary.hex }}>
                         {senderName} 
                       </span>
-                    </div>
-                  )}
-                  <div
+                  </div>
+                )}
+                <div
                     className={`px-4 py-3 rounded-2xl shadow-sm ${isSentByMe ? 'bg-blue-100' : 'bg-white'} text-gray-900 rounded-bl-sm border ${fontSize === 'small' ? 'text-sm' : fontSize === 'large' ? 'text-lg' : 'text-base'}`}
                     style={{ borderColor: colors.primary.hex }}
                   >

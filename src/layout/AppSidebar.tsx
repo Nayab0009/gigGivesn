@@ -147,6 +147,11 @@ const employeeNavItems: NavItem[] = [
     icon: <MessageCircle  size={20} />,
     path: "/dashboard/manager/chat",
   },
+   {
+    name: " Notes",
+    icon: <MessageCircle  size={20} />,
+    path: "/dashboard/teammember/notes",
+  },
 ]
 
 // Student-specific navigation items (unchanged)
