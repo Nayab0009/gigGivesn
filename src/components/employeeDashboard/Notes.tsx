@@ -212,15 +212,15 @@ const ProfessionalNotesEditor = () => {
                 <h1
                   className={`text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent`}
                 >
-                  ProNotes
+                  MyNotes
                 </h1>
               </div>
-              <button
+              {/* <button
                 onClick={() => setIsDarkMode(!isDarkMode)}
                 className={`p-2.5 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-700/50 transition-all duration-200 ${textClass}`}
               >
                 {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-              </button>
+              </button> */}
             </div>
             {/* Search */}
             <div className="relative group">
