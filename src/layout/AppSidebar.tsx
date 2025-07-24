@@ -6,7 +6,7 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useSidebar } from "../context/SidebarContext"
 import { useAuth } from "../context/AuthContext"
-import { LayoutGrid, List, Users, FileText, ChevronLeft, ChevronRight, ChevronDown, Calendar ,Building,Timer,MessageCircle ,Folder ,UserPlus  ,MessagesSquare  } from "lucide-react"
+import { LayoutGrid, Notebook , Users, FileText, ChevronLeft, ChevronRight, ChevronDown, Calendar ,Building,Timer,MessageCircle ,Folder ,UserPlus  ,MessagesSquare  } from "lucide-react"
 import { GridIcon, ListIcon, PaperPlaneIcon, TableIcon, UserCircleIcon, EnvelopeListIcon } from "../icons/index"
 import { colors } from "@/colors"
 
@@ -149,7 +149,7 @@ const employeeNavItems: NavItem[] = [
   },
    {
     name: " Notes",
-    icon: <MessageCircle  size={20} />,
+    icon: <Notebook  size={20} />,
     path: "/dashboard/teammember/notes",
   },
 ]

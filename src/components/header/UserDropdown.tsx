@@ -28,10 +28,13 @@ export default function UserDropdown() {
     setIsOpen(false);
   }
 
+  // Don't render if no user
+  if (!user) {
+    return null;
+  }
+
   // Get user's display name
-  const displayName = user ? 
-    (user.name ? user.name : user.email.split('@')[0]) 
-    : 'Guest User';
+  const displayName = user.name ? user.name : user.email.split('@')[0];
 
   // Generate initials from display name
   const getInitials = (name: string) => {
@@ -95,7 +98,7 @@ export default function UserDropdown() {
             {displayName}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            {user?.email || 'guest@example.com'}
+            {user.email}
           </span>
         </div>
 
@@ -128,7 +131,7 @@ export default function UserDropdown() {
             <DropdownItem
               onItemClick={closeDropdown}
               tag="a"
-              href={`/dashboard/${user?.role}/settings`}
+              href={`/dashboard/${user.role}/settings`}
               className="flex items-center gap-3 px-3 py-2 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
             >
               <svg
