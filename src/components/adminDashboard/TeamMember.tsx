@@ -1,13 +1,13 @@
 "use client"
+
 import { useState, useEffect, useMemo } from "react"
-import { Search, Plus, RefreshCw, AlertCircle, Edit, Trash2, Eye } from "lucide-react"
+import { Search, Plus, RefreshCw, AlertCircle, Edit, Trash2, X, Save } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { deleteEmployee } from "@/lib/TeamService"
+import { deleteEmployee, updateTeamMember } from "@/lib/TeamService"
 import { ShowEmployee } from "@/lib/TeamService"
-import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
 import Pagination from "../pagination"
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthContext"
 
 interface TeamMember {
   id?: string | number
@@ -16,6 +16,10 @@ interface TeamMember {
   phone: string
   address: string
   role?: string
+}
+
+interface EditingMember extends TeamMember {
+  originalData: TeamMember
 }
 
 const generateAvatar = (name: string, index: number) => {
@@ -47,22 +51,25 @@ export default function TeamListPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
   const [searchTerm, setSearchTerm] = useState("")
-  
+  const [editingMember, setEditingMember] = useState<EditingMember | null>(null)
+  const [isUpdating, setIsUpdating] = useState(false)
+
   const router = useRouter()
-  const { user } = useAuth();
-  const userRole = user?.role?.toLowerCase();
+  const { user } = useAuth()
+  const userRole = user?.role?.toLowerCase()
 
   // Pagination logic
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 5
+
   useEffect(() => {
-    setCurrentPage(1);
-  }, [teamMembers]);
+    setCurrentPage(1)
+  }, [teamMembers])
 
   const fetchEmployees = async () => {
     setIsLoading(true)
     try {
-      const res = await ShowEmployee('employee');
+      const res = await ShowEmployee("employee")
       let membersData: TeamMember[] = []
       if (Array.isArray(res.data)) {
         membersData = res.data
@@ -94,31 +101,94 @@ export default function TeamListPage() {
         (member.id?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ?? false),
     )
   }, [teamMembers, searchTerm])
-  const paginatedMembers = filteredMembers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const paginatedMembers = filteredMembers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+
+  // Form validation function
+  const isFormValid = () => {
+    if (!editingMember) return false
+
+    return (
+      editingMember.name.trim() !== "" &&
+      editingMember.email.trim() !== "" &&
+      editingMember.email.includes("@") &&
+      editingMember.phone.trim() !== "" &&
+      editingMember.address.trim() !== ""
+    )
+  }
+
   const handleEmployeeDelete = async (teamId: string | number) => {
-    if (!teamId) return;
-    const confirmDelete = window.confirm("Are you sure you want to delete this employee?");
-    if (!confirmDelete) return;
+    if (!teamId) return
+    const confirmDelete = window.confirm("Are you sure you want to delete this employee?")
+    if (!confirmDelete) return
+
     try {
-      await deleteEmployee(teamId);
+      await deleteEmployee(teamId)
       setTeamMembers((prev) => {
-        const updated = prev.filter((team) => String(team.id) !== String(teamId));
+        const updated = prev.filter((team) => String(team.id) !== String(teamId))
         // If the current page is now empty, go to the previous page (if not on page 1)
         if ((currentPage - 1) * itemsPerPage >= updated.length && currentPage > 1) {
-          setCurrentPage(currentPage - 1);
+          setCurrentPage(currentPage - 1)
         }
-        return updated;
-      });
+        return updated
+      })
     } catch (error) {
-      console.error("Error deleting manager:", error);
-      alert("Failed to delete manager. Please try again.");
+      console.error("Error deleting employee:", error)
+      alert("Failed to delete employee. Please try again.")
     }
-  };
+  }
+
+  const handleEditStart = (member: TeamMember) => {
+    setEditingMember({
+      ...member,
+      originalData: { ...member },
+    })
+  }
+
+  const handleEditCancel = () => {
+    setEditingMember(null)
+  }
+
+  const handleEditSave = async () => {
+    if (!editingMember || !editingMember.id) return
+
+    setIsUpdating(true)
+    try {
+      const updateData = {
+        name: editingMember.name,
+        email: editingMember.email,
+        phone: editingMember.phone,
+        address: editingMember.address,
+        role: editingMember.role,
+      }
+      await updateTeamMember(String(editingMember.id), updateData)
+
+      // Update the local state
+      setTeamMembers((prev) =>
+        prev.map((member) => (String(member.id) === String(editingMember.id) ? { ...member, ...updateData } : member)),
+      )
+
+      setEditingMember(null)
+      alert("Employee updated successfully!")
+    } catch (error) {
+      console.error("Error updating employee:", error)
+      alert("Failed to update employee. Please try again.")
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
+  const handleInputChange = (field: keyof TeamMember, value: string) => {
+    if (editingMember) {
+      setEditingMember({
+        ...editingMember,
+        [field]: value,
+      })
+    }
+  }
+
   return (
-    <div
-  
-      className="p-4 sm:p-6 lg:p-8"
-    >
+    <div className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -126,8 +196,8 @@ export default function TeamListPage() {
             className="text-3xl sm:text-4xl font-bold mb-2"
             style={{
               background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-              WebkitBackgroundClip: 'text',
-              color: 'transparent',
+              WebkitBackgroundClip: "text",
+              color: "transparent",
             }}
           >
             Team Members
@@ -136,8 +206,8 @@ export default function TeamListPage() {
             className="text-lg"
             style={{
               background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-              WebkitBackgroundClip: 'text',
-              color: 'transparent',
+              WebkitBackgroundClip: "text",
+              color: "transparent",
             }}
           >
             Manage and track all team members
@@ -149,7 +219,7 @@ export default function TeamListPage() {
           className="mb-8 rounded-2xl shadow-lg border p-6"
           style={{
             background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-            color: '#fff',
+            color: "#fff",
             borderColor: colors.primary.hex,
           }}
         >
@@ -164,7 +234,7 @@ export default function TeamListPage() {
                 placeholder="Search employees by name, email or ID..."
                 className="w-full pl-10 pr-4 py-3 rounded-2xl focus:ring-2 transition-all duration-300 shadow-sm focus:shadow-md"
                 style={{
-                  background: '#fff',
+                  background: "#fff",
                   color: colors.primary.hex,
                   border: `1px solid ${colors.primary.hex}`,
                 }}
@@ -181,7 +251,10 @@ export default function TeamListPage() {
                   borderColor: colors.primary.hex,
                 }}
               >
-                <span className="font-semibold" style={{ color: colors.primary.hex }}>{filteredMembers.length}</span> of {teamMembers.length} employees
+                <span className="font-semibold" style={{ color: colors.primary.hex }}>
+                  {filteredMembers.length}
+                </span>{" "}
+                of {teamMembers.length} employees
               </div>
               {userRole === "manager" && (
                 <button
@@ -189,7 +262,7 @@ export default function TeamListPage() {
                   className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
                   style={{
                     background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                    color: '#fff',
+                    color: "#fff",
                     border: `1px solid ${colors.primary.hex}`,
                   }}
                   onClick={() => router.push("/dashboard/admin/addemployee")}
@@ -201,47 +274,271 @@ export default function TeamListPage() {
               <button
                 className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
-                  background: '#fff',
+                  background: "#fff",
                   color: colors.primary.hex,
                   border: `1px solid ${colors.primary.hex}`,
                 }}
                 onClick={fetchEmployees}
                 disabled={isLoading}
               >
-                <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} style={{ color: colors.secondary.hex }} />
+                <RefreshCw
+                  className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`}
+                  style={{ color: colors.secondary.hex }}
+                />
                 Refresh
               </button>
             </div>
           </div>
         </div>
 
+        {/* Edit Modal */}
+        {editingMember && (
+          <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div
+              className="bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100"
+              style={{
+                border: `3px solid ${colors.primary.hex}`,
+                boxShadow: `0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px ${colors.primary.hex}33`,
+              }}
+            >
+              {/* Header */}
+              <div
+                className="px-8 py-6 border-b relative overflow-hidden"
+                style={{
+                  background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                  color: "#fff",
+                }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+                <div className="relative flex items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold mb-1">Edit Team Member</h2>
+                    <p className="text-white/80 text-sm">Update employee information</p>
+                  </div>
+                  <button
+                    onClick={handleEditCancel}
+                    className="p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-all duration-300 transform hover:scale-110"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Form */}
+              <div className="px-8 py-6 space-y-6">
+                {/* Name Field */}
+                <div className="space-y-2">
+                  <label
+                    className="block text-sm font-semibold mb-2 flex items-center gap-2"
+                    style={{ color: colors.primary.hex }}
+                  >
+                    <div className="w-2 h-2 rounded-full" style={{ background: colors.primary.hex }}></div>
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={editingMember.name}
+                    onChange={(e) => handleInputChange("name", e.target.value)}
+                    className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium"
+                    style={{
+                      borderColor: editingMember.name.trim() ? colors.primary.hex : "#ef4444",
+                      backgroundColor: editingMember.name.trim() ? "#fff" : "#fef2f2",
+                      focusRingColor: `${colors.primary.hex}33`,
+                    }}
+                    placeholder="Enter full name"
+                  />
+                  {!editingMember.name.trim() && (
+                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      Name is required
+                    </p>
+                  )}
+                </div>
+
+                {/* Email Field */}
+                <div className="space-y-2">
+                  <label
+                    className="block text-sm font-semibold mb-2 flex items-center gap-2"
+                    style={{ color: colors.primary.hex }}
+                  >
+                    <div className="w-2 h-2 rounded-full" style={{ background: colors.secondary.hex }}></div>
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    value={editingMember.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium"
+                    style={{
+                      borderColor:
+                        editingMember.email.trim() && editingMember.email.includes("@")
+                          ? colors.primary.hex
+                          : "#ef4444",
+                      backgroundColor:
+                        editingMember.email.trim() && editingMember.email.includes("@") ? "#fff" : "#fef2f2",
+                      focusRingColor: `${colors.primary.hex}33`,
+                    }}
+                    placeholder="Enter email address"
+                  />
+                  {(!editingMember.email.trim() || !editingMember.email.includes("@")) && (
+                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      Valid email is required
+                    </p>
+                  )}
+                </div>
+
+                {/* Phone Field */}
+                <div className="space-y-2">
+                  <label
+                    className="block text-sm font-semibold mb-2 flex items-center gap-2"
+                    style={{ color: colors.primary.hex }}
+                  >
+                    <div className="w-2 h-2 rounded-full" style={{ background: colors.accent.hex }}></div>
+                    Phone Number *
+                  </label>
+                  <input
+                    type="tel"
+                    value={editingMember.phone}
+                    onChange={(e) => handleInputChange("phone", e.target.value)}
+                    className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium"
+                    style={{
+                      borderColor: editingMember.phone.trim() ? colors.primary.hex : "#ef4444",
+                      backgroundColor: editingMember.phone.trim() ? "#fff" : "#fef2f2",
+                      focusRingColor: `${colors.primary.hex}33`,
+                    }}
+                    placeholder="Enter phone number"
+                  />
+                  {!editingMember.phone.trim() && (
+                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      Phone number is required
+                    </p>
+                  )}
+                </div>
+
+                {/* Address Field */}
+                <div className="space-y-2">
+                  <label
+                    className="block text-sm font-semibold mb-2 flex items-center gap-2"
+                    style={{ color: colors.primary.hex }}
+                  >
+                    <div className="w-2 h-2 rounded-full" style={{ background: colors.highlight.hex }}></div>
+                    Address *
+                  </label>
+                  <textarea
+                    value={editingMember.address}
+                    onChange={(e) => handleInputChange("address", e.target.value)}
+                    rows={3}
+                    className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none resize-none transition-all duration-300 font-medium"
+                    style={{
+                      borderColor: editingMember.address.trim() ? colors.primary.hex : "#ef4444",
+                      backgroundColor: editingMember.address.trim() ? "#fff" : "#fef2f2",
+                      focusRingColor: `${colors.primary.hex}33`,
+                    }}
+                    placeholder="Enter complete address"
+                  />
+                  {!editingMember.address.trim() && (
+                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      Address is required
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div
+                className="px-8 py-6 border-t bg-gradient-to-r from-gray-50 to-gray-100"
+                style={{ borderColor: `${colors.primary.hex}20` }}
+              >
+                <div className="flex gap-4">
+                  <button
+                    onClick={handleEditCancel}
+                    className="flex-1 px-6 py-3 border-2 rounded-xl font-semibold transition-all duration-300 hover:bg-gray-50 transform hover:scale-105"
+                    style={{
+                      borderColor: colors.primary.hex,
+                      color: colors.primary.hex,
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleEditSave}
+                    disabled={isUpdating || !isFormValid()}
+                    className="flex-1 px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transform hover:scale-105 disabled:transform-none shadow-lg"
+                    style={{
+                      background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                    }}
+                  >
+                    {isUpdating ? (
+                      <>
+                        <RefreshCw className="w-5 h-5 animate-spin" />
+                        Updating...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-5 h-5" />
+                        Save Changes
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Table Container */}
         <div
           className="rounded-2xl shadow-lg border overflow-hidden"
           style={{
-            background: '#fff',
+            background: "#fff",
             borderColor: colors.primary.hex,
           }}
         >
           {isLoading ? (
             <div className="p-12 text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4"
+              <div
+                className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4"
                 style={{ background: colors.accent.hex }}
               >
                 <RefreshCw className="w-6 h-6 animate-spin" style={{ color: colors.primary.hex }} />
               </div>
-              <p className="text-lg" style={{ color: colors.primary.hex }}>Loading team members...</p>
+              <p className="text-lg" style={{ color: colors.primary.hex }}>
+                Loading team members...
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y" style={{ borderColor: colors.primary.hex }}>
                 <thead style={{ background: colors.accent.hex }}>
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Employee Details</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Role</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Contact Information</th>
+                    <th
+                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: colors.primary.hex }}
+                    >
+                      Employee Details
+                    </th>
+                    <th
+                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: colors.primary.hex }}
+                    >
+                      Role
+                    </th>
+                    <th
+                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: colors.primary.hex }}
+                    >
+                      Contact Information
+                    </th>
                     {userRole === "manager" && (
-                      <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Actions</th>
+                      <th
+                        className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                        style={{ color: colors.primary.hex }}
+                      >
+                        Actions
+                      </th>
                     )}
                   </tr>
                 </thead>
@@ -260,12 +557,7 @@ export default function TeamListPage() {
                     </tr>
                   ) : (
                     paginatedMembers.map((member, index) => (
-                      <tr
-                        key={member.id || index}
-                        className={
-                          `bg-white transition-all duration-300 hover:bg-gradient-to-r hover:from-[${colors.primary.hex}] hover:to-[${colors.secondary.hex}] hover:text-white`
-                        }
-                      >
+                      <tr key={member.id || index} className="bg-white transition-all duration-300 hover:bg-slate-50">
                         <td className="px-6 py-6">
                           <div className="space-y-2">
                             <div className="flex items-center gap-3">
@@ -273,16 +565,23 @@ export default function TeamListPage() {
                                 className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-lg"
                                 style={{
                                   background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                                  color: '#fff',
+                                  color: "#fff",
                                 }}
                               >
                                 {member.name.charAt(0).toUpperCase()}
                               </div>
                               <div>
-                                <h3 className="text-lg font-semibold leading-tight" style={{ color: colors.primary.hex }}>{member.name}</h3>
+                                <h3
+                                  className="text-lg font-semibold leading-tight"
+                                  style={{ color: colors.primary.hex }}
+                                >
+                                  {member.name}
+                                </h3>
                                 <div className="flex items-center gap-2 mt-1">
-                                
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium" style={{ background: colors.highlight.hex, color: colors.primary.hex }}>
+                                  <span
+                                    className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium"
+                                    style={{ background: colors.highlight.hex, color: colors.primary.hex }}
+                                  >
                                     Team Member
                                   </span>
                                 </div>
@@ -295,7 +594,7 @@ export default function TeamListPage() {
                             className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium capitalize"
                             style={{
                               background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                              color: '#fff',
+                              color: "#fff",
                             }}
                           >
                             {member.role || "Employee"}
@@ -305,15 +604,23 @@ export default function TeamListPage() {
                           <div className="space-y-2">
                             <div className="flex items-center gap-2">
                               <div className="w-2 h-2 rounded-full" style={{ background: colors.primary.hex }}></div>
-                              <span className="text-sm font-medium" style={{ color: colors.primary.hex }}>{member.email}</span>
+                              <span className="text-sm font-medium" style={{ color: colors.primary.hex }}>
+                                {member.email}
+                              </span>
                             </div>
                             <div className="flex items-center gap-2">
                               <div className="w-2 h-2 rounded-full" style={{ background: colors.secondary.hex }}></div>
-                              <span className="text-sm" style={{ color: colors.secondary.hex }}>{member.phone}</span>
+                              <span className="text-sm" style={{ color: colors.secondary.hex }}>
+                                {member.phone}
+                              </span>
                             </div>
                             <div className="flex items-center gap-2">
                               <div className="w-2 h-2 rounded-full" style={{ background: colors.accent.hex }}></div>
-                              <span className="text-sm max-w-xs truncate" title={member.address} style={{ color: colors.accent.hex }}>
+                              <span
+                                className="text-sm max-w-xs truncate"
+                                title={member.address}
+                                style={{ color: colors.accent.hex }}
+                              >
                                 {member.address}
                               </span>
                             </div>
@@ -323,6 +630,7 @@ export default function TeamListPage() {
                           <td className="px-6 py-6">
                             <div className="flex items-center gap-2">
                               <button
+                                onClick={() => handleEditStart(member)}
                                 className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
                                 style={{
                                   background: colors.highlight.hex,
@@ -336,10 +644,10 @@ export default function TeamListPage() {
                                 className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
                                 style={{
                                   background: colors.warning.hex,
-                                  color: '#fff',
+                                  color: "#fff",
                                 }}
                               >
-                                <Trash2 className="w-4 h-4" style={{ color: '#fff' }} />
+                                <Trash2 className="w-4 h-4" style={{ color: "#fff" }} />
                               </button>
                             </div>
                           </td>
@@ -371,7 +679,7 @@ export default function TeamListPage() {
             className="mt-8 rounded-2xl shadow-lg border p-6"
             style={{
               background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-              color: '#fff',
+              color: "#fff",
               borderColor: colors.primary.hex,
             }}
           >

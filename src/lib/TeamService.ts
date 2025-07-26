@@ -42,3 +42,12 @@ export const fetchEmployeeAllTasks=async()=>{
         console.log("Error fetching users",error)
     }
 }
+export const updateTeamMember = async (teamId:string,data:any) => {
+    try {
+        const response = await axiosInstance.patch(`/user/${teamId}`, data);
+        return response.data;
+    }
+    catch (error) {
+        console.log("Error fetching users", error)
+    }
+}

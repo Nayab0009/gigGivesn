@@ -27,7 +27,7 @@ export const createDiscussionComment = async (data: { comment: string; discussio
 
 // Get comments for a discussion by id
 export const getDiscussionComments = async (discussionId: number) => {
-    try {
+    try {      
         const response = await axiosInstance.get(`/discussions/comment/for/${discussionId}`);
         return response.data;
     } catch (error) {
