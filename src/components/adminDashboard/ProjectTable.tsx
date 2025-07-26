@@ -216,15 +216,20 @@ export default function ProjectDashboard() {
   }, [])
 
   // Filter projects
-  const filteredProjects = useMemo(() => {
-    return projects.filter((project) => {
-      const matchesSearch =
-        project.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        project.description?.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesStatus = statusFilter === "all" || project.status?.toLowerCase() === statusFilter
-      return matchesSearch && matchesStatus
-    })
-  }, [projects, searchTerm, statusFilter])
+ const filteredProjects = useMemo(() => {
+  return projects.filter((project) => {
+    const matchesSearch =
+      project.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      project.description?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // Normalize status by removing dashes, so "in-progress" and "inprogress" both match
+    const projectStatus = project.status?.toLowerCase().replace(/-/g, "");
+    const filterStatus = statusFilter.toLowerCase().replace(/-/g, "");
+    const matchesStatus = statusFilter === "all" || projectStatus === filterStatus;
+
+    return matchesSearch && matchesStatus;
+  });
+}, [projects, searchTerm, statusFilter]);
 
   // Pagination logic
   const paginatedProjects = filteredProjects.slice(

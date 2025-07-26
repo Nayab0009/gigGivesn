@@ -126,7 +126,7 @@ export default function ChatPage() {
     // Use the chatService POST function to fetch messages
     try {
       const data = await fetchChatHistoryAPI(senderId, receiverId)
-      // Assume the response is an array of messages or has a messages property
+
       const messagesArray = Array.isArray(data) ? data : data.messages || []
       const mappedMessages = messagesArray.map((msg: any) => ({
         message: msg.messageBody,
