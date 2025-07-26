@@ -25,3 +25,7 @@ export const deleteProject = async (projectId: number) => {
     const { data } = await axiosInstance.delete(`/projects/${projectId}`);
     return data;
 }
+export const updateProjectDetails = async (projectId: number|string) => {
+    const { data } = await axiosInstance.patch(`/projects/${projectId}`);
+    return data;
+}

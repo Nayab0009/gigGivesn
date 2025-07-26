@@ -1,6 +1,9 @@
 "use client"
+
+import type React from "react"
+
 import { useState, useEffect, useMemo } from "react"
-import { Search, Edit, Trash2, Eye, RefreshCw, AlertCircle, ChevronDown, UserCheck, Plus } from "lucide-react"
+import { Search, Edit, Trash2, RefreshCw, AlertCircle, ChevronDown, Plus, X } from "lucide-react"
 import { useRouter } from "next/navigation"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
@@ -51,7 +54,7 @@ const getStatusColor = (status: string) => {
   switch (status?.toLowerCase()) {
     case "active":
     case "in-progress":
-      return "bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border-emerald-200 ring-1 ring-emerald-200 shadow-sm" 
+      return "bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border-emerald-200 ring-1 ring-emerald-200 shadow-sm"
     case "completed":
       return "bg-gradient-to-r from-teal-50 to-emerald-50 text-teal-700 border-teal-200 ring-1 ring-teal-200 shadow-sm"
     case "cancelled":
@@ -59,6 +62,250 @@ const getStatusColor = (status: string) => {
     default:
       return "bg-gradient-to-r from-slate-50 to-gray-50 text-slate-700 border-slate-200 ring-1 ring-slate-200 shadow-sm"
   }
+}
+
+// --- Edit Project Modal Component ---
+interface EditProjectModalProps {
+  open: boolean
+  onClose: () => void
+  onUpdate: (projectId: string, updatedData: Partial<Project>) => void
+  project: Project | null
+  isUpdating?: boolean
+}
+
+function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false }: EditProjectModalProps) {
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+    status: "",
+  })
+  const [errors, setErrors] = useState<Record<string, string>>({})
+
+  // Initialize form data when project changes
+  useEffect(() => {
+    if (project) {
+      setFormData({
+        name: project.name || "",
+        description: project.description || "",
+        startDate: project.startDate ? project.startDate.split("T")[0] : "",
+        endDate: project.endDate ? project.endDate.split("T")[0] : "",
+        status: project.status || "",
+      })
+      setErrors({})
+    }
+  }, [project])
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {}
+
+    if (!formData.name.trim()) {
+      newErrors.name = "Project name is required"
+    }
+
+    if (!formData.description.trim()) {
+      newErrors.description = "Project description is required"
+    }
+
+    if (formData.startDate && formData.endDate && new Date(formData.startDate) > new Date(formData.endDate)) {
+      newErrors.endDate = "End date must be after start date"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!validateForm() || !project) return
+
+    // Create update object with only necessary fields
+    const updateData: Partial<Project> = {}
+
+    if (formData.name.trim()) updateData.name = formData.name.trim()
+    if (formData.description.trim()) updateData.description = formData.description.trim()
+    if (formData.startDate) updateData.startDate = formData.startDate
+    if (formData.endDate) updateData.endDate = formData.endDate
+    if (formData.status) updateData.status = formData.status
+
+    onUpdate(project.id, updateData)
+  }
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: "" }))
+    }
+  }
+
+  if (!open || !project) return null
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+        <div
+          className="p-6 flex items-center justify-between"
+          style={{
+            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+            color: "#fff",
+          }}
+        >
+          <div>
+            <h2 className="text-2xl font-bold">Edit Project</h2>
+            <p className="mt-1 text-white/90">Update project information</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-white/20 rounded-full transition-colors"
+            disabled={isUpdating}
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 max-h-[calc(90vh-120px)] overflow-y-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Project Name */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
+                Project Name *
+              </label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
+                style={{
+                  borderColor: errors.name ? "#ef4444" : colors.primary.hex,
+                  focusRingColor: colors.primary.hex,
+                }}
+                placeholder="Enter project name"
+                disabled={isUpdating}
+              />
+              {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+            </div>
+
+            {/* Description */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
+                Description *
+              </label>
+              <textarea
+                value={formData.description}
+                onChange={(e) => handleInputChange("description", e.target.value)}
+                rows={3}
+                className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all resize-none"
+                style={{
+                  borderColor: errors.description ? "#ef4444" : colors.primary.hex,
+                  focusRingColor: colors.primary.hex,
+                }}
+                placeholder="Enter project description"
+                disabled={isUpdating}
+              />
+              {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
+            </div>
+
+            {/* Start Date */}
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
+                Start Date
+              </label>
+              <input
+                type="date"
+                value={formData.startDate}
+                onChange={(e) => handleInputChange("startDate", e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
+                style={{
+                  borderColor: colors.primary.hex,
+                  focusRingColor: colors.primary.hex,
+                }}
+                disabled={isUpdating}
+              />
+            </div>
+
+            {/* End Date */}
+            <div>
+              <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
+                End Date
+              </label>
+              <input
+                type="date"
+                value={formData.endDate}
+                onChange={(e) => handleInputChange("endDate", e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
+                style={{
+                  borderColor: errors.endDate ? "#ef4444" : colors.primary.hex,
+                  focusRingColor: colors.primary.hex,
+                }}
+                disabled={isUpdating}
+              />
+              {errors.endDate && <p className="mt-1 text-sm text-red-600">{errors.endDate}</p>}
+            </div>
+
+            {/* Status */}
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
+                Status
+              </label>
+              <select
+                value={formData.status}
+                onChange={(e) => handleInputChange("status", e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
+                style={{
+                  borderColor: colors.primary.hex,
+                  focusRingColor: colors.primary.hex,
+                }}
+                disabled={isUpdating}
+              >
+                <option value="">Select Status</option>
+                <option value="inprogress">In Progress</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="on-hold">On Hold</option>
+              </select>
+            </div>
+          </div>
+        </form>
+
+        <div className="p-6 border-t border-gray-200 flex justify-end gap-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-6 py-3 rounded-xl transition-colors disabled:opacity-50"
+            style={{
+              background: "#fff",
+              color: colors.primary.hex,
+              border: `2px solid ${colors.primary.hex}`,
+            }}
+            disabled={isUpdating}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={isUpdating}
+            className="px-6 py-3 rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2"
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+              color: "#fff",
+            }}
+          >
+            {isUpdating ? (
+              <>
+                <RefreshCw className="w-4 h-4 animate-spin" />
+                Updating...
+              </>
+            ) : (
+              "Update Project"
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 // --- Assign Manager Modal Component ---
@@ -79,15 +326,15 @@ function AssignManagerModal({
   managers,
   isAssigning = false,
 }: AssignManagerModalProps) {
-  const [assigningManagerId, setAssigningManagerId] = useState<string | null>(null);
+  const [assigningManagerId, setAssigningManagerId] = useState<string | null>(null)
 
   if (!open || !project) return null
 
   const handleAssign = async (manager: Manager) => {
-    setAssigningManagerId(manager.id);
-    await onAssign(manager);
-    setAssigningManagerId(null);
-  };
+    setAssigningManagerId(manager.id)
+    await onAssign(manager)
+    setAssigningManagerId(null)
+  }
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -96,13 +343,12 @@ function AssignManagerModal({
           className="p-6"
           style={{
             background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-            color: '#fff',
+            color: "#fff",
           }}
         >
           <h2 className="text-2xl font-bold">Assign Manager to {project.name}</h2>
-          <p className="mt-1 text-white" >Select a manager to oversee this project</p>
+          <p className="mt-1 text-white">Select a manager to oversee this project</p>
         </div>
-
         <div className="p-6 max-h-96 overflow-y-auto">
           <div className="space-y-4">
             {managers.map((manager) => (
@@ -130,7 +376,7 @@ function AssignManagerModal({
                   className="px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   style={{
                     background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                    color: '#fff',
+                    color: "#fff",
                   }}
                   disabled={!!assigningManagerId}
                 >
@@ -147,13 +393,12 @@ function AssignManagerModal({
             ))}
           </div>
         </div>
-
         <div className="p-6 border-t border-gray-200 flex justify-end">
           <button
             onClick={onClose}
             className="px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
             style={{
-              background: '#fff',
+              background: "#fff",
               color: colors.primary.hex,
               border: `1px solid ${colors.primary.hex}`,
             }}
@@ -172,14 +417,16 @@ export default function ProjectDashboard() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
   const [isAssigning, setIsAssigning] = useState(false)
+  const [isUpdating, setIsUpdating] = useState(false)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
   const [projects, setProjects] = useState<Project[]>([])
   const [managers, setManagers] = useState<Manager[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [assignManagerProjectId, setAssignManagerProjectId] = useState<string | null>(null)
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const [editProjectId, setEditProjectId] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 5
 
   // Fetch projects from API
   useEffect(() => {
@@ -195,7 +442,6 @@ export default function ProjectDashboard() {
         setIsLoading(false)
       }
     }
-
     fetchProjects()
   }, [])
 
@@ -211,31 +457,47 @@ export default function ProjectDashboard() {
         setManagers([])
       }
     }
-
     fetchManagers()
   }, [])
 
   // Filter projects
- const filteredProjects = useMemo(() => {
-  return projects.filter((project) => {
-    const matchesSearch =
-      project.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.description?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    // Normalize status by removing dashes, so "in-progress" and "inprogress" both match
-    const projectStatus = project.status?.toLowerCase().replace(/-/g, "");
-    const filterStatus = statusFilter.toLowerCase().replace(/-/g, "");
-    const matchesStatus = statusFilter === "all" || projectStatus === filterStatus;
-
-    return matchesSearch && matchesStatus;
-  });
-}, [projects, searchTerm, statusFilter]);
+  const filteredProjects = useMemo(() => {
+    return projects.filter((project) => {
+      const matchesSearch =
+        project.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      // Normalize status by removing dashes, so "in-progress" and "inprogress" both match
+      const projectStatus = project.status?.toLowerCase().replace(/-/g, "")
+      const filterStatus = statusFilter.toLowerCase().replace(/-/g, "")
+      const matchesStatus = statusFilter === "all" || projectStatus === filterStatus
+      return matchesSearch && matchesStatus
+    })
+  }, [projects, searchTerm, statusFilter])
 
   // Pagination logic
-  const paginatedProjects = filteredProjects.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const paginatedProjects = filteredProjects.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+
+  // Update project with API call
+  const updateProject = async (projectId: string, updatedData: Partial<Project>) => {
+    setIsUpdating(true)
+    try {
+      // Make PATCH request to update project
+      const response = await axiosInstance.patch(`/projects/${projectId}`, updatedData)
+
+      // Update local state on success
+      setProjects((prev) => prev.map((p) => (p.id === projectId ? { ...p, ...updatedData } : p)))
+
+      setEditProjectId(null)
+      console.log(`Project updated successfully!`)
+      // You could add a success notification here
+    } catch (error) {
+      console.error("Error updating project:", error)
+      // You could add an error notification here
+      alert("Failed to update project. Please try again.")
+    } finally {
+      setIsUpdating(false)
+    }
+  }
 
   // Assign manager to project with API call
   const assignManager = async (projectId: string, manager: Manager) => {
@@ -245,11 +507,9 @@ export default function ProjectDashboard() {
       await axiosInstance.patch(`/projects/${projectId}`, {
         manager: manager.id,
       })
-
       // Update local state on success
       setProjects((prev) => prev.map((p) => (p.id === projectId ? { ...p, manager } : p)))
       setAssignManagerProjectId(null)
-
       // You could add a success notification here
       console.log(`Manager ${manager.name} assigned to project successfully!`)
     } catch (error) {
@@ -266,15 +526,12 @@ export default function ProjectDashboard() {
     if (!confirm("Are you sure you want to delete this project? This action cannot be undone.")) {
       return
     }
-
     setIsDeleting(projectId)
     try {
       // Make DELETE request to delete project
       await axiosInstance.delete(`/projects/${projectId}`)
-
       // Remove project from local state on success
       setProjects((prev) => prev.filter((p) => p.id !== projectId))
-
       // You could add a success notification here
       console.log(`Project deleted successfully!`)
     } catch (error) {
@@ -287,6 +544,7 @@ export default function ProjectDashboard() {
   }
 
   const currentProject = assignManagerProjectId ? projects.find((p) => p.id === assignManagerProjectId) : null
+  const editProject = editProjectId ? projects.find((p) => p.id === editProjectId) : null
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
@@ -297,8 +555,8 @@ export default function ProjectDashboard() {
             className="text-3xl sm:text-4xl font-bold mb-2"
             style={{
               background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-              WebkitBackgroundClip: 'text',
-              color: 'transparent',
+              WebkitBackgroundClip: "text",
+              color: "transparent",
             }}
           >
             Project Dashboard
@@ -307,8 +565,8 @@ export default function ProjectDashboard() {
             className="text-lg"
             style={{
               background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-              WebkitBackgroundClip: 'text',
-              color: 'transparent',
+              WebkitBackgroundClip: "text",
+              color: "transparent",
             }}
           >
             Manage and track your project progress
@@ -320,7 +578,7 @@ export default function ProjectDashboard() {
           className="mb-8 rounded-2xl shadow-lg border p-6"
           style={{
             background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-            color: '#fff',
+            color: "#fff",
             borderColor: colors.primary.hex,
           }}
         >
@@ -335,7 +593,7 @@ export default function ProjectDashboard() {
                 placeholder="Search projects by name or description..."
                 className="w-full pl-10 pr-4 py-3 rounded-2xl focus:ring-2 transition-all duration-300 shadow-sm focus:shadow-md"
                 style={{
-                  background: '#fff',
+                  background: "#fff",
                   color: colors.primary.hex,
                   border: `1px solid ${colors.primary.hex}`,
                 }}
@@ -350,7 +608,7 @@ export default function ProjectDashboard() {
                   onChange={(e) => setStatusFilter(e.target.value)}
                   className="appearance-none rounded-2xl px-4 py-3 pr-10 min-w-[140px] shadow-sm focus:shadow-md"
                   style={{
-                    background: '#fff',
+                    background: "#fff",
                     color: colors.primary.hex,
                     border: `1px solid ${colors.primary.hex}`,
                   }}
@@ -360,14 +618,17 @@ export default function ProjectDashboard() {
                   <option value="completed">Completed</option>
                   <option value="cancelled">Cancelled</option>
                 </select>
-                <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none" style={{ color: colors.secondary.hex }} />
+                <ChevronDown
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none"
+                  style={{ color: colors.secondary.hex }}
+                />
               </div>
               <button
                 type="button"
                 className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
                 style={{
                   background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-                  color: '#fff',
+                  color: "#fff",
                   border: `1px solid ${colors.primary.hex}`,
                 }}
                 onClick={() => router.push("/dashboard/admin/addProject")}
@@ -383,36 +644,75 @@ export default function ProjectDashboard() {
         <div
           className="rounded-2xl shadow-lg border overflow-hidden"
           style={{
-            background: '#fff',
+            background: "#fff",
             borderColor: colors.primary.hex,
           }}
         >
           {isLoading ? (
             <div className="p-12 text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4"
+              <div
+                className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4"
                 style={{ background: colors.accent.hex }}
               >
                 <RefreshCw className="w-6 h-6 animate-spin" style={{ color: colors.primary.hex }} />
               </div>
-              <p className="text-lg" style={{ color: colors.primary.hex }}>Loading projects...</p>
+              <p className="text-lg" style={{ color: colors.primary.hex }}>
+                Loading projects...
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y" style={{ borderColor: colors.primary.hex }}>
                 <thead style={{ background: colors.accent.hex }}>
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Name</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Description</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Status</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Manager</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Progress</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Actions</th>
+                    <th
+                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: colors.primary.hex }}
+                    >
+                      Name
+                    </th>
+                    <th
+                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: colors.primary.hex }}
+                    >
+                      Description
+                    </th>
+                    <th
+                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: colors.primary.hex }}
+                    >
+                      Start Date
+                    </th>
+                    <th
+                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: colors.primary.hex }}
+                    >
+                      End Date
+                    </th>
+                    <th
+                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: colors.primary.hex }}
+                    >
+                      Status
+                    </th>
+                    <th
+                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: colors.primary.hex }}
+                    >
+                      Manager
+                    </th>
+                    <th
+                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: colors.primary.hex }}
+                    >
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-slate-200">
                   {paginatedProjects.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-6 py-12 text-center">
+                      <td colSpan={7} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center justify-center">
                           <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
                             <AlertCircle className="w-8 h-8 text-slate-400" />
@@ -430,16 +730,32 @@ export default function ProjectDashboard() {
                       >
                         <td className="px-6 py-6">
                           <div className="space-y-2">
-                            <h3 className="text-lg font-semibold leading-tight" style={{ color: colors.primary.hex }}>{project.name}</h3>
+                            <h3 className="text-lg font-semibold leading-tight" style={{ color: colors.primary.hex }}>
+                              {project.name}
+                            </h3>
                             <div className="flex items-center gap-2">
                               {project.budget && (
-                                <span className="text-sm" style={{ color: colors.secondary.hex }}>${project.budget.toLocaleString()}</span>
+                                <span className="text-sm" style={{ color: colors.secondary.hex }}>
+                                  ${project.budget.toLocaleString()}
+                                </span>
                               )}
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-6">
-                          <p className="text-sm leading-relaxed max-w-xs" style={{ color: colors.secondary.hex }}>{project.description}</p>
+                          <p className="text-sm leading-relaxed max-w-xs" style={{ color: colors.secondary.hex }}>
+                            {project.description}
+                          </p>
+                        </td>
+                        <td className="px-6 py-6">
+                          <span className="text-sm" style={{ color: colors.primary.hex }}>
+                            {project.startDate ? new Date(project.startDate).toLocaleDateString() : "—"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-6">
+                          <span className="text-sm" style={{ color: colors.primary.hex }}>
+                            {project.endDate ? new Date(project.endDate).toLocaleDateString() : "—"}
+                          </span>
                         </td>
                         <td className="px-6 py-6">
                           {project.status ? (
@@ -447,33 +763,39 @@ export default function ProjectDashboard() {
                               className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize"
                               style={{
                                 background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                                color: '#fff',
+                                color: "#fff",
                               }}
                             >
                               {(() => {
-                                const status = project.status.toLowerCase();
-                                if (status === "inprogress" || status === "in-progress") return "In Progress";
-                                if (status === "onhold" || status === "on-hold") return "On Hold";
-                                return status.charAt(0).toUpperCase() + status.slice(1);
+                                const status = project.status.toLowerCase()
+                                if (status === "inprogress" || status === "in-progress") return "In Progress"
+                                if (status === "onhold" || status === "on-hold") return "On Hold"
+                                return status.charAt(0).toUpperCase() + status.slice(1)
                               })()}
                             </span>
                           ) : (
-                            <span className="text-xs" style={{ color: colors.secondary.hex }}>—</span>
+                            <span className="text-xs" style={{ color: colors.secondary.hex }}>
+                              —
+                            </span>
                           )}
                         </td>
                         <td className="px-6 py-6">
                           {project.manager ? (
-                            <span className="font-semibold" style={{ color: colors.primary.hex }}>{project.manager.name}</span>
+                            <span className="font-semibold" style={{ color: colors.primary.hex }}>
+                              {project.manager.name}
+                            </span>
                           ) : (
                             <div className="flex items-center gap-2">
-                              <span className="text-sm" style={{ color: colors.secondary.hex }}>No manager</span>
+                              <span className="text-sm" style={{ color: colors.secondary.hex }}>
+                                No manager
+                              </span>
                               <button
                                 className="ml-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                                 onClick={() => setAssignManagerProjectId(project.id)}
                                 disabled={isAssigning}
                                 style={{
                                   background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-                                  color: '#fff',
+                                  color: "#fff",
                                   border: `1px solid ${colors.primary.hex}`,
                                 }}
                               >
@@ -483,33 +805,16 @@ export default function ProjectDashboard() {
                           )}
                         </td>
                         <td className="px-6 py-6">
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <span className="text-sm font-medium" style={{ color: colors.primary.hex }}>{project.completion || 0}%</span>
-                            </div>
-                            <div className="w-full rounded-full h-2 shadow-inner" style={{ background: colors.accent.hex }}>
-                              <div
-                                className="h-2 rounded-full transition-all duration-500 shadow-sm relative overflow-hidden"
-                                style={{
-                                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                                  width: `${project.completion || 0}%`,
-                                }}
-                              >
-                                <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, transparent, #fff3, transparent)', animation: 'pulse 2s infinite' }}></div>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-6">
                           <div className="flex items-center gap-2">
                             <button
+                              onClick={() => setEditProjectId(project.id)}
                               className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
                               style={{
                                 background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                                color: '#fff',
+                                color: "#fff",
                               }}
                             >
-                              <Edit className="w-4 h-4" style={{ color: '#fff' }} />
+                              <Edit className="w-4 h-4" style={{ color: "#fff" }} />
                             </button>
                             <button
                               onClick={() => deleteProject(project.id)}
@@ -517,13 +822,13 @@ export default function ProjectDashboard() {
                               className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
                               style={{
                                 background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                                color: '#fff',
+                                color: "#fff",
                               }}
                             >
                               {isDeleting === project.id ? (
-                                <RefreshCw className="w-4 h-4 animate-spin" style={{ color: '#fff' }} />
+                                <RefreshCw className="w-4 h-4 animate-spin" style={{ color: "#fff" }} />
                               ) : (
-                                <Trash2 className="w-4 h-4" style={{ color: '#fff' }} />
+                                <Trash2 className="w-4 h-4" style={{ color: "#fff" }} />
                               )}
                             </button>
                           </div>
@@ -548,6 +853,15 @@ export default function ProjectDashboard() {
             />
           </div>
         )}
+
+        {/* Edit Project Modal */}
+        <EditProjectModal
+          open={!!editProjectId}
+          onClose={() => setEditProjectId(null)}
+          onUpdate={updateProject}
+          project={editProject}
+          isUpdating={isUpdating}
+        />
 
         {/* Assign Manager Modal */}
         <AssignManagerModal
