@@ -121,14 +121,35 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
 
     if (!validateForm() || !project) return
 
-    // Create update object with only necessary fields
+    // Create update object with only non-empty fields that have actually changed
     const updateData: Partial<Project> = {}
 
-    if (formData.name.trim()) updateData.name = formData.name.trim()
-    if (formData.description.trim()) updateData.description = formData.description.trim()
-    if (formData.startDate) updateData.startDate = formData.startDate
-    if (formData.endDate) updateData.endDate = formData.endDate
-    if (formData.status) updateData.status = formData.status
+    // Only include fields that are not empty and different from original
+    if (formData.name.trim() && formData.name.trim() !== project.name) {
+      updateData.name = formData.name.trim()
+    }
+
+    if (formData.description.trim() && formData.description.trim() !== project.description) {
+      updateData.description = formData.description.trim()
+    }
+
+    if (formData.startDate && formData.startDate !== (project.startDate ? project.startDate.split("T")[0] : "")) {
+      updateData.startDate = formData.startDate
+    }
+
+    if (formData.endDate && formData.endDate !== (project.endDate ? project.endDate.split("T")[0] : "")) {
+      updateData.endDate = formData.endDate
+    }
+
+    if (formData.status && formData.status !== project.status) {
+      updateData.status = formData.status
+    }
+
+    // Only proceed if there are actual changes
+    if (Object.keys(updateData).length === 0) {
+      alert("No changes detected.")
+      return
+    }
 
     onUpdate(project.id, updateData)
   }
@@ -145,7 +166,7 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col">
         <div
           className="p-6 flex items-center justify-between"
           style={{
@@ -166,143 +187,146 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 max-h-[calc(90vh-120px)] overflow-y-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Project Name */}
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
-                Project Name *
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => handleInputChange("name", e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
-                style={{
-                  borderColor: errors.name ? "#ef4444" : colors.primary.hex,
-                  focusRingColor: colors.primary.hex,
-                }}
-                placeholder="Enter project name"
-                disabled={isUpdating}
-              />
-              {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
-            </div>
+        <form onSubmit={handleSubmit} className="flex flex-col h-full">
+          <div className="p-6 flex-1 overflow-y-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Project Name */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
+                  Project Name *
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
+                  style={{
+                    borderColor: errors.name ? "#ef4444" : colors.primary.hex,
+                    focusRingColor: colors.primary.hex,
+                  }}
+                  placeholder="Enter project name"
+                  disabled={isUpdating}
+                />
+                {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+              </div>
 
-            {/* Description */}
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
-                Description *
-              </label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => handleInputChange("description", e.target.value)}
-                rows={3}
-                className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all resize-none"
-                style={{
-                  borderColor: errors.description ? "#ef4444" : colors.primary.hex,
-                  focusRingColor: colors.primary.hex,
-                }}
-                placeholder="Enter project description"
-                disabled={isUpdating}
-              />
-              {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
-            </div>
+              {/* Description */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
+                  Description *
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => handleInputChange("description", e.target.value)}
+                  rows={3}
+                  className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all resize-none"
+                  style={{
+                    borderColor: errors.description ? "#ef4444" : colors.primary.hex,
+                    focusRingColor: colors.primary.hex,
+                  }}
+                  placeholder="Enter project description"
+                  disabled={isUpdating}
+                />
+                {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
+              </div>
 
-            {/* Start Date */}
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
-                Start Date
-              </label>
-              <input
-                type="date"
-                value={formData.startDate}
-                onChange={(e) => handleInputChange("startDate", e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
-                style={{
-                  borderColor: colors.primary.hex,
-                  focusRingColor: colors.primary.hex,
-                }}
-                disabled={isUpdating}
-              />
-            </div>
+              {/* Start Date */}
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
+                  Start Date
+                </label>
+                <input
+                  type="date"
+                  value={formData.startDate}
+                  onChange={(e) => handleInputChange("startDate", e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
+                  style={{
+                    borderColor: colors.primary.hex,
+                    focusRingColor: colors.primary.hex,
+                  }}
+                  disabled={isUpdating}
+                />
+              </div>
 
-            {/* End Date */}
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
-                End Date
-              </label>
-              <input
-                type="date"
-                value={formData.endDate}
-                onChange={(e) => handleInputChange("endDate", e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
-                style={{
-                  borderColor: errors.endDate ? "#ef4444" : colors.primary.hex,
-                  focusRingColor: colors.primary.hex,
-                }}
-                disabled={isUpdating}
-              />
-              {errors.endDate && <p className="mt-1 text-sm text-red-600">{errors.endDate}</p>}
-            </div>
+              {/* End Date */}
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
+                  End Date
+                </label>
+                <input
+                  type="date"
+                  value={formData.endDate}
+                  onChange={(e) => handleInputChange("endDate", e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
+                  style={{
+                    borderColor: errors.endDate ? "#ef4444" : colors.primary.hex,
+                    focusRingColor: colors.primary.hex,
+                  }}
+                  disabled={isUpdating}
+                />
+                {errors.endDate && <p className="mt-1 text-sm text-red-600">{errors.endDate}</p>}
+              </div>
 
-            {/* Status */}
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
-                Status
-              </label>
-              <select
-                value={formData.status}
-                onChange={(e) => handleInputChange("status", e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
-                style={{
-                  borderColor: colors.primary.hex,
-                  focusRingColor: colors.primary.hex,
-                }}
-                disabled={isUpdating}
-              >
-                <option value="">Select Status</option>
-                <option value="inprogress">In Progress</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
-                <option value="on-hold">On Hold</option>
-              </select>
+              {/* Status */}
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
+                  Status
+                </label>
+                <select
+                  value={formData.status}
+                  onChange={(e) => handleInputChange("status", e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
+                  style={{
+                    borderColor: colors.primary.hex,
+                    focusRingColor: colors.primary.hex,
+                  }}
+                  disabled={isUpdating}
+                >
+                  <option value="">Select Status</option>
+                  <option value="inprogress">In Progress</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                  <option value="on-hold">On Hold</option>
+                </select>
+              </div>
             </div>
           </div>
-        </form>
 
-        <div className="p-6 border-t border-gray-200 flex justify-end gap-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-6 py-3 rounded-xl transition-colors disabled:opacity-50"
-            style={{
-              background: "#fff",
-              color: colors.primary.hex,
-              border: `2px solid ${colors.primary.hex}`,
-            }}
-            disabled={isUpdating}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={isUpdating}
-            className="px-6 py-3 rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2"
-            style={{
-              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-              color: "#fff",
-            }}
-          >
-            {isUpdating ? (
-              <>
-                <RefreshCw className="w-4 h-4 animate-spin" />
-                Updating...
-              </>
-            ) : (
-              "Update Project"
-            )}
-          </button>
-        </div>
+          {/* Footer with buttons */}
+          <div className="p-6 border-t border-gray-200 flex justify-end gap-4 flex-shrink-0">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-3 rounded-xl transition-colors disabled:opacity-50"
+              style={{
+                background: "#fff",
+                color: colors.primary.hex,
+                border: `2px solid ${colors.primary.hex}`,
+              }}
+              disabled={isUpdating}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isUpdating}
+              className="px-6 py-3 rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2"
+              style={{
+                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                color: "#fff",
+              }}
+            >
+              {isUpdating ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                "Update Project"
+              )}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   )

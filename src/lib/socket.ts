@@ -25,6 +25,7 @@ export const initiateSocket = (userId?: string): void => {
     console.log("🔄 Creating new socket connection...");
 
     socket = io("https://geekjives-26190134d520.herokuapp.com" ,{
+    // socket = io("http://192.168.1.12:3002" ,{
       transports: ['websocket', 'polling'],
       withCredentials: true,
       autoConnect: true,

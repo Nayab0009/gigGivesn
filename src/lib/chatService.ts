@@ -12,21 +12,26 @@ export const sendMessage = async (senderId, receiverId) => {
         throw error;
     }
 }
-export const uploadfile = async (file) => {
+
+export const uploadfile = async (file, messageBody, sendBy, recievedBy) => {
     try {
         const formData = new FormData();
-        formData.append("file", file);
-        const response = await axiosInstance.post("/messages/upload", formData, {
+        formData.append('file', file);
+        formData.append('messageBody', messageBody);
+        formData.append('sendBy', sendBy);
+        formData.append('recievedBy', recievedBy);
+
+        const response = await axiosInstance.post("/messages/send/file", formData, {
             headers: {
                 "Content-Type": "multipart/form-data"
             }
         });
+
         return response.data;
-    }catch(error) {
-        console.error("Error uploading file:", error);
+    } catch (error) {
         throw error;
     }
-}
+};
 export const getFiles = async () => {
     try {
         const response = await axiosInstance.get("/files");
@@ -35,5 +40,15 @@ export const getFiles = async () => {
     catch (error)
     {
         console.error("Error getting files:", error);
+    }
+}
+export const deletemessage = async (id:string) => {
+    try {
+        const response = await axiosInstance.delete(`/messages/${id}`);
+        return response.data;
+    }
+    catch (error)
+    {
+        console.error("Error deleting message:", error);
     }
 }
