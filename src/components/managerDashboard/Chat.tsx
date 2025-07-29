@@ -1,13 +1,52 @@
 "use client"
+
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
-import { Send, User, Moon, Sun, Bell, BellOff, Palette, MessageCircle, Search, Paperclip, Trash2 } from "lucide-react"
+import {
+  Send,
+  User,
+  Moon,
+  Sun,
+  Bell,
+  BellOff,
+  Palette,
+  MessageCircle,
+  Search,
+  Paperclip,
+  Trash2,
+  Loader2,
+} from "lucide-react" // Added Loader2 icon
 import { colors } from "@/colors" // Assuming this file exists and exports colors
 import { ShowEmployee } from "@/lib/TeamService" // Assuming this service exists
 import { useAuth } from "@/context/AuthContext" // Assuming this context exists
 import { initiateSocket, getSocket } from "@/lib/socket" // Assuming these socket functions exist
 import { sendMessage as fetchChatHistoryAPI } from "@/lib/chatService" // Use the chatService sendMessage for fetching history
 import { deletemessage, uploadfile } from "@/lib/chatService"
+
+// New ImageModal component
+function ImageModal({ src, onClose }: { src: string; onClose: () => void }) {
+  if (!src) return null
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
+      onClick={onClose}
+      aria-modal="true"
+      role="dialog"
+    >
+      <div className="relative max-w-4xl max-h-[90vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <img src={src || "/placeholder.svg"} alt="Full size image" className="max-w-full max-h-full object-contain" />
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-white text-3xl bg-black bg-opacity-50 rounded-full w-10 h-10 flex items-center justify-center"
+          aria-label="Close image"
+        >
+          &times;
+        </button>
+      </div>
+    </div>
+  )
+}
 
 export default function ChatPage() {
   type Message = {
@@ -21,7 +60,9 @@ export default function ChatPage() {
     fileUrl?: string // This will hold the URL for files
     fileType?: string // This will hold the inferred file type
     isFile?: boolean // New field to indicate if it's a file message
+    isPending?: boolean // New field for optimistic updates/loading state
   }
+
   type EnhancedContact = {
     id: string | number
     name: string
@@ -31,6 +72,7 @@ export default function ChatPage() {
     lastMessageTimestamp?: number
     unread: number
   }
+
   const [message, setMessage] = useState("")
   const [selectedFile, setSelectedFile] = useState<File | null>(null) // New state for selected file
   const fileInputRef = useRef<HTMLInputElement>(null) // Ref for file input
@@ -50,6 +92,13 @@ export default function ChatPage() {
   const [contactMessages, setContactMessages] = useState<{ [key: string]: Message[] }>({})
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null) // Ref for the audio element
+
+  // New states for image modal
+  const [showImageModal, setShowImageModal] = useState(false)
+  const [modalImageUrl, setModalImageUrl] = useState<string | null>(null)
+
+  // New state for file upload loading
+  const [isUploadingFile, setIsUploadingFile] = useState(false)
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "auto" })
@@ -84,6 +133,7 @@ export default function ChatPage() {
     const now = new Date()
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
     const yesterday = today - 86400000 // 24 hours in milliseconds
+
     if (date.getTime() >= today) {
       return date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
     } else if (date.getTime() >= yesterday) {
@@ -153,27 +203,22 @@ export default function ChatPage() {
       : `bg-white border-[${colors.primary.hex}]`
 
   const fetchChatHistory = async (receiverId: string, senderId: string) => {
-    // Use the chatService POST function to fetch messages
     try {
       const data = await fetchChatHistoryAPI(senderId, receiverId)
       const messagesArray = Array.isArray(data) ? data : data.messages || []
       const mappedMessages = messagesArray.map((msg: any) => {
-        // Determine if it's a file message based on the 'messageBody' content being a URL
         const isFileFromMessageBody = typeof msg.messageBody === "string" && msg.messageBody.startsWith("http")
         return {
           id: msg.id,
-          // If it's a file URL, the 'message' field for display should be empty,
-          // as the content is the file itself. Otherwise, it's the text message.
           message: isFileFromMessageBody ? "" : msg.messageBody || "",
           senderId: msg.sendBy?.id?.toString(),
           receiverId: msg.receivedBy?.id?.toString(),
           username: msg.sendBy?.name,
           timestamp: msg.createdAt ? new Date(msg.createdAt).getTime() : undefined,
-          // If it's a file URL, the file URL is in `msg.messageBody`.
           fileUrl: isFileFromMessageBody ? msg.messageBody : undefined,
-          // Infer file type from the URL in `msg.messageBody`
           fileType: isFileFromMessageBody ? getFileTypeFromUrl(msg.messageBody) : undefined,
-          isFile: isFileFromMessageBody, // Set isFile based on URL detection
+          isFile: isFileFromMessageBody,
+          isPending: false, // Ensure fetched messages are not pending
         }
       })
       setMessages(mappedMessages)
@@ -184,7 +229,6 @@ export default function ChatPage() {
         }))
         const lastMessage = mappedMessages[mappedMessages.length - 1]
         if (lastMessage) {
-          // Mark this contact as read when viewing history
           saveReadStatus(selectedUserId)
           setContacts((prevContacts) => {
             return prevContacts.map((contact) => {
@@ -197,7 +241,7 @@ export default function ChatPage() {
                       ? `Sent a ${lastMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
                       : "New message"),
                   lastMessageTimestamp: lastMessage.timestamp,
-                  unread: 0, // Reset unread when viewing history
+                  unread: 0,
                 }
               }
               return contact
@@ -216,13 +260,11 @@ export default function ChatPage() {
     return contact?.name || userId
   }
 
-  // Helper function to fetch latest message for a contact
   const fetchLatestMessage = async (userId: string, contactId: string) => {
     try {
       const data = await fetchChatHistoryAPI(userId, contactId)
       const messagesArray = Array.isArray(data) ? data : data.messages || []
       if (messagesArray.length > 0) {
-        // Get the most recent message
         const latestMsg = messagesArray[messagesArray.length - 1]
         return {
           message: latestMsg.isFile ? "" : latestMsg.messageBody,
@@ -249,7 +291,7 @@ export default function ChatPage() {
         } else if (currentRole === "employee") {
           response = await ShowEmployee("manager")
         }
-        // First set basic contacts to prevent long loading
+
         const basicContacts = (response?.data || []).map((contact: any) => ({
           ...contact,
           lastMessage: "",
@@ -257,17 +299,15 @@ export default function ChatPage() {
           unread: 0,
         }))
         setContacts(basicContacts)
-        // Then fetch last message for each contact
+
         if (currentUser?.id) {
           const userId = currentUser.id.toString()
           const updatedContacts = [...basicContacts]
-          // Load saved read status
           const readStatus = loadReadStatus()
-          // Using Promise.all to fetch all messages in parallel
+
           const messagePromises = basicContacts.map(async (contact: EnhancedContact, index: number) => {
             const latestMessage = await fetchLatestMessage(userId, contact.id.toString())
             if (latestMessage) {
-              // Check if this contact is marked as read in localStorage
               const isRead = readStatus[contact.id.toString()] === true
               updatedContacts[index] = {
                 ...updatedContacts[index],
@@ -277,15 +317,32 @@ export default function ChatPage() {
                     ? `Sent a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
                     : "New message"),
                 lastMessageTimestamp: latestMessage.timestamp,
-                // If the last message is from the other person and not read, mark as unread
                 unread: latestMessage.senderId !== userId && !isRead ? 1 : 0,
               }
             }
             return null
           })
           await Promise.all(messagePromises)
-          // Update contacts with the latest messages
           setContacts(updatedContacts)
+
+          const lastSelectedUserIdFromStorage = localStorage.getItem("lastSelectedUserId")
+          let foundSelectedContact: EnhancedContact | undefined
+
+          if (lastSelectedUserIdFromStorage) {
+            foundSelectedContact = updatedContacts.find(
+              (contact) => contact.id.toString() === lastSelectedUserIdFromStorage,
+            )
+          }
+
+          if (foundSelectedContact) {
+            setSelectedUser(foundSelectedContact.name)
+            setSelectedUserId(foundSelectedContact.id)
+            saveReadStatus(foundSelectedContact.id)
+          } else if (updatedContacts.length > 0) {
+            setSelectedUser(updatedContacts[0].name)
+            setSelectedUserId(updatedContacts[0].id)
+            saveReadStatus(updatedContacts[0].id)
+          }
         }
       } catch (error) {
         console.error("Error fetching contacts:", error)
@@ -296,11 +353,10 @@ export default function ChatPage() {
   }, [currentRole, currentUser?.id])
 
   useEffect(() => {
-    if (contacts.length > 0 && !selectedUser) {
-      setSelectedUser(contacts[0].name)
-      setSelectedUserId(contacts[0].id)
+    if (selectedUserId) {
+      localStorage.setItem("lastSelectedUserId", selectedUserId.toString())
     }
-  }, [contacts, selectedUser])
+  }, [selectedUserId])
 
   useEffect(() => {
     scrollToBottom()
@@ -322,7 +378,6 @@ export default function ChatPage() {
     }
   }
 
-  // Initialize socket connection
   useEffect(() => {
     initiateSocket()
     const socket = getSocket()
@@ -338,15 +393,13 @@ export default function ChatPage() {
 
     const handleMessage = (data: any) => {
       console.log("✅ Message received from server:", data)
-      console.log("[RAW RECEIVED PAYLOAD]", data) // This logs the raw data from the server
+      console.log("[RAW RECEIVED PAYLOAD]", data)
+
       setMessageCounter((prev) => prev + 1)
 
       if (data && typeof data === "object") {
         const currentUserId = currentUser?.id?.toString()
-
-        // Determine if it's a file message based on the 'message' content being a URL
         const isFileMessage = typeof data.message === "string" && data.message.startsWith("http")
-
         console.log("🔍 File detection (based on raw message content):", {
           message: data.message,
           isFileMessage: isFileMessage,
@@ -354,19 +407,16 @@ export default function ChatPage() {
 
         const mappedData: Message = {
           id: data.id,
-          // If it's a file message, the 'message' field for display should be empty,
-          // as the content is the file itself.
           message: isFileMessage ? "" : data.message || "",
           timestamp: data.createdAt ? new Date(data.createdAt).getTime() : data.timestamp || Date.now(),
           userId: data.userId,
           username: data.username,
           senderId: data.sendBy?.id?.toString() || data.senderId?.toString(),
           receiverId: data.receivedBy?.id?.toString() || data.receiverId?.toString(),
-          // If it's a file message, the file URL is in `data.message`.
           fileUrl: isFileMessage ? data.message : undefined,
-          // Infer file type from the URL in `data.message`
           fileType: isFileMessage ? getFileTypeFromUrl(data.message) : undefined,
           isFile: isFileMessage,
+          isPending: false, // Received messages are never pending
         }
         console.log("📝 Mapped message data (frontend internal state):", mappedData)
 
@@ -390,11 +440,9 @@ export default function ChatPage() {
               if (contact.id.toString() === contactId) {
                 const isUnread =
                   mappedData.senderId !== currentUserId && contact.id.toString() !== selectedUserId.toString()
-
                 if (contact.id.toString() === selectedUserId.toString()) {
                   saveReadStatus(contact.id)
                 }
-
                 return {
                   ...contact,
                   lastMessage:
@@ -419,11 +467,8 @@ export default function ChatPage() {
               senderId: mappedData.senderId,
               receiverId: mappedData.receiverId,
               selectedUserId: selectedUserId.toString(),
-              // isFile and fileUrl are derived for frontend display, not part of raw payload
             })
-
             setMessages((prev) => [...prev, mappedData])
-
             setContacts((prevContacts) => {
               return prevContacts.map((contact) => {
                 if (contact.id.toString() === selectedUserId.toString()) {
@@ -450,81 +495,104 @@ export default function ChatPage() {
         }
       }
     }
-
     socket.on("message", handleMessage)
-
     return () => {
       socket.off("message", handleMessage)
     }
-  }, [selectedUserId, currentUser, notifications, messageCounter]) // Added messageCounter to dependency array for accurate console logs
+  }, [selectedUserId, currentUser, notifications, messageCounter])
 
   const sendMessage = async () => {
     const socket = getSocket()
     if (!socket || (!message.trim() && !selectedFile)) return
+    if (isUploadingFile) return // Prevent sending if a file is already uploading
+
+    const tempMessageId = `temp-${Date.now()}-${Math.random()}` // Unique ID for pending message
 
     if (selectedFile) {
-      // Send file message
+      setIsUploadingFile(true) // Start uploading indicator
+
+      // Optimistically add a pending message to the UI
+      const pendingMsgData: Message = {
+        id: tempMessageId,
+        message: message.trim(),
+        timestamp: Date.now(),
+        userId: currentUser?.id?.toString(),
+        username: currentUser?.name,
+        senderId: currentUser?.id?.toString(),
+        receiverId: selectedUserId?.toString(),
+        fileUrl: URL.createObjectURL(selectedFile), // Use local URL for immediate preview
+        fileType: selectedFile?.type,
+        isFile: true,
+        isPending: true, // Mark as pending
+      }
+      setMessages((prev) => [...prev, pendingMsgData])
+      setTimeout(scrollToBottom, 0)
+
       try {
         const uploadResult = await uploadfile(
           selectedFile,
-          message.trim(), // This accompanying text will be passed to uploadfile, but not directly to socket.emit
+          message.trim(),
           currentUser?.id?.toString(),
           selectedUserId?.toString(),
         )
 
-        // Construct the socket payload as expected by the backend's handleMessage
+        // Update the pending message with actual data and remove pending status
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === tempMessageId
+              ? {
+                  ...msg,
+                  id: uploadResult.id, // Use actual message ID from backend
+                  fileUrl: uploadResult.messageBody, // Use actual file URL from backend
+                  isPending: false,
+                }
+              : msg,
+          ),
+        )
+
         const socketEmitData = {
-          message: uploadResult.messageBody, // File URL as the message content
+          message: uploadResult.messageBody,
           senderId: currentUser?.id?.toString(),
           receiverId: selectedUserId?.toString(),
         }
         console.log("🚀 Emitting file message to socket (minimal payload):", socketEmitData)
         socket.emit("message", socketEmitData)
 
-        // Update local state for file message (including accompanying text if any)
-        const localMsgData: Message = {
-          message: message.trim(), // Keep the text message for local display if any
-          timestamp: Date.now(),
-          userId: currentUser?.id?.toString(),
-          username: currentUser?.name,
-          senderId: currentUser?.id?.toString(),
-          receiverId: selectedUserId?.toString(),
-          fileUrl: uploadResult.messageBody, // Store file URL for display
-          fileType: selectedFile?.type, // Store file type for display
-          isFile: true, // Mark as file message for display
-        }
-        setMessages((prev) => [...prev, localMsgData])
-        setTimeout(scrollToBottom, 0)
         if (selectedUserId) saveReadStatus(selectedUserId)
 
-        // Update contact messages and contacts list
         setContactMessages((prev) => {
           const existing = prev[selectedUserId.toString()] || []
           return {
             ...prev,
-            [selectedUserId.toString()]: [...existing, localMsgData],
+            [selectedUserId.toString()]: [
+              ...existing.filter((m) => m.id !== tempMessageId),
+              { ...pendingMsgData, id: uploadResult.id, fileUrl: uploadResult.messageBody, isPending: false },
+            ],
           }
         })
-
         setContacts((prev) =>
           prev.map((contact) =>
             contact.id.toString() === selectedUserId.toString()
               ? {
                   ...contact,
                   lastMessage:
-                    localMsgData.message || `Sent a ${localMsgData.fileType?.startsWith("image/") ? "photo" : "file"}`,
-                  lastMessageTimestamp: localMsgData.timestamp,
+                    pendingMsgData.message ||
+                    `Sent a ${pendingMsgData.fileType?.startsWith("image/") ? "photo" : "file"}`,
+                  lastMessageTimestamp: pendingMsgData.timestamp,
                 }
               : contact,
           ),
         )
-
         setMessage("")
         setSelectedFile(null)
         if (fileInputRef.current) fileInputRef.current.value = ""
       } catch (error) {
         alert("File upload failed. Please try again.")
         console.error("File upload error:", error)
+        // Remove the pending message if upload fails
+        setMessages((prev) => prev.filter((msg) => msg.id !== tempMessageId))
+      } finally {
+        setIsUploadingFile(false) // End uploading indicator
       }
     } else {
       // Send plain text message
@@ -535,9 +603,9 @@ export default function ChatPage() {
         username: currentUser?.name,
         senderId: currentUser?.id?.toString(),
         receiverId: selectedUserId?.toString(),
-        isFile: false, // Explicitly mark as not a file
+        isFile: false,
+        isPending: false,
       }
-
       console.log("🚀 Emitting text message to socket:", msgData)
       socket.emit("message", msgData)
 
@@ -545,7 +613,6 @@ export default function ChatPage() {
       setTimeout(scrollToBottom, 0)
       if (selectedUserId) saveReadStatus(selectedUserId)
 
-      // Update contact messages and contacts list
       setContactMessages((prev) => {
         const existing = prev[selectedUserId.toString()] || []
         return {
@@ -553,7 +620,6 @@ export default function ChatPage() {
           [selectedUserId.toString()]: [...existing, msgData],
         }
       })
-
       setContacts((prev) =>
         prev.map((contact) =>
           contact.id.toString() === selectedUserId.toString()
@@ -565,26 +631,19 @@ export default function ChatPage() {
             : contact,
         ),
       )
-
       setMessage("")
     }
   }
 
   useEffect(() => {
     if (currentUser?.id && selectedUserId) {
-      // Fetch messages for the conversation between current user and selected user
       console.log(`Fetching chat history between users ${currentUser.id} and ${selectedUserId}`)
-      // First check if we already have messages in contactMessages
       const existingMessages = contactMessages[selectedUserId.toString()]
       if (existingMessages && existingMessages.length > 0) {
-        // Use cached messages to prevent flickering
         setMessages(existingMessages)
-        // Immediately scroll to bottom when changing users
         setTimeout(scrollToBottom, 0)
       }
-      // Always fetch fresh data from the server
       fetchChatHistory(currentUser.id.toString(), selectedUserId.toString()).then(() => {
-        // Scroll to bottom after fetching new messages
         setTimeout(scrollToBottom, 0)
       })
     }
@@ -647,9 +706,7 @@ export default function ChatPage() {
               onClick={() => {
                 setSelectedUser(contact.name)
                 setSelectedUserId(contact.id)
-                // Save this contact as read in localStorage
                 saveReadStatus(contact.id)
-                // Reset unread when selecting a contact
                 setContacts((prevContacts) => prevContacts.map((c) => (c.id === contact.id ? { ...c, unread: 0 } : c)))
               }}
               className={`py-4 px-6 cursor-pointer transition-all duration-200 border-b hover:bg-blue-50 ${
@@ -790,7 +847,13 @@ export default function ChatPage() {
                         <img
                           src={msg.fileUrl || "/placeholder.svg"}
                           alt="Attached image"
-                          className="max-w-full h-auto rounded-lg mb-2"
+                          className="max-w-[200px] max-h-[200px] object-cover rounded-lg mb-2 cursor-pointer" // Smaller size
+                          onClick={() => {
+                            if (msg.fileUrl) {
+                              setModalImageUrl(msg.fileUrl)
+                              setShowImageModal(true)
+                            }
+                          }}
                         />
                       ) : msg.fileUrl ? (
                         // Render other file types as a link
@@ -806,13 +869,18 @@ export default function ChatPage() {
                         </div>
                       ) : null}
                       {msg.message && <p>{msg.message}</p>} {/* Only render message if it exists */}
+                      {msg.isPending && (
+                        <div className="flex items-center text-xs text-gray-500 mt-1">
+                          <Loader2 className="w-3 h-3 animate-spin mr-1" />
+                          <span>Uploading...</span>
+                        </div>
+                      )}
                       <div className="flex items-center justify-between mt-1">
                         {msg.timestamp && (
                           <p className="text-xs text-gray-500">
                             {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                           </p>
                         )}
-                        {/* The delete button is now always visible */}
                         <button
                           onClick={() => handleDeleteMessage(msg.id)}
                           className="ml-2 p-1 rounded-full hover:bg-gray-200 text-gray-500 hover:text-red-500 transition-colors"
@@ -837,6 +905,7 @@ export default function ChatPage() {
               ref={fileInputRef}
               onChange={handleFileChange}
               className="hidden" // Hide the default file input
+              disabled={isUploadingFile} // Disable during upload
             />
             <button
               onClick={() => fileInputRef.current?.click()} // Trigger file input click
@@ -844,8 +913,11 @@ export default function ChatPage() {
               style={{
                 background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
                 color: "#fff",
+                opacity: isUploadingFile ? 0.5 : 1,
+                cursor: isUploadingFile ? "not-allowed" : "pointer",
               }}
               aria-label="Attach file"
+              disabled={isUploadingFile} // Disable during upload
             >
               <Paperclip className="w-5 h-5" />
             </button>
@@ -867,7 +939,7 @@ export default function ChatPage() {
               <textarea
                 className="w-full px-4 py-3 rounded-2xl border bg-white focus:ring-2 resize-none max-h-32"
                 style={{ borderColor: colors.primary.hex, color: colors.primary.hex }}
-                placeholder="Type your message..."
+                placeholder={isUploadingFile ? "Uploading file..." : "Type your message..."}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={(e) => {
@@ -877,20 +949,21 @@ export default function ChatPage() {
                   }
                 }}
                 rows={1}
+                disabled={isUploadingFile} // Disable during upload
               />
             </div>
             <button
               onClick={sendMessage}
-              disabled={!message.trim() && !selectedFile} // Disable if both message and file are empty
+              disabled={(!message.trim() && !selectedFile) || isUploadingFile} // Disable if both message and file are empty OR uploading
               className="p-3 rounded-full transition-all duration-200 hover:scale-105"
               style={{
                 background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
                 color: "#fff",
-                opacity: !message.trim() && !selectedFile ? 0.5 : 1,
-                cursor: !message.trim() && !selectedFile ? "not-allowed" : "pointer",
+                opacity: (!message.trim() && !selectedFile) || isUploadingFile ? 0.5 : 1,
+                cursor: (!message.trim() && !selectedFile) || isUploadingFile ? "not-allowed" : "pointer",
               }}
             >
-              <Send className="w-5 h-5" />
+              {isUploadingFile ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
             </button>
           </div>
         </div>
@@ -989,6 +1062,11 @@ export default function ChatPage() {
       )}
       {/* Audio element for notifications */}
       <audio ref={audioRef} src="/audio/note.mp3" preload="auto" />
+
+      {/* Image Modal */}
+      {showImageModal && modalImageUrl && (
+        <ImageModal src={modalImageUrl || "/placeholder.svg"} onClose={() => setShowImageModal(false)} />
+      )}
     </div>
   )
 }
