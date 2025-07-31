@@ -1,5 +1,4 @@
 "use client"
-
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import {
@@ -15,6 +14,7 @@ import {
   Paperclip,
   Trash2,
   Loader2,
+  Settings,
 } from "lucide-react" // Added Loader2 icon
 import { colors } from "@/colors" // Assuming this file exists and exports colors
 import { ShowEmployee } from "@/lib/TeamService" // Assuming this service exists
@@ -26,7 +26,6 @@ import { deletemessage, uploadfile } from "@/lib/chatService"
 // New ImageModal component
 function ImageModal({ src, onClose }: { src: string; onClose: () => void }) {
   if (!src) return null
-
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
@@ -70,6 +69,7 @@ export default function ChatPage() {
     status?: string
     lastMessage?: string
     lastMessageTimestamp?: number
+    lastMessageSenderId?: string // New field to store the sender of the last message
     unread: number
   }
 
@@ -176,6 +176,7 @@ export default function ChatPage() {
       case "xlsx":
         return "application/vnd.ms-excel"
       case "txt":
+      case "csv":
         return "text/plain"
       // Add more as needed
       default:
@@ -189,9 +190,11 @@ export default function ChatPage() {
       // Sort by last message timestamp (most recent first)
       const timeA = a.lastMessageTimestamp || 0
       const timeB = b.lastMessageTimestamp || 0
+
       // If someone has unread messages, prioritize them
       if (a.unread > 0 && b.unread === 0) return -1
       if (b.unread > 0 && a.unread === 0) return 1
+
       return timeB - timeA
     })
     .filter((contact) => contact.name.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -202,10 +205,11 @@ export default function ChatPage() {
       ? `bg-[${colors.secondary.hex}] border-[${colors.primary.hex}]`
       : `bg-white border-[${colors.primary.hex}]`
 
-  const fetchChatHistory = async (receiverId: string, senderId: string) => {
+  const fetchChatHistory = async (senderId: string, receiverId: string) => {
     try {
       const data = await fetchChatHistoryAPI(senderId, receiverId)
       const messagesArray = Array.isArray(data) ? data : data.messages || []
+
       const mappedMessages = messagesArray.map((msg: any) => {
         const isFileFromMessageBody = typeof msg.messageBody === "string" && msg.messageBody.startsWith("http")
         return {
@@ -222,25 +226,31 @@ export default function ChatPage() {
         }
       })
       setMessages(mappedMessages)
+
       if (mappedMessages.length > 0) {
         setContactMessages((prev) => ({
           ...prev,
           [selectedUserId.toString()]: mappedMessages,
         }))
+
         const lastMessage = mappedMessages[mappedMessages.length - 1]
         if (lastMessage) {
           saveReadStatus(selectedUserId)
           setContacts((prevContacts) => {
             return prevContacts.map((contact) => {
               if (contact.id.toString() === selectedUserId.toString()) {
+                const messageContent =
+                  lastMessage.message ||
+                  (lastMessage.isFile
+                    ? lastMessage.senderId === currentUser?.id?.toString()
+                      ? `You: Sent a ${lastMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
+                      : `Received a ${lastMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
+                    : "New message")
                 return {
                   ...contact,
-                  lastMessage:
-                    lastMessage.message ||
-                    (lastMessage.isFile
-                      ? `Sent a ${lastMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
-                      : "New message"),
+                  lastMessage: messageContent,
                   lastMessageTimestamp: lastMessage.timestamp,
+                  lastMessageSenderId: lastMessage.senderId, // Store sender ID
                   unread: 0,
                 }
               }
@@ -266,13 +276,15 @@ export default function ChatPage() {
       const messagesArray = Array.isArray(data) ? data : data.messages || []
       if (messagesArray.length > 0) {
         const latestMsg = messagesArray[messagesArray.length - 1]
+        const isFile =
+          latestMsg.isFile || (typeof latestMsg.messageBody === "string" && latestMsg.messageBody.startsWith("http"))
         return {
-          message: latestMsg.isFile ? "" : latestMsg.messageBody,
+          message: isFile ? "" : latestMsg.messageBody,
           senderId: latestMsg.sendBy?.id?.toString(),
           timestamp: latestMsg.createdAt ? new Date(latestMsg.createdAt).getTime() : Date.now(),
-          fileUrl: latestMsg.isFile ? latestMsg.messageBody : undefined,
-          fileType: latestMsg.isFile ? getFileTypeFromUrl(latestMsg.messageBody) : undefined,
-          isFile: latestMsg.isFile || false,
+          fileUrl: isFile ? latestMsg.messageBody : undefined,
+          fileType: isFile ? getFileTypeFromUrl(latestMsg.messageBody) : undefined,
+          isFile: isFile,
         }
       }
       return null
@@ -296,6 +308,7 @@ export default function ChatPage() {
           ...contact,
           lastMessage: "",
           lastMessageTimestamp: undefined,
+          lastMessageSenderId: undefined, // Initialize new field
           unread: 0,
         }))
         setContacts(basicContacts)
@@ -309,14 +322,18 @@ export default function ChatPage() {
             const latestMessage = await fetchLatestMessage(userId, contact.id.toString())
             if (latestMessage) {
               const isRead = readStatus[contact.id.toString()] === true
+              const messageContent =
+                latestMessage.message ||
+                (latestMessage.isFile
+                  ? latestMessage.senderId === userId
+                    ? `You: Sent a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
+                    : `Received a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
+                  : "New message")
               updatedContacts[index] = {
                 ...updatedContacts[index],
-                lastMessage:
-                  latestMessage.message ||
-                  (latestMessage.isFile
-                    ? `Sent a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
-                    : "New message"),
+                lastMessage: messageContent,
                 lastMessageTimestamp: latestMessage.timestamp,
+                lastMessageSenderId: latestMessage.senderId, // Store sender ID
                 unread: latestMessage.senderId !== userId && !isRead ? 1 : 0,
               }
             }
@@ -327,7 +344,6 @@ export default function ChatPage() {
 
           const lastSelectedUserIdFromStorage = localStorage.getItem("lastSelectedUserId")
           let foundSelectedContact: EnhancedContact | undefined
-
           if (lastSelectedUserIdFromStorage) {
             foundSelectedContact = updatedContacts.find(
               (contact) => contact.id.toString() === lastSelectedUserIdFromStorage,
@@ -349,6 +365,7 @@ export default function ChatPage() {
         setContacts([])
       }
     }
+
     if (currentRole && currentUser?.id) fetchContacts()
   }, [currentRole, currentUser?.id])
 
@@ -394,12 +411,12 @@ export default function ChatPage() {
     const handleMessage = (data: any) => {
       console.log("✅ Message received from server:", data)
       console.log("[RAW RECEIVED PAYLOAD]", data)
-
       setMessageCounter((prev) => prev + 1)
 
       if (data && typeof data === "object") {
         const currentUserId = currentUser?.id?.toString()
         const isFileMessage = typeof data.message === "string" && data.message.startsWith("http")
+
         console.log("🔍 File detection (based on raw message content):", {
           message: data.message,
           isFileMessage: isFileMessage,
@@ -443,14 +460,18 @@ export default function ChatPage() {
                 if (contact.id.toString() === selectedUserId.toString()) {
                   saveReadStatus(contact.id)
                 }
+                const messageContent =
+                  mappedData.message ||
+                  (mappedData.isFile
+                    ? mappedData.senderId === currentUserId
+                      ? `You: Sent a ${mappedData.fileType?.startsWith("image/") ? "photo" : "file"}`
+                      : `Received a ${mappedData.fileType?.startsWith("image/") ? "photo" : "file"}`
+                    : "New message")
                 return {
                   ...contact,
-                  lastMessage:
-                    mappedData.message ||
-                    (mappedData.isFile
-                      ? `Sent a ${mappedData.fileType?.startsWith("image/") ? "photo" : "file"}`
-                      : "New message"),
+                  lastMessage: messageContent,
                   lastMessageTimestamp: mappedData.timestamp,
+                  lastMessageSenderId: mappedData.senderId, // Store sender ID for new messages
                   unread: isUnread ? (contact.unread || 0) + 1 : contact.unread,
                 }
               }
@@ -495,7 +516,9 @@ export default function ChatPage() {
         }
       }
     }
+
     socket.on("message", handleMessage)
+
     return () => {
       socket.off("message", handleMessage)
     }
@@ -570,6 +593,7 @@ export default function ChatPage() {
             ],
           }
         })
+
         setContacts((prev) =>
           prev.map((contact) =>
             contact.id.toString() === selectedUserId.toString()
@@ -577,12 +601,14 @@ export default function ChatPage() {
                   ...contact,
                   lastMessage:
                     pendingMsgData.message ||
-                    `Sent a ${pendingMsgData.fileType?.startsWith("image/") ? "photo" : "file"}`,
+                    `You: Sent a ${pendingMsgData.fileType?.startsWith("image/") ? "photo" : "file"}`,
                   lastMessageTimestamp: pendingMsgData.timestamp,
+                  lastMessageSenderId: currentUser?.id?.toString(), // Store current user as sender
                 }
               : contact,
           ),
         )
+
         setMessage("")
         setSelectedFile(null)
         if (fileInputRef.current) fileInputRef.current.value = ""
@@ -611,6 +637,7 @@ export default function ChatPage() {
 
       setMessages((prev) => [...prev, msgData])
       setTimeout(scrollToBottom, 0)
+
       if (selectedUserId) saveReadStatus(selectedUserId)
 
       setContactMessages((prev) => {
@@ -620,6 +647,7 @@ export default function ChatPage() {
           [selectedUserId.toString()]: [...existing, msgData],
         }
       })
+
       setContacts((prev) =>
         prev.map((contact) =>
           contact.id.toString() === selectedUserId.toString()
@@ -627,6 +655,7 @@ export default function ChatPage() {
                 ...contact,
                 lastMessage: msgData.message,
                 lastMessageTimestamp: msgData.timestamp,
+                lastMessageSenderId: currentUser?.id?.toString(), // Store current user as sender
               }
             : contact,
         ),
@@ -670,13 +699,13 @@ export default function ChatPage() {
               <MessageCircle className="w-6 h-6" style={{ color: "#006699" }} />
               <span style={{ color: "#006699" }}>Messages</span>
             </h1>
-            {/* <button
+            <button
               onClick={() => setShowSettings(!showSettings)}
               className="p-2 rounded-full hover:bg-gray-200 transition-colors"
               style={{ color: "#006699" }}
             >
               <Settings className="w-5 h-5" />
-            </button> */}
+            </button>
           </div>
           {/* Search */}
           <div className="relative">
@@ -757,7 +786,8 @@ export default function ChatPage() {
                   >
                     {contact.lastMessage ? (
                       <>
-                        {contact.lastMessageTimestamp && getUserNameById(contact.id.toString()) !== selectedUser ? (
+                        {contact.lastMessageSenderId === currentUser?.id?.toString() &&
+                        !contact.lastMessage?.startsWith("You:") ? ( // Only add "You:" if not already part of the message string
                           <span className="font-medium mr-1">You:</span>
                         ) : null}
                         {contact.lastMessage}
@@ -1060,6 +1090,7 @@ export default function ChatPage() {
           </div>
         </div>
       )}
+
       {/* Audio element for notifications */}
       <audio ref={audioRef} src="/audio/note.mp3" preload="auto" />
 

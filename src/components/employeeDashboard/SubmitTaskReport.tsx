@@ -126,7 +126,7 @@ const SubmitTaskReport = () => {
       console.log('Report submitted successfully:', response.data);
       
       // Navigate back to tasks page
-      router.push('/dashboard/teammember');
+      router.push('/dashboard/teammember/mytasks');
       
     } catch (error: any) {
       console.error('Error submitting report:', error);
