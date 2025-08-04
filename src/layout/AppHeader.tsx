@@ -3,16 +3,12 @@ import UserDropdown from "@/components/header/UserDropdown"
 import { useAuth } from "@/context/AuthContext"
 import { useSidebar } from "@/context/SidebarContext"
 import type React from "react"
-import { useEffect, useState } from "react"
 import { colors } from "@/colors"
 
 const AppHeader: React.FC = () => {
   const { user } = useAuth()
   const { isExpanded, isMobileOpen } = useSidebar()
   const displayName = user ? user.name : "Guest"
-
-  const [prevScrollPos, setPrevScrollPos] = useState(0)
-  const [visible, setVisible] = useState(true)
 
   // Calculate sidebar width for header positioning - Updated widths
   const sidebarWidth = isMobileOpen ? 0 : isExpanded ? 280 : 80
@@ -23,17 +19,6 @@ const AppHeader: React.FC = () => {
   // Normalize the user role for logic
   const userRole = user?.role?.toLowerCase() || "guest"
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollPos = window.pageYOffset
-      setVisible((prevScrollPos > currentScrollPos && prevScrollPos - currentScrollPos > 70) || currentScrollPos < 10)
-      setPrevScrollPos(currentScrollPos)
-    }
-
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [prevScrollPos, visible])
-
   const getTextGradient = () => {
     return {
       background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
@@ -42,6 +27,7 @@ const AppHeader: React.FC = () => {
       backgroundClip: 'text'
     };
   };
+
   // --- LIGHT BACKGROUND with emerald accent ---
   return (
     <header
@@ -49,7 +35,6 @@ const AppHeader: React.FC = () => {
         fixed top-0 z-[99999] 
         shadow-lg border-b border-emerald-100 transition-all duration-500 ease-in-out
         backdrop-blur-sm bg-white/95
-        ${visible ? "" : "transform -translate-y-full"}
       `}
       style={{
         left: `${sidebarWidth}px`,
@@ -80,18 +65,19 @@ const AppHeader: React.FC = () => {
               >
                 Welcome
               </span>
-<span
-  className={`
-    ml-2 font-black drop-shadow-lg transition-all duration-500 ease-in-out
-    ${hasMoreSpace ? "text-2xl" : "text-xl"}
-  `}
-  style={{
-    ...getTextGradient(),
-    textShadow: "0 0 8px rgba(16, 185, 129, 0.15)",
-  }}
->
-  {displayName}
-</span>            </div>
+              <span
+                className={`
+                  ml-2 font-black drop-shadow-lg transition-all duration-500 ease-in-out
+                  ${hasMoreSpace ? "text-2xl" : "text-xl"}
+                `}
+                style={{
+                  ...getTextGradient(),
+                  textShadow: "0 0 8px rgba(16, 185, 129, 0.15)",
+                }}
+              >
+                {displayName}
+              </span>
+            </div>
           </div>
         </div>
 

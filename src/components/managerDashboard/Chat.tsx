@@ -1,52 +1,13 @@
 "use client"
-
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
-import {
-  Send,
-  User,
-  Moon,
-  Sun,
-  Bell,
-  BellOff,
-  Palette,
-  MessageCircle,
-  Search,
-  Paperclip,
-  Trash2,
-  Loader2,
-  Settings,
-} from "lucide-react" // Added Loader2 icon
+import { Send, MessageCircle, Search, Paperclip, Trash2, Loader2 } from "lucide-react" // Removed Settings icon
 import { colors } from "@/colors" // Assuming this file exists and exports colors
 import { ShowEmployee } from "@/lib/TeamService" // Assuming this service exists
 import { useAuth } from "@/context/AuthContext" // Assuming this context exists
 import { initiateSocket, getSocket } from "@/lib/socket" // Assuming these socket functions exist
 import { sendMessage as fetchChatHistoryAPI } from "@/lib/chatService" // Use the chatService sendMessage for fetching history
 import { deletemessage, uploadfile } from "@/lib/chatService"
-
-// New ImageModal component
-function ImageModal({ src, onClose }: { src: string; onClose: () => void }) {
-  if (!src) return null
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
-      onClick={onClose}
-      aria-modal="true"
-      role="dialog"
-    >
-      <div className="relative max-w-4xl max-h-[90vh] overflow-hidden" onClick={(e) => e.stopPropagation()}>
-        <img src={src || "/placeholder.svg"} alt="Full size image" className="max-w-full max-h-full object-contain" />
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-white text-3xl bg-black bg-opacity-50 rounded-full w-10 h-10 flex items-center justify-center"
-          aria-label="Close image"
-        >
-          &times;
-        </button>
-      </div>
-    </div>
-  )
-}
 
 export default function ChatPage() {
   type Message = {
@@ -62,7 +23,6 @@ export default function ChatPage() {
     isFile?: boolean // New field to indicate if it's a file message
     isPending?: boolean // New field for optimistic updates/loading state
   }
-
   type EnhancedContact = {
     id: string | number
     name: string
@@ -73,13 +33,12 @@ export default function ChatPage() {
     lastMessageSenderId?: string // New field to store the sender of the last message
     unread: number
   }
-
   const [message, setMessage] = useState("")
   const [selectedFile, setSelectedFile] = useState<File | null>(null) // New state for selected file
   const fileInputRef = useRef<HTMLInputElement>(null) // Ref for file input
   const [selectedUser, setSelectedUser] = useState("")
   const [selectedUserId, setSelectedUserId] = useState<string | number>("")
-  const [showSettings, setShowSettings] = useState(false)
+  // const [showSettings, setShowSettings] = useState(false) // Removed settings state
   const [searchQuery, setSearchQuery] = useState("")
   const [theme, setTheme] = useState("light")
   const [notifications, setNotifications] = useState(true)
@@ -93,11 +52,9 @@ export default function ChatPage() {
   const [contactMessages, setContactMessages] = useState<{ [key: string]: Message[] }>({})
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null) // Ref for the audio element
-
-  // New states for image modal
-  const [showImageModal, setShowImageModal] = useState(false)
-  const [modalImageUrl, setModalImageUrl] = useState<string | null>(null)
-
+  // Removed states for image modal
+  // const [showImageModal, setShowImageModal] = useState(false)
+  // const [modalImageUrl, setModalImageUrl] = useState<string | null>(null)
   // New state for file upload loading
   const [isUploadingFile, setIsUploadingFile] = useState(false)
 
@@ -134,7 +91,6 @@ export default function ChatPage() {
     const now = new Date()
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
     const yesterday = today - 86400000 // 24 hours in milliseconds
-
     if (date.getTime() >= today) {
       return date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
     } else if (date.getTime() >= yesterday) {
@@ -191,11 +147,9 @@ export default function ChatPage() {
       // Sort by last message timestamp (most recent first)
       const timeA = a.lastMessageTimestamp || 0
       const timeB = b.lastMessageTimestamp || 0
-
       // If someone has unread messages, prioritize them
       if (a.unread > 0 && b.unread === 0) return -1
       if (b.unread > 0 && a.unread === 0) return 1
-
       return timeB - timeA
     })
     .filter((contact) => contact.name.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -301,7 +255,6 @@ export default function ChatPage() {
         } else if (currentRole === "employee") {
           response = await ShowEmployee("manager")
         }
-
         const basicContacts = (response?.data || []).map((contact: any) => ({
           ...contact,
           lastMessage: "",
@@ -327,6 +280,7 @@ export default function ChatPage() {
                     ? `You: Sent a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
                     : `Received a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
                   : "New message")
+
               updatedContacts[index] = {
                 ...updatedContacts[index],
                 lastMessage: messageContent,
@@ -363,7 +317,6 @@ export default function ChatPage() {
         setContacts([])
       }
     }
-
     if (currentRole && currentUser?.id) fetchContacts()
   }, [currentRole, currentUser?.id])
 
@@ -513,7 +466,6 @@ export default function ChatPage() {
         }
       }
     }
-
     socket.on("message", handleMessage)
 
     return () => {
@@ -530,7 +482,6 @@ export default function ChatPage() {
 
     if (selectedFile) {
       setIsUploadingFile(true) // Start uploading indicator
-
       // Optimistically add a pending message to the UI
       const pendingMsgData: Message = {
         id: tempMessageId,
@@ -631,7 +582,6 @@ export default function ChatPage() {
       }
       console.log("🚀 Emitting text message to socket:", msgData)
       socket.emit("message", msgData)
-
       setMessages((prev) => [...prev, msgData])
       setTimeout(scrollToBottom, 0)
 
@@ -677,13 +627,10 @@ export default function ChatPage() {
 
   const handleDeleteMessage = async (id: string | undefined) => {
     if (!id) return
-
     try {
       await deletemessage(id)
-
       // Update messages in the main chat view
       setMessages((prev) => prev.filter((msg) => msg.id !== id))
-
       // Update messages in the contactMessages cache and then update contacts state
       setContactMessages((prev) => {
         const updatedContactMessages = { ...prev }
@@ -727,7 +674,6 @@ export default function ChatPage() {
             return contact
           }),
         )
-
         return updatedContactMessages
       })
     } catch (error) {
@@ -747,13 +693,14 @@ export default function ChatPage() {
               <MessageCircle className="w-6 h-6" style={{ color: "#006699" }} />
               <span style={{ color: "#006699" }}>Messages</span>
             </h1>
-            <button
-              onClick={() => setShowSettings(!showSettings)}
-              className="p-2 rounded-full hover:bg-gray-200 transition-colors"
-              style={{ color: "#006699" }}
-            >
-              <Settings className="w-5 h-5" />
-            </button>
+            {/* Removed settings button */}
+            {/* <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+            style={{ color: "#006699" }}
+          >
+            <Settings className="w-5 h-5" />
+          </button> */}
           </div>
           {/* Search */}
           <div className="relative">
@@ -883,7 +830,7 @@ export default function ChatPage() {
 
         {/* Messages Area */}
         <div
-          className="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col-reverse"
+          className="flex-1 overflow-y-auto px-4 py-2 space-y-4 flex flex-col-reverse" // Adjusted padding here
           style={{ background: colors.accent.hex + "11" }}
         >
           <div ref={messagesEndRef} />
@@ -897,7 +844,6 @@ export default function ChatPage() {
                 const contact = contacts.find((c) => c.id.toString() === msg.senderId)
                 senderName = contact?.name || msg.username || `User ${msg.senderId}`
               }
-
               return (
                 <div key={i} className={`flex ${isSentByMe ? "justify-end" : "justify-start"}`}>
                   <div className={`max-w-xs lg:max-w-md ${!isSentByMe ? "order-2" : ""}`}>
@@ -929,12 +875,13 @@ export default function ChatPage() {
                           src={msg.fileUrl || "/placeholder.svg"}
                           alt="Attached image"
                           className="max-w-[200px] max-h-[200px] object-cover rounded-lg mb-2 cursor-pointer" // Smaller size
-                          onClick={() => {
-                            if (msg.fileUrl) {
-                              setModalImageUrl(msg.fileUrl)
-                              setShowImageModal(true)
-                            }
-                          }}
+                          // Removed onClick to open modal
+                          // onClick={() => {
+                          //   if (msg.fileUrl) {
+                          //     setModalImageUrl(msg.fileUrl)
+                          //     setShowImageModal(true)
+                          //   }
+                          // }}
                         />
                       ) : msg.fileUrl ? (
                         // Render other file types as a link
@@ -1050,109 +997,103 @@ export default function ChatPage() {
         </div>
       </main>
 
-      {/* Settings Panel */}
-      {showSettings && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-96 max-h-[80vh] overflow-y-auto shadow-2xl">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold">Settings</h3>
-              <button
-                onClick={() => setShowSettings(false)}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="space-y-6">
-              {/* Theme Settings */}
-              <div>
-                <h4 className="font-semibold mb-3 flex items-center gap-2">
-                  <Palette className="w-4 h-4" />
-                  Appearance
-                </h4>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span>Theme</span>
-                    <button
-                      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
-                    >
-                      {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
-                      {theme === "light" ? "Dark" : "Light"}
-                    </button>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Font Size</span>
-                    <select
-                      value={fontSize}
-                      onChange={(e) => setFontSize(e.target.value)}
-                      className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
-                    >
-                      <option value="small">Small</option>
-                      <option value="medium">Medium</option>
-                      <option value="large">Large</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              {/* Notification Settings */}
-              <div>
-                <h4 className="font-semibold mb-3 flex items-center gap-2">
-                  <Bell className="w-4 h-4" />
-                  Notifications
-                </h4>
+      {/* Removed Settings Panel */}
+      {/* {showSettings && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-96 max-h-[80vh] overflow-y-auto shadow-2xl">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold">Settings</h3>
+            <button
+              onClick={() => setShowSettings(false)}
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="space-y-6">
+            <div>
+              <h4 className="font-semibold mb-3 flex items-center gap-2">
+                <Palette className="w-4 h-4" />
+                Appearance
+              </h4>
+              <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span>Enable Notifications</span>
+                  <span>Theme</span>
                   <button
-                    onClick={() => setNotifications(!notifications)}
-                    className={`p-2 rounded-full ${
-                      notifications ? "bg-green-500 text-white" : "bg-gray-200 dark:bg-gray-600"
-                    }`}
+                    onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
                   >
-                    {notifications ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
+                    {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+                    {theme === "light" ? "Dark" : "Light"}
                   </button>
                 </div>
+                <div className="flex items-center justify-between">
+                  <span>Font Size</span>
+                  <select
+                    value={fontSize}
+                    onChange={(e) => setFontSize(e.target.value)}
+                    className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
+                  >
+                    <option value="small">Small</option>
+                    <option value="medium">Medium</option>
+                    <option value="large">Large</option>
+                  </select>
+                </div>
               </div>
-
-              {/* Profile Settings */}
-              <div>
-                <h4 className="font-semibold mb-3 flex items-center gap-2">
-                  <User className="w-4 h-4" />
-                  Profile
-                </h4>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-lg">
-                      M
-                    </div>
-                    <div>
-                      <p className="font-semibold">Me</p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Online</p>
-                    </div>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-3 flex items-center gap-2">
+                <Bell className="w-4 h-4" />
+                Notifications
+              </h4>
+              <div className="flex items-center justify-between">
+                <span>Enable Notifications</span>
+                <button
+                  onClick={() => setNotifications(!notifications)}
+                  className={`p-2 rounded-full ${
+                    notifications ? "bg-green-500 text-white" : "bg-gray-200 dark:bg-gray-600"
+                  }`}
+                >
+                  {notifications ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-3 flex items-center gap-2">
+                <User className="w-4 h-4" />
+                Profile
+              </h4>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-lg">
+                    M
+                  </div>
+                  <div>
+                    <p className="font-semibold">Me</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Online</p>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-              <button
-                onClick={() => setShowSettings(false)}
-                className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-              >
-                Save Changes
-              </button>
-            </div>
+          </div>
+          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <button
+              onClick={() => setShowSettings(false)}
+              className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            >
+              Save Changes
+            </button>
           </div>
         </div>
-      )}
+      </div>
+    )} */}
 
       {/* Audio element for notifications */}
       <audio ref={audioRef} src="/audio/note.mp3" preload="auto" />
-
-      {/* Image Modal */}
-      {showImageModal && modalImageUrl && (
-        <ImageModal src={modalImageUrl || "/placeholder.svg"} onClose={() => setShowImageModal(false)} />
-      )}
+      {/* Removed Image Modal */}
+      {/* {showImageModal && modalImageUrl && (
+      <ImageModal src={modalImageUrl || "/placeholder.svg"} onClose={() => setShowImageModal(false)} />
+    )} */}
     </div>
   )
 }
