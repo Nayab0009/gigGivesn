@@ -1,4 +1,5 @@
 "use client"
+
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
 import {
@@ -209,7 +210,6 @@ export default function ChatPage() {
     try {
       const data = await fetchChatHistoryAPI(senderId, receiverId)
       const messagesArray = Array.isArray(data) ? data : data.messages || []
-
       const mappedMessages = messagesArray.map((msg: any) => {
         const isFileFromMessageBody = typeof msg.messageBody === "string" && msg.messageBody.startsWith("http")
         return {
@@ -226,13 +226,11 @@ export default function ChatPage() {
         }
       })
       setMessages(mappedMessages)
-
       if (mappedMessages.length > 0) {
         setContactMessages((prev) => ({
           ...prev,
           [selectedUserId.toString()]: mappedMessages,
         }))
-
         const lastMessage = mappedMessages[mappedMessages.length - 1]
         if (lastMessage) {
           saveReadStatus(selectedUserId)
@@ -416,7 +414,6 @@ export default function ChatPage() {
       if (data && typeof data === "object") {
         const currentUserId = currentUser?.id?.toString()
         const isFileMessage = typeof data.message === "string" && data.message.startsWith("http")
-
         console.log("🔍 File detection (based on raw message content):", {
           message: data.message,
           isFileMessage: isFileMessage,
@@ -680,12 +677,63 @@ export default function ChatPage() {
 
   const handleDeleteMessage = async (id: string | undefined) => {
     if (!id) return
-    await deletemessage(id)
-    setMessages((prev) => prev.filter((msg) => msg.id !== id))
-    setContactMessages((prev) => ({
-      ...prev,
-      [selectedUserId.toString()]: (prev[selectedUserId.toString()] || []).filter((msg) => msg.id !== id),
-    }))
+
+    try {
+      await deletemessage(id)
+
+      // Update messages in the main chat view
+      setMessages((prev) => prev.filter((msg) => msg.id !== id))
+
+      // Update messages in the contactMessages cache and then update contacts state
+      setContactMessages((prev) => {
+        const updatedContactMessages = { ...prev }
+        const currentContactMessages = updatedContactMessages[selectedUserId.toString()] || []
+        const filteredMessages = currentContactMessages.filter((msg) => msg.id !== id)
+        updatedContactMessages[selectedUserId.toString()] = filteredMessages
+
+        // Determine the new last message for the selected contact
+        const newLastMessage = filteredMessages.length > 0 ? filteredMessages[filteredMessages.length - 1] : null
+
+        // Update the contacts state based on the new last message
+        setContacts((prevContacts) =>
+          prevContacts.map((contact) => {
+            if (contact.id.toString() === selectedUserId.toString()) {
+              if (newLastMessage) {
+                const messageContent =
+                  newLastMessage.message ||
+                  (newLastMessage.isFile
+                    ? newLastMessage.senderId === currentUser?.id?.toString()
+                      ? `You: Sent a ${newLastMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
+                      : `Received a ${newLastMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
+                    : "New message") // Fallback if message is empty and not a file
+                return {
+                  ...contact,
+                  lastMessage: messageContent,
+                  lastMessageTimestamp: newLastMessage.timestamp,
+                  lastMessageSenderId: newLastMessage.senderId,
+                  unread: 0, // Assuming deleting a message means it's read
+                }
+              } else {
+                // No messages left for this contact
+                return {
+                  ...contact,
+                  lastMessage: "",
+                  lastMessageTimestamp: undefined,
+                  lastMessageSenderId: undefined,
+                  unread: 0,
+                }
+              }
+            }
+            return contact
+          }),
+        )
+
+        return updatedContactMessages
+      })
+    } catch (error) {
+      console.error("Error deleting message:", error)
+      // Optionally, show an error message to the user
+    }
   }
 
   return (
@@ -849,6 +897,7 @@ export default function ChatPage() {
                 const contact = contacts.find((c) => c.id.toString() === msg.senderId)
                 senderName = contact?.name || msg.username || `User ${msg.senderId}`
               }
+
               return (
                 <div key={i} className={`flex ${isSentByMe ? "justify-end" : "justify-start"}`}>
                   <div className={`max-w-xs lg:max-w-md ${!isSentByMe ? "order-2" : ""}`}>
@@ -869,7 +918,9 @@ export default function ChatPage() {
                       </div>
                     )}
                     <div
-                      className={`px-4 py-3 rounded-2xl shadow-sm ${isSentByMe ? "bg-blue-100" : "bg-white"} text-gray-900 rounded-bl-sm border ${fontSize === "small" ? "text-sm" : fontSize === "large" ? "text-lg" : "text-base"}`}
+                      className={`px-4 py-3 rounded-2xl shadow-sm ${isSentByMe ? "bg-blue-100" : "bg-white"} text-gray-900 rounded-bl-sm border ${
+                        fontSize === "small" ? "text-sm" : fontSize === "large" ? "text-lg" : "text-base"
+                      }`}
                       style={{ borderColor: colors.primary.hex }}
                     >
                       {msg.fileUrl && msg.fileType?.startsWith("image/") ? (
@@ -1044,6 +1095,7 @@ export default function ChatPage() {
                   </div>
                 </div>
               </div>
+
               {/* Notification Settings */}
               <div>
                 <h4 className="font-semibold mb-3 flex items-center gap-2">
@@ -1054,12 +1106,15 @@ export default function ChatPage() {
                   <span>Enable Notifications</span>
                   <button
                     onClick={() => setNotifications(!notifications)}
-                    className={`p-2 rounded-full ${notifications ? "bg-green-500 text-white" : "bg-gray-200 dark:bg-gray-600"}`}
+                    className={`p-2 rounded-full ${
+                      notifications ? "bg-green-500 text-white" : "bg-gray-200 dark:bg-gray-600"
+                    }`}
                   >
                     {notifications ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
+
               {/* Profile Settings */}
               <div>
                 <h4 className="font-semibold mb-3 flex items-center gap-2">
