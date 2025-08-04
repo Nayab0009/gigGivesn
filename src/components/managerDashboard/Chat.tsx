@@ -54,6 +54,7 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null) // Ref for the audio element
   const [isUploadingFile, setIsUploadingFile] = useState(false)
+  const [fullScreenImageUrl, setFullScreenImageUrl] = useState<string | null>(null) // New state for full screen image
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "auto" })
@@ -290,7 +291,6 @@ export default function ChatPage() {
           })
           await Promise.all(messagePromises)
           setContacts(updatedContacts)
-
           // Removed the automatic selection of the first contact or last selected from storage
           // The selectedUser and selectedUserId will remain empty initially.
         }
@@ -299,6 +299,7 @@ export default function ChatPage() {
         setContacts([])
       }
     }
+
     if (currentRole && currentUser?.id) fetchContactsAndLastMessages()
   }, [currentRole, currentUser?.id])
 
@@ -447,6 +448,7 @@ export default function ChatPage() {
         }
       }
     }
+
     socket.on("message", handleMessage)
 
     return () => {
@@ -563,6 +565,7 @@ export default function ChatPage() {
       }
       console.log("🚀 Emitting text message to socket:", msgData)
       socket.emit("message", msgData)
+
       setMessages((prev) => [...prev, msgData])
       setTimeout(scrollToBottom, 0)
 
@@ -821,6 +824,7 @@ export default function ChatPage() {
                   const contact = contacts.find((c) => c.id.toString() === msg.senderId)
                   senderName = contact?.name || msg.username || `User ${msg.senderId}`
                 }
+
                 return (
                   <div key={i} className={`flex ${isSentByMe ? "justify-end" : "justify-start"}`}>
                     <div className={`max-w-xs lg:max-w-md ${!isSentByMe ? "order-2" : ""}`}>
@@ -851,7 +855,8 @@ export default function ChatPage() {
                           <img
                             src={msg.fileUrl || "/placeholder.svg"}
                             alt="Attached image"
-                            className="max-w-[200px] max-h-[200px] object-cover rounded-lg mb-2 cursor-pointer" // Smaller size
+                            className="max-w-[200px] max-h-[200px] object-cover rounded-lg mb-2 cursor-pointer"
+                            onClick={() => setFullScreenImageUrl(msg.fileUrl || "/placeholder.svg")} // Added click handler
                           />
                         ) : msg.fileUrl ? (
                           // Render other file types as a link
@@ -971,6 +976,30 @@ export default function ChatPage() {
           <MessageCircle className="w-24 h-24 mb-4" />
           <h2 className="text-2xl font-semibold mb-2">Welcome to Chat!</h2>
           <p className="text-lg">Select a conversation from the sidebar to start messaging.</p>
+        </div>
+      )}
+
+      {/* Full-screen image preview modal */}
+      {fullScreenImageUrl && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+          onClick={() => setFullScreenImageUrl(null)} // Close on background click
+        >
+          <div className="relative" onClick={(e) => e.stopPropagation()}>
+            {/* Prevent closing when clicking on the image itself */}
+            <img
+              src={fullScreenImageUrl || "/placeholder.svg"}
+              alt="Full screen image preview"
+              className="max-w-[90vw] max-h-[90vh] object-contain"
+            />
+            <button
+              className="absolute top-4 right-4 text-white text-3xl font-bold"
+              onClick={() => setFullScreenImageUrl(null)}
+              aria-label="Close image preview"
+            >
+              &times;
+            </button>
+          </div>
         </div>
       )}
 
