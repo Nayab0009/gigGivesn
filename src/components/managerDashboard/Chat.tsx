@@ -1,7 +1,7 @@
 "use client"
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
-import { Send, MessageCircle, Search, Paperclip, Trash2, Loader2 } from "lucide-react" // Removed Settings icon
+import { Send, MessageCircle, Search, Paperclip, Trash2, Loader2 } from "lucide-react"
 import { colors } from "@/colors" // Assuming this file exists and exports colors
 import { ShowEmployee } from "@/lib/TeamService" // Assuming this service exists
 import { useAuth } from "@/context/AuthContext" // Assuming this context exists
@@ -23,6 +23,7 @@ export default function ChatPage() {
     isFile?: boolean // New field to indicate if it's a file message
     isPending?: boolean // New field for optimistic updates/loading state
   }
+
   type EnhancedContact = {
     id: string | number
     name: string
@@ -33,12 +34,12 @@ export default function ChatPage() {
     lastMessageSenderId?: string // New field to store the sender of the last message
     unread: number
   }
+
   const [message, setMessage] = useState("")
   const [selectedFile, setSelectedFile] = useState<File | null>(null) // New state for selected file
   const fileInputRef = useRef<HTMLInputElement>(null) // Ref for file input
   const [selectedUser, setSelectedUser] = useState("")
   const [selectedUserId, setSelectedUserId] = useState<string | number>("")
-  // const [showSettings, setShowSettings] = useState(false) // Removed settings state
   const [searchQuery, setSearchQuery] = useState("")
   const [theme, setTheme] = useState("light")
   const [notifications, setNotifications] = useState(true)
@@ -52,10 +53,6 @@ export default function ChatPage() {
   const [contactMessages, setContactMessages] = useState<{ [key: string]: Message[] }>({})
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null) // Ref for the audio element
-  // Removed states for image modal
-  // const [showImageModal, setShowImageModal] = useState(false)
-  // const [modalImageUrl, setModalImageUrl] = useState<string | null>(null)
-  // New state for file upload loading
   const [isUploadingFile, setIsUploadingFile] = useState(false)
 
   const scrollToBottom = () => {
@@ -247,7 +244,7 @@ export default function ChatPage() {
   }
 
   useEffect(() => {
-    const fetchContacts = async () => {
+    const fetchContactsAndLastMessages = async () => {
       try {
         let response
         if (currentRole === "manager") {
@@ -255,6 +252,7 @@ export default function ChatPage() {
         } else if (currentRole === "employee") {
           response = await ShowEmployee("manager")
         }
+
         const basicContacts = (response?.data || []).map((contact: any) => ({
           ...contact,
           lastMessage: "",
@@ -280,7 +278,6 @@ export default function ChatPage() {
                     ? `You: Sent a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
                     : `Received a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
                   : "New message")
-
               updatedContacts[index] = {
                 ...updatedContacts[index],
                 lastMessage: messageContent,
@@ -294,30 +291,15 @@ export default function ChatPage() {
           await Promise.all(messagePromises)
           setContacts(updatedContacts)
 
-          const lastSelectedUserIdFromStorage = localStorage.getItem("lastSelectedUserId")
-          let foundSelectedContact: EnhancedContact | undefined
-          if (lastSelectedUserIdFromStorage) {
-            foundSelectedContact = updatedContacts.find(
-              (contact) => contact.id.toString() === lastSelectedUserIdFromStorage,
-            )
-          }
-
-          if (foundSelectedContact) {
-            setSelectedUser(foundSelectedContact.name)
-            setSelectedUserId(foundSelectedContact.id)
-            saveReadStatus(foundSelectedContact.id)
-          } else if (updatedContacts.length > 0) {
-            setSelectedUser(updatedContacts[0].name)
-            setSelectedUserId(updatedContacts[0].id)
-            saveReadStatus(updatedContacts[0].id)
-          }
+          // Removed the automatic selection of the first contact or last selected from storage
+          // The selectedUser and selectedUserId will remain empty initially.
         }
       } catch (error) {
         console.error("Error fetching contacts:", error)
         setContacts([])
       }
     }
-    if (currentRole && currentUser?.id) fetchContacts()
+    if (currentRole && currentUser?.id) fetchContactsAndLastMessages()
   }, [currentRole, currentUser?.id])
 
   useEffect(() => {
@@ -389,7 +371,6 @@ export default function ChatPage() {
 
         if (mappedData.senderId === currentUserId || mappedData.receiverId === currentUserId) {
           const contactId = mappedData.senderId === currentUserId ? mappedData.receiverId : mappedData.senderId
-
           if (notifications && mappedData.senderId !== currentUserId && audioRef.current) {
             audioRef.current.play().catch((e) => console.error("Error playing audio:", e))
           }
@@ -622,6 +603,9 @@ export default function ChatPage() {
       fetchChatHistory(currentUser.id.toString(), selectedUserId.toString()).then(() => {
         setTimeout(scrollToBottom, 0)
       })
+    } else {
+      // Clear messages when no user is selected
+      setMessages([])
     }
   }, [selectedUserId, currentUser?.id])
 
@@ -693,14 +677,6 @@ export default function ChatPage() {
               <MessageCircle className="w-6 h-6" style={{ color: "#006699" }} />
               <span style={{ color: "#006699" }}>Messages</span>
             </h1>
-            {/* Removed settings button */}
-            {/* <button
-            onClick={() => setShowSettings(!showSettings)}
-            className="p-2 rounded-full hover:bg-gray-200 transition-colors"
-            style={{ color: "#006699" }}
-          >
-            <Settings className="w-5 h-5" />
-          </button> */}
           </div>
           {/* Search */}
           <div className="relative">
@@ -805,295 +781,201 @@ export default function ChatPage() {
         </div>
       </aside>
 
-      {/* Main Chat Area */}
-      <main className="flex flex-col flex-1">
-        {/* Chat Header */}
-        <header className="p-4 border-b" style={{ borderColor: colors.primary.hex, background: "#fff" }}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <div
-                  className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
-                  style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}
-                >
-                  {selectedUser[0]}
+      {/* Main Chat Area - Conditional Rendering */}
+      {selectedUserId ? (
+        <main className="flex flex-col flex-1">
+          {/* Chat Header */}
+          <header className="p-4 border-b" style={{ borderColor: colors.primary.hex, background: "#fff" }}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
+                    style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}
+                  >
+                    {selectedUser[0]}
+                  </div>
+                </div>
+                <div>
+                  <h2 className="font-semibold" style={{ color: colors.primary.hex }}>
+                    {selectedUser}
+                  </h2>
                 </div>
               </div>
-              <div>
-                <h2 className="font-semibold" style={{ color: colors.primary.hex }}>
-                  {selectedUser}
-                </h2>
-              </div>
             </div>
-          </div>
-        </header>
+          </header>
 
-        {/* Messages Area */}
-        <div
-          className="flex-1 overflow-y-auto px-4 py-2 space-y-4 flex flex-col-reverse" // Adjusted padding here
-          style={{ background: colors.accent.hex + "11" }}
-        >
-          <div ref={messagesEndRef} />
-          {messages
-            .slice()
-            .reverse()
-            .map((msg, i) => {
-              const isSentByMe = msg.senderId === (currentUser?.id ? currentUser.id.toString() : undefined)
-              let senderName = ""
-              if (!isSentByMe && msg.senderId) {
-                const contact = contacts.find((c) => c.id.toString() === msg.senderId)
-                senderName = contact?.name || msg.username || `User ${msg.senderId}`
-              }
-              return (
-                <div key={i} className={`flex ${isSentByMe ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-xs lg:max-w-md ${!isSentByMe ? "order-2" : ""}`}>
-                    {/* Show sender name and ID for received messages */}
-                    {!isSentByMe && (
-                      <div className="flex items-center gap-2 mb-1">
-                        <div
-                          className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
-                          style={{
-                            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                          }}
-                        >
-                          {senderName[0] || "?"}
-                        </div>
-                        <span className="text-xs" style={{ color: colors.secondary.hex }}>
-                          {senderName}
-                        </span>
-                      </div>
-                    )}
-                    <div
-                      className={`px-4 py-3 rounded-2xl shadow-sm ${isSentByMe ? "bg-blue-100" : "bg-white"} text-gray-900 rounded-bl-sm border ${
-                        fontSize === "small" ? "text-sm" : fontSize === "large" ? "text-lg" : "text-base"
-                      }`}
-                      style={{ borderColor: colors.primary.hex }}
-                    >
-                      {msg.fileUrl && msg.fileType?.startsWith("image/") ? (
-                        // Render image
-                        <img
-                          src={msg.fileUrl || "/placeholder.svg"}
-                          alt="Attached image"
-                          className="max-w-[200px] max-h-[200px] object-cover rounded-lg mb-2 cursor-pointer" // Smaller size
-                          // Removed onClick to open modal
-                          // onClick={() => {
-                          //   if (msg.fileUrl) {
-                          //     setModalImageUrl(msg.fileUrl)
-                          //     setShowImageModal(true)
-                          //   }
-                          // }}
-                        />
-                      ) : msg.fileUrl ? (
-                        // Render other file types as a link
-                        <div className="flex items-center gap-2 mb-2">
-                          <Paperclip className="w-4 h-4 text-gray-500" />
-                          <a
-                            href={msg.fileUrl}
-                            download={`file.${msg.fileType?.split("/")[1] || "bin"}`}
-                            className="text-blue-600 hover:underline"
+          {/* Messages Area */}
+          <div
+            className="flex-1 overflow-y-auto px-4 py-2 space-y-4 flex flex-col-reverse" // Adjusted padding here
+            style={{ background: colors.accent.hex + "11" }}
+          >
+            <div ref={messagesEndRef} />
+            {messages
+              .slice()
+              .reverse()
+              .map((msg, i) => {
+                const isSentByMe = msg.senderId === (currentUser?.id ? currentUser.id.toString() : undefined)
+                let senderName = ""
+                if (!isSentByMe && msg.senderId) {
+                  const contact = contacts.find((c) => c.id.toString() === msg.senderId)
+                  senderName = contact?.name || msg.username || `User ${msg.senderId}`
+                }
+                return (
+                  <div key={i} className={`flex ${isSentByMe ? "justify-end" : "justify-start"}`}>
+                    <div className={`max-w-xs lg:max-w-md ${!isSentByMe ? "order-2" : ""}`}>
+                      {/* Show sender name and ID for received messages */}
+                      {!isSentByMe && (
+                        <div className="flex items-center gap-2 mb-1">
+                          <div
+                            className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
+                            style={{
+                              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                            }}
                           >
-                            {msg.fileType || "Attached File"}
-                          </a>
-                        </div>
-                      ) : null}
-                      {msg.message && <p>{msg.message}</p>} {/* Only render message if it exists */}
-                      {msg.isPending && (
-                        <div className="flex items-center text-xs text-gray-500 mt-1">
-                          <Loader2 className="w-3 h-3 animate-spin mr-1" />
-                          <span>Uploading...</span>
+                            {senderName[0] || "?"}
+                          </div>
+                          <span className="text-xs" style={{ color: colors.secondary.hex }}>
+                            {senderName}
+                          </span>
                         </div>
                       )}
-                      <div className="flex items-center justify-between mt-1">
-                        {msg.timestamp && (
-                          <p className="text-xs text-gray-500">
-                            {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                          </p>
+                      <div
+                        className={`px-4 py-3 rounded-2xl shadow-sm ${isSentByMe ? "bg-blue-100" : "bg-white"} text-gray-900 rounded-bl-sm border ${
+                          fontSize === "small" ? "text-sm" : fontSize === "large" ? "text-lg" : "text-base"
+                        }`}
+                        style={{ borderColor: colors.primary.hex }}
+                      >
+                        {msg.fileUrl && msg.fileType?.startsWith("image/") ? (
+                          // Render image
+                          <img
+                            src={msg.fileUrl || "/placeholder.svg"}
+                            alt="Attached image"
+                            className="max-w-[200px] max-h-[200px] object-cover rounded-lg mb-2 cursor-pointer" // Smaller size
+                          />
+                        ) : msg.fileUrl ? (
+                          // Render other file types as a link
+                          <div className="flex items-center gap-2 mb-2">
+                            <Paperclip className="w-4 h-4 text-gray-500" />
+                            <a
+                              href={msg.fileUrl}
+                              download={`file.${msg.fileType?.split("/")[1] || "bin"}`}
+                              className="text-blue-600 hover:underline"
+                            >
+                              {msg.fileType || "Attached File"}
+                            </a>
+                          </div>
+                        ) : null}
+                        {msg.message && <p>{msg.message}</p>} {/* Only render message if it exists */}
+                        {msg.isPending && (
+                          <div className="flex items-center text-xs text-gray-500 mt-1">
+                            <Loader2 className="w-3 h-3 animate-spin mr-1" />
+                            <span>Uploading...</span>
+                          </div>
                         )}
-                        <button
-                          onClick={() => handleDeleteMessage(msg.id)}
-                          className="ml-2 p-1 rounded-full hover:bg-gray-200 text-gray-500 hover:text-red-500 transition-colors"
-                          aria-label="Delete message"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        <div className="flex items-center justify-between mt-1">
+                          {msg.timestamp && (
+                            <p className="text-xs text-gray-500">
+                              {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                            </p>
+                          )}
+                          <button
+                            onClick={() => handleDeleteMessage(msg.id)}
+                            className="ml-2 p-1 rounded-full hover:bg-gray-200 text-gray-500 hover:text-red-500 transition-colors"
+                            aria-label="Delete message"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              )
-            })}
-        </div>
+                )
+              })}
+          </div>
 
-        {/* Chat Input */}
-        <div className="p-4 bg-white border-t" style={{ borderColor: colors.primary.hex }}>
-          <div className="flex items-end gap-3">
-            {/* File input button */}
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              className="hidden" // Hide the default file input
-              disabled={isUploadingFile} // Disable during upload
-            />
-            <button
-              onClick={() => fileInputRef.current?.click()} // Trigger file input click
-              className="p-3 rounded-full transition-all duration-200 hover:scale-105"
-              style={{
-                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                color: "#fff",
-                opacity: isUploadingFile ? 0.5 : 1,
-                cursor: isUploadingFile ? "not-allowed" : "pointer",
-              }}
-              aria-label="Attach file"
-              disabled={isUploadingFile} // Disable during upload
-            >
-              <Paperclip className="w-5 h-5" />
-            </button>
-            <div className="flex-1">
-              {selectedFile && (
-                <div className="mb-2 p-2 border rounded-lg flex items-center justify-between bg-gray-50">
-                  <span className="text-sm text-gray-700">{selectedFile.name}</span>
-                  <button
-                    onClick={() => {
-                      setSelectedFile(null)
-                      if (fileInputRef.current) fileInputRef.current.value = ""
-                    }}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    ✕
-                  </button>
-                </div>
-              )}
-              <textarea
-                className="w-full px-4 py-3 rounded-2xl border bg-white focus:ring-2 resize-none max-h-32"
-                style={{ borderColor: colors.primary.hex, color: colors.primary.hex }}
-                placeholder={isUploadingFile ? "Uploading file..." : "Type your message..."}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault()
-                    sendMessage()
-                  }
-                }}
-                rows={1}
+          {/* Chat Input */}
+          <div className="p-4 bg-white border-t" style={{ borderColor: colors.primary.hex }}>
+            <div className="flex items-end gap-3">
+              {/* File input button */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                className="hidden" // Hide the default file input
                 disabled={isUploadingFile} // Disable during upload
               />
-            </div>
-            <button
-              onClick={sendMessage}
-              disabled={(!message.trim() && !selectedFile) || isUploadingFile} // Disable if both message and file are empty OR uploading
-              className="p-3 rounded-full transition-all duration-200 hover:scale-105"
-              style={{
-                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                color: "#fff",
-                opacity: (!message.trim() && !selectedFile) || isUploadingFile ? 0.5 : 1,
-                cursor: (!message.trim() && !selectedFile) || isUploadingFile ? "not-allowed" : "pointer",
-              }}
-            >
-              {isUploadingFile ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
-      </main>
-
-      {/* Removed Settings Panel */}
-      {/* {showSettings && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-96 max-h-[80vh] overflow-y-auto shadow-2xl">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold">Settings</h3>
-            <button
-              onClick={() => setShowSettings(false)}
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
-            >
-              ✕
-            </button>
-          </div>
-          <div className="space-y-6">
-            <div>
-              <h4 className="font-semibold mb-3 flex items-center gap-2">
-                <Palette className="w-4 h-4" />
-                Appearance
-              </h4>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span>Theme</span>
-                  <button
-                    onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
-                  >
-                    {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
-                    {theme === "light" ? "Dark" : "Light"}
-                  </button>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Font Size</span>
-                  <select
-                    value={fontSize}
-                    onChange={(e) => setFontSize(e.target.value)}
-                    className="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
-                  >
-                    <option value="small">Small</option>
-                    <option value="medium">Medium</option>
-                    <option value="large">Large</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-3 flex items-center gap-2">
-                <Bell className="w-4 h-4" />
-                Notifications
-              </h4>
-              <div className="flex items-center justify-between">
-                <span>Enable Notifications</span>
-                <button
-                  onClick={() => setNotifications(!notifications)}
-                  className={`p-2 rounded-full ${
-                    notifications ? "bg-green-500 text-white" : "bg-gray-200 dark:bg-gray-600"
-                  }`}
-                >
-                  {notifications ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-3 flex items-center gap-2">
-                <User className="w-4 h-4" />
-                Profile
-              </h4>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-lg">
-                    M
+              <button
+                onClick={() => fileInputRef.current?.click()} // Trigger file input click
+                className="p-3 rounded-full transition-all duration-200 hover:scale-105"
+                style={{
+                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                  color: "#fff",
+                  opacity: isUploadingFile ? 0.5 : 1,
+                  cursor: isUploadingFile ? "not-allowed" : "pointer",
+                }}
+                aria-label="Attach file"
+                disabled={isUploadingFile} // Disable during upload
+              >
+                <Paperclip className="w-5 h-5" />
+              </button>
+              <div className="flex-1">
+                {selectedFile && (
+                  <div className="mb-2 p-2 border rounded-lg flex items-center justify-between bg-gray-50">
+                    <span className="text-sm text-gray-700">{selectedFile.name}</span>
+                    <button
+                      onClick={() => {
+                        setSelectedFile(null)
+                        if (fileInputRef.current) fileInputRef.current.value = ""
+                      }}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      ✕
+                    </button>
                   </div>
-                  <div>
-                    <p className="font-semibold">Me</p>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Online</p>
-                  </div>
-                </div>
+                )}
+                <textarea
+                  className="w-full px-4 py-3 rounded-2xl border bg-white focus:ring-2 resize-none max-h-32"
+                  style={{ borderColor: colors.primary.hex, color: colors.primary.hex }}
+                  placeholder={isUploadingFile ? "Uploading file..." : "Type your message..."}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault()
+                      sendMessage()
+                    }
+                  }}
+                  rows={1}
+                  disabled={isUploadingFile} // Disable during upload
+                />
               </div>
+              <button
+                onClick={sendMessage}
+                disabled={(!message.trim() && !selectedFile) || isUploadingFile} // Disable if both message and file are empty OR uploading
+                className="p-3 rounded-full transition-all duration-200 hover:scale-105"
+                style={{
+                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                  color: "#fff",
+                  opacity: (!message.trim() && !selectedFile) || isUploadingFile ? 0.5 : 1,
+                  cursor: (!message.trim() && !selectedFile) || isUploadingFile ? "not-allowed" : "pointer",
+                }}
+              >
+                {isUploadingFile ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+              </button>
             </div>
           </div>
-          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <button
-              onClick={() => setShowSettings(false)}
-              className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-            >
-              Save Changes
-            </button>
-          </div>
+        </main>
+      ) : (
+        <div className="flex flex-col flex-1 items-center justify-center h-full bg-gray-50 text-gray-500">
+          <MessageCircle className="w-24 h-24 mb-4" />
+          <h2 className="text-2xl font-semibold mb-2">Welcome to Chat!</h2>
+          <p className="text-lg">Select a conversation from the sidebar to start messaging.</p>
         </div>
-      </div>
-    )} */}
+      )}
 
       {/* Audio element for notifications */}
       <audio ref={audioRef} src="/audio/note.mp3" preload="auto" />
-      {/* Removed Image Modal */}
-      {/* {showImageModal && modalImageUrl && (
-      <ImageModal src={modalImageUrl || "/placeholder.svg"} onClose={() => setShowImageModal(false)} />
-    )} */}
     </div>
   )
 }
