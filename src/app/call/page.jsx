@@ -1,4 +1,3 @@
-// app/call/page.jsx
 import React, { Suspense } from "react";
 import IndividualMeetingRoom from "@/components/ui/call/ClientMeetingRoom";
 
