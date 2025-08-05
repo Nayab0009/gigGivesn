@@ -10,7 +10,7 @@ import { useSearchParams } from "next/navigation";
 import { io } from "socket.io-client";
 import VideoCallScreen from "@/components/ui/call/CallingUi";
 
-const backendDomain = "http://127.0.0.1:3002/signaling";
+const backendDomain = "https://geekjives-26190134d520.herokuapp.com/signaling";
 
 const peerConfiguration = {
   iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
