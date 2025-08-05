@@ -1,7 +1,7 @@
 "use client"
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
-import { Send, MessageCircle, Search, Paperclip, Phone, Trash2, Loader2 } from "lucide-react"
+import { Send, MessageCircle, Search, Paperclip, Video, Trash2, Loader2 } from "lucide-react"
 import { colors } from "@/colors" // Assuming this file exists and exports colors
 import { ShowEmployee } from "@/lib/TeamService" // Assuming this service exists
 import { useAuth } from "@/context/AuthContext" // Assuming this context exists
@@ -10,7 +10,6 @@ import { sendMessage as fetchChatHistoryAPI } from "@/lib/chatService" // Use th
 import { deletemessage, uploadfile } from "@/lib/chatService"
 // Removed: import { toast } from "@/hooks/use-toast";
 // Removed: import { v4 as uuidv4 } from "uuid";
-
 export default function ChatPage() {
   type Message = {
     id?: string
@@ -25,7 +24,6 @@ export default function ChatPage() {
     isFile?: boolean // New field to indicate if it's a file message
     isPending?: boolean // New field for optimistic updates/loading state
   }
-
   type EnhancedContact = {
     id: string | number
     name: string
@@ -36,7 +34,6 @@ export default function ChatPage() {
     lastMessageSenderId?: string // New field to store the sender of the last message
     unread: number
   }
-
   const [message, setMessage] = useState("")
   const [selectedFile, setSelectedFile] = useState<File | null>(null) // New state for selected file
   const fileInputRef = useRef<HTMLInputElement>(null) // Ref for file input
@@ -60,14 +57,11 @@ export default function ChatPage() {
   const [generatedLink, setGeneratedLink] = useState("")
   const [otp, setOtp] = useState("")
   const [showMeetingDialog, setShowMeetingDialog] = useState(false)
-
   const [isUploadingFile, setIsUploadingFile] = useState(false)
   const [fullScreenImageUrl, setFullScreenImageUrl] = useState<string | null>(null) // New state for full screen image
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "auto" })
   }
-
   // Helper functions to save and load read status
   const saveReadStatus = (contactId: string | number) => {
     try {
@@ -82,7 +76,6 @@ export default function ChatPage() {
       console.error("Error saving read status:", error)
     }
   }
-
   const loadReadStatus = () => {
     try {
       const savedReadStatus = localStorage.getItem("chatReadStatus") || "{}"
@@ -92,12 +85,10 @@ export default function ChatPage() {
       return {}
     }
   }
-
   const formatTime = (date: Date) => {
     const now = new Date()
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
     const yesterday = today - 86400000 // 24 hours in milliseconds
-
     if (date.getTime() >= today) {
       return date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
     } else if (date.getTime() >= yesterday) {
@@ -106,7 +97,6 @@ export default function ChatPage() {
       return date.toLocaleDateString("en-US", { month: "short", day: "numeric" })
     }
   }
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "online":
@@ -117,7 +107,6 @@ export default function ChatPage() {
         return `bg-gray-400`
     }
   }
-
   // Helper to infer file type from URL extension
   const getFileTypeFromUrl = (url: string): string | undefined => {
     if (!url) return undefined
@@ -147,12 +136,10 @@ export default function ChatPage() {
         return undefined // Or 'application/octet-stream' for generic binary
     }
   }
-
   // Custom ID generation function (replaces uuidv4)
   const generateUniqueId = (): string => {
     return Date.now().toString(36) + Math.random().toString(36).substring(2, 15)
   }
-
   // Generate a unique room ID and link for the call
   const generateRoom = async () => {
     const roomId = generateUniqueId() // Using custom ID generation
@@ -162,7 +149,6 @@ export default function ChatPage() {
     await sendMessage()
     return link
   }
-
   // Sort contacts by most recent message first, then filter by search
   const filteredContacts = contacts
     .sort((a, b) => {
@@ -175,13 +161,11 @@ export default function ChatPage() {
       return timeB - timeA
     })
     .filter((contact) => contact.name.toLowerCase().includes(searchQuery.toLowerCase()))
-
   const themeClasses = theme === "dark" ? `bg-[${colors.primary.hex}] text-white` : "bg-white text-gray-900"
   const sidebarClasses =
     theme === "dark"
       ? `bg-[${colors.secondary.hex}] border-[${colors.primary.hex}]`
       : `bg-white border-[${colors.primary.hex}]`
-
   const fetchChatHistory = async (senderId: string, receiverId: string) => {
     try {
       const data = await fetchChatHistoryAPI(senderId, receiverId)
@@ -237,13 +221,11 @@ export default function ChatPage() {
       setMessages([])
     }
   }
-
   const getUserNameById = (userId: string) => {
     if (currentUser && userId === (currentUser.id ? currentUser.id.toString() : "")) return currentUser.name
     const contact = contacts.find((c) => c.id.toString() === userId)
     return contact?.name || userId
   }
-
   const fetchLatestMessage = async (userId: string, contactId: string) => {
     try {
       const data = await fetchChatHistoryAPI(userId, contactId)
@@ -267,7 +249,6 @@ export default function ChatPage() {
       return null
     }
   }
-
   useEffect(() => {
     const fetchContactsAndLastMessages = async () => {
       try {
@@ -277,7 +258,6 @@ export default function ChatPage() {
         } else if (currentRole === "employee") {
           response = await ShowEmployee("manager")
         }
-
         const basicContacts = (response?.data || []).map((contact: any) => ({
           ...contact,
           lastMessage: "",
@@ -286,13 +266,11 @@ export default function ChatPage() {
           unread: 0,
         }))
         setContacts(basicContacts)
-
         if (currentUser?.id) {
           const userId = currentUser.id.toString()
           const updatedContacts = [...basicContacts]
           const readStatus = loadReadStatus()
           const lastSelectedIdFromStorage = localStorage.getItem("lastSelectedUserId")
-
           const messagePromises = basicContacts.map(async (contact: EnhancedContact, index: number) => {
             const latestMessage = await fetchLatestMessage(userId, contact.id.toString())
             if (latestMessage) {
@@ -316,7 +294,6 @@ export default function ChatPage() {
           })
           await Promise.all(messagePromises)
           setContacts(updatedContacts)
-
           // Initialize selectedUser and selectedUserId
           if (lastSelectedIdFromStorage) {
             const foundContact = updatedContacts.find((c) => c.id.toString() === lastSelectedIdFromStorage)
@@ -344,17 +321,14 @@ export default function ChatPage() {
     }
     if (currentRole && currentUser?.id) fetchContactsAndLastMessages()
   }, [currentRole, currentUser?.id])
-
   useEffect(() => {
     if (selectedUserId) {
       localStorage.setItem("lastSelectedUserId", selectedUserId.toString())
     }
   }, [selectedUserId])
-
   useEffect(() => {
     scrollToBottom()
   }, [messages])
-
   useEffect(() => {
     if (message.length > 0) {
       setIsTyping(true)
@@ -362,7 +336,6 @@ export default function ChatPage() {
       return () => clearTimeout(timer)
     }
   }, [message])
-
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       setSelectedFile(event.target.files[0])
@@ -370,25 +343,20 @@ export default function ChatPage() {
       setSelectedFile(null)
     }
   }
-
   useEffect(() => {
     initiateSocket()
     const socket = getSocket()
     if (!socket) return
-
     socket.on("connect", () => {
       console.log("Socket connected:", socket.id)
     })
-
     socket.on("connect_error", (err) => {
       console.error("Socket connection error:", err)
     })
-
     const handleMessage = (data: any) => {
       console.log("✅ Message received from server:", data)
       console.log("[RAW RECEIVED PAYLOAD]", data)
       setMessageCounter((prev) => prev + 1)
-
       if (data && typeof data === "object") {
         const currentUserId = currentUser?.id?.toString()
         const isFileMessage = typeof data.message === "string" && data.message.startsWith("http")
@@ -396,7 +364,6 @@ export default function ChatPage() {
           message: data.message,
           isFileMessage: isFileMessage,
         })
-
         const mappedData: Message = {
           id: data.id,
           message: isFileMessage ? "" : data.message || "",
@@ -408,17 +375,14 @@ export default function ChatPage() {
           fileUrl: isFileMessage ? data.message : undefined,
           fileType: isFileMessage ? getFileTypeFromUrl(data.message) : undefined,
           isFile: isFileMessage,
-          isPending: false, // Received messages are never pending
+          isPending: false,
         }
         console.log("📝 Mapped message data (frontend internal state):", mappedData)
-
         if (mappedData.senderId === currentUserId || mappedData.receiverId === currentUserId) {
           const contactId = mappedData.senderId === currentUserId ? mappedData.receiverId : mappedData.senderId
-
           if (notifications && mappedData.senderId !== currentUserId && audioRef.current) {
             audioRef.current.play().catch((e) => console.error("Error playing audio:", e))
           }
-
           setContactMessages((prev) => {
             const existingMessages = prev[contactId?.toString() ?? ""] || []
             return {
@@ -426,7 +390,6 @@ export default function ChatPage() {
               [contactId?.toString() ?? ""]: [...existingMessages, mappedData],
             }
           })
-
           setContacts((prevContacts) => {
             return prevContacts.map((contact) => {
               if (contact.id.toString() === contactId) {
@@ -453,7 +416,6 @@ export default function ChatPage() {
               return contact
             })
           })
-
           // This is the crucial check for real-time display in the active chat
           if (
             mappedData.senderId === selectedUserId.toString() ||
@@ -492,21 +454,16 @@ export default function ChatPage() {
         }
       }
     }
-
     socket.on("message", handleMessage)
-
     return () => {
       socket.off("message", handleMessage)
     }
   }, [selectedUserId, currentUser, notifications, messageCounter]) // Added selectedUserId to dependencies
-
   const sendMessage = async () => {
     const socket = getSocket()
     if (!socket || (!message.trim() && !selectedFile)) return
     if (isUploadingFile) return // Prevent sending if a file is already uploading
-
     const tempMessageId = generateUniqueId() // Using custom ID generation for pending message
-
     if (selectedFile) {
       setIsUploadingFile(true) // Start uploading indicator
       // Optimistically add a pending message to the UI
@@ -525,7 +482,6 @@ export default function ChatPage() {
       }
       setMessages((prev) => [...prev, pendingMsgData])
       setTimeout(scrollToBottom, 0)
-
       try {
         const uploadResult = await uploadfile(
           selectedFile,
@@ -533,7 +489,6 @@ export default function ChatPage() {
           currentUser?.id?.toString(),
           selectedUserId?.toString(),
         )
-
         // Update the pending message with actual data and remove pending status
         setMessages((prev) =>
           prev.map((msg) =>
@@ -547,7 +502,6 @@ export default function ChatPage() {
               : msg,
           ),
         )
-
         const socketEmitData = {
           message: uploadResult.messageBody,
           senderId: currentUser?.id?.toString(),
@@ -555,9 +509,7 @@ export default function ChatPage() {
         }
         console.log("🚀 Emitting file message to socket (minimal payload):", socketEmitData)
         socket.emit("message", socketEmitData)
-
         if (selectedUserId) saveReadStatus(selectedUserId)
-
         setContactMessages((prev) => {
           const existing = prev[selectedUserId.toString()] || []
           return {
@@ -568,7 +520,6 @@ export default function ChatPage() {
             ],
           }
         })
-
         setContacts((prev) =>
           prev.map((contact) =>
             contact.id.toString() === selectedUserId.toString()
@@ -583,7 +534,6 @@ export default function ChatPage() {
               : contact,
           ),
         )
-
         setMessage("")
         setSelectedFile(null)
         if (fileInputRef.current) fileInputRef.current.value = ""
@@ -609,12 +559,9 @@ export default function ChatPage() {
       }
       console.log("🚀 Emitting text message to socket:", msgData)
       socket.emit("message", msgData)
-
       setMessages((prev) => [...prev, msgData])
       setTimeout(scrollToBottom, 0)
-
       if (selectedUserId) saveReadStatus(selectedUserId)
-
       setContactMessages((prev) => {
         const existing = prev[selectedUserId.toString()] || []
         return {
@@ -622,7 +569,6 @@ export default function ChatPage() {
           [selectedUserId.toString()]: [...existing, msgData],
         }
       })
-
       setContacts((prev) =>
         prev.map((contact) =>
           contact.id.toString() === selectedUserId.toString()
@@ -638,7 +584,6 @@ export default function ChatPage() {
       setMessage("")
     }
   }
-
   useEffect(() => {
     if (currentUser?.id && selectedUserId) {
       console.log(`Fetching chat history between users ${currentUser.id} and ${selectedUserId}`)
@@ -655,7 +600,6 @@ export default function ChatPage() {
       setMessages([])
     }
   }, [selectedUserId, currentUser?.id])
-
   const handleDeleteMessage = async (id: string | undefined) => {
     if (!id) return
     try {
@@ -668,10 +612,8 @@ export default function ChatPage() {
         const currentContactMessages = updatedContactMessages[selectedUserId.toString()] || []
         const filteredMessages = currentContactMessages.filter((msg) => msg.id !== id)
         updatedContactMessages[selectedUserId.toString()] = filteredMessages
-
         // Determine the new last message for the selected contact
         const newLastMessage = filteredMessages.length > 0 ? filteredMessages[filteredMessages.length - 1] : null
-
         // Update the contacts state based on the new last message
         setContacts((prevContacts) =>
           prevContacts.map((contact) => {
@@ -711,6 +653,29 @@ export default function ChatPage() {
       console.error("Error deleting message:", error)
       // Optionally, show an error message to the user
     }
+  }
+
+  // Helper function to render message content with clickable links
+  const renderMessageContent = (text: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g
+    const parts = text.split(urlRegex)
+
+    return parts.map((part, index) => {
+      if (part.match(urlRegex)) {
+        return (
+          <a
+            key={index}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline"
+          >
+            {part}
+          </a>
+        )
+      }
+      return <span key={index}>{part}</span>
+    })
   }
 
   return (
@@ -827,7 +792,6 @@ export default function ChatPage() {
           ))}
         </div>
       </aside>
-
       {/* Main Chat Area - Conditional Rendering */}
       {selectedUserId ? (
         <main className="flex flex-col flex-1">
@@ -856,7 +820,7 @@ export default function ChatPage() {
                   aria-label="Start meeting"
                   type="button"
                 >
-                  <Phone className="w-6 h-6" style={{ color: "#006699" }} />
+                  <Video className="w-6 h-6" style={{ color: "#006699" }} />
                 </button>
                 {/* <Video className="w-6 h-6" style={{ color: "#006699" }}/> */}
               </div>
@@ -893,7 +857,6 @@ export default function ChatPage() {
               )}
             </div>
           </header>
-
           {/* Messages Area */}
           <div
             className="flex-1 overflow-y-auto px-4 py-2 space-y-4 flex flex-col-reverse" // Adjusted padding here
@@ -956,7 +919,7 @@ export default function ChatPage() {
                             </a>
                           </div>
                         ) : null}
-                        {msg.message && <p>{msg.message}</p>} {/* Only render message if it exists */}
+                        {msg.message && <p>{renderMessageContent(msg.message)}</p>} {/* Updated here */}
                         {msg.isPending && (
                           <div className="flex items-center text-xs text-gray-500 mt-1">
                             <Loader2 className="w-3 h-3 animate-spin mr-1" />
@@ -983,7 +946,6 @@ export default function ChatPage() {
                 )
               })}
           </div>
-
           {/* Chat Input */}
           <div className="p-4 bg-white border-t" style={{ borderColor: colors.primary.hex }}>
             <div className="flex items-end gap-3">
@@ -1063,7 +1025,6 @@ export default function ChatPage() {
           <p className="text-lg">Select a conversation from the sidebar to start messaging.</p>
         </div>
       )}
-
       {/* Full-screen image preview modal */}
       {fullScreenImageUrl && (
         <div
@@ -1087,7 +1048,6 @@ export default function ChatPage() {
           </div>
         </div>
       )}
-
       {/* Audio element for notifications */}
       <audio ref={audioRef} src="/audio/note.mp3" preload="auto" />
     </div>
