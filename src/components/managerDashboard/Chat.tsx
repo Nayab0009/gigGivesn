@@ -1,15 +1,15 @@
 "use client"
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
-import { Send, MessageCircle, Search, Paperclip, Phone, Video, Trash2, Loader2 } from "lucide-react"
+import { Send, MessageCircle, Search, Paperclip, Phone, Trash2, Loader2 } from "lucide-react"
 import { colors } from "@/colors" // Assuming this file exists and exports colors
 import { ShowEmployee } from "@/lib/TeamService" // Assuming this service exists
 import { useAuth } from "@/context/AuthContext" // Assuming this context exists
 import { initiateSocket, getSocket } from "@/lib/socket" // Assuming these socket functions exist
 import { sendMessage as fetchChatHistoryAPI } from "@/lib/chatService" // Use the chatService sendMessage for fetching history
 import { deletemessage, uploadfile } from "@/lib/chatService"
-import { toast } from "@/hooks/use-toast";
-import { v4 as uuidv4 } from "uuid";
+// Removed: import { toast } from "@/hooks/use-toast";
+// Removed: import { v4 as uuidv4 } from "uuid";
 
 export default function ChatPage() {
   type Message = {
@@ -55,12 +55,13 @@ export default function ChatPage() {
   const [contactMessages, setContactMessages] = useState<{ [key: string]: Message[] }>({})
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null) // Ref for the audio element
-  const [isPasswordProtected, setIsPasswordProtected] = useState(false);
-  const [password, setPassword] = useState("");
-  const [generatedLink, setGeneratedLink] = useState("");
-  const [otp, setOtp] = useState("");
-  const [showMeetingDialog, setShowMeetingDialog] = useState(false);
-    const [isUploadingFile, setIsUploadingFile] = useState(false)
+  const [isPasswordProtected, setIsPasswordProtected] = useState(false)
+  const [password, setPassword] = useState("")
+  const [generatedLink, setGeneratedLink] = useState("")
+  const [otp, setOtp] = useState("")
+  const [showMeetingDialog, setShowMeetingDialog] = useState(false)
+
+  const [isUploadingFile, setIsUploadingFile] = useState(false)
   const [fullScreenImageUrl, setFullScreenImageUrl] = useState<string | null>(null) // New state for full screen image
 
   const scrollToBottom = () => {
@@ -96,6 +97,7 @@ export default function ChatPage() {
     const now = new Date()
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
     const yesterday = today - 86400000 // 24 hours in milliseconds
+
     if (date.getTime() >= today) {
       return date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
     } else if (date.getTime() >= yesterday) {
@@ -145,15 +147,21 @@ export default function ChatPage() {
         return undefined // Or 'application/octet-stream' for generic binary
     }
   }
+
+  // Custom ID generation function (replaces uuidv4)
+  const generateUniqueId = (): string => {
+    return Date.now().toString(36) + Math.random().toString(36).substring(2, 15)
+  }
+
   // Generate a unique room ID and link for the call
   const generateRoom = async () => {
-    const roomId = uuidv4();
-    const link = `https://gig-gives.vercel.app/call?roomId=${roomId}`;
-    setGeneratedLink(link);
-    setMessage(`Join the meeting: ${link}`);
-    await sendMessage();
-    return link;
-  };
+    const roomId = generateUniqueId() // Using custom ID generation
+    const link = `https://gig-gives.vercel.app/call?roomId=${roomId}`
+    setGeneratedLink(link)
+    setMessage(`Join the meeting: ${link}`)
+    await sendMessage()
+    return link
+  }
 
   // Sort contacts by most recent message first, then filter by search
   const filteredContacts = contacts
@@ -283,6 +291,7 @@ export default function ChatPage() {
           const userId = currentUser.id.toString()
           const updatedContacts = [...basicContacts]
           const readStatus = loadReadStatus()
+          const lastSelectedIdFromStorage = localStorage.getItem("lastSelectedUserId")
 
           const messagePromises = basicContacts.map(async (contact: EnhancedContact, index: number) => {
             const latestMessage = await fetchLatestMessage(userId, contact.id.toString())
@@ -307,15 +316,32 @@ export default function ChatPage() {
           })
           await Promise.all(messagePromises)
           setContacts(updatedContacts)
-          // Removed the automatic selection of the first contact or last selected from storage
-          // The selectedUser and selectedUserId will remain empty initially.
+
+          // Initialize selectedUser and selectedUserId
+          if (lastSelectedIdFromStorage) {
+            const foundContact = updatedContacts.find((c) => c.id.toString() === lastSelectedIdFromStorage)
+            if (foundContact) {
+              setSelectedUser(foundContact.name)
+              setSelectedUserId(foundContact.id)
+              saveReadStatus(foundContact.id) // Mark as read if re-selected
+            } else if (updatedContacts.length > 0) {
+              // If last selected not found, but contacts exist, select the first one
+              setSelectedUser(updatedContacts[0].name)
+              setSelectedUserId(updatedContacts[0].id)
+              saveReadStatus(updatedContacts[0].id)
+            }
+          } else if (updatedContacts.length > 0) {
+            // If no last selected, select the first one
+            setSelectedUser(updatedContacts[0].name)
+            setSelectedUserId(updatedContacts[0].id)
+            saveReadStatus(updatedContacts[0].id)
+          }
         }
       } catch (error) {
         console.error("Error fetching contacts:", error)
         setContacts([])
       }
     }
-
     if (currentRole && currentUser?.id) fetchContactsAndLastMessages()
   }, [currentRole, currentUser?.id])
 
@@ -388,6 +414,7 @@ export default function ChatPage() {
 
         if (mappedData.senderId === currentUserId || mappedData.receiverId === currentUserId) {
           const contactId = mappedData.senderId === currentUserId ? mappedData.receiverId : mappedData.senderId
+
           if (notifications && mappedData.senderId !== currentUserId && audioRef.current) {
             audioRef.current.play().catch((e) => console.error("Error playing audio:", e))
           }
@@ -427,6 +454,7 @@ export default function ChatPage() {
             })
           })
 
+          // This is the crucial check for real-time display in the active chat
           if (
             mappedData.senderId === selectedUserId.toString() ||
             mappedData.receiverId === selectedUserId.toString()
@@ -470,14 +498,14 @@ export default function ChatPage() {
     return () => {
       socket.off("message", handleMessage)
     }
-  }, [selectedUserId, currentUser, notifications, messageCounter])
+  }, [selectedUserId, currentUser, notifications, messageCounter]) // Added selectedUserId to dependencies
 
   const sendMessage = async () => {
     const socket = getSocket()
     if (!socket || (!message.trim() && !selectedFile)) return
     if (isUploadingFile) return // Prevent sending if a file is already uploading
 
-    const tempMessageId = `temp-${Date.now()}-${Math.random()}` // Unique ID for pending message
+    const tempMessageId = generateUniqueId() // Using custom ID generation for pending message
 
     if (selectedFile) {
       setIsUploadingFile(true) // Start uploading indicator
@@ -812,7 +840,7 @@ export default function ChatPage() {
                     className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
                     style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}
                   >
-                    {selectedUser[0]} 
+                    {selectedUser[0]}
                   </div>
                 </div>
                 <div>
@@ -821,48 +849,48 @@ export default function ChatPage() {
                   </h2>
                 </div>
               </div>
-            <div className="flex items-center gap-3">
-              <button
-              onClick={() => setShowMeetingDialog(true)}
-              className="p-1 rounded-full hover:bg-gray-100"
-              aria-label="Start meeting"
-              type="button"
-              >
-              <Phone className="w-6 h-6" style={{ color: "#006699" }} />
-              </button>
-              {/* <Video className="w-6 h-6" style={{ color: "#006699" }}/> */}
-            </div>
-            {/* Meeting Dialog */}
-            {typeof window !== "undefined" && (
-              <>
-              {showMeetingDialog && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-                <div className="bg-white rounded-xl shadow-lg p-6 w-80">
-                  <h3 className="text-lg font-semibold mb-4">Start the meeting</h3>
-                  <button
-                  className="w-full py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
-                  onClick={async () => {
-                    const link = await generateRoom();
-                    console.log("Generated meeting link:", link);
-                    if (link) {
-                      window.open(link, "_blank");
-                    }
-                    setShowMeetingDialog(false);
-                  }}
-                  >
-                  Start
-                  </button>
-                  <button
-                  className="mt-3 w-full py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
-                  onClick={() => setShowMeetingDialog(false)}
-                  >
-                  Cancel
-                  </button>
-                </div>
-                </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setShowMeetingDialog(true)}
+                  className="p-1 rounded-full hover:bg-gray-100"
+                  aria-label="Start meeting"
+                  type="button"
+                >
+                  <Phone className="w-6 h-6" style={{ color: "#006699" }} />
+                </button>
+                {/* <Video className="w-6 h-6" style={{ color: "#006699" }}/> */}
+              </div>
+              {/* Meeting Dialog */}
+              {typeof window !== "undefined" && (
+                <>
+                  {showMeetingDialog && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+                      <div className="bg-white rounded-xl shadow-lg p-6 w-80">
+                        <h3 className="text-lg font-semibold mb-4">Start the meeting</h3>
+                        <button
+                          className="w-full py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
+                          onClick={async () => {
+                            const link = await generateRoom()
+                            console.log("Generated meeting link:", link)
+                            if (link) {
+                              window.open(link, "_blank")
+                            }
+                            setShowMeetingDialog(false)
+                          }}
+                        >
+                          Start
+                        </button>
+                        <button
+                          className="mt-3 w-full py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
+                          onClick={() => setShowMeetingDialog(false)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
-              </>
-            )}
             </div>
           </header>
 
@@ -882,7 +910,6 @@ export default function ChatPage() {
                   const contact = contacts.find((c) => c.id.toString() === msg.senderId)
                   senderName = contact?.name || msg.username || `User ${msg.senderId}`
                 }
-
                 return (
                   <div key={i} className={`flex ${isSentByMe ? "justify-end" : "justify-start"}`}>
                     <div className={`max-w-xs lg:max-w-md ${!isSentByMe ? "order-2" : ""}`}>
