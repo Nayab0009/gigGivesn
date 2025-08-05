@@ -148,7 +148,7 @@ export default function ChatPage() {
   // Generate a unique room ID and link for the call
   const generateRoom = async () => {
     const roomId = uuidv4();
-    const link = `http://localhost:3000/call?roomId=${roomId}`;
+    const link = `https://gig-gives.vercel.app/call?roomId=${roomId}`;
     setGeneratedLink(link);
     setMessage(`Join the meeting: ${link}`);
     await sendMessage();
