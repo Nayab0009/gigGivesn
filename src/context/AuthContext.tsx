@@ -31,49 +31,57 @@ interface SignupData {
   role: string;
 }
 
-// Predefined static users with different roles
-const PREDEFINED_USERS = [
-  {
-    id: 1,
-    email: "admin@giggives.com",
-    password: "admin123",
-    firstName: "Admin",
-    lastName: "",
-    role: "admin"
-  },
-  {
-    id: 2,
-    email: "team@giggives.com",
-    password: "user123",
-    firstName: "User",
-    lastName: "",
-    role: "employee"
-  },
-  {
-    id: 3,
-    email: "manager@giggives.com",
-    password: "123",
-    firstName: "AJ",
-    lastName: "Rana",
-    role: "manager"
-  },
-  {
-    id: 4,
-    email: "superadmin@giggives.com",
-    password: "123",
-    firstName: "Super",
-    lastName: "Admin",
-    role: "superadmin"
-  },
-];
+
 
 // Define dashboard paths for each role
 const ROLE_DASHBOARD_PATHS: Record<string, string> = {
   admin: "/dashboard/admin",
   manager: "/dashboard/manager",
   employee: "/dashboard/teammember",
-  superadmin:"/dashboard/superadmin",
+  superadmin: "/dashboard/superadmin",
   default: "/dashboard" 
+};
+
+// Helper function to check if token is expired
+const isTokenExpired = (token: string): boolean => {
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const currentTime = Date.now() / 1000;
+    return payload.exp < currentTime;
+  } catch (error) {
+    console.error('Error parsing token:', error);
+    return true; // Consider invalid tokens as expired
+  }
+};
+
+// Helper function to validate stored authentication
+const validateStoredAuth = (): { isValid: boolean; user: User | null } => {
+  const storedUser = localStorage.getItem('user');
+  const storedToken = localStorage.getItem('authToken');
+  
+  // Both user and token must exist
+  if (!storedUser || !storedToken) {
+    return { isValid: false, user: null };
+  }
+  
+  // Check if token is expired (skip for mock tokens)
+  if (!storedToken.startsWith('mock-token-') && isTokenExpired(storedToken)) {
+    // Clean up expired auth
+    localStorage.removeItem('user');
+    localStorage.removeItem('authToken');
+    return { isValid: false, user: null };
+  }
+  
+  try {
+    const user = JSON.parse(storedUser);
+    return { isValid: true, user };
+  } catch (error) {
+    console.error('Error parsing stored user:', error);
+    // Clean up corrupted data
+    localStorage.removeItem('user');
+    localStorage.removeItem('authToken');
+    return { isValid: false, user: null };
+  }
 };
 
 // Create the context
@@ -86,23 +94,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Check for existing user session on initial load
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
-    
-    // Initialize predefined users in localStorage if they don't exist
-    const storedUsers = localStorage.getItem('users');
-    if (!storedUsers) {
-      // Store predefined users without their passwords
-      const usersForStorage = PREDEFINED_USERS.map(user => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { password, ...userWithoutPassword } = user;
-        return userWithoutPassword;
-      });
-      localStorage.setItem('users', JSON.stringify(usersForStorage));
-    }
+    const initializeAuth = () => {
+      const { isValid, user: validatedUser } = validateStoredAuth();
+      
+      if (isValid && validatedUser) {
+        setUser(validatedUser);
+        console.log('Valid session found:', validatedUser);
+      } else {
+        console.log('No valid session found');
+        setUser(null);
+      }
+      
+      setIsLoading(false);
+    };
+
+    initializeAuth();
   }, []);
 
   // Return the appropriate redirect path based on user role
@@ -123,34 +129,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error('Email and password are required');
       }
       
-      // First check against predefined users for development/testing
-      const predefinedUser = PREDEFINED_USERS.find(
-        u => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-      );
-      
-      if (predefinedUser) {
-        // Destructure to exclude password
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { password, ...userWithoutPassword } = predefinedUser;
-        
-        // Normalize the role to lowercase when storing the user
-        const userWithNormalizedRole = {
-          ...userWithoutPassword,
-          name: `${userWithoutPassword.firstName} ${userWithoutPassword.lastName}`, // Add name property
-          role: userWithoutPassword.role.toLowerCase()
-        };
-        
-        // Set a mock token for development purposes
-        localStorage.setItem('authToken', `mock-token-${Date.now()}`);
-        
-        setUser(userWithNormalizedRole);
-        localStorage.setItem('user', JSON.stringify(userWithNormalizedRole));
-        console.log("Signed in as predefined user:", userWithNormalizedRole);
-        return;
-      }
-      
       try {
-        // Use the API authentication service
+        // Use only the API authentication service
         const authenticatedUser = await authenticateUser(email, password);
         
         if (authenticatedUser) {
@@ -162,23 +142,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             id: userWithoutPassword.id,
             email: userWithoutPassword.email,
             name: userWithoutPassword.name,
-            role: userWithoutPassword.role.toLowerCase(), // Normalize the role to lowercase
+            role: userWithoutPassword.role.toLowerCase(),
             phone: userWithoutPassword.phone,
             address: userWithoutPassword.address
           };
           
-          // The token should have been stored by the authenticateUser function
-          
-          setUser(userObj);
+          // Store user data
           localStorage.setItem('user', JSON.stringify(userObj));
+          setUser(userObj);
           console.log("Signed in via API:", userObj);
         } else {
-          // Instead of throwing an error, just set the error state
           setError('Invalid credentials. Please check your email and password.');
         }
       } catch (apiError) {
         console.error('API authentication error:', apiError);
-        setError('Authentication service is unavailable. Please try again later or use a predefined account.');
+        setError('Authentication service is unavailable. Please try again later.');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Authentication failed');
@@ -196,32 +174,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error('Email, password, and role are required');
       }
       
-      // Check if email already exists in predefined users
-      const emailExists = PREDEFINED_USERS.some(user => user.email === userData.email);
-      if (emailExists) {
-        throw new Error('Email is already in use');
-      }
-      
-      // Check if email exists in stored users
-      const storedUsers = JSON.parse(localStorage.getItem('users') || '[]');
-      const emailExistsInStored = storedUsers.some((user: User) => user.email === userData.email);
-      if (emailExistsInStored) {
-        throw new Error('Email is already in use');
-      }
-      
+  
       const newUser = { 
-        id: parseInt("user" + Date.now()), // Convert to number 
+        id: Date.now(), // Use timestamp as ID
         email: userData.email,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        name: `${userData.firstName} ${userData.lastName}`, // Add name property
-        role: userData.role 
+        name: `${userData.firstName} ${userData.lastName}`,
+        role: userData.role.toLowerCase() 
       };
       
-      storedUsers.push(newUser);
-      localStorage.setItem('users', JSON.stringify(storedUsers));
-      setUser(newUser);
+      // Set a token (in production, this would come from the API)
+      const token = `user-token-${Date.now()}`;
+      localStorage.setItem('authToken', token);
       localStorage.setItem('user', JSON.stringify(newUser));
+      
+      setUser(newUser);
       console.log("Signed up as:", newUser);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Registration failed');
@@ -234,7 +200,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signout = () => {
     setUser(null);
     localStorage.removeItem('user');
-    console.log("Signed out");
+    localStorage.removeItem('authToken');
+    console.log("Signed out and cleared all auth data");
   };
   
   const isAuthenticated = !!user;
