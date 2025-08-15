@@ -7,6 +7,7 @@ import { useEffect } from "react";
 const PUBLIC_ROUTES = [
   '/signin',
   '/signup',
+  '/call'
 ];
 
 // Function to check if current route is public

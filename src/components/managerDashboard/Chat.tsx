@@ -52,10 +52,7 @@ export default function ChatPage() {
   const [contactMessages, setContactMessages] = useState<{ [key: string]: Message[] }>({})
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null) // Ref for the audio element
-  const [isPasswordProtected, setIsPasswordProtected] = useState(false)
-  const [password, setPassword] = useState("")
   const [generatedLink, setGeneratedLink] = useState("")
-  const [otp, setOtp] = useState("")
   const [showMeetingDialog, setShowMeetingDialog] = useState(false)
   const [isUploadingFile, setIsUploadingFile] = useState(false)
   const [fullScreenImageUrl, setFullScreenImageUrl] = useState<string | null>(null) // New state for full screen image
@@ -143,7 +140,7 @@ export default function ChatPage() {
   // Generate a unique room ID and link for the call
   const generateRoom = async () => {
     const roomId = generateUniqueId() // Using custom ID generation
-    const link = `https://gig-gives.vercel.app/call?roomId=${roomId}`
+    const link = `${window.location.origin}/call?roomId=${roomId}` // Use current origin
     setGeneratedLink(link)
     setMessage(`Join the meeting: ${link}`)
     await sendMessage()

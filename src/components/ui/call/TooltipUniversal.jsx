@@ -1,17 +1,19 @@
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/call/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-import React, { memo } from "react";
-
-const UniversalTooltip = memo(({ trigger, content }) => {
+export default function UniversalTooltip({ children, content }) {
   return (
-    <TooltipProvider delayDuration={0}>
+    <TooltipProvider delayDuration={100}>
       <Tooltip>
-        <TooltipTrigger>{trigger}</TooltipTrigger>
-        <TooltipContent>{content}</TooltipContent>
+        <TooltipTrigger asChild>{children}</TooltipTrigger>
+        <TooltipContent>
+          <p>{content}</p>
+        </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );
-});
-UniversalTooltip.displayName = "tooltip-component";
-
-export default UniversalTooltip;
+}
