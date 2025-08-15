@@ -31,9 +31,6 @@ interface SignupData {
   role: string;
 }
 
-
-
-// Define dashboard paths for each role
 const ROLE_DASHBOARD_PATHS: Record<string, string> = {
   admin: "/dashboard/admin",
   manager: "/dashboard/manager",
@@ -41,8 +38,6 @@ const ROLE_DASHBOARD_PATHS: Record<string, string> = {
   superadmin: "/dashboard/superadmin",
   default: "/dashboard" 
 };
-
-// Helper function to check if token is expired
 const isTokenExpired = (token: string): boolean => {
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
@@ -50,23 +45,18 @@ const isTokenExpired = (token: string): boolean => {
     return payload.exp < currentTime;
   } catch (error) {
     console.error('Error parsing token:', error);
-    return true; // Consider invalid tokens as expired
+    return true; 
   }
 };
-
-// Helper function to validate stored authentication
 const validateStoredAuth = (): { isValid: boolean; user: User | null } => {
   const storedUser = localStorage.getItem('user');
   const storedToken = localStorage.getItem('authToken');
-  
-  // Both user and token must exist
+
   if (!storedUser || !storedToken) {
     return { isValid: false, user: null };
   }
   
-  // Check if token is expired (skip for mock tokens)
   if (!storedToken.startsWith('mock-token-') && isTokenExpired(storedToken)) {
-    // Clean up expired auth
     localStorage.removeItem('user');
     localStorage.removeItem('authToken');
     return { isValid: false, user: null };
@@ -77,22 +67,18 @@ const validateStoredAuth = (): { isValid: boolean; user: User | null } => {
     return { isValid: true, user };
   } catch (error) {
     console.error('Error parsing stored user:', error);
-    // Clean up corrupted data
     localStorage.removeItem('user');
     localStorage.removeItem('authToken');
     return { isValid: false, user: null };
   }
 };
 
-// Create the context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Check for existing user session on initial load
   useEffect(() => {
     const initializeAuth = () => {
       const { isValid, user: validatedUser } = validateStoredAuth();
@@ -110,12 +96,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     initializeAuth();
   }, []);
-
-  // Return the appropriate redirect path based on user role
   const getRedirectPath = () => {
     if (!user) return '/signin';
-    
-    // Make role comparison case-insensitive
     const normalizedRole = user.role.toLowerCase();
     return ROLE_DASHBOARD_PATHS[normalizedRole] || ROLE_DASHBOARD_PATHS.default;
   };
@@ -130,12 +112,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
       
       try {
-        // Use only the API authentication service
         const authenticatedUser = await authenticateUser(email, password);
         
         if (authenticatedUser) {
-          // Create a user object without the password
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { password, ...userWithoutPassword } = authenticatedUser;
           
           const userObj = {
@@ -146,8 +125,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             phone: userWithoutPassword.phone,
             address: userWithoutPassword.address
           };
-          
-          // Store user data
           localStorage.setItem('user', JSON.stringify(userObj));
           setUser(userObj);
           console.log("Signed in via API:", userObj);
@@ -176,13 +153,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
   
       const newUser = { 
-        id: Date.now(), // Use timestamp as ID
+        id: Date.now(),
         email: userData.email,
         name: `${userData.firstName} ${userData.lastName}`,
         role: userData.role.toLowerCase() 
       };
       
-      // Set a token (in production, this would come from the API)
+  
       const token = `user-token-${Date.now()}`;
       localStorage.setItem('authToken', token);
       localStorage.setItem('user', JSON.stringify(newUser));

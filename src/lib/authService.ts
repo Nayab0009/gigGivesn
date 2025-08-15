@@ -22,15 +22,12 @@ export interface UserData {
  */
 export const authenticateUser = async (email: string, password: string): Promise<UserData | null> => {
   try {
-    console.log('Attempting to authenticate with API:', { email, password: '******' });
-
     // Format the request exactly as expected by the API
     const response = await axiosInstance.post('/auth/login', {
       email,
       password
     });
 
-    console.log('Auth API response:', response.data);
 
     // Handle the actual API response format
     if (response.data && response.data.access_token) {
@@ -64,25 +61,6 @@ export const authenticateUser = async (email: string, password: string): Promise
   }
 };
 
-/**
- * Fetches all users from the API (requires authentication)
- * @returns Promise with array of users
- */
-export const getAllUsers = async (): Promise<UserData[]> => {
-  try {
-    const response = await axiosInstance.get('/user');
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    return [];
-  }
-};
-
-/**
- * Fetches a single user by ID (requires authentication)
- * @param id User ID to fetch
- * @returns Promise with user data
- */
 export const getUserById = async (id: number): Promise<UserData | null> => {
   try {
     const response = await axiosInstance.get(`/user/${id}`);
@@ -93,16 +71,3 @@ export const getUserById = async (id: number): Promise<UserData | null> => {
   }
 };
 
-/**
- * Test function to verify API connectivity
- */
-export const testApiConnection = async (): Promise<boolean> => {
-  try {
-    // Test a public endpoint that doesn't require authentication
-    await axiosInstance.get('/');
-    return true;
-  } catch (error) {
-    console.error('API connection test failed:', error);
-    return false;
-  }
-};
