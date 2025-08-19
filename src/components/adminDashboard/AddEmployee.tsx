@@ -5,9 +5,11 @@ import { User, Mail, Phone, Loader2, KeyRound, MapPin, Building2, UserPlus, Spar
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
 import { useRouter } from "next/navigation"
-
+import { useAuth } from "@/context/AuthContext"
 const AddEmployee: React.FC = () => {
-  const router = useRouter();
+  const router = useRouter()
+  const { token } = useAuth() // Fixed token destructuring from auth context
+  console.log("this is the token:", token)
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -68,18 +70,32 @@ const AddEmployee: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6" >
+    <div className="min-h-screen flex items-center justify-center p-4 sm:p-6">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full blur-3xl" style={{ background: colors.primary.rgb, opacity: 0.3 }}></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-3xl" style={{ background: colors.secondary.rgb, opacity: 0.3 }}></div>
-        <div className="absolute top-3/4 left-1/2 w-64 h-64 rounded-full blur-3xl" style={{ background: colors.accent.rgb, opacity: 0.3 }}></div>
+        <div
+          className="absolute top-1/4 left-1/4 w-72 h-72 rounded-full blur-3xl"
+          style={{ background: colors.primary.rgb, opacity: 0.3 }}
+        ></div>
+        <div
+          className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full blur-3xl"
+          style={{ background: colors.secondary.rgb, opacity: 0.3 }}
+        ></div>
+        <div
+          className="absolute top-3/4 left-1/2 w-64 h-64 rounded-full blur-3xl"
+          style={{ background: colors.accent.rgb, opacity: 0.3 }}
+        ></div>
       </div>
 
       <div className="relative w-full max-w-5xl bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 sm:p-10">
         {/* Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})` }}>
+          <div
+            className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg"
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+            }}
+          >
             <UserPlus className="w-10 h-10" style={{ color: colors.highlight.hex }} />
           </div>
           <h1 className="text-4xl font-bold mb-3" style={{ color: colors.primary.hex }}>
@@ -94,7 +110,10 @@ const AddEmployee: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm" style={{ background: colors.primary.hex }}>
+                  <div
+                    className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
+                    style={{ background: colors.primary.hex }}
+                  >
                     <User className="w-4 h-4" style={{ color: colors.highlight.hex }} />
                   </div>
                   <span className="text-lg">Full Name</span>
@@ -115,7 +134,10 @@ const AddEmployee: React.FC = () => {
 
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm" style={{ background: colors.primary.hex }}>
+                  <div
+                    className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
+                    style={{ background: colors.primary.hex }}
+                  >
                     <Mail className="w-4 h-4" style={{ color: colors.highlight.hex }} />
                   </div>
                   <span className="text-lg">Email Address</span>
@@ -139,7 +161,10 @@ const AddEmployee: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm" style={{ background: colors.primary.hex }}>
+                  <div
+                    className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
+                    style={{ background: colors.primary.hex }}
+                  >
                     <KeyRound className="w-4 h-4" style={{ color: colors.highlight.hex }} />
                   </div>
                   <span className="text-lg">Password</span>
@@ -160,7 +185,10 @@ const AddEmployee: React.FC = () => {
 
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm" style={{ background: colors.primary.hex  }}>
+                  <div
+                    className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
+                    style={{ background: colors.primary.hex }}
+                  >
                     <Phone className="w-4 h-4" style={{ color: colors.highlight.hex }} />
                   </div>
                   <span className="text-lg">Phone Number</span>
@@ -184,7 +212,10 @@ const AddEmployee: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm" style={{ background: colors.primary.hex }}>
+                  <div
+                    className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
+                    style={{ background: colors.primary.hex }}
+                  >
                     <MapPin className="w-4 h-4" style={{ color: colors.highlight.hex }} />
                   </div>
                   <span className="text-lg">Address</span>
@@ -203,9 +234,12 @@ const AddEmployee: React.FC = () => {
                 </div>
               </div>
 
-              <div className="group">
+              {/* <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm" style={{ background: colors.primary.hex }}>
+                  <div
+                    className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
+                    style={{ background: colors.primary.hex }}
+                  >
                     <Building2 className="w-4 h-4" style={{ color: colors.highlight.hex }} />
                   </div>
                   <span className="text-lg">Organization ID</span>
@@ -222,7 +256,7 @@ const AddEmployee: React.FC = () => {
                   />
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* Error or Success Message */}
@@ -246,7 +280,9 @@ const AddEmployee: React.FC = () => {
                 type="submit"
                 disabled={isSubmitting}
                 className="group relative overflow-hidden text-white font-bold py-4 px-12 rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed text-lg transform hover:scale-105 active:scale-95 min-w-[200px]"
-                style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})` }}
+                style={{
+                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                }}
               >
                 <div className="absolute inset-0" style={{ background: colors.accent.rgb, opacity: 0.2 }}></div>
                 <div className="relative flex items-center justify-center">
@@ -257,7 +293,10 @@ const AddEmployee: React.FC = () => {
                     </>
                   ) : (
                     <>
-                      <UserPlus className="w-6 h-6 mr-3 group-hover:rotate-12 transition-transform duration-300" style={{ color: colors.highlight.hex }} />
+                      <UserPlus
+                        className="w-6 h-6 mr-3 group-hover:rotate-12 transition-transform duration-300"
+                        style={{ color: colors.highlight.hex }}
+                      />
                       <span>Add Employee</span>
                     </>
                   )}

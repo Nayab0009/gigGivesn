@@ -16,7 +16,9 @@ import {
   ArrowLeft,
   ClipboardList,
   TrendingUp,
-  Send
+  Send,
+  X,
+  MessageSquare
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { colors } from "@/colors";
@@ -84,6 +86,11 @@ const ShowSprintTask: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   
+  // Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
+  const [modalLoading, setModalLoading] = useState(false);
+  
   // Fetch tasks for the specific sprint
   const fetchSprintTasks = async () => {
     if (!sprintId) {
@@ -119,6 +126,35 @@ const ShowSprintTask: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Fetch individual task details for modal
+  const fetchTaskDetails = async (taskId: number) => {
+    setModalLoading(true);
+    try {
+      const response = await axiosInstance.get(`/tasks/${taskId}`);
+      console.log('Task Details API Response:', response.data);
+      setSelectedTask(response.data);
+    } catch (error: any) {
+      console.error('Error fetching task details:', error);
+      // If API call fails, use the task from the list
+      const taskFromList = tasks.find(task => task.id === taskId);
+      setSelectedTask(taskFromList || null);
+    } finally {
+      setModalLoading(false);
+    }
+  };
+
+  // Handle View Report button click
+  const handleViewReport = async (task: TaskResponse) => {
+    setIsModalOpen(true);
+    await fetchTaskDetails(task.id);
+  };
+
+  // Close modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedTask(null);
   };
 
   // Refresh data
@@ -444,6 +480,20 @@ const ShowSprintTask: React.FC = () => {
                           </div>
                         )}
                       </div>
+
+                      {/* View Report Button */}
+                      <div className="mt-6">
+                        <button
+                          onClick={() => handleViewReport(task)}
+                          className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r hover:shadow-xl text-white rounded-xl text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+                          style={{ 
+                            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` 
+                          }}
+                        >
+                          <FileText className="w-4 h-4" />
+                          View Report
+                        </button>
+                      </div>
                     </div>
                   );
                 })}
@@ -451,6 +501,86 @@ const ShowSprintTask: React.FC = () => {
             </div>
           )}
         </div>
+
+        {/* Modal */}
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+              {/* Modal Header */}
+              <div className="flex items-center justify-between p-6 border-b border-slate-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: colors.accent.hex }}>
+                    <MessageSquare className="w-5 h-5" style={{ color: colors.primary.hex }} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold" style={{ color: colors.primary.hex }}>
+                      Task Report
+                    </h3>
+                    <p className="text-sm text-slate-500">
+                      {selectedTask?.title || 'Loading...'}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={closeModal}
+                  className="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center transition-colors duration-200"
+                >
+                  <X className="w-4 h-4 text-slate-600" />
+                </button>
+              </div>
+
+              {/* Modal Content */}
+              <div className="p-6">
+                {modalLoading ? (
+                  <div className="text-center py-8">
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" style={{ color: colors.primary.hex }} />
+                    <p className="text-slate-600">Loading task report...</p>
+                  </div>
+                ) : (
+                  <div>
+                    {selectedTask?.comment ? (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2 mb-4">
+                          <MessageSquare className="w-5 h-5" style={{ color: colors.primary.hex }} />
+                          <span className="font-semibold" style={{ color: colors.primary.hex }}>
+                            Task Comment/Report
+                          </span>
+                        </div>
+                        <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200">
+                          <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">
+                            {selectedTask.comment}
+                          </p>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: colors.accent.hex }}>
+                          <MessageSquare className="w-8 h-8" style={{ color: colors.primary.hex }} />
+                        </div>
+                        <h4 className="text-lg font-semibold text-slate-700 mb-2">
+                          No Comment Available
+                        </h4>
+                        <p className="text-slate-500">
+                          This task doesn't have any comment or report yet.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer */}
+              <div className="flex items-center justify-end gap-3 p-6 border-t border-slate-200">
+                <button
+                  onClick={closeModal}
+                  className="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium transition-colors duration-200"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

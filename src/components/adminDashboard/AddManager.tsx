@@ -1,20 +1,21 @@
 "use client"
 import type React from "react"
 import { useState } from "react"
-import { User, Mail, Phone, Loader2, KeyRound, MapPin, Building2, UserPlus, Sparkles } from "lucide-react"
+import { User, Mail, Phone, Loader2, KeyRound, MapPin, UserPlus, Sparkles } from "lucide-react"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
 import { useRouter } from "next/navigation"
-
+import { useAuth } from "@/context/AuthContext"
 const AddManager: React.FC = () => {
-  const router = useRouter();
+  const { token } = useAuth()
+  console.log("this is the token console:", token)
+  const router = useRouter()
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
     phone: "",
     address: "",
-    organization: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -37,24 +38,22 @@ const AddManager: React.FC = () => {
 
     // Always pass role as "manger" (spelling as per backend)
     const payload = {
-      name: form.name,
-      email: form.email,
-      password: form.password,
-      phone: form.phone,
-      address: form.address,
+      ...form,
       role: "manager",
-      organization: Number(form.organization),
     }
 
     try {
-      await axiosInstance.post("/user", payload)
+      await axiosInstance.post("/user", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       setForm({
         name: "",
         email: "",
         password: "",
         phone: "",
         address: "",
-        organization: "",
       })
       setSuccess("Manager added successfully!")
       setTimeout(() => {
@@ -79,20 +78,20 @@ const AddManager: React.FC = () => {
       <div className="relative w-full max-w-5xl bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 sm:p-10">
         {/* Header */}
         <div className="text-center mb-10">
-          <div 
+          <div
             className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg"
-              style={{
-                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-              }}
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+            }}
           >
             <UserPlus className="w-10 h-10 text-white" />
           </div>
-          <h1 
+          <h1
             className="text-4xl font-bold bg-clip-text text-transparent mb-3"
             style={{
               background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
             }}
           >
             Add New Manager
@@ -106,7 +105,7 @@ const AddManager: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div 
+                  <div
                     className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
                     style={{
                       background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
@@ -125,17 +124,20 @@ const AddManager: React.FC = () => {
                     required
                     placeholder="Enter manager's full name"
                     className="w-full border-2 border-gray-200 rounded-2xl px-6 py-4 text-lg focus:ring-4 transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md group-hover:border-gray-300"
-                    style={{
-                      '--tw-ring-color': `${colors.primary.hex}33`,
-                    } as React.CSSProperties}
+                    style={
+                      {
+                        "--tw-ring-color": `${colors.primary.hex}33`,
+                      } as React.CSSProperties
+                    }
                     onFocus={(e) => {
-                      e.target.style.borderColor = colors.primary.hex;
+                      e.target.style.borderColor = colors.primary.hex
                     }}
                     onBlur={(e) => {
-                      e.target.style.borderColor = '#e5e7eb';
+                      e.target.style.borderColor = "#e5e7eb"
                     }}
                   />
-                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  <div
+                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                     style={{
                       background: `linear-gradient(to right, ${colors.primary.hex}0D, ${colors.secondary.hex}0D)`,
                     }}
@@ -145,7 +147,7 @@ const AddManager: React.FC = () => {
 
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div 
+                  <div
                     className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
                     style={{
                       background: `linear-gradient(to right, ${colors.secondary.hex}, ${colors.accent.hex})`,
@@ -164,17 +166,20 @@ const AddManager: React.FC = () => {
                     required
                     placeholder="manager@company.com"
                     className="w-full border-2 border-gray-200 rounded-2xl px-6 py-4 text-lg focus:ring-4 transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md group-hover:border-gray-300"
-                    style={{
-                      '--tw-ring-color': `${colors.secondary.hex}33`,
-                    } as React.CSSProperties}
+                    style={
+                      {
+                        "--tw-ring-color": `${colors.secondary.hex}33`,
+                      } as React.CSSProperties
+                    }
                     onFocus={(e) => {
-                      e.target.style.borderColor = colors.secondary.hex;
+                      e.target.style.borderColor = colors.secondary.hex
                     }}
                     onBlur={(e) => {
-                      e.target.style.borderColor = '#e5e7eb';
+                      e.target.style.borderColor = "#e5e7eb"
                     }}
                   />
-                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  <div
+                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                     style={{
                       background: `linear-gradient(to right, ${colors.secondary.hex}0D, ${colors.accent.hex}0D)`,
                     }}
@@ -187,7 +192,7 @@ const AddManager: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div 
+                  <div
                     className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
                     style={{
                       background: `linear-gradient(to right, ${colors.accent.hex}, ${colors.primary.hex})`,
@@ -206,17 +211,20 @@ const AddManager: React.FC = () => {
                     required
                     placeholder="Create secure password"
                     className="w-full border-2 border-gray-200 rounded-2xl px-6 py-4 text-lg focus:ring-4 transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md group-hover:border-gray-300"
-                    style={{
-                      '--tw-ring-color': `${colors.accent.hex}33`,
-                    } as React.CSSProperties}
+                    style={
+                      {
+                        "--tw-ring-color": `${colors.accent.hex}33`,
+                      } as React.CSSProperties
+                    }
                     onFocus={(e) => {
-                      e.target.style.borderColor = colors.accent.hex;
+                      e.target.style.borderColor = colors.accent.hex
                     }}
                     onBlur={(e) => {
-                      e.target.style.borderColor = '#e5e7eb';
+                      e.target.style.borderColor = "#e5e7eb"
                     }}
                   />
-                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  <div
+                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                     style={{
                       background: `linear-gradient(to right, ${colors.accent.hex}0D, ${colors.primary.hex}0D)`,
                     }}
@@ -226,7 +234,7 @@ const AddManager: React.FC = () => {
 
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div 
+                  <div
                     className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
                     style={{
                       background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.accent.hex})`,
@@ -245,17 +253,20 @@ const AddManager: React.FC = () => {
                     required
                     placeholder="+1 (555) 123-4567"
                     className="w-full border-2 border-gray-200 rounded-2xl px-6 py-4 text-lg focus:ring-4 transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md group-hover:border-gray-300"
-                    style={{
-                      '--tw-ring-color': `${colors.primary.hex}33`,
-                    } as React.CSSProperties}
+                    style={
+                      {
+                        "--tw-ring-color": `${colors.primary.hex}33`,
+                      } as React.CSSProperties
+                    }
                     onFocus={(e) => {
-                      e.target.style.borderColor = colors.primary.hex;
+                      e.target.style.borderColor = colors.primary.hex
                     }}
                     onBlur={(e) => {
-                      e.target.style.borderColor = '#e5e7eb';
+                      e.target.style.borderColor = "#e5e7eb"
                     }}
                   />
-                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  <div
+                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                     style={{
                       background: `linear-gradient(to right, ${colors.primary.hex}0D, ${colors.accent.hex}0D)`,
                     }}
@@ -268,7 +279,7 @@ const AddManager: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div 
+                  <div
                     className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
                     style={{
                       background: `linear-gradient(to right, ${colors.secondary.hex}, ${colors.primary.hex})`,
@@ -287,17 +298,20 @@ const AddManager: React.FC = () => {
                     required
                     placeholder="Manager's address"
                     className="w-full border-2 border-gray-200 rounded-2xl px-6 py-4 text-lg focus:ring-4 transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md group-hover:border-gray-300"
-                    style={{
-                      '--tw-ring-color': `${colors.secondary.hex}33`,
-                    } as React.CSSProperties}
+                    style={
+                      {
+                        "--tw-ring-color": `${colors.secondary.hex}33`,
+                      } as React.CSSProperties
+                    }
                     onFocus={(e) => {
-                      e.target.style.borderColor = colors.secondary.hex;
+                      e.target.style.borderColor = colors.secondary.hex
                     }}
                     onBlur={(e) => {
-                      e.target.style.borderColor = '#e5e7eb';
+                      e.target.style.borderColor = "#e5e7eb"
                     }}
                   />
-                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                  <div
+                    className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
                     style={{
                       background: `linear-gradient(to right, ${colors.secondary.hex}0D, ${colors.primary.hex}0D)`,
                     }}
@@ -305,7 +319,7 @@ const AddManager: React.FC = () => {
                 </div>
               </div>
 
-              <div className="group">
+              {/* <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
                   <div 
                     className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
@@ -342,7 +356,7 @@ const AddManager: React.FC = () => {
                     }}
                   ></div>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* Error or Success Message */}
@@ -352,14 +366,14 @@ const AddManager: React.FC = () => {
               </div>
             )}
             {success && (
-              <div 
+              <div
                 className="border-2 rounded-2xl p-4 text-center"
                 style={{
                   backgroundColor: `${colors.accent.hex}1A`,
                   borderColor: `${colors.accent.hex}40`,
                 }}
               >
-                <div 
+                <div
                   className="font-semibold text-lg flex items-center justify-center space-x-2"
                   style={{ color: colors.accent.hex }}
                 >
@@ -380,16 +394,16 @@ const AddManager: React.FC = () => {
                 }}
                 onMouseEnter={(e) => {
                   if (!isSubmitting) {
-                    e.currentTarget.style.background = `linear-gradient(to right, ${colors.primary.hex}E6, ${colors.secondary.hex}E6, ${colors.accent.hex}E6)`;
+                    e.currentTarget.style.background = `linear-gradient(to right, ${colors.primary.hex}E6, ${colors.secondary.hex}E6, ${colors.accent.hex}E6)`
                   }
                 }}
                 onMouseLeave={(e) => {
                   if (!isSubmitting) {
-                    e.currentTarget.style.background = `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`;
+                    e.currentTarget.style.background = `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`
                   }
                 }}
               >
-                <div 
+                <div
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   style={{
                     background: `linear-gradient(to right, ${colors.primary.hex}33, ${colors.secondary.hex}33, ${colors.accent.hex}33)`,

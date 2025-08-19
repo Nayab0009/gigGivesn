@@ -1,18 +1,19 @@
 "use client"
 import type React from "react"
 import { useState } from "react"
-import { User, Mail, Phone, Loader2, KeyRound, MapPin, Building2, UserPlus, Sparkles } from "lucide-react"
+import { User, Mail, Phone, Loader2, KeyRound, MapPin, UserPlus, Sparkles } from "lucide-react"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
-
+import {useAuth} from '@/context/AuthContext'
 const AddAdmin: React.FC = () => {
+  const { token } = useAuth();
+  console.log("this is the token:",token)
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
     phone: "",
     address: "",
-    organization: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -33,26 +34,23 @@ const AddAdmin: React.FC = () => {
     setError(null)
     setSuccess(null)
 
-    // Always pass role as "admin"
     const payload = {
-      name: form.name,
-      email: form.email,
-      password: form.password,
-      phone: form.phone,
-      address: form.address,
+      ...form,
       role: "admin",
-      organization: Number(form.organization),
     }
 
     try {
-      await axiosInstance.post("/user", payload)
+      await axiosInstance.post("/user", payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      })
       setForm({
         name: "",
         email: "",
         password: "",
         phone: "",
-        address: "",
-        organization: "",
+        address: ""
       })
       setSuccess("Admin added successfully!")
     } catch (err: any) {
@@ -300,7 +298,7 @@ const AddAdmin: React.FC = () => {
                 </div>
               </div>
 
-              <div className="group">
+              {/* <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
                   <div 
                     className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
@@ -337,7 +335,7 @@ const AddAdmin: React.FC = () => {
                     }}
                   ></div>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* Error or Success Message */}
