@@ -1,24 +1,40 @@
 "use client"
 import type React from "react"
-import { useState } from "react"
-import { User, Mail, Phone, Loader2, KeyRound, MapPin, UserPlus, Sparkles } from "lucide-react"
+import { useEffect, useState } from "react"
+import { User, Mail, Phone, Loader2, KeyRound, MapPin, Building2 ,UserPlus, Sparkles } from "lucide-react"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
-import {useAuth} from '@/context/AuthContext'
+import { useAuth } from '@/context/AuthContext'
+import { getOrganizations } from "@/lib/organizationService"
+import { createadmin,type AdminData } from "@/lib/superAdminService"
 const AddAdmin: React.FC = () => {
   const { token } = useAuth();
-  console.log("this is the token:",token)
+  const [organizations, setOrganizations] = useState([])
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
     phone: "",
     address: "",
+    organizationId:"",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
-
+//fetc the Organizations 
+  useEffect(() => {
+    const fetchOrganizations = async () => {
+      try {
+        const data = await getOrganizations()
+        setOrganizations(data)
+      }
+      catch (error) {
+        throw error;
+      }
+    }
+    fetchOrganizations()
+  }, [])
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setForm((prev) => ({
@@ -26,7 +42,7 @@ const AddAdmin: React.FC = () => {
       [name]: value,
     }))
   }
-
+  
   // --- API POST handler ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -34,23 +50,27 @@ const AddAdmin: React.FC = () => {
     setError(null)
     setSuccess(null)
 
-    const payload = {
-      ...form,
+    const payload :AdminData= {
+      name: form.name,
+      email: form.email,
+      password: form.password,
+      phone: form.phone,
+      address: form.address,
       role: "admin",
+      organizationId: form.organizationId,
+      industry:form.industry,
     }
 
     try {
-      await axiosInstance.post("/user", payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      })
+      await createadmin(payload)
       setForm({
         name: "",
         email: "",
         password: "",
         phone: "",
-        address: ""
+        address: "",
+        organizationId: "",
+        industry:"",
       })
       setSuccess("Admin added successfully!")
     } catch (err: any) {
@@ -298,44 +318,39 @@ const AddAdmin: React.FC = () => {
                 </div>
               </div>
 
-              {/* <div className="group">
-                <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div 
-                    className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
-                    style={{
-                      background: `linear-gradient(to right, ${colors.accent.hex}, ${colors.secondary.hex})`,
-                    }}
-                  >
-                    <Building2 className="w-4 h-4 text-white" />
-                  </div>
-                  <span className="text-lg">Organization ID</span>
-                </label>
-                <div className="relative">
-                  <input
-                    name="organization"
-                    type="number"
-                    value={form.organization}
-                    onChange={handleChange}
-                    required
-                    placeholder="Enter organization ID"
-                    className="w-full border-2 border-gray-200 rounded-2xl px-6 py-4 text-lg focus:ring-4 transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md group-hover:border-gray-300"
-                    style={{
-                      '--tw-ring-color': `${colors.accent.hex}33`,
-                    } as React.CSSProperties}
-                    onFocus={(e) => {
-                      e.target.style.borderColor = colors.accent.hex;
-                    }}
-                    onBlur={(e) => {
-                      e.target.style.borderColor = '#e5e7eb';
-                    }}
-                  />
-                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                    style={{
-                      background: `linear-gradient(to right, ${colors.accent.hex}0D, ${colors.secondary.hex}0D)`,
-                    }}
-                  ></div>
-                </div>
-              </div> */}
+           <div className="group">
+  <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
+    <div 
+      className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
+      style={{
+        background: `linear-gradient(to right, ${colors.accent.hex}, ${colors.secondary.hex})`,
+      }}
+    >
+      <Building2 className="w-4 h-4 text-white" />
+    </div>
+    <span className="text-lg">Organization</span>
+  </label>
+  <div className="relative">
+    <select
+      name="organizationId"
+      value={form.organizationId}
+      onChange={handleChange}
+      required
+      className="w-full border-2 border-gray-200 rounded-2xl px-6 py-4 text-lg bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md focus:ring-4 transition-all duration-300"
+      style={{
+        '--tw-ring-color': `${colors.accent.hex}33`,
+      } as React.CSSProperties}
+    >
+      <option value="">Select organization</option>
+      {organizations.map((org) => (
+        <option key={org.id} value={org.id}>
+          {org.name}
+        </option>
+      ))}
+    </select>
+  </div>
+</div>
+
             </div>
 
             {/* Error or Success Message */}

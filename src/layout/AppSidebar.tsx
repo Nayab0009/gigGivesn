@@ -49,6 +49,11 @@ const superAdminNavItems: NavItem[] = [
     icon: <UserPlus size={20} />,
     path: "/dashboard/superadmin/addadmin",
   },
+  {
+    name: "View Admins",
+    icon: <Users size={20} />,
+    path: "/dashboard/superadmin/viewsuperadmin",
+  },
 ]
 
 // Admin-specific navigation items

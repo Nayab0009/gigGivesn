@@ -120,24 +120,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("Email and password are required")
       }
 
-      if (email === "superadmin@gmail.com" && password === "Super@123") {
-        const superAdminUser: User = {
-          id: 0,
-          email,
-          name: "Super Admin",
-          role: "superadmin",
-        }
-
-        const token = `mock-token-superadmin`
-        localStorage.setItem("authToken", token)
-        localStorage.setItem("user", JSON.stringify(superAdminUser))
-        setUser(superAdminUser)
-        setToken(token)
-
-        console.log("Signed in as Superadmin:", superAdminUser)
-        return // 🚀 Exit early so API is not called
-      }
-
       try {
         const authenticatedUser = await authenticateUser(email, password)
 
