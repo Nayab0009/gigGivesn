@@ -5,6 +5,7 @@ import { useEffect } from "react";
 
 // Routes that don't require authentication (minimal set)
 const PUBLIC_ROUTES = [
+  '/',
   '/signin',
   '/signup',
   '/call',
