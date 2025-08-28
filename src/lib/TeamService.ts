@@ -20,7 +20,7 @@ export const deleteEmployee = async (teamId: string) => {
         return Array.isArray(response.data) ? response.data : []
     } catch (error) {
         console.log("Error fetching users", error)
-        throw error // propagate error so the component can handle it
+        throw error
     }
 }
 

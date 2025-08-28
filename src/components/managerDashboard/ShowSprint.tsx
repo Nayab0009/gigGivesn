@@ -1,4 +1,4 @@
-'use client';
+  'use client';
 import React, { useEffect, useState } from 'react';
 import { getSprintsForManagers } from '@/lib/SprintService';
 import { useAuth } from '@/context/AuthContext';

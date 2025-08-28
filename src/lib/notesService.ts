@@ -26,7 +26,6 @@ export const getNotes = async () => {
 
 export const updateNote = async (id: number, payload: Partial<Notespayload>) => {
   try {
-    // Assuming your backend uses PATCH for partial updates and expects the ID in the URL
     const response = await axiosInstance.patch(`/notes/${id}`, payload)
     return response.data
   } catch (error) {

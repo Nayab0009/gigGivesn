@@ -46,18 +46,18 @@ export const initiateSocket = (userId?: string): void => {
     });
 
     socket.on("connect_error", (error) => {
-      console.error("❌ Socket connection error:", error);
+      console.error("Socket connection error:", error);
     });
 
-    console.log("🚀 Socket instance created");
+    console.log("Socket instance created");
   } else {
-    console.log("♻️ Using existing socket connection");
+    console.log("Using existing socket connection");
   }
 };
 
 export const getSocket = (): Socket | undefined => {
   if (!socket) {
-    console.log("⚠️ Socket not initialized, call initiateSocket() first");
+    console.log("Socket not initialized, call initiateSocket() first");
   }
   return socket;
 };

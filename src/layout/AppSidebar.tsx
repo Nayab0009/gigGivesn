@@ -6,7 +6,7 @@ import Image from "next/image"
 import { usePathname } from "next/navigation"
 import { useSidebar } from "../context/SidebarContext"
 import { useAuth } from "../context/AuthContext"
-import { LayoutGrid, Notebook , Users, FileText, ChevronLeft, ChevronRight, ChevronDown, Calendar ,Building,Timer,MessageCircle ,Folder ,UserPlus  ,MessagesSquare  } from "lucide-react"
+import { LayoutGrid, Notebook , Users, FileText, ChevronLeft, ChevronRight, ChevronDown, Calendar ,Rabbit ,Building,Timer,MessageCircle ,Folder ,UserPlus  ,MessagesSquare  } from "lucide-react"
 import { GridIcon, ListIcon, PaperPlaneIcon, TableIcon, UserCircleIcon, EnvelopeListIcon } from "../icons/index"
 import { colors } from "@/colors"
 
@@ -139,6 +139,12 @@ const employeeNavItems: NavItem[] = [
     name: "Discussions",
     icon: <MessagesSquare />,
     path: "/dashboard/teammember/discussions",
+
+  },
+  {
+    name: "Sprints",
+    icon: <Timer />,
+    path: "/dashboard/teammember/sprints",
 
   },
   {
