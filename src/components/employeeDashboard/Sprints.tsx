@@ -1,9 +1,8 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { getSprintsForManagers } from '@/lib/SprintService';
 import { ShowEmployeeTasks } from '@/lib/TeamService';
 import { useAuth } from '@/context/AuthContext';
-import { Calendar, Clock, Plus, Users, CheckCircle, Circle } from 'lucide-react';
+import { Calendar, Clock, Users, CheckCircle, Circle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { AssignTaskModal } from '../adminDashboard/AssignProjectTicket';
 import type { Task } from '@/types';
@@ -15,6 +14,7 @@ const Sprints: React.FC = () => {
   const router = useRouter();
 
   const [projects, setProjects] = useState<any[]>([]);
+  
   const [sprints, setSprints] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

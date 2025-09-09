@@ -76,89 +76,104 @@ const Pagination: React.FC<PaginationProps> = ({
     <nav className="flex justify-center items-center mt-8">
       <div className="flex items-center space-x-2">
         {/* Previous Button */}
+       <button
+  onClick={() => handlePageChange(currentPage - 1)}
+  disabled={isFirstPage}
+  className={`
+    group relative flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium text-sm
+    transition-all duration-300 ease-in-out transform
+    ${isFirstPage 
+      ? 'cursor-not-allowed opacity-50' 
+      : 'hover:scale-105 hover:-translate-y-0.5 active:scale-95'
+    }
+  `}
+  style={{
+    background: "rgba(50, 50, 50, 0.4)", // glass dark gray
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
+    border: "1px solid rgba(255, 255, 255, 0.15)", // subtle frosted border
+    color: isFirstPage ? "rgba(255,255,255,0.5)" : "#fff",
+    boxShadow: isFirstPage
+      ? "none"
+      : "0 4px 15px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255,255,255,0.1)",
+  }}
+>
+  <ChevronLeft className="w-4 h-4" />
+  <span className="hidden sm:inline">Previous</span>
+
+  {!isFirstPage && (
+    <div
+      className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+      style={{
+        background:
+          "linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05))",
+      }}
+    />
+  )}
+</button>
+
+       {/* Page Numbers */}
+<div className="flex items-center space-x-1">
+  {pageNumbers.map((page, index) => (
+    <React.Fragment key={index}>
+      {page === "..." ? (
+        <div className="flex items-center justify-center w-10 h-10">
+          <MoreHorizontal className="w-4 h-4 text-white/60" />
+        </div>
+      ) : (
         <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={isFirstPage}
+          onClick={() => handlePageChange(page as number)}
           className={`
-            group relative flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium text-sm
-            transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg
-            ${isFirstPage 
-              ? 'cursor-not-allowed opacity-50' 
-              : 'hover:-translate-y-0.5 active:scale-95'
+            group relative flex items-center justify-center w-12 h-12 rounded-xl font-semibold text-sm
+            transition-all duration-300 ease-in-out transform
+            ${currentPage === page 
+              ? "scale-110 hover:-translate-y-1 z-10" 
+              : "hover:scale-105 hover:-translate-y-0.5 active:scale-95"
             }
           `}
           style={{
-            background: isFirstPage 
-              ? colors.accent.hex 
-              : `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
-            color: isFirstPage ? colors.primary.hex : '#fff',
-            border: `2px solid ${isFirstPage ? colors.primary.hex : 'transparent'}`,
-            boxShadow: isFirstPage 
-              ? 'none' 
-              : `0 4px 15px rgba(0, 0, 0, 0.1), 0 0 0 1px ${colors.primary.hex}20`,
+            background:
+              currentPage === page
+                ? `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`
+                : "rgba(50, 50, 50, 0.4)", // glass dark gray
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            color: currentPage === page ? "#fff" : "rgba(255,255,255,0.8)",
+            border:
+              currentPage === page
+                ? "1px solid rgba(255,255,255,0.2)"
+                : "1px solid rgba(255,255,255,0.1)",
+            boxShadow:
+              currentPage === page
+                ? "0 8px 25px rgba(0, 0, 0, 0.35), 0 0 20px rgba(255,255,255,0.15)"
+                : "0 2px 8px rgba(0,0,0,0.25)",
           }}
         >
-          <ChevronLeft className="w-4 h-4" />
-          <span className="hidden sm:inline">Previous</span>
-          {!isFirstPage && (
-            <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          {page}
+          {currentPage === page && (
+            <div
+              className="absolute inset-0 rounded-xl opacity-20 group-hover:opacity-40 transition-opacity duration-300"
               style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
+                background:
+                  "linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))",
+              }}
+            />
+          )}
+          {currentPage !== page && (
+            <div
+              className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05))",
               }}
             />
           )}
         </button>
+      )}
+    </React.Fragment>
+  ))}
+</div>
 
-        {/* Page Numbers */}
-        <div className="flex items-center space-x-1">
-          {pageNumbers.map((page, index) => (
-            <React.Fragment key={index}>
-              {page === '...' ? (
-                <div className="flex items-center justify-center w-10 h-10">
-                  <MoreHorizontal className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                </div>
-              ) : (
-                <button
-                  onClick={() => handlePageChange(page as number)}
-                  className={`
-                    group relative flex items-center justify-center w-12 h-12 rounded-xl font-semibold text-sm
-                    transition-all duration-300 ease-in-out transform hover:scale-110 hover:shadow-lg
-                    ${currentPage === page 
-                      ? 'hover:-translate-y-1 scale-110 z-10' 
-                      : 'hover:-translate-y-0.5 active:scale-95'
-                    }
-                  `}
-                  style={{
-                    background: currentPage === page 
-                      ? `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})` 
-                      : colors.accent.hex,
-                    color: currentPage === page ? '#fff' : colors.primary.hex,
-                    border: `2px solid ${currentPage === page ? 'transparent' : colors.primary.hex + '30'}`,
-                    boxShadow: currentPage === page 
-                      ? `0 8px 25px rgba(0, 0, 0, 0.15), 0 0 0 1px ${colors.primary.hex}40, 0 0 20px ${colors.primary.hex}20` 
-                      : `0 2px 8px rgba(0, 0, 0, 0.1)`,
-                  }}
-                >
-                  {page}
-                  {currentPage === page && (
-                    <div className="absolute inset-0 rounded-xl opacity-30 group-hover:opacity-50 transition-opacity duration-300"
-                      style={{
-                        background: 'linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1))',
-                      }}
-                    />
-                  )}
-                  {currentPage !== page && (
-                    <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      style={{
-                        background: `linear-gradient(135deg, ${colors.primary.hex}15, ${colors.secondary.hex}15)`,
-                      }}
-                    />
-                  )}
-                </button>
-              )}
-            </React.Fragment>
-          ))}
-        </div>
 
         {/* Next Button */}
         <button
@@ -172,16 +187,16 @@ const Pagination: React.FC<PaginationProps> = ({
               : 'hover:-translate-y-0.5 active:scale-95'
             }
           `}
-          style={{
-            background: isLastPage 
-              ? colors.accent.hex 
-              : `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
-            color: isLastPage ? colors.primary.hex : '#fff',
-            border: `2px solid ${isLastPage ? colors.primary.hex : 'transparent'}`,
-            boxShadow: isLastPage 
-              ? 'none' 
-              : `0 4px 15px rgba(0, 0, 0, 0.1), 0 0 0 1px ${colors.primary.hex}20`,
-          }}
+           style={{
+    background: "rgba(50, 50, 50, 0.4)", // glass dark gray
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
+    border: "1px solid rgba(255, 255, 255, 0.15)", // subtle frosted border
+    color: isFirstPage ? "rgba(255,255,255,0.5)" : "#fff",
+    boxShadow: isFirstPage
+      ? "none"
+      : "0 4px 15px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255,255,255,0.1)",
+  }}
         >
           <span className="hidden sm:inline">Next</span>
           <ChevronRight className="w-4 h-4" />
@@ -195,23 +210,25 @@ const Pagination: React.FC<PaginationProps> = ({
         </button>
       </div>
 
-      {/* Page Info */}
-      <div className="hidden md:flex items-center ml-6 px-4 py-2 rounded-lg"
-        style={{
-          background: colors.accent.hex,
-          border: `1px solid ${colors.primary.hex}30`,
-        }}
-      >
-        <span className="text-sm font-medium"
-          style={{
-            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-            WebkitBackgroundClip: 'text',
-            color: 'transparent',
-          }}
-        >
-          Page {currentPage} of {totalPages}
-        </span>
-      </div>
+
+  <div
+  className="hidden md:flex items-center ml-6 px-4 py-2 rounded-xl shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105"
+  style={{
+    background: "rgba(255, 255, 255, 0.08)", 
+    border: `1px solid ${colors.primary.hex}30`, 
+  }}
+>
+  <span
+    className="text-sm font-medium"
+    style={{
+      color: "#ffffff", 
+    }}
+  >
+    Page {currentPage} of {totalPages}
+  </span>
+</div>
+
+
     </nav>
   );
 };

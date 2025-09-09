@@ -572,11 +572,11 @@ export default function ProjectDashboard() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-7xl mx-auto bg-green-600">
         {/* Header */}
         <div className="mb-8">
           <h1
-            className="text-3xl sm:text-4xl font-bold mb-2"
+            className="text-3xl sm:text-4xl font-bold mb-2 bg-amber-500"
             style={{
               background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
               WebkitBackgroundClip: "text",

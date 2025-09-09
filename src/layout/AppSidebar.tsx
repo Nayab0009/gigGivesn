@@ -1,550 +1,365 @@
-"use client"
-import type React from "react"
-import { useEffect, useRef, useState, useCallback } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { usePathname } from "next/navigation"
-import { useSidebar } from "../context/SidebarContext"
-import { useAuth } from "../context/AuthContext"
-import { LayoutGrid, Notebook , Users, FileText, ChevronLeft, ChevronRight, ChevronDown, Calendar ,Rabbit ,Building,Timer,MessageCircle ,Folder ,UserPlus  ,MessagesSquare  } from "lucide-react"
-import { GridIcon, ListIcon, PaperPlaneIcon, TableIcon, UserCircleIcon, EnvelopeListIcon } from "../icons/index"
-import { colors } from "@/colors"
+// "use client"
+// import UserDropdown from "@/components/header/UserDropdown"
+// import { useAuth } from "@/context/AuthContext"
+// import { useSidebar } from "@/context/SidebarContext"
+// import { usePathname } from "next/navigation"
+// import Image from "next/image"
+// import Link from "next/link"
+// import { useEffect, useState, useCallback } from "react"
+// import type React from "react"
+// import { colors } from "@/colors"
 
-// Add this constant for consistent mobile width
-const SIDEBAR_WIDTH_MOBILE = "280px"
+// // Define the type for navigation items (same as sidebar)
+// type NavItem = {
+//   name: string
+//   path?: string
+//   subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[]
+// }
 
-// Define the type for navigation items
-type NavItem = {
-  name: string
-  icon: React.ReactNode
-  path?: string
-  subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[]
-}
+// // Common navigation items for all roles
+// const commonNavItems: NavItem[] = []
 
-// Add interface for SubItem type
-interface SubItem {
-  name: string
-  path: string
-  pro?: boolean
-  new?: boolean
-}
+// // Super Admin-specific navigation items
+// const superAdminNavItems: NavItem[] = [
+//   {
+//     name: "Dashboard",
+//     path: "/dashboard/superadmin",
+//   },
+//   {
+//     name: "Organizations",
+//     path: "/dashboard/superadmin/organizations",
+//   },
+//   {
+//     name: "Create Admin",
+//     path: "/dashboard/superadmin/addadmin",
+//   },
+//   {
+//     name: "View Admins",
+//     path: "/dashboard/superadmin/viewsuperadmin",
+//   },
+// ]
 
-// Common navigation items for all roles
-const commonNavItems: NavItem[] = []
+// // Admin-specific navigation items
+// const adminNavItems: NavItem[] = [
+//   {
+//     name: "Dashboard",
+//     path: "/dashboard/admin",
+//   },
+//   {
+//     name: "Projects",
+//     path: "/dashboard/admin/projects",
+//   },
+//   {
+//     name: "Managers",
+//     path: "/dashboard/admin/managers",
+//   },
+//   {
+//     name: "Teams",
+//     path: "/dashboard/admin/team/list",
+//   },
+//   {
+//     name: "Discussions",
+//     path: "/dashboard/teammember/discussions",
+//   },
+// ]
 
-// Super Admin-specific navigation items
-const superAdminNavItems: NavItem[] = [
-  {
-    icon: <LayoutGrid size={20} />,
-    name: "Dashboard",
-    path: "/dashboard/superadmin",
-  },
-  {
-    name: "Organizations",
-    icon: <Building size={20} />,
-    path: "/dashboard/superadmin/organizations",
-  },
-  {
-    name: "Create Admin",
-    icon: <UserPlus size={20} />,
-    path: "/dashboard/superadmin/addadmin",
-  },
-  {
-    name: "View Admins",
-    icon: <Users size={20} />,
-    path: "/dashboard/superadmin/viewsuperadmin",
-  },
-]
+// // Manager-specific navigation items
+// const managerNavItems: NavItem[] = [
+//   {
+//     name: "Dashboard",
+//     path: "/dashboard/manager",
+//   },
+//   {
+//     name: "Projects",
+//     path: "/dashboard/manager/addproject",
+//   },
+//   {
+//     name: "Team Members",
+//     path: "/dashboard/admin/team/list",
+//   },
+//   {
+//     name: "Sprints",
+//     path: "/dashboard/manager/showsprints",
+//   },
+//   {
+//     name: "Chats",
+//     path: "/dashboard/manager/chat",
+//   },
+//   {
+//     name: "Discussions",
+//     path: "/dashboard/teammember/discussions",
+//   },
+// ]
 
-// Admin-specific navigation items
-const adminNavItems: NavItem[] = [
-  {
-    icon: <LayoutGrid size={20} />,
-    name: "Dashboard",
-    path: "/dashboard/admin",
-  },
-  {
-    name: "Projects",
-    icon: <Folder size={20} />,
-    path: "/dashboard/admin/projects",
-  },
-  {
-    name: "Managers",
-    icon: <FileText size={20} />,
-    path: "/dashboard/admin/managers",
-  },
-  {
-    icon: <Users size={20} />,
-    name: "Teams",
-    path: "/dashboard/admin/team/list",
-  },
-   {
-    name: "Discussions",
-    icon: <MessagesSquare />,
-    path: "/dashboard/teammember/discussions",
+// // Employee-specific navigation items
+// const employeeNavItems: NavItem[] = [
+//   {
+//     name: "Dashboard",
+//     path: "/dashboard/teammember",
+//   },
+//   {
+//     name: "My Projects",
+//     path: "/dashboard/teammember/mytasks",
+//   },
+//   {
+//     name: "Discussions",
+//     path: "/dashboard/teammember/discussions",
+//   },
+//   {
+//     name: "Sprints",
+//     path: "/dashboard/teammember/sprints",
+//   },
+//   {
+//     name: "My Calendar",
+//     path: "/dashboard/teammember/calendertasks",
+//   },
+//   {
+//     name: "Chats",
+//     path: "/dashboard/manager/chat",
+//   },
+//   {
+//     name: "Notes",
+//     path: "/dashboard/teammember/notes",
+//   },
+// ]
 
-  },
-  
-]
+// // Student-specific navigation items
+// const studentNavItems: NavItem[] = [
+//   {
+//     name: "Dashboard",
+//     path: "/dashboard/agent",
+//   },
+//   {
+//     name: "My Listings",
+//     path: "/dashboard/projects",
+//   },
+//   ...commonNavItems,
+//   {
+//     name: "My Contacts",
+//     path: "/dashboard/agent/mycontacts",
+//   },
+//   {
+//     name: "Profile",
+//     path: "/dashboard/account/profile",
+//   },
+//   {
+//     name: "Reminders",
+//     path: "/dashboard/agent/reminders",
+//   },
+//   {
+//     name: "Email Lists",
+//     path: "/dashboard/email-lists",
+//   },
+//   {
+//     name: "Email Campaigns",
+//     path: "/dashboard/email-campaigns",
+//   },
+//   {
+//     name: "Pipelines",
+//     path: "/dashboard/agent/pipeline",
+//   },
+// ]
 
-// Manager-specific navigation items
-const managerNavItems: NavItem[] = [
-  {
-    icon: <LayoutGrid size={20} />,
-    name: "Dashboard",
-    path: "/dashboard/manager",
-  },
-  {
-    name: "Projects",
-    icon: <Folder size={20} />,
-    path: "/dashboard/manager/addproject",
-  },
-  {
-    name: " Team Members",
-    icon: <Users size={20} />,
-    path: "/dashboard/admin/team/list",
-  },
-  {
-    name: " Sprints",
-    icon: <Timer  size={20} />,
-    path: "/dashboard/manager/showsprints",
-  },
-  {
-    name: " Chats",
-    icon: <MessageCircle  size={20} />,
-    path: "/dashboard/manager/chat",
-  },
-   {
-    name: "Discussions",
-    icon: <MessagesSquare />,
-    path: "/dashboard/teammember/discussions",
+// const AppHeader: React.FC = () => {
+//   const { user } = useAuth()
+//   const { isExpanded, isMobileOpen } = useSidebar()
+//   const pathname = usePathname()
+//   const [navItems, setNavItems] = useState<NavItem[]>([])
+//   const displayName = user ? user.name : "Guest"
 
-  },
-]
+//   const sidebarWidth = isMobileOpen ? 0 : isExpanded ? 280 : 80
+//   const hasMoreSpace = !isExpanded && !isMobileOpen
 
-// Employee-specific navigation items (NEW)
-const employeeNavItems: NavItem[] = [
-  {
-    icon: <LayoutGrid size={20} />,
-    name: "Dashboard",
-    path: "/dashboard/teammember",
-  },
-  {
-    name: "My Projects",
-    icon: <ListIcon />,
-    path: "/dashboard/teammember/mytasks",
+//   // Determine which navigation items to show based on user role
+//   useEffect(() => {
+//     if (user) {
+//       const role = user.role.toLowerCase()
+//       if (role === "superadmin") {
+//         setNavItems(superAdminNavItems)
+//       } else if (role === "admin") {
+//         setNavItems(adminNavItems)
+//       } else if (role === "manager" || role === "manger") {
+//         setNavItems(managerNavItems)
+//       } else if (role === "employee") {
+//         setNavItems(employeeNavItems)
+//       } else if (role === "broker" || role === "agent") {
+//         setNavItems(studentNavItems)
+//       } else {
+//         setNavItems(commonNavItems)
+//       }
+//     } else {
+//       setNavItems([])
+//     }
+//   }, [user])
 
-  },
-  {
-    name: "Discussions",
-    icon: <MessagesSquare />,
-    path: "/dashboard/teammember/discussions",
+//   const isActive = useCallback((path: string) => path === pathname, [pathname])
 
-  },
-  {
-    name: "Sprints",
-    icon: <Timer />,
-    path: "/dashboard/teammember/sprints",
+//   return (
+//     <header
+//       className={`
+//         fixed top-0 z-[99999] 
+//         shadow-md transition-all duration-500 ease-in-out
+//         backdrop-blur-md bg-black/40 text-white
+//       `}
+//       style={{
+//         left: `${sidebarWidth}px`,
+//         width: `calc(100% - ${sidebarWidth}px)`,
+//         fontFamily:
+//           "'Inter', 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+//       }}
+//     >
+//       <div
+//         className={`flex items-center justify-between px-4 md:px-8 transition-all duration-500 ease-in-out ${
+//           hasMoreSpace ? "py-3" : "py-2"
+//         }`}
+//       >
+//         {/* Left - Logo */}
+//         <div className="flex items-center gap-4">
+//           <Image
+//             src="/images/logo/gigjives1.svg"
+//             alt="Gig Jives"
+//             width={133}
+//             height={31}
+//             priority
+//           />
+//         </div>
 
-  },
-  {
-    name: "My Calender",
-    icon: <Calendar  />,
-    path: "/dashboard/teammember/calendertasks",
+//         {/* Middle - Dynamic Nav Items based on User Role */}
+//         <nav className="hidden lg:block">
+//           <ul className="flex items-center gap-6 text-sm font-medium">
+//             {navItems.slice(0, 6).map((item, index) => (
+//               <li key={item.name}>
+//                 {item.path ? (
+//                   <Link
+//                     href={item.path}
+//                     className={`transition-all duration-200 ease-in-out hover:scale-105 ${
+//                       isActive(item.path)
+//                         ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-1.5 rounded-full shadow-lg"
+//                         : "hover:text-blue-400 cursor-pointer"
+//                     }`}
+//                     style={
+//                       isActive(item.path)
+//                         ? {
+//                             background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+//                           }
+//                         : {}
+//                     }
+//                   >
+//                     {item.name}
+//                   </Link>
+//                 ) : (
+//                   <span className="hover:text-blue-400 cursor-pointer">
+//                     {item.name}
+//                   </span>
+//                 )}
+//               </li>
+//             ))}
+            
+//             {/* Show "More" dropdown if there are more than 6 items */}
+//             {navItems.length > 6 && (
+//               <li className="relative group">
+//                 <button className="hover:text-blue-400 cursor-pointer flex items-center gap-1">
+//                   More
+//                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+//                   </svg>
+//                 </button>
+                
+//                 {/* Dropdown Menu */}
+//                 <div className="absolute top-full left-0 mt-2 w-48 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+//                   <ul className="py-2">
+//                     {navItems.slice(6).map((item) => (
+//                       <li key={item.name}>
+//                         {item.path ? (
+//                           <Link
+//                             href={item.path}
+//                             className={`block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors duration-200 ${
+//                               isActive(item.path) ? "bg-blue-50 text-blue-600 border-r-2 border-blue-500" : ""
+//                             }`}
+//                           >
+//                             {item.name}
+//                           </Link>
+//                         ) : (
+//                           <span className="block px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
+//                             {item.name}
+//                           </span>
+//                         )}
+//                       </li>
+//                     ))}
+//                   </ul>
+//                 </div>
+//               </li>
+//             )}
+//           </ul>
+//         </nav>
 
-  },
-   {
-    name: " Chats",
-    icon: <MessageCircle  size={20} />,
-    path: "/dashboard/manager/chat",
-  },
-   {
-    name: " Notes",
-    icon: <Notebook  size={20} />,
-    path: "/dashboard/teammember/notes",
-  },
-]
+//         {/* Mobile Navigation Menu */}
+//         <nav className="lg:hidden">
+//           <div className="relative group">
+//             <button className="p-2 hover:bg-white/10 rounded-lg transition-colors duration-200">
+//               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+//               </svg>
+//             </button>
+            
+//             {/* Mobile Dropdown */}
+//             <div className="absolute top-full right-0 mt-2 w-64 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+//               <ul className="py-2 max-h-80 overflow-y-auto">
+//                 {navItems.map((item) => (
+//                   <li key={item.name}>
+//                     {item.path ? (
+//                       <Link
+//                         href={item.path}
+//                         className={`block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors duration-200 ${
+//                           isActive(item.path) ? "bg-blue-50 text-blue-600 border-r-2 border-blue-500" : ""
+//                         }`}
+//                       >
+//                         {item.name}
+//                       </Link>
+//                     ) : (
+//                       <span className="block px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
+//                         {item.name}
+//                       </span>
+//                     )}
+//                   </li>
+//                 ))}
+//               </ul>
+//             </div>
+//           </div>
+//         </nav>
 
-// Student-specific navigation items (unchanged)
-const studentNavItems: NavItem[] = [
-  {
-    icon: <GridIcon />,
-    name: "Dashboard",
-    path: "/dashboard/agent",
-  },
-  {
-    name: "My Listings",
-    icon: <ListIcon />,
-    path: "/dashboard/projects",
-  },
-  ...commonNavItems,
-  {
-    name: "My Contacts",
-    icon: <UserCircleIcon />,
-    path: "/dashboard/agent/mycontacts",
-  },
-  {
-    name: "Profile",
-    icon: <UserCircleIcon />,
-    path: "/dashboard/account/profile",
-  },
-  {
-    name: "Reminders",
-    icon: <TableIcon />,
-    path: "/dashboard/agent/reminders",
-  },
-  {
-    name: "Email Lists",
-    icon: <EnvelopeListIcon />,
-    path: "/dashboard/email-lists",
-  },
-  {
-    name: "Email Campaigns",
-    icon: <PaperPlaneIcon />,
-    path: "/dashboard/email-campaigns",
-  },
-  {
-    name: "PipeLines Management",
-    icon: <FileText />,
-    path: "/dashboard/agent/pipeline",
-  },
-]
+//         {/* Right - Search, Notifications, User */}
+//         <div
+//           className={`flex items-center transition-all duration-500 ease-in-out ${
+//             hasMoreSpace ? "gap-4 md:gap-5" : "gap-2 md:gap-3"
+//           }`}
+//         >
+//           <button className="hover:scale-110 transition-transform duration-200 p-2 hover:bg-white/10 rounded-lg">
+//             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+//             </svg>
+//           </button>
+          
+//           <button className="hover:scale-110 transition-transform duration-200 p-2 hover:bg-white/10 rounded-lg relative">
+//             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5-5v10z" />
+//               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4h1v8a6 6 0 006 6h2a6 6 0 006-6V6h1" />
+//             </svg>
+//             {/* Notification badge */}
+//             <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+//           </button>
 
-const AppSidebar: React.FC = () => {
-  const { isExpanded, isMobileOpen, toggleSidebar } = useSidebar()
-  const { user } = useAuth()
-  const pathname = usePathname()
-  const [navItems, setNavItems] = useState<NavItem[]>([])
+//           <div
+//             className={`transition-all duration-500 ease-in-out ${
+//               hasMoreSpace ? "scale-110" : "scale-100"
+//             }`}
+//           >
+//             <UserDropdown />
+//           </div>
+//         </div>
+//       </div>
+//     </header>
+//   )
+// }
 
-  // Determine which navigation items to show based on user role
-  useEffect(() => {
-    if (user) {
-      const role = user.role.toLowerCase()
-      if (role === "superadmin") {
-        setNavItems(superAdminNavItems)
-      } else if (role === "admin") {
-        setNavItems(adminNavItems)
-      } else if (role === "manager" || role === "manger") {
-        setNavItems(managerNavItems)
-      } else if (role === "employee") {
-        setNavItems(employeeNavItems)
-      } else if (role === "broker" || role === "agent") {
-        setNavItems(studentNavItems)
-      } else {
-        setNavItems(commonNavItems)
-      }
-    } else {
-      setNavItems([])
-    }
-  }, [user])
-
-  const renderMenuItems = (navItems: NavItem[], menuType: "main" | "others") => (
-    <ul className="flex flex-col gap-1">
-      {navItems.map((nav, index) => (
-        <li key={nav.name}>
-          {nav.subItems ? (
-            <button
-              onClick={() => handleSubmenuToggle(index, menuType)}
-              className={`menu-item group w-full transition-all duration-200 ease-in-out ${
-                openSubmenu?.type === menuType && openSubmenu?.index === index
-                  ? "text-white shadow-lg"
-                  : "text-slate-600 hover:text-blue-700"
-              } cursor-pointer rounded-xl p-3 flex items-center gap-3 ${!isExpanded ? "lg:justify-center" : "lg:justify-start"}`}
-              style={openSubmenu?.type === menuType && openSubmenu?.index === index ? { background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})` } : {}}
-            >
-              <span
-                className={`transition-all duration-200 ease-in-out flex-shrink-0 ${
-                  openSubmenu?.type === menuType && openSubmenu?.index === index
-                    ? "text-white"
-                    : "text-slate-500 group-hover:text-blue-700"
-                }`}
-              >
-                {nav.icon}
-              </span>
-              {(isExpanded || isMobileOpen) && (
-                <>
-                  <span
-                    className={`font-medium text-sm flex-1 text-left transition-all duration-200 ease-in-out ${
-                      openSubmenu?.type === menuType && openSubmenu?.index === index
-                        ? "text-white"
-                        : "text-slate-700 group-hover:text-blue-700"
-                    }`}
-                  >
-                    {nav.name}
-                  </span>
-                  <ChevronDown
-                    className={`w-4 h-4 transition-all duration-200 ease-in-out flex-shrink-0 ${
-                      openSubmenu?.type === menuType && openSubmenu?.index === index
-                        ? "rotate-180 text-white"
-                        : "text-slate-400 group-hover:text-blue-700"
-                    }`}
-                  />
-                </>
-              )}
-            </button>
-          ) : (
-            nav.path && (
-              <Link
-                href={nav.path}
-                className={`menu-item group transition-all duration-200 ease-in-out rounded-xl p-3 flex items-center gap-3 ${
-                  isActive(nav.path)
-                    ? "text-white shadow-lg"
-                    : "text-slate-600 hover:text-blue-700"
-                } ${!isExpanded ? "lg:justify-center" : "lg:justify-start"}`}
-                style={isActive(nav.path) ? { background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})` } : {}}
-              >
-                <span
-                  className={`transition-all duration-200 ease-in-out flex-shrink-0 ${
-                    isActive(nav.path) ? "text-white" : "text-slate-500 group-hover:text-blue-700"
-                  }`}
-                >
-                  {nav.icon}
-                </span>
-                {(isExpanded || isMobileOpen) && (
-                  <span
-                    className={`font-medium text-sm transition-all duration-200 ease-in-out ${
-                      isActive(nav.path) ? "text-white" : "text-slate-700 group-hover:text-blue-700"
-                    }`}
-                  >
-                    {nav.name}
-                  </span>
-                )}
-              </Link>
-            )
-          )}
-          {nav.subItems && (isExpanded || isMobileOpen) && (
-            <div
-              ref={(el) => {
-                subMenuRefs.current[`${menuType}-${index}`] = el
-              }}
-              className="overflow-hidden transition-all duration-300 ease-in-out"
-              style={{
-                height:
-                  openSubmenu?.type === menuType && openSubmenu?.index === index
-                    ? `${subMenuHeight[`${menuType}-${index}`]}px`
-                    : "0px",
-                opacity: openSubmenu?.type === menuType && openSubmenu?.index === index ? 1 : 0,
-              }}
-            >
-              <ul className="mt-2 space-y-1 ml-8">
-                {nav.subItems.map((subItem) => (
-                  <li key={subItem.name}>
-                    <Link
-                      href={subItem.path}
-                      className={`menu-dropdown-item transition-all duration-200 ease-in-out font-medium text-sm block py-2.5 px-3 rounded-lg flex items-center justify-between ${
-                        isActive(subItem.path)
-                          ? "bg-blue-100 text-blue-700 border-l-2 border-blue-500"
-                          : "text-slate-600 hover:bg-slate-50 hover:text-blue-600 border-l-2 border-transparent hover:border-blue-300"
-                      }`}
-                    >
-                      <span>{subItem.name}</span>
-                      <div className="flex items-center gap-1">
-                        {subItem.new && (
-                          <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
-                            new
-                          </span>
-                        )}
-                        {subItem.pro && (
-                          <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
-                            pro
-                          </span>
-                        )}
-                      </div>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </li>
-      ))}
-    </ul>
-  )
-
-  const [openSubmenu, setOpenSubmenu] = useState<{
-    type: "main" | "others"
-    index: number
-  } | null>(null)
-  const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>({})
-  const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({})
-
-  const isActive = useCallback((path: string) => path === pathname, [pathname])
-
-  useEffect(() => {
-    // Check if the current path matches any submenu item
-    let submenuMatched = false
-    ;["main", "others"].forEach((menuType) => {
-      const items = menuType === "main" ? navItems : []
-      items.forEach((nav, index) => {
-        if (nav.subItems) {
-          nav.subItems.forEach((subItem) => {
-            if (isActive(subItem.path)) {
-              setOpenSubmenu({
-                type: menuType as "main" | "others",
-                index,
-              })
-              submenuMatched = true
-            }
-          })
-        }
-      })
-    })
-
-    // If no submenu item matches, close the open submenu
-    if (!submenuMatched) {
-      setOpenSubmenu(null)
-    }
-  }, [pathname, isActive, navItems])
-
-  useEffect(() => {
-    // Set the height of the submenu items when the submenu is opened
-    if (openSubmenu !== null) {
-      const key = `${openSubmenu.type}-${openSubmenu.index}`
-      if (subMenuRefs.current[key]) {
-        setSubMenuHeight((prevHeights) => ({
-          ...prevHeights,
-          [key]: subMenuRefs.current[key]?.scrollHeight || 0,
-        }))
-      }
-    }
-  }, [openSubmenu])
-
-  const handleSubmenuToggle = (index: number, menuType: "main" | "others") => {
-    setOpenSubmenu((prevOpenSubmenu) => {
-      if (prevOpenSubmenu && prevOpenSubmenu.type === menuType && prevOpenSubmenu.index === index) {
-        return null
-      }
-      return { type: menuType, index }
-    })
-  }
-
-  return (
-    <div className="relative">
-      {/* Mobile Overlay */}
-      {isMobileOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity duration-300 ease-in-out backdrop-blur-sm"
-          onClick={toggleSidebar}
-        />
-      )}
-
-      {/* Sidebar */}
-      <aside
-        className={`fixed top-0 left-0 h-screen z-50 bg-white border-r border-slate-200 shadow-xl
-          transition-all duration-300 ease-in-out transform
-          ${isExpanded || isMobileOpen ? "w-[280px]" : "w-[80px]"}
-          ${isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
-        `}
-      >
-        {/* Header with Logo and Toggle Button */}
-        <div
-          className={`flex items-center bg-white border-b border-slate-200 transition-all duration-300 ease-in-out ${
-            !isExpanded && !isMobileOpen ? "justify-center px-4 py-4" : "justify-between px-6 py-4"
-          }`}
-        >
-          {/* Logo - Only show when expanded */}
-          {(isExpanded || isMobileOpen) && (
-            <div className="flex items-center gap-3 w-full">
-              <div className="w-full h-16 flex items-center justify-center rounded-lg p-2">
-                <Image
-                  src="/images/logo/giggives_logo.png"
-                  alt="GigJives Logo"
-                  width={200}
-                  height={60}
-                  className="object-contain max-w-full max-h-full"
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Collapsed Logo */}
-          {!isExpanded && !isMobileOpen && (
-            <div className="w-10 h-10 flex items-center justify-center">
-              <Image
-                src="/images/logo/giggives_logo.png"
-                alt="GigJives Logo"
-                width={80}
-                height={80}
-                className="object-contain"
-              />
-            </div>
-          )}
-
-          {/* Toggle Button */}
-          {(isExpanded || isMobileOpen) && (
-            <button
-              onClick={toggleSidebar}
-              className="group relative flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-800 transition-all duration-200 ease-in-out transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-slate-300"
-              aria-label="Toggle Sidebar"
-            >
-              <ChevronLeft size={16} className="transition-transform duration-200" />
-            </button>
-          )}
-        </div>
-
-        {/* Sidebar Content */}
-        <div className="flex flex-col h-full overflow-y-auto">
-          <nav className="flex-1 p-5">
-            <div className="space-y-2">{renderMenuItems(navItems, "main")}</div>
-          </nav>
-
-          {/* Footer */}
-          <div className="p-5 border-t border-slate-200">
-            <div className="flex items-center gap-3 p-3 rounded-xl" style={{ background: colors.accent.hex }}>
-              {isExpanded || isMobileOpen ? (
-                <>
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})` }}>
-                    <span className="text-white text-sm font-semibold">
-                      {user?.name?.charAt(0)?.toUpperCase() || "U"}
-                    </span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate" style={{ color: colors.primary.hex }}>{user?.name || "User"}</p>
-                    <p className="text-xs truncate capitalize" style={{ color: colors.secondary.hex }}>{user?.role || "Member"}</p>
-                  </div>
-                </>
-              ) : (
-                <div className="w-9 h-9 rounded-full flex items-center justify-center mx-auto" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})` }}>
-                  <span className="text-white text-sm font-semibold">
-                    {user?.name?.charAt(0)?.toUpperCase() || "U"}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Expand Button for Collapsed State */}
-        {!isExpanded && !isMobileOpen && (
-          <button
-            onClick={toggleSidebar}
-            className="absolute -right-3 top-20 w-6 h-6 text-white rounded-full flex items-center justify-center shadow-lg transition-all duration-200 ease-in-out transform hover:scale-110 focus:outline-none"
-            style={{ background: colors.primary.hex }}
-            aria-label="Expand Sidebar"
-          >
-            <ChevronRight size={12} />
-          </button>
-        )}
-      </aside>
-
-      {/* Custom scrollbar styles */}
-      <style jsx>{`
-        .no-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-        .no-scrollbar::-webkit-scrollbar-track {
-          background: rgba(148, 163, 184, 0.1);
-        }
-        .no-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(148, 163, 184, 0.3);
-          border-radius: 3px;
-        }
-        .no-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(148, 163, 184, 0.5);
-        }
-      `}</style>
-    </div>
-  )
-}
-
-export default AppSidebar
+// export default AppHeader

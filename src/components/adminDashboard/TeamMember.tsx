@@ -191,476 +191,407 @@ export default function TeamListPage() {
     <div className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1
-            className="text-3xl sm:text-4xl font-bold mb-2"
-            style={{
-              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
-          >
-            Team Members
-          </h1>
-          <p
-            className="text-lg"
-            style={{
-              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
-          >
-            Manage and track all team members
-          </p>
-        </div>
+     <div className="mb-8 flex flex-col lg:flex-row items-center justify-between gap-6">
+  {/* Heading Section */}
+  <div className="flex flex-col">
+    <h1 className="text-2xl sm:text-2xl font-bold text-white">Team Members</h1>
+    <p className="text-lg text-white">Manage and track all team members</p>
+  </div>
 
-        {/* Action Bar */}
-        <div
-          className="mb-8 rounded-2xl shadow-lg border p-6"
-          style={{
-            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-            color: "#fff",
-            borderColor: colors.primary.hex,
-          }}
-        >
-          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-            <div className="relative flex-1 max-w-md w-full">
-              <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5"
-                style={{ color: colors.accent.hex }}
-              />
-              <input
-                type="text"
-                placeholder="Search employees by name, email or ID..."
-                className="w-full pl-10 pr-4 py-3 rounded-2xl focus:ring-2 transition-all duration-300 shadow-sm focus:shadow-md"
-                style={{
-                  background: "#fff",
-                  color: colors.primary.hex,
-                  border: `1px solid ${colors.primary.hex}`,
-                }}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
-              <div
-                className="text-sm px-4 py-2 rounded-full border"
-                style={{
-                  background: colors.accent.hex,
-                  color: colors.primary.hex,
-                  borderColor: colors.primary.hex,
-                }}
-              >
-                <span className="font-semibold" style={{ color: colors.primary.hex }}>
-                  {filteredMembers.length}
-                </span>{" "}
-                of {teamMembers.length} employees
-              </div>
-              {userRole === "manager" && (
-                <button
-                  type="button"
-                  className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
-                  style={{
-                    background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                    color: "#fff",
-                    border: `1px solid ${colors.primary.hex}`,
-                  }}
-                  onClick={() => router.push("/dashboard/admin/addemployee")}
-                >
-                  <Plus className="w-4 h-4" style={{ color: colors.highlight.hex }} />
-                  Add Employee
-                </button>
-              )}
-              <button
-                className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={{
-                  background: "#fff",
-                  color: colors.primary.hex,
-                  border: `1px solid ${colors.primary.hex}`,
-                }}
-                onClick={fetchEmployees}
-                disabled={isLoading}
-              >
-                <RefreshCw
-                  className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`}
-                  style={{ color: colors.secondary.hex }}
-                />
-                Refresh
-              </button>
-            </div>
-          </div>
-        </div>
+  {/* Action Bar */}
+  <div className="flex flex-1 items-center gap-6 w-full lg:w-auto justify-end">
+    {/* Search Bar */}
+  <div className="relative flex-1 max-w-md w-full">
+  <Search
+    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5"
+    style={{ color: colors.accent.hex }}
+  />
+ <input
+  type="text"
+  placeholder="Search employees by name, email or ID..."
+  className="w-full pl-10 pr-4 py-3 rounded-full focus:ring-2 transition-all duration-300 shadow-lg focus:shadow-xl text-white placeholder-gray-300"
+  style={{
+    background: "rgba(0, 0, 0, 0.4)", 
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
+    border: "1px solid rgba(255, 255, 255, 0.2)", 
+  }}
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+/>
+
+
+</div>
+
+
+
+    {/* Stats Badge */}
+    <div
+      className="text-sm px-4 py-2 rounded-full border text-white border"
+  
+    >
+      <span className="font-semibold " >
+        {filteredMembers.length}
+      </span>{" "}
+      of {teamMembers.length} employees
+    </div>
+
+    {/* Add Button (only for managers) */}
+    {userRole === "manager" && (
+      <button
+        type="button"
+        className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
+        style={{
+          background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+          color: "#fff",
+          border: `1px solid ${colors.primary.hex}`,
+        }}
+        onClick={() => router.push("/dashboard/admin/addemployee")}
+      >
+        <Plus className="w-4 h-4" style={{ color: colors.highlight.hex }} />
+        Add Employee
+      </button>
+    )}
+  </div>
+</div>
 
         {/* Edit Modal */}
-        {editingMember && (
-          <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div
-              className="bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100"
-              style={{
-                border: `3px solid ${colors.primary.hex}`,
-                boxShadow: `0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px ${colors.primary.hex}33`,
-              }}
-            >
-              {/* Header */}
-              <div
-                className="px-8 py-6 border-b relative overflow-hidden"
-                style={{
-                  background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                  color: "#fff",
-                }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
-                <div className="relative flex items-center justify-between">
-                  <div>
-                    <h2 className="text-2xl font-bold mb-1">Edit Team Member</h2>
-                    <p className="text-white/80 text-sm">Update employee information</p>
-                  </div>
-                  <button
-                    onClick={handleEditCancel}
-                    className="p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-all duration-300 transform hover:scale-110"
-                  >
-                    <X className="w-6 h-6" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Form */}
-              <div className="px-8 py-6 space-y-6">
-                {/* Name Field */}
-                <div className="space-y-2">
-                  <label
-                    className="block text-sm font-semibold mb-2 flex items-center gap-2"
-                    style={{ color: colors.primary.hex }}
-                  >
-                    <div className="w-2 h-2 rounded-full" style={{ background: colors.primary.hex }}></div>
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    value={editingMember.name}
-                    onChange={(e) => handleInputChange("name", e.target.value)}
-                    className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium"
-                    style={{
-                      borderColor: editingMember.name.trim() ? colors.primary.hex : "#ef4444",
-                      backgroundColor: editingMember.name.trim() ? "#fff" : "#fef2f2",
-                      focusRingColor: `${colors.primary.hex}33`,
-                    }}
-                    placeholder="Enter full name"
-                  />
-                  {!editingMember.name.trim() && (
-                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />
-                      Name is required
-                    </p>
-                  )}
-                </div>
-
-                {/* Email Field */}
-                <div className="space-y-2">
-                  <label
-                    className="block text-sm font-semibold mb-2 flex items-center gap-2"
-                    style={{ color: colors.primary.hex }}
-                  >
-                    <div className="w-2 h-2 rounded-full" style={{ background: colors.secondary.hex }}></div>
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    value={editingMember.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
-                    className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium"
-                    style={{
-                      borderColor:
-                        editingMember.email.trim() && editingMember.email.includes("@")
-                          ? colors.primary.hex
-                          : "#ef4444",
-                      backgroundColor:
-                        editingMember.email.trim() && editingMember.email.includes("@") ? "#fff" : "#fef2f2",
-                      focusRingColor: `${colors.primary.hex}33`,
-                    }}
-                    placeholder="Enter email address"
-                  />
-                  {(!editingMember.email.trim() || !editingMember.email.includes("@")) && (
-                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />
-                      Valid email is required
-                    </p>
-                  )}
-                </div>
-
-                {/* Phone Field */}
-                <div className="space-y-2">
-                  <label
-                    className="block text-sm font-semibold mb-2 flex items-center gap-2"
-                    style={{ color: colors.primary.hex }}
-                  >
-                    <div className="w-2 h-2 rounded-full" style={{ background: colors.accent.hex }}></div>
-                    Phone Number *
-                  </label>
-                  <input
-                    type="tel"
-                    value={editingMember.phone}
-                    onChange={(e) => handleInputChange("phone", e.target.value)}
-                    className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium"
-                    style={{
-                      borderColor: editingMember.phone.trim() ? colors.primary.hex : "#ef4444",
-                      backgroundColor: editingMember.phone.trim() ? "#fff" : "#fef2f2",
-                      focusRingColor: `${colors.primary.hex}33`,
-                    }}
-                    placeholder="Enter phone number"
-                  />
-                  {!editingMember.phone.trim() && (
-                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />
-                      Phone number is required
-                    </p>
-                  )}
-                </div>
-
-                {/* Address Field */}
-                <div className="space-y-2">
-                  <label
-                    className="block text-sm font-semibold mb-2 flex items-center gap-2"
-                    style={{ color: colors.primary.hex }}
-                  >
-                    <div className="w-2 h-2 rounded-full" style={{ background: colors.highlight.hex }}></div>
-                    Address *
-                  </label>
-                  <textarea
-                    value={editingMember.address}
-                    onChange={(e) => handleInputChange("address", e.target.value)}
-                    rows={3}
-                    className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none resize-none transition-all duration-300 font-medium"
-                    style={{
-                      borderColor: editingMember.address.trim() ? colors.primary.hex : "#ef4444",
-                      backgroundColor: editingMember.address.trim() ? "#fff" : "#fef2f2",
-                      focusRingColor: `${colors.primary.hex}33`,
-                    }}
-                    placeholder="Enter complete address"
-                  />
-                  {!editingMember.address.trim() && (
-                    <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
-                      <AlertCircle className="w-3 h-3" />
-                      Address is required
-                    </p>
-                  )}
-                </div>
-              </div>
-
-              {/* Footer */}
-              <div
-                className="px-8 py-6 border-t bg-gradient-to-r from-gray-50 to-gray-100"
-                style={{ borderColor: `${colors.primary.hex}20` }}
-              >
-                <div className="flex gap-4">
-                  <button
-                    onClick={handleEditCancel}
-                    className="flex-1 px-6 py-3 border-2 rounded-xl font-semibold transition-all duration-300 hover:bg-gray-50 transform hover:scale-105"
-                    style={{
-                      borderColor: colors.primary.hex,
-                      color: colors.primary.hex,
-                    }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleEditSave}
-                    disabled={isUpdating || !isFormValid()}
-                    className="flex-1 px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transform hover:scale-105 disabled:transform-none shadow-lg"
-                    style={{
-                      background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                    }}
-                  >
-                    {isUpdating ? (
-                      <>
-                        <RefreshCw className="w-5 h-5 animate-spin" />
-                        Updating...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="w-5 h-5" />
-                        Save Changes
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
+       {editingMember && (
+  <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div
+      className="rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100"
+      style={{
+        background: "rgba(255, 255, 255, 0.08)", // glassy modal bg
+        border: `2px solid ${colors.primary.hex}40`,
+      }}
+    >
+      {/* Header */}
+      <div
+        className="px-8 py-6 border-b relative overflow-hidden rounded-t-3xl"
+        style={{
+          background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
+          color: "#fff",
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+        <div className="relative flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-bold mb-1">Edit Team Member</h2>
+            <p className="text-white/80 text-sm">Update employee information</p>
           </div>
-        )}
+          <button
+            onClick={handleEditCancel}
+            className="p-2 hover:bg-white/20 rounded-full transition-all duration-300 transform hover:scale-110"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+      </div>
 
-        {/* Table Container */}
-        <div
-          className="rounded-2xl shadow-lg border overflow-hidden"
-          style={{
-            background: "#fff",
-            borderColor: colors.primary.hex,
-          }}
-        >
-          {isLoading ? (
-            <div className="p-12 text-center">
-              <div
-                className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4"
-                style={{ background: colors.accent.hex }}
-              >
-                <RefreshCw className="w-6 h-6 animate-spin" style={{ color: colors.primary.hex }} />
-              </div>
-              <p className="text-lg" style={{ color: colors.primary.hex }}>
-                Loading team members...
-              </p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y" style={{ borderColor: colors.primary.hex }}>
-                <thead style={{ background: colors.accent.hex }}>
-                  <tr>
-                    <th
-                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: colors.primary.hex }}
-                    >
-                      Employee Details
-                    </th>
-                    <th
-                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: colors.primary.hex }}
-                    >
-                      Role
-                    </th>
-                    <th
-                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: colors.primary.hex }}
-                    >
-                      Contact Information
-                    </th>
-                    {userRole === "manager" && (
-                      <th
-                        className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
-                        style={{ color: colors.primary.hex }}
-                      >
-                        Actions
-                      </th>
-                    )}
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-slate-200">
-                  {paginatedMembers.length === 0 ? (
-                    <tr>
-                      <td colSpan={4} className="px-6 py-12 text-center">
-                        <div className="flex flex-col items-center justify-center">
-                          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                            <AlertCircle className="w-8 h-8 text-slate-400" />
-                          </div>
-                          <p className="text-slate-600 text-lg font-medium mb-1">No team members found</p>
-                          <p className="text-slate-500">Try adjusting your search criteria</p>
-                        </div>
-                      </td>
-                    </tr>
-                  ) : (
-                    paginatedMembers.map((member, index) => (
-                      <tr key={member.id || index} className="bg-white transition-all duration-300 hover:bg-slate-50">
-                        <td className="px-6 py-6">
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-3">
-                              <div
-                                className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-lg"
-                                style={{
-                                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                                  color: "#fff",
-                                }}
-                              >
-                                {member.name.charAt(0).toUpperCase()}
-                              </div>
-                              <div>
-                                <h3
-                                  className="text-lg font-semibold leading-tight"
-                                  style={{ color: colors.primary.hex }}
-                                >
-                                  {member.name}
-                                </h3>
-                                <div className="flex items-center gap-2 mt-1">
-                                  <span
-                                    className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium"
-                                    style={{ background: colors.highlight.hex, color: colors.primary.hex }}
-                                  >
-                                    Team Member
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-6">
-                          <span
-                            className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium capitalize"
-                            style={{
-                              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                              color: "#fff",
-                            }}
-                          >
-                            {member.role || "Employee"}
-                          </span>
-                        </td>
-                        <td className="px-6 py-6">
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 rounded-full" style={{ background: colors.primary.hex }}></div>
-                              <span className="text-sm font-medium" style={{ color: colors.primary.hex }}>
-                                {member.email}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 rounded-full" style={{ background: colors.secondary.hex }}></div>
-                              <span className="text-sm" style={{ color: colors.secondary.hex }}>
-                                {member.phone}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 rounded-full" style={{ background: colors.accent.hex }}></div>
-                              <span
-                                className="text-sm max-w-xs truncate"
-                                title={member.address}
-                                style={{ color: colors.accent.hex }}
-                              >
-                                {member.address}
-                              </span>
-                            </div>
-                          </div>
-                        </td>
-                        {userRole === "manager" && (
-                          <td className="px-6 py-6">
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => handleEditStart(member)}
-                                className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
-                                style={{
-                                  background: colors.highlight.hex,
-                                  color: colors.primary.hex,
-                                }}
-                              >
-                                <Edit className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                              </button>
-                              <button
-                                onClick={() => handleEmployeeDelete(String(member.id))}
-                                className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
-                                style={{
-                                  background: colors.warning.hex,
-                                  color: "#fff",
-                                }}
-                              >
-                                <Trash2 className="w-4 h-4" style={{ color: "#fff" }} />
-                              </button>
-                            </div>
-                          </td>
-                        )}
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+      {/* Form */}
+      <div className="px-8 py-6 space-y-6 text-white">
+        {/* Name Field */}
+        <div className="space-y-2">
+          <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full" style={{ background: colors.primary.hex }}></div>
+            Full Name *
+          </label>
+          <input
+            type="text"
+            value={editingMember.name}
+            onChange={(e) => handleInputChange("name", e.target.value)}
+            className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
+            style={{
+              borderColor: editingMember.name.trim() ? colors.primary.hex : "#ef4444",
+            }}
+            placeholder="Enter full name"
+          />
+          {!editingMember.name.trim() && (
+            <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+              <AlertCircle className="w-3 h-3" />
+              Name is required
+            </p>
           )}
         </div>
 
+        {/* Email Field */}
+        <div className="space-y-2">
+          <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full" style={{ background: colors.secondary.hex }}></div>
+            Email Address *
+          </label>
+          <input
+            type="email"
+            value={editingMember.email}
+            onChange={(e) => handleInputChange("email", e.target.value)}
+            className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
+            style={{
+              borderColor:
+                editingMember.email.trim() && editingMember.email.includes("@")
+                  ? colors.primary.hex
+                  : "#ef4444",
+            }}
+            placeholder="Enter email address"
+          />
+          {(!editingMember.email.trim() || !editingMember.email.includes("@")) && (
+            <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+              <AlertCircle className="w-3 h-3" />
+              Valid email is required
+            </p>
+          )}
+        </div>
+
+        {/* Phone Field */}
+        <div className="space-y-2">
+          <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full" style={{ background: colors.accent.hex }}></div>
+            Phone Number *
+          </label>
+          <input
+            type="tel"
+            value={editingMember.phone}
+            onChange={(e) => handleInputChange("phone", e.target.value)}
+            className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
+            style={{
+              borderColor: editingMember.phone.trim() ? colors.primary.hex : "#ef4444",
+            }}
+            placeholder="Enter phone number"
+          />
+          {!editingMember.phone.trim() && (
+            <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+              <AlertCircle className="w-3 h-3" />
+              Phone number is required
+            </p>
+          )}
+        </div>
+
+        {/* Address Field */}
+        <div className="space-y-2">
+          <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full" style={{ background: colors.highlight.hex }}></div>
+            Address *
+          </label>
+          <textarea
+            value={editingMember.address}
+            onChange={(e) => handleInputChange("address", e.target.value)}
+            rows={3}
+            className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none resize-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
+            style={{
+              borderColor: editingMember.address.trim() ? colors.primary.hex : "#ef4444",
+            }}
+            placeholder="Enter complete address"
+          />
+          {!editingMember.address.trim() && (
+            <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+              <AlertCircle className="w-3 h-3" />
+              Address is required
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div
+        className="px-8 py-6 border-t rounded-b-3xl flex gap-4"
+        style={{
+          background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
+          borderColor: `${colors.primary.hex}40`,
+        }}
+      >
+        <button
+          onClick={handleEditCancel}
+          className="flex-1 px-6 py-3 border-2 rounded-xl font-semibold transition-all duration-300 hover:bg-white/20 transform hover:scale-105 text-white"
+          style={{
+            borderColor: "#fff",
+          }}
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleEditSave}
+          disabled={isUpdating || !isFormValid()}
+          className="flex-1 px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transform hover:scale-105 disabled:transform-none shadow-lg"
+          style={{
+            background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
+          }}
+        >
+          {isUpdating ? (
+            <>
+              <RefreshCw className="w-5 h-5 animate-spin" />
+              Updating...
+            </>
+          ) : (
+            <>
+              <Save className="w-5 h-5" />
+              Save Changes
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+{/* Table Container */}
+<div
+  className="rounded-2xl shadow-2xl border overflow-hidden backdrop-blur-xl"
+  style={{
+    background: "rgba(255, 255, 255, 0.05)",
+    borderColor: "rgba(255, 255, 255, 0.1)",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1)"
+  }}
+>
+  {isLoading ? (
+    <div className="p-12 text-center">
+      <div
+        className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 backdrop-blur-xl"
+        style={{ 
+          background: "rgba(255, 255, 255, 0.1)",
+          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)"
+        }}
+      >
+        <RefreshCw className="w-6 h-6 animate-spin text-white" />
+      </div>
+      <p className="text-lg text-white">
+        Loading team members...
+      </p>
+    </div>
+  ) : (
+    <div className="overflow-x-auto">
+      <table className="min-w-full">
+        <thead
+  className="backdrop-blur-md bg-black/40 text-white   rounded-t-2xl  h-[32px]"
+  style={{
+    borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+  }}
+>
+          <tr className="h-[73px]">
+            <th className="px-6 py-4 text-left text-sm font-medium text-white/90">
+              Employee Details
+            </th>
+            <th className="px-6 py-4 text-left text-sm font-medium text-white/90">
+              Role
+            </th>
+            <th className="px-6 py-4 text-left text-sm font-medium text-white/90">
+              Contact Info
+            </th>
+            {userRole === "manager" && (
+              <th className="px-6 py-4 text-left text-sm font-medium text-white/90">
+                Actions
+              </th>
+            )}
+          </tr>
+        </thead>
+
+    <tbody
+  className="backdrop-blur-md bg-black/40 text-white  rounded-b-2xl "
+  style={{
+    borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+  }}
+>
+  {paginatedMembers.length === 0 ? (
+    <tr>
+      <td colSpan={4} className="px-6 py-12 text-center">
+        <div className="flex flex-col items-center justify-center">
+          <div className="w-16 h-16 bg-white/10 backdrop-blur-xl rounded-full flex items-center justify-center mb-4">
+            <AlertCircle className="w-8 h-8 text-white/80" />
+          </div>
+          <p className="text-white text-lg font-medium mb-1">
+            No team members found
+          </p>
+          <p className="text-white/70">Try adjusting your search criteria</p>
+        </div>
+      </td>
+    </tr>
+  ) : (
+    paginatedMembers.map((member, index) => (
+      <tr
+        key={member.id || index}
+        className="transition-all duration-300 hover:bg-white/5 border-b border-white/10"
+      >
+        <td className="px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm shadow-lg backdrop-blur-xl relative"
+              style={{
+                background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                color: "#fff",
+              }}
+            >
+              {member.name.charAt(0).toUpperCase()}
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
+            </div>
+            <div>
+              <h3 className="text-base font-semibold text-white">
+                {member.name}
+              </h3>
+              <p className="text-sm text-blue-400">Team Member</p>
+            </div>
+          </div>
+        </td>
+
+        <td className="px-6 py-4">
+          <span className="text-sm text-white/70 capitalize">
+            {member.role || "Employee"}
+          </span>
+        </td>
+
+        <td className="px-6 py-4">
+          <div className="space-y-1">
+            <div className="text-sm text-white/90">{member.email}</div>
+            {member.phone && (
+              <div className="text-xs text-white/60">{member.phone}</div>
+            )}
+            {member.address && (
+              <div
+                className="text-xs text-white/60 truncate max-w-xs"
+                title={member.address}
+              >
+                {member.address}
+              </div>
+            )}
+          </div>
+        </td>
+
+        {userRole === "manager" && (
+          <td className="px-6 py-4">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleEditStart(member)}
+                className="inline-flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:bg-white/10 backdrop-blur-xl"
+                style={{
+                  background: "rgba(255, 255, 255, 0.05)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                }}
+              >
+                <Edit className="w-4 h-4 text-white/70" />
+              </button>
+              <button
+                onClick={() => handleEmployeeDelete(String(member.id))}
+                className="inline-flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:bg-red-500/20 backdrop-blur-xl"
+                style={{
+                  background: "rgba(239, 68, 68, 0.1)",
+                  border: "1px solid rgba(239, 68, 68, 0.2)",
+                }}
+              >
+                <Trash2 className="w-4 h-4 text-red-400" />
+              </button>
+            </div>
+          </td>
+        )}
+      </tr>
+    ))
+  )}
+</tbody>
+
+      </table>
+    </div>
+  )}
+</div>
         {/* Pagination */}
         {!isLoading && filteredMembers.length > itemsPerPage && (
           <div className="flex justify-center my-6">
@@ -676,38 +607,43 @@ export default function TeamListPage() {
         {/* Summary Footer */}
         {!isLoading && (
           <div
-            className="mt-8 rounded-2xl shadow-lg border p-6"
-            style={{
-              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-              color: "#fff",
-              borderColor: colors.primary.hex,
-            }}
-          >
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-6">
-                <div className="text-center">
-                  <div className="text-2xl font-bold">{teamMembers.length}</div>
-                  <div className="text-sm">Total Employees</div>
-                </div>
-                <div className="w-px h-12" style={{ background: colors.accent.hex }}></div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">{filteredMembers.length}</div>
-                  <div className="text-sm">Filtered Results</div>
-                </div>
-                <div className="w-px h-12" style={{ background: colors.accent.hex }}></div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">
-                    {teamMembers.filter((member) => member.role?.toLowerCase() === "employee").length}
-                  </div>
-                  <div className="text-sm">Active Employees</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full animate-pulse" style={{ background: colors.highlight.hex }}></div>
-                <span className="text-sm">System Active</span>
-              </div>
-            </div>
-          </div>
+  className="mt-8 rounded-2xl shadow-lg border p-6 text-white backdrop-blur-xl"
+  style={{
+    background: "rgba(50, 50, 50, 0.35)", // glassy dark gray
+    backdropFilter: "blur(16px)",
+    WebkitBackdropFilter: "blur(16px)",
+    border: "1px solid rgba(255, 255, 255, 0.1)", // subtle border
+  }}
+>
+  <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div className="flex items-center gap-6">
+      <div className="text-center">
+        <div className="text-2xl font-bold">{teamMembers.length}</div>
+        <div className="text-sm text-white/70">Total Employees</div>
+      </div>
+      <div className="w-px h-12 bg-white/20"></div>
+      <div className="text-center">
+        <div className="text-2xl font-bold">{filteredMembers.length}</div>
+        <div className="text-sm text-white/70">Filtered Results</div>
+      </div>
+      <div className="w-px h-12 bg-white/20"></div>
+      <div className="text-center">
+        <div className="text-2xl font-bold">
+          {teamMembers.filter((member) => member.role?.toLowerCase() === "employee").length}
+        </div>
+        <div className="text-sm text-white/70">Active Employees</div>
+      </div>
+    </div>
+    <div className="flex items-center gap-2">
+      <div
+        className="w-3 h-3 rounded-full animate-pulse"
+        style={{ background: colors.highlight.hex }}
+      ></div>
+      <span className="text-sm text-white/70">System Active</span>
+    </div>
+  </div>
+</div>
+
         )}
       </div>
     </div>

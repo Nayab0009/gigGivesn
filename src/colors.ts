@@ -3,12 +3,12 @@
 
 export const colors = {
   primary: {
-    hex: "#015f82",
-    rgb: "rgba(1,95,130,1)",
+    hex: "#0CA9F6",
+    rgb: "rgba(12, 169, 246, 1)",
   },
   secondary: {
-    hex: "#1a7094",
-    rgb: "rgba(26,112,148,1)",
+    hex: "#0CA9F6",
+  rgb: "rgba(12, 169, 246, 1)",
   },
   accent: {
     hex: "#65cdec",
