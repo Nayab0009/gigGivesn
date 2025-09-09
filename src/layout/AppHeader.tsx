@@ -222,7 +222,7 @@ const AppHeader: React.FC = () => {
 
       {/* Middle - Dynamic Nav Items based on User Role */}
       <nav className="hidden lg:block flex-1 mx-8">
-        <ul className="flex items-center justify-center gap-6 text-sm font-medium">
+        <ul className="flex items-center justify-center gap-14 text-sm font-medium">
           {navItems.slice(0, 6).map((item, index) => (
             <li key={item.name}>
               {item.path ? (
