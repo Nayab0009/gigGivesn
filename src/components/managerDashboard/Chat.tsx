@@ -161,7 +161,7 @@ export default function ChatPage() {
   const themeClasses = theme === "dark" ? `bg-[${colors.primary.hex}] text-white` : "bg-white text-gray-900"
   const sidebarClasses =
     theme === "dark"
-      ? `bg-[${colors.secondary.hex}] border-[${colors.primary.hex}]`
+      ? `bg-[${colors.white.hex}] border-[${colors.white.hex}]`
       : `bg-white border-[${colors.primary.hex}]`
   const fetchChatHistory = async (senderId: string, receiverId: string) => {
     try {
@@ -676,124 +676,135 @@ export default function ChatPage() {
   }
 
   return (
-    <div className={`flex h-screen ${themeClasses} transition-colors duration-200`}>
+<div className="flex h-screen bg-black/40 backdrop-blur-xl rounded-3xl border border-white/20 p-4 gap-10">
+
+
       {/* Sidebar */}
-      <aside className={`w-80 ${sidebarClasses} border-r flex flex-col`}>
-        {/* Header */}
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-xl font-bold flex items-center gap-2">
-              <MessageCircle className="w-6 h-6" style={{ color: "#006699" }} />
-              <span style={{ color: "#006699" }}>Messages</span>
-            </h1>
-          </div>
-          {/* Search */}
-          <div className="relative">
-            <Search
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4"
-              style={{ color: colors.secondary.hex }}
-            />
-            <input
-              type="text"
-              placeholder="Search conversations..."
-              className="w-full pl-10 pr-4 py-2 rounded-lg border"
-              style={{
-                borderColor: "#eaeaea",
-                background: "#fff",
-                color: colors.primary.hex,
-              }}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
-        {/* User List */}
-        <div className="flex-1 overflow-y-auto border-t border-[#eaeaea]">
-          {filteredContacts.map((contact) => (
-            <div
-              key={contact.id || contact.name}
-              onClick={() => {
-                setSelectedUser(contact.name)
-                setSelectedUserId(contact.id)
-                saveReadStatus(contact.id)
-                setContacts((prevContacts) => prevContacts.map((c) => (c.id === contact.id ? { ...c, unread: 0 } : c)))
-              }}
-              className={`py-4 px-6 cursor-pointer transition-all duration-200 border-b hover:bg-blue-50 ${
-                selectedUser === contact.name ? `bg-blue-50 border-l-4 shadow-sm` : ""
-              }`}
-              style={{
-                borderColor: "#eaeaea",
-                borderLeftColor: selectedUser === contact.name ? "#006699" : "transparent",
-              }}
-            >
-              <div className="flex items-start gap-4">
-                <div className="relative">
-                  <div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold text-lg ${
-                      selectedUser === contact.name ? "ring-2 ring-offset-2 ring-blue-500" : ""
-                    }`}
-                    style={{
-                      backgroundColor: selectedUser === contact.name ? "#004d73" : "#006699",
-                      color: "white",
-                      boxShadow: selectedUser === contact.name ? "0 0 0 2px rgba(0, 102, 153, 0.3)" : "none",
-                    }}
-                  >
-                    {contact.name?.[0]?.toUpperCase() || "?"}
-                  </div>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <h3
-                      className={`${selectedUser === contact.name ? "font-semibold" : "font-medium"} text-[15px]`}
-                      style={{
-                        color: selectedUser === contact.name ? "#004d73" : "#006699",
-                      }}
-                    >
-                      {contact.name}
-                    </h3>
-                    {contact.lastMessageTimestamp && (
-                      <span className="text-xs text-gray-500 ml-2">
-                        {formatTime(new Date(contact.lastMessageTimestamp))}
-                      </span>
-                    )}
-                  </div>
-                  <p
-                    className="text-sm truncate mt-1"
-                    style={{
-                      fontWeight: contact.unread > 0 ? "medium" : "normal",
-                      color: selectedUser === contact.name ? "#333333" : "#666666",
-                    }}
-                  >
-                    {contact.lastMessage ? (
-                      <>
-                        {contact.lastMessageSenderId === currentUser?.id?.toString() &&
-                        !contact.lastMessage?.startsWith("You:") ? ( // Only add "You:" if not already part of the message string
-                          <span className="font-medium mr-1">You:</span>
-                        ) : null}
-                        {contact.lastMessage}
-                      </>
-                    ) : (
-                      "No messages yet"
-                    )}
-                  </p>
-                  {contact.unread > 0 && (
-                    <div className="mt-1">
-                      <span className="bg-blue-950 text-white text-xs rounded-full px-2 py-0.5 text-right">
-                        {contact.unread}
-                      </span>
-                    </div>
-                  )}
-                </div>
+     {/* Sidebar - Replace from line 473 */}
+<aside className="w-80 bg-white/5  rounded-xl backdrop-blur-sm border-r border-white/10 flex flex-col">
+  {/* Header */}
+  <div className="p-4 border-b border-white/10">
+    <div className="flex items-center justify-between mb-4">
+      <h1 className="text-xl font-bold flex items-center gap-2 text-white">
+        <MessageCircle className="w-6 h-6" />
+        <span>Chat</span>
+      </h1>
+    </div>
+    {/* Modern search bar */}
+    <div className="relative">
+      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60" />
+      <input
+        type="text"
+        placeholder="Search"
+        className="w-full pl-10 pr-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
+    </div>
+  </div>
+
+  {/* Contact list with modern cards */}
+  <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+    {/* Team section */}
+    <div className="p-4">
+      <h3 className="text-sm font-medium text-white/70 mb-3">Team</h3>
+      <div className="space-y-2">
+        {filteredContacts.slice(0, Math.ceil(filteredContacts.length / 2)).map((contact) => (
+          <div
+            key={contact.id}
+            onClick={() => {
+              setSelectedUser(contact.name)
+              setSelectedUserId(contact.id)
+              saveReadStatus(contact.id)
+              setContacts((prevContacts) => prevContacts.map((c) => (c.id === contact.id ? { ...c, unread: 0 } : c)))
+            }}
+            className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all hover:bg-white/10 ${
+              selectedUser === contact.name ? 'bg-white/15 border border-white/20' : ''
+            }`}
+          >
+            <div className="relative">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-semibold">
+                {contact.name?.[0]?.toUpperCase() || "?"}
               </div>
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white/20"></div>
             </div>
-          ))}
-        </div>
-      </aside>
+            <div className="flex-1 min-w-0">
+              <p className="text-white text-sm font-medium truncate">{contact.name}</p>
+              <p className="text-white/60 text-xs truncate">
+                {contact.lastMessage ? (
+                  <>
+                    {contact.lastMessageSenderId === currentUser?.id?.toString() &&
+                    !contact.lastMessage?.startsWith("You:") ? (
+                      <span className="font-medium mr-1">You:</span>
+                    ) : null}
+                    {contact.lastMessage}
+                  </>
+                ) : (
+                  "No messages yet"
+                )}
+              </p>
+            </div>
+            {contact.unread > 0 && (
+              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Personal section */}
+    <div className="p-4">
+      <h3 className="text-sm font-medium text-white/70 mb-3">Personal</h3>
+      <div className="space-y-2">
+        {filteredContacts.slice(Math.ceil(filteredContacts.length / 2)).map((contact) => (
+          <div
+            key={contact.id}
+            onClick={() => {
+              setSelectedUser(contact.name)
+              setSelectedUserId(contact.id)
+              saveReadStatus(contact.id)
+              setContacts((prevContacts) => prevContacts.map((c) => (c.id === contact.id ? { ...c, unread: 0 } : c)))
+            }}
+            className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all hover:bg-white/10 ${
+              selectedUser === contact.name ? 'bg-white/15 border border-white/20' : ''
+            }`}
+          >
+            <div className="relative">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white text-sm font-semibold">
+                {contact.name?.[0]?.toUpperCase() || "?"}
+              </div>
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-gray-400 rounded-full border-2 border-white/20"></div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-white text-sm font-medium truncate">{contact.name}</p>
+              <p className="text-white/60 text-xs truncate">
+                {contact.lastMessage ? (
+                  <>
+                    {contact.lastMessageSenderId === currentUser?.id?.toString() &&
+                    !contact.lastMessage?.startsWith("You:") ? (
+                      <span className="font-medium mr-1">You:</span>
+                    ) : null}
+                    {contact.lastMessage}
+                  </>
+                ) : (
+                  "No messages yet"
+                )}
+              </p>
+            </div>
+            {contact.unread > 0 && (
+              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</aside>
       {/* Main Chat Area - Conditional Rendering */}
       {selectedUserId ? (
         <main className="flex flex-col flex-1">
           {/* Chat Header */}
-          <header className="p-4 border-b" style={{ borderColor: colors.primary.hex, background: "#fff" }}>
+          <header className="p-4 bg-white/5  rounded-xl backdrop-blur-sm " >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="relative">
@@ -856,7 +867,7 @@ export default function ChatPage() {
           </header>
           {/* Messages Area */}
           <div
-            className="flex-1 overflow-y-auto px-4 py-2 space-y-4 flex flex-col-reverse" // Adjusted padding here
+            className="px-4 py-2 space-y-4 flex flex-col-reverse flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]" // Adjusted padding here
             style={{ background: colors.accent.hex + "11" }}
           >
             <div ref={messagesEndRef} />
@@ -944,8 +955,9 @@ export default function ChatPage() {
               })}
           </div>
           {/* Chat Input */}
-          <div className="p-4 bg-white border-t" style={{ borderColor: colors.primary.hex }}>
-            <div className="flex items-end gap-3">
+        
+<div className="p-4 bg-black/40 backdrop-blur-xl border-t border-white/10">
+            <div className="flex items-center justify-between gap-3">
               {/* File input button */}
               <input
                 type="file"
@@ -984,20 +996,19 @@ export default function ChatPage() {
                   </div>
                 )}
                 <textarea
-                  className="w-full px-4 py-3 rounded-2xl border bg-white focus:ring-2 resize-none max-h-32"
-                  style={{ borderColor: colors.primary.hex, color: colors.primary.hex }}
-                  placeholder={isUploadingFile ? "Uploading file..." : "Type your message..."}
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault()
-                      sendMessage()
-                    }
-                  }}
-                  rows={1}
-                  disabled={isUploadingFile} // Disable during upload
-                />
+  className="w-3/4 px-4 py-3 rounded-2xl border border-white/20 bg-black/30 backdrop-blur-sm focus:ring-2 focus:ring-white/30 resize-none max-h-32 text-white placeholder-white/60"
+  placeholder={isUploadingFile ? "Uploading file..." : "Type your message..."}
+  value={message}
+  onChange={(e) => setMessage(e.target.value)}
+  onKeyDown={(e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      sendMessage()
+    }
+  }}
+  rows={1}
+  disabled={isUploadingFile}
+/>
               </div>
               <button
                 onClick={sendMessage}
