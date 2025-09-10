@@ -224,10 +224,15 @@ export default function SignInForm() {
       )}
 
       {/* Centered Card */}
-      <div className="relative z-10 flex min-h-screen items-center justify-center p-4">
-        <div className="w-full max-w-lg">
+      <div className="fixed inset-0 z-10 flex items-center justify-center">
+        <div className="w-full max-w-lg flex items-center justify-center">
           <div
-            className="w-[600px] h-[500px] rounded-[22px] p-8 flex flex-col justify-between bg-black/30 border border-white/15 shadow-2xl text-white opacity-100 backdrop-blur-[100px]"
+            className="w-[600px] h-[510px] rounded-[22px] p-8 flex flex-col justify-between shadow-2xl text-white opacity-100 backdrop-blur-[24px] "
+            style={{
+              background: '#0000005D',
+              backdropFilter: 'blur(24px) saturate(180%)',
+              WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+            }}
           >
             {/* Logo */}
             <div className="flex flex-col items-start mb-6">
@@ -269,7 +274,7 @@ export default function SignInForm() {
                     type={showPassword ? "text" : "password"}
                     id="password"
                     name="password"
-                    placeholder="olivia@gmail.com"
+                    placeholder="•••••••••"
                     value={formData.password}
                     onChange={handleChange}
                     error={!!errors.password}
@@ -293,7 +298,7 @@ export default function SignInForm() {
                   label="Remember me"
                   checked={isChecked}
                   onChange={() => setIsChecked(!isChecked)}
-                  className="text-[#0CA9F6] "
+                  className="text-[#0CA9F6] text-[12px]"
                 />
                 {/* <Link href="/forgot-password" className="text-sm text-[#0CA9F6] hover:text-blue-200">
                   Forgot Password
