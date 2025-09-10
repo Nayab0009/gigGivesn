@@ -91,9 +91,8 @@ useEffect(() => {
   value={form.title}
   onChange={e => setForm(prev => ({ ...prev, title: e.target.value }))}
   placeholder="e.g., Sprint 24 - User Authentication & Dashboard"
-  className="w-full px-4 py-4 border rounded-xl focus:ring-2 focus:border-transparent outline-none 
+  className="w-full px-4 py-4  rounded-xl focus:ring-2 focus:border-transparent outline-none 
              bg-black/40 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200"
-  style={{ borderColor: colors.primary.hex }}
 />
 
                 </div>
@@ -104,9 +103,8 @@ useEffect(() => {
   onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
   rows={4}
   placeholder="Describe the main objectives, scope, and expected outcomes for this sprint..."
-  className="w-full px-4 py-4 border rounded-xl focus:ring-2 focus:border-transparent outline-none 
+  className="w-full px-4 py-4  rounded-xl focus:ring-2 focus:border-transparent outline-none 
              bg-black/40 backdrop-blur-sm text-white placeholder-gray-400 resize-none transition-all duration-200"
-  style={{ borderColor: colors.primary.hex }}
 />
                 </div>
                 <div>
@@ -117,9 +115,9 @@ useEffect(() => {
   required
   value={form.project}
   onChange={e => setForm(prev => ({ ...prev, project: e.target.value }))}
-  className="w-full px-4 py-4 border rounded-xl focus:ring-2 focus:border-transparent outline-none 
+  className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none 
              bg-black/40 backdrop-blur-sm text-white transition-all duration-200"
-  style={{ borderColor: colors.primary.hex }}
+
 >
   <option value="" className="bg-black text-white">Select a project...</option>
   {loadingProjects ? (
@@ -154,9 +152,9 @@ useEffect(() => {
   required
   value={form.startDate}
   onChange={e => setForm(prev => ({ ...prev, startDate: e.target.value }))}
-  className="w-full px-4 py-4 border rounded-xl focus:ring-2 focus:border-transparent outline-none 
+  className="w-full px-4 py-4  rounded-xl focus:ring-2 focus:border-transparent outline-none 
              bg-black/40 backdrop-blur-sm text-white transition-all duration-200"
-  style={{ borderColor: colors.primary.hex }}
+
 />
                 </div>
                 <div>
@@ -168,9 +166,8 @@ useEffect(() => {
   required
   value={form.endDate}
   onChange={e => setForm(prev => ({ ...prev, endDate: e.target.value }))}
-  className="w-full px-4 py-4 border rounded-xl focus:ring-2 focus:border-transparent outline-none 
+  className="w-full px-4 py-4  rounded-xl focus:ring-2 focus:border-transparent outline-none 
              bg-black/40 backdrop-blur-sm text-white transition-all duration-200"
-  style={{ borderColor: colors.primary.hex }}
 />
                 </div>
               </div>

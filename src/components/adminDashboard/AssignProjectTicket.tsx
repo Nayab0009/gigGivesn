@@ -241,12 +241,15 @@ export function AssignTaskModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4">
-      <div className="bg-gradient-to-br from-white to-blue-50/30 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] overflow-hidden border border-white/50 backdrop-blur-sm mx-4 ml-16 lg:ml-20">
+  <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
+
+     <div className="bg-black/40 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] overflow-hidden border border-white/20 mx-4 ml-16 lg:ml-20">
+
         {/* Header */}
-        <div className="p-6 text-white"  style={{
-              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-            }}>
+       <div
+  className="p-6 text-white bg-black/40 backdrop-blur-md border-b border-white/20 shadow-lg"
+>
+
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
@@ -303,7 +306,7 @@ export function AssignTaskModal({
 
           {/* Task Title */}
           <div className="group">
-            <label htmlFor="task-title" className="block text-sm font-semibold text-gray-800 mb-2">
+            <label htmlFor="task-title" className="block text-sm font-semibold text-white mb-2">
               Task Title*
             </label>
             <input
@@ -312,11 +315,7 @@ export function AssignTaskModal({
               value={task.title}
               onChange={(e) => setTask({ ...task, title: e.target.value })}
               className="w-full px-4 py-3 border rounded-xl focus:outline-none transition-all duration-200"
-              style={{
-                borderColor: colors.primary.hex,
-                background: colors.accent.hex + '30',
-                color: colors.primary.hex,
-              }}
+      
               placeholder="Enter a descriptive task title..."
               disabled={isCreating}
             />
@@ -324,7 +323,7 @@ export function AssignTaskModal({
 
           {/* Task Description */}
           <div className="group">
-            <label htmlFor="task-description" className="block text-sm font-semibold text-gray-800 mb-2">
+            <label htmlFor="task-description" className="block text-sm font-semibold text-white mb-2">
               Description
             </label>
             <textarea
@@ -332,11 +331,7 @@ export function AssignTaskModal({
               value={task.description}
               onChange={(e) => setTask({ ...task, description: e.target.value })}
               className="w-full px-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 resize-none"
-              style={{
-                borderColor: colors.primary.hex,
-                background: colors.accent.hex + '30',
-                color: colors.primary.hex,
-              }}
+             
               placeholder="Describe the task details and requirements..."
               rows={3}
               disabled={isCreating}
@@ -345,7 +340,7 @@ export function AssignTaskModal({
 
           {/* Task Due Date Picker */}
           <div className="group">
-            <label htmlFor="task-due-date" className="block text-sm font-semibold text-gray-800 mb-2">
+            <label htmlFor="task-due-date" className="block text-sm font-semibold text-white mb-2">
               Task Due Date*
             </label>
             <input
@@ -354,11 +349,7 @@ export function AssignTaskModal({
               value={task.dueDate ? task.dueDate.substring(0, 10) : ''}
               onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
               className="w-full px-4 py-3 border rounded-xl focus:outline-none transition-all duration-200"
-              style={{
-                borderColor: colors.primary.hex,
-                background: colors.accent.hex + '30',
-                color: colors.primary.hex,
-              }}
+
               disabled={isCreating}
               placeholder="Select due date for the task"
             />
@@ -368,15 +359,11 @@ export function AssignTaskModal({
           <div className="group">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
-                <Users className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                <span className="font-semibold text-sm text-gray-700">Assign Team Members*</span>
+                <Users className="w-4 h-4 text-white" />
+                <span className="font-semibold text-sm text-white">Assign Team Members*</span>
               </div>
-              <span className="text-sm px-4 py-2 rounded-full font-semibold border"
-                style={{
-                  background: colors.accent.hex + '40',
-                  color: colors.primary.hex,
-                  borderColor: colors.primary.hex,
-                }}
+              <span className="text-sm px-4 py-2 text-white rounded-full font-semibold border"
+                
               >
                 {task.assignedTo.length} selected
               </span>
@@ -416,37 +403,28 @@ export function AssignTaskModal({
               <div
                 key={team.id}
                 className="border rounded-xl p-6 hover:shadow-lg transition-all duration-300 relative overflow-hidden mb-4"
-                style={{
-                  borderColor: colors.primary.hex,
-                  background: colors.accent.hex + '20',
-                }}
+            
               >
                 {/* Team Header */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center space-x-4">
                     <div className="p-3 rounded-xl"
-                      style={{
-                        background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                      }}
+                
                     >
                       <Users className="w-6 h-6" style={{ color: '#fff' }} />
                     </div>
                     <div>
-                      <h3 className="font-bold text-xl text-gray-900">
+                      <h3 className="font-bold text-xl text-white">
                         {team.name}
                       </h3>
-                      <p className="text-sm text-gray-600 font-medium">
+                      <p className="text-sm text-white font-medium">
                         {team.department} Department
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <span className="text-sm px-4 py-2 rounded-full font-semibold border"
-                      style={{
-                        background: colors.accent.hex + '40',
-                        color: colors.primary.hex,
-                        borderColor: colors.primary.hex,
-                      }}
+                    <span className="text-sm px-4 py-2 rounded-full font-semibold border text-white"
+            
                     >
                       {team.members.length} member{team.members.length !== 1 ? 's' : ''}
                     </span>
@@ -456,56 +434,58 @@ export function AssignTaskModal({
                 {/* Team Members */}
                 <div>
                   <div className="flex items-center space-x-2 mb-4">
-                    <Users className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                    <span className="font-semibold text-sm text-gray-700">Select Team Members</span>
+                    <Users className="w-4 h-4 text-white" />
+                    <span className="font-semibold text-sm text-gray-700 text-white">Select Team Members</span>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {team.members.map((member: any) => (
-                      <div
-                        key={member.id}
-                        className={`relative flex items-center space-x-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer ${
-                          task.assignedTo.includes(member.id)
-                            ? 'shadow-md'
-                            : 'hover:shadow'
-                        } ${isCreating ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        style={{
-                          background: task.assignedTo.includes(member.id)
-                            ? colors.highlight.hex + '20'
-                            : colors.accent.hex + '20',
-                          borderColor: colors.primary.hex,
-                        }}
-                        onClick={() => !isCreating && toggleAssignment(member.id)}
-                      >
-                        {/* Selection indicator */}
-                        {task.assignedTo.includes(member.id) && (
-                          <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center"
-                            style={{ background: colors.primary.hex }}
-                          >
-                            <Check className="w-3 h-3" style={{ color: '#fff' }} />
-                          </div>
-                        )}
-                        
-                        <div className="relative flex-shrink-0">
-                          <img
-                            src={member.avatar}
-                            alt={member.name}
-                            className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
-                          />
-                          <div className="absolute -bottom-0.5 -right-0.5 p-0.5 bg-white rounded-full shadow-sm">
-                            {getUserStatusIcon(member.status)}
-                          </div>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-medium text-gray-900 truncate">
-                            {member.name}
-                          </div>
-                          <div className="text-sm text-gray-600 truncate">
-                            {member.role}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+  {team.members.map((member: any) => (
+    <div
+      key={member.id}
+      className={`relative flex items-center space-x-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer ${
+        task.assignedTo.includes(member.id)
+          ? 'shadow-md'
+          : 'hover:shadow'
+      } ${isCreating ? 'opacity-50 cursor-not-allowed' : ''}`}
+      style={{
+        background: task.assignedTo.includes(member.id)
+          ? 'rgba(255,255,255,0.1)' // glass effect for selected
+          : 'rgba(0,0,0,0.4)',       // glass effect default
+        borderColor: 'rgba(255,255,255,0.2)', // subtle white border
+      }}
+      onClick={() => !isCreating && toggleAssignment(member.id)}
+    >
+      {/* Selection indicator */}
+      {task.assignedTo.includes(member.id) && (
+        <div
+          className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center"
+          style={{ background: 'rgba(255,255,255,0.6)' }}
+        >
+          <Check className="w-3 h-3 text-black" />
+        </div>
+      )}
+
+      <div className="relative flex-shrink-0">
+        <img
+          src={member.avatar}
+          alt={member.name}
+          className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
+        />
+        <div className="absolute -bottom-0.5 -right-0.5 p-0.5 bg-white rounded-full shadow-sm">
+          {getUserStatusIcon(member.status)}
+        </div>
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="font-medium text-white truncate">
+          {member.name}
+        </div>
+        <div className="text-sm text-gray-300 truncate">
+          {member.role}
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
                 </div>
               </div>
             ))}
@@ -522,16 +502,19 @@ export function AssignTaskModal({
         </div>
 
         {/* Footer - Fixed at bottom with better button visibility */}
-        <div className="border-t px-6 py-6"
-          style={{
-            borderColor: colors.primary.hex,
-            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-          }}
-        >
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+       <div
+  className="border-t px-6 py-6 rounded-b-2xl backdrop-blur-md shadow-lg"
+  style={{
+    background: `linear-gradient(to right, ${colors.primary.hex}20, ${colors.secondary.hex}20, rgba(0,0,0,0.4))`,
+
+  }}
+>
+
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-black/40 backdrop-blur-md rounded-xl border border-white/20 p-4 shadow-lg">
+
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <Users className="w-4 h-4" style={{ color: colors.primary.hex }} />
+                <Users className="w-4 h-4 text-white"  />
                 <p className="text-sm text-white font-medium">
                   {task.assignedTo.length > 0 
                     ? `${task.assignedTo.length} member${task.assignedTo.length !== 1 ? 's' : ''} selected`

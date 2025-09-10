@@ -123,7 +123,7 @@ const ManagerSprintsCards: React.FC = () => {
     // You can add additional logic here like showing a success toast
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className='text-white'>Loading...</p>;
   if (error) return <p>{error}</p>;
 
   // Show projects if no project is selected

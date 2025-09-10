@@ -8,7 +8,7 @@ export const colors = {
   },
   secondary: {
     hex: "#0CA9F6",
-  rgb: "rgba(12, 169, 246, 1)",
+    rgb: "rgba(12, 169, 246, 1)",
   },
   accent: {
     hex: "#65cdec",
@@ -22,4 +22,8 @@ export const colors = {
     hex: "#ae7200",
     rgb: "rgba(174,114,0,1)",
   },
-}; 
+  white: {
+    hex: "#ffffff",
+    rgb: "rgba(255,255,255,1)",
+  },
+};
