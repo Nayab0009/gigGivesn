@@ -314,9 +314,8 @@ export function AssignTaskModal({
               type="text"
               value={task.title}
               onChange={(e) => setTask({ ...task, title: e.target.value })}
-              className="w-full px-4 py-3 border rounded-xl focus:outline-none transition-all duration-200"
-      
-              placeholder="Enter a descriptive task title..."
+              className="w-full px-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 text-white placeholder-white bg-black/30"
+    placeholder="Enter a descriptive task title..."
               disabled={isCreating}
             />
           </div>
@@ -330,7 +329,7 @@ export function AssignTaskModal({
               id="task-description"
               value={task.description}
               onChange={(e) => setTask({ ...task, description: e.target.value })}
-              className="w-full px-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 resize-none"
+               className="w-full px-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 resize-none text-white placeholder-white bg-black/30"
              
               placeholder="Describe the task details and requirements..."
               rows={3}
@@ -348,7 +347,7 @@ export function AssignTaskModal({
               type="date"
               value={task.dueDate ? task.dueDate.substring(0, 10) : ''}
               onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
-              className="w-full px-4 py-3 border rounded-xl focus:outline-none transition-all duration-200"
+            className="w-full px-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 text-white placeholder-white bg-black/30"
 
               disabled={isCreating}
               placeholder="Select due date for the task"

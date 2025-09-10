@@ -87,21 +87,15 @@ const AddEmployee: React.FC = () => {
         ></div>
       </div>
 
-      <div className="relative w-full max-w-5xl bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 sm:p-10">
+     <div className="relative w-full max-w-5xl bg-black/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 sm:p-10">
+
         {/* Header */}
         <div className="text-center mb-10">
-          <div
-            className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg"
-            style={{
-              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-            }}
-          >
-            <UserPlus className="w-10 h-10" style={{ color: colors.highlight.hex }} />
-          </div>
-          <h1 className="text-4xl font-bold mb-3" style={{ color: colors.primary.hex }}>
+  
+          <h1 className="text-2xl font-bold mb-3" style={{ color: colors.white.hex }}>
             Add New Employee
           </h1>
-          <p className="text-gray-600 text-lg font-medium">Build your team with talented individuals</p>
+          <p className=" text-lg font-medium" style={{ color: colors.white.hex }}>Build your team with talented individuals</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -110,13 +104,7 @@ const AddEmployee: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div
-                    className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
-                    style={{ background: colors.primary.hex }}
-                  >
-                    <User className="w-4 h-4" style={{ color: colors.highlight.hex }} />
-                  </div>
-                  <span className="text-lg">Full Name</span>
+                  <span className="text-md" style={{ color: colors.white.hex }}>Full Name</span>
                 </label>
                 <div className="relative">
                   <input
@@ -126,7 +114,7 @@ const AddEmployee: React.FC = () => {
                     onChange={handleChange}
                     required
                     placeholder="Enter employee's full name"
-                    className="w-full border-2 border-gray-200 rounded-2xl px-6 py-4 text-lg focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md group-hover:border-gray-300"
+                   className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                   />
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
@@ -134,13 +122,8 @@ const AddEmployee: React.FC = () => {
 
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div
-                    className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
-                    style={{ background: colors.primary.hex }}
-                  >
-                    <Mail className="w-4 h-4" style={{ color: colors.highlight.hex }} />
-                  </div>
-                  <span className="text-lg">Email Address</span>
+            
+                  <span className="text-md"style={{ color: colors.white.hex }}>Email Address</span>
                 </label>
                 <div className="relative">
                   <input
@@ -150,7 +133,7 @@ const AddEmployee: React.FC = () => {
                     onChange={handleChange}
                     required
                     placeholder="employee@company.com"
-                    className="w-full border-2 border-gray-200 rounded-2xl px-6 py-4 text-lg focus:ring-4 focus:ring-red-500/20 focus:border-red-500 transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md group-hover:border-gray-300"
+                    className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                   />
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
@@ -161,13 +144,8 @@ const AddEmployee: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div
-                    className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
-                    style={{ background: colors.primary.hex }}
-                  >
-                    <KeyRound className="w-4 h-4" style={{ color: colors.highlight.hex }} />
-                  </div>
-                  <span className="text-lg">Password</span>
+                
+                  <span className="text-md" style={{ color: colors.white.hex }}>Password</span>
                 </label>
                 <div className="relative">
                   <input
@@ -177,7 +155,7 @@ const AddEmployee: React.FC = () => {
                     onChange={handleChange}
                     required
                     placeholder="Create secure password"
-                    className="w-full border-2 border-gray-200 rounded-2xl px-6 py-4 text-lg focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md group-hover:border-gray-300"
+                  className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                   />
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
@@ -185,13 +163,8 @@ const AddEmployee: React.FC = () => {
 
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div
-                    className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
-                    style={{ background: colors.primary.hex }}
-                  >
-                    <Phone className="w-4 h-4" style={{ color: colors.highlight.hex }} />
-                  </div>
-                  <span className="text-lg">Phone Number</span>
+                
+                  <span className="text-md" style={{ color: colors.white.hex }}>Phone Number</span>
                 </label>
                 <div className="relative">
                   <input
@@ -201,7 +174,7 @@ const AddEmployee: React.FC = () => {
                     onChange={handleChange}
                     required
                     placeholder="+1 (555) 123-4567"
-                    className="w-full border-2 border-gray-200 rounded-2xl px-6 py-4 text-lg focus:ring-4 focus:ring-green-500/20 focus:border-green-500 transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md group-hover:border-gray-300"
+                    className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                   />
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
@@ -209,55 +182,26 @@ const AddEmployee: React.FC = () => {
             </div>
 
             {/* Address & Organization */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="group">
-                <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div
-                    className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
-                    style={{ background: colors.primary.hex }}
-                  >
-                    <MapPin className="w-4 h-4" style={{ color: colors.highlight.hex }} />
-                  </div>
-                  <span className="text-lg">Address</span>
-                </label>
-                <div className="relative">
-                  <input
-                    name="address"
-                    type="text"
-                    value={form.address}
-                    onChange={handleChange}
-                    required
-                    placeholder="Employee's address"
-                    className="w-full border-2 border-gray-200 rounded-2xl px-6 py-4 text-lg focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md group-hover:border-gray-300"
-                  />
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-500/5 to-red-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                </div>
-              </div>
-
-              {/* <div className="group">
-                <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div
-                    className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
-                    style={{ background: colors.primary.hex }}
-                  >
-                    <Building2 className="w-4 h-4" style={{ color: colors.highlight.hex }} />
-                  </div>
-                  <span className="text-lg">Organization ID</span>
-                </label>
-                <div className="relative">
-                  <input
-                    name="organization"
-                    type="number"
-                    value={form.organization}
-                    onChange={handleChange}
-                    required
-                    placeholder="Enter organization ID"
-                    className="w-full border-2 border-gray-200 rounded-2xl px-6 py-4 text-lg focus:ring-4 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-300 bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md group-hover:border-gray-300"
-                  />
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                </div>
-              </div> */}
-            </div>
+            {/* Address */}
+<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+  <div className="group lg:col-span-2">
+    <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
+      <span className="text-md" style={{ color: colors.white.hex }}>Address</span>
+    </label>
+    <div className="relative">
+      <input
+        name="address"
+        type="text"
+        value={form.address}
+        onChange={handleChange}
+        required
+        placeholder="Employee's address"
+        className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
+      />
+      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-500/5 to-red-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+    </div>
+  </div>
+</div>
 
             {/* Error or Success Message */}
             {error && (
