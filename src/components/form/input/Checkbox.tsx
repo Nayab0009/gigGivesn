@@ -24,17 +24,17 @@ const Checkbox: React.FC<CheckboxProps> = ({ id, label, checked, onChange, class
           className="sr-only" // Hide the actual input
         />
         <div
-          className={`w-5 h-5 border rounded flex items-center justify-center transition-colors ${
+          className={`w-4 h-4 border rounded flex items-center justify-center transition-colors ${
             checked
-              ? "bg-[#06AED7] border-[#06AED7]" // Checked state - use the blue color from the design
-              : "bg-white border-gray-300"
+              ? "bg-transparent border-white"
+              : "bg-transparent border-white"
           } ${disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
           onClick={() => !disabled && onChange(!checked)}
         >
           {checked && (
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-3.5 w-3.5 text-white"
+              className="h-3 w-3 text-white"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
