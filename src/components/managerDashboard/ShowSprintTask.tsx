@@ -18,7 +18,8 @@ import {
   TrendingUp,
   Send,
   X,
-  MessageSquare
+  MessageSquare,
+  Users
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { colors } from "@/colors";
@@ -164,81 +165,109 @@ const ShowSprintTask: React.FC = () => {
     setRefreshing(false);
   };
 
-  // Get status color and icon
-  const getStatusInfo = (status: string | undefined | null) => {
-    if (!status) {
-      return {
-        color: '',
-        icon: <Clock className="w-5 h-5" style={{ color: colors.primary.hex }} />,
-        bgColor: '',
-        borderColor: '',
-        glowColor: ''
-      };
-    }
-    
+  // Get status info for columns
+  const getColumnInfo = (status: string) => {
     switch (status.toLowerCase()) {
       case 'completed':
         return {
-          color: '',
-          icon: <CheckCircle className="w-5 h-5" style={{ color: colors.primary.hex }} />,
-          bgColor: '',
-          borderColor: '',
-          glowColor: ''
+          title: 'Done',
+          icon: <CheckCircle className="w-5 h-5 text-green-500" />,
+          bgColor: 'bg-green-50',
+          headerColor: 'bg-green-500',
+          count: tasks.filter(task => task.status?.toLowerCase() === 'completed').length
         };
       case 'inprogress':
         return {
-          color: '',
-          icon: <Clock className="w-5 h-5" style={{ color: colors.primary.hex }} />,
-          bgColor: '',
-          borderColor: '',
-          glowColor: ''
+          title: 'In Progress',
+          icon: <Clock className="w-5 h-5 text-blue-500" />,
+          bgColor: 'bg-blue-50',
+          headerColor: 'bg-blue-500',
+          count: tasks.filter(task => task.status?.toLowerCase() === 'inprogress').length
         };
       case 'cancelled':
         return {
-          color: '',
-          icon: <AlertTriangle className="w-5 h-5 text-red-700" />,
-          bgColor: '',
-          borderColor: '',
-          glowColor: ''
+          title: 'Cancelled',
+          icon: <X className="w-5 h-5 text-red-500" />,
+          bgColor: 'bg-red-50',
+          headerColor: 'bg-red-500',
+          count: tasks.filter(task => task.status?.toLowerCase() === 'cancelled').length
         };
       default:
         return {
-          color: '',
-          icon: <Clock className="w-5 h-5" style={{ color: colors.primary.hex }} />,
-          bgColor: '',
-          borderColor: '',
-          glowColor: ''
+          title: 'To Do',
+          icon: <ClipboardList className="w-5 h-5 text-gray-500" />,
+          bgColor: 'bg-gray-50',
+          headerColor: 'bg-gray-500',
+          count: tasks.filter(task => !task.status || task.status.toLowerCase() === 'todo').length
         };
     }
   };
 
-  // Get priority color
-  const getPriorityColor = (priority: string | undefined | null) => {
-    if (!priority) {
-      return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
+  // Get priority badge
+  const getPriorityBadge = (priority: string | undefined | null) => {
+    if (!priority) return null;
     
-    switch (priority.toLowerCase()) {
-      case 'high':
-        return 'bg-red-100 text-red-800 border-red-200';
-      case 'medium':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low':
-        return 'bg-green-100 text-green-800 border-green-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
+    const priorityConfig = {
+      high: { bg: 'bg-red-100', text: 'text-red-700', label: 'High' },
+      medium: { bg: 'bg-yellow-100', text: 'text-yellow-700', label: 'Medium' },
+      low: { bg: 'bg-green-100', text: 'text-green-700', label: 'Low' }
+    };
+    
+    const config = priorityConfig[priority.toLowerCase() as keyof typeof priorityConfig];
+    if (!config) return null;
+    
+    return (
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
+        {config.label}
+      </span>
+    );
   };
 
   // Format date
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
       month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+      day: 'numeric'
     });
+  };
+
+  // Get unique task statuses
+  const getTasksByStatus = () => {
+    const statusGroups: { [key: string]: TaskResponse[] } = {};
+    const statuses = ['inprogress', 'completed'];
+    
+    // Initialize groups
+    statuses.forEach(status => {
+      statusGroups[status] = [];
+    });
+    
+    // Group tasks by status
+    tasks.forEach(task => {
+      const status = task.status?.toLowerCase() || 'todo';
+      if (statusGroups[status]) {
+        statusGroups[status].push(task);
+      } else if (status === 'cancelled' || status === 'todo') {
+        // Handle other statuses
+        if (!statusGroups[status]) {
+          statusGroups[status] = [];
+        }
+        statusGroups[status].push(task);
+      }
+    });
+    
+    return statusGroups;
+  };
+
+  // Get assignee avatar
+  const getAssigneeAvatar = (task: TaskResponse) => {
+    const assignee = task.taskFor || task.user;
+    if (!assignee) return null;
+    
+    return (
+      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center text-white text-sm font-semibold">
+        {assignee.name.charAt(0).toUpperCase()}
+      </div>
+    );
   };
 
   // Get task statistics
@@ -259,273 +288,170 @@ const ShowSprintTask: React.FC = () => {
   }, [sprintId]);
 
   const taskStats = getTaskStats();
+  const tasksByStatus = getTasksByStatus();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen relative p-4 sm:p-6 lg:p-8">
+      
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-10">
-          <div className="flex items-center justify-between mb-8">
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
-              <button
-                onClick={() => router.back()}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-white/80 backdrop-blur-sm text-slate-700 rounded-2xl font-semibold transition-all duration-300 hover:bg-white hover:shadow-lg transform hover:scale-105"
-              >
-                <ArrowLeft className="w-5 h-5" />
-                Back
-              </button>
+    <button
+  onClick={() => router.back()}
+  className="inline-flex items-center gap-2 px-8 py-3 rounded-full font-medium text-white transition-all duration-300 shadow-lg hover:opacity-90"
+  style={{ backgroundColor: colors.primary.hex }}
+>
+  <ArrowLeft className="w-4 h-4" />
+  Back
+</button>
+  
             </div>
-            <button
-              onClick={refreshData}
-              disabled={refreshing || isLoading}
-              className="group inline-flex items-center gap-3 px-8 py-4 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-emerald-700 rounded-2xl text-sm font-semibold transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none border border-white/30"
-            >
-              <RefreshCw className={`w-5 h-5 transition-transform duration-300 ${refreshing ? 'animate-spin' : 'group-hover:rotate-180'}`} />
-              Refresh Tasks
-            </button>
+           <button
+  onClick={refreshData}
+  disabled={refreshing || isLoading}
+  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-white transition-all duration-300 shadow-lg disabled:opacity-50 hover:opacity-90"
+  style={{ backgroundColor: colors.primary.hex }}
+>
+  <RefreshCw
+    className={`w-4 h-4 transition-transform duration-300 ${refreshing ? 'animate-spin' : ''}`}
+  />
+  Refresh
+</button>
           </div>
           
-          <div className="text-center mb-8">
-            <h1 className="text-3xl sm:text-4xl font-bold mb-4" style={{ color: colors.primary.hex }}>
-              {sprintName || `Sprint ${sprintId}`}
+          <div className="text-center mb-6">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+              Sprint Tasks
             </h1>
-            <div className="w-24 h-1 mx-auto rounded-full mb-6" style={{ background: colors.primary.hex }}></div>
-            <p className="text-xl max-w-2xl mx-auto" style={{ color: colors.primary.hex }}>
-              {sprint?.description || 'Sprint tasks and progress overview'}
+            <p className="text-gray-400">
+              Welcome back, Manager Oversee your assigned projects and manage your tasks effectively
             </p>
-          </div>
-        </div>
-
-        {/* Stats Bar */}
-        <div className="mb-8  rounded-3xl shadow-2xl p-8 text-white"  style={{
-            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-          }}>
-          <div className="flex flex-col sm:flex-row gap-6 items-center justify-between">
-            <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                  <ClipboardList className="w-6 h-6" style={{ color: colors.primary.hex }} />
-                </div>
-                <div>
-                  <p className="text-sm text-emerald-100">Total Tasks</p>
-                  <p className="font-bold text-lg">{taskStats.total}</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                  <CheckCircle className="w-6 h-6" style={{ color: colors.primary.hex }} />
-                </div>
-                <div>
-                  <p className="text-sm text-emerald-100">Completed</p>
-                  <p className="font-bold text-lg">{taskStats.completed}</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
-                  <Clock className="w-6 h-6" style={{ color: colors.primary.hex }} />
-                </div>
-                <div>
-                  <p className="text-sm text-emerald-100">In Progress</p>
-                  <p className="font-bold text-lg">{taskStats.inProgress}</p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="mb-8 bg-red-50/80 backdrop-blur-sm border border-red-200 rounded-3xl p-6 shadow-lg">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-red-100 rounded-2xl flex items-center justify-center">
-                <AlertCircle className="w-5 h-5 text-red-600" />
+          <div className="mb-6 bg-red-500/20 backdrop-blur-sm border border-red-500/30 rounded-lg p-4">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-red-400" />
+              <div>
+                <p className="text-red-300 font-medium">Error loading tasks</p>
+                <p className="text-red-400 text-sm">{error}</p>
               </div>
-              <p className="text-red-700 font-semibold text-lg">Error loading tasks</p>
             </div>
-            <p className="text-red-600 mb-4 ml-13">{error}</p>
-            <button
-              onClick={refreshData}
-              className="ml-13 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-xl text-sm font-semibold transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              Try Again
-            </button>
           </div>
         )}
 
-        {/* Content Container */}
-        <div className="bg-white/60 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
-          {isLoading ? (
-            <div className="p-16 text-center">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-6" style={{ background: colors.accent.hex }}>
-                <Loader2 className="w-8 h-8 animate-spin" style={{ color: colors.primary.hex }} />
-              </div>
-              <p className="text-slate-600 text-xl font-medium">Loading sprint tasks...</p>
+        {/* Loading State */}
+        {isLoading ? (
+          <div className="text-center py-16">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/10 mb-4">
+              <Loader2 className="w-6 h-6 animate-spin text-white" />
             </div>
-          ) : tasks.length === 0 ? (
-            <div className="p-16 text-center">
-              <div className="w-20 h-20 rounded-full flex items-center justify-center mb-6 mx-auto shadow-lg" style={{ background: colors.accent.hex }}>
-                <ClipboardList className="w-10 h-10" style={{ color: colors.primary.hex }} />
-              </div>
-              <h3 className="text-2xl font-bold text-slate-900 mb-3">No Tasks Found</h3>
-              <p className="text-slate-500 text-lg">This sprint doesn't have any tasks assigned yet.</p>
-            </div>
-          ) : (
-            <div className="p-8">
-              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-                {tasks.map((task) => {
-                  const statusInfo = getStatusInfo(task.status);
-                  
-                  return (
-                    <div
-                      key={task.id}
-                      className={`${statusInfo.bgColor} rounded-2xl border-2 ${statusInfo.borderColor} p-6 hover:shadow-2xl ${statusInfo.glowColor} transition-all duration-500 backdrop-blur-sm transform hover:scale-105 hover:-translate-y-2 group`}
-                    >
-                      {/* Task Header */}
-                      <div className="flex items-start justify-between mb-6">
-                        <div className="flex-1">
-                          <h3 className="text-xl font-bold mb-3 line-clamp-2">
-                            <span style={{ color: colors.primary.hex }}>{task.title}</span>
-                          </h3>
-                          <div className="flex items-center space-x-3">
-                            <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold ${statusInfo.color} shadow-lg`}>
-                              {statusInfo.icon}
-                              <span style={{ color: colors.primary.hex }}>{task.status ? task.status.charAt(0).toUpperCase() + task.status.slice(1) : ''}</span>
-                            </div>
-                            <div className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border ${getPriorityColor(task.priority)}`}>
-                              <Star className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                              {task.priority ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1) : ''}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Task Description */}
-                      <div className="mb-6">
-                        <p className="text-slate-600 line-clamp-3 leading-relaxed">
-                          {task.description || 'No description provided'}
-                        </p>
-                      </div>
-
-                      {/* Assignee Info */}
-                      {task.taskFor ? (
-                        <div className="mb-6 p-4 bg-slate-50/50 rounded-xl">
-                          <div className="flex items-center space-x-3 mb-3">
-                            <User className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                            <span className="text-sm font-semibold" style={{ color: colors.primary.hex }}>Assigned To</span>
-                          </div>
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: colors.accent.hex }}>
-                              <span style={{ color: colors.primary.hex }} className="text-sm font-semibold">
-                                {task.taskFor.name.charAt(0).toUpperCase()}
-                              </span>
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium" style={{ color: colors.primary.hex }}>{task.taskFor.name}</p>
-                              <p className="text-xs" style={{ color: colors.secondary.hex }}>{task.taskFor.role}</p>
-                            </div>
-                          </div>
-                        </div>
-                      ) : task.user ? (
-                        <div className="mb-6 p-4 bg-slate-50/50 rounded-xl">
-                          <div className="flex items-center space-x-3 mb-3">
-                            <User className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                            <span className="text-sm font-semibold" style={{ color: colors.primary.hex }}>Assigned To</span>
-                          </div>
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: colors.accent.hex }}>
-                              <span style={{ color: colors.primary.hex }} className="text-sm font-semibold">
-                                {task.user.name.charAt(0).toUpperCase()}
-                              </span>
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium" style={{ color: colors.primary.hex }}>{task.user.name}</p>
-                              <p className="text-xs" style={{ color: colors.secondary.hex }}>{task.user.role}</p>
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="mb-6 p-4 bg-slate-50/50 rounded-xl">
-                          <div className="flex items-center space-x-3 mb-3">
-                            <User className="w-4 h-4 text-slate-400" />
-                            <span className="text-sm font-semibold text-slate-500">Assignment</span>
-                          </div>
-                          <div className="flex items-center space-x-3 mb-4">
-                            <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center">
-                              <span className="text-sm font-semibold text-slate-500">?</span>
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-slate-500">No assignee</p>
-                              <p className="text-xs text-slate-400">Task not yet assigned</p>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Task Meta Info */}
-                      <div className="space-y-3 mb-6 p-4 bg-slate-50/50 rounded-xl">
-                        <div className="flex items-center space-x-3 text-sm text-slate-600">
-                          <Calendar className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                          <span>Created: {formatDate(task.createdAt)}</span>
-                        </div>
-                        {task.dueDate && (
-                          <div className="flex items-center space-x-3 text-sm text-slate-600">
-                            <Clock className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                            <span>Due: {formatDate(task.dueDate)}</span>
-                          </div>
-                        )}
-                        {task.updatedAt !== task.createdAt && (
-                          <div className="flex items-center space-x-3 text-sm text-slate-600">
-                            <Clock className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                            <span>Updated: {formatDate(task.updatedAt)}</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* View Report Button */}
-                      <div className="mt-6">
-                        <button
-                          onClick={() => handleViewReport(task)}
-                          className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r hover:shadow-xl text-white rounded-xl text-sm font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
-                          style={{ 
-                            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` 
-                          }}
-                        >
-                          <FileText className="w-4 h-4" />
-                          View Report
-                        </button>
-                      </div>
+            <p className="text-gray-400">Loading sprint tasks...</p>
+          </div>
+        ) : (
+          /* Kanban Board */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Object.entries(tasksByStatus).map(([status, statusTasks]) => {
+              const columnInfo = getColumnInfo(status);
+              
+              // Skip empty columns that aren't in our main statuses
+              if (statusTasks.length === 0 && !['inprogress', 'completed'].includes(status)) {
+                return null;
+              }
+              
+              return (
+                <div key={status} className="flex flex-col">
+                  {/* Column Header */}
+                  <div className="flex items-center justify-between p-4 mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full ${columnInfo.headerColor}`}></div>
+                      <span className="text-white font-medium">{columnInfo.title}</span>
+                      <span className="bg-white/10 text-white text-sm px-2 py-1 rounded-full">
+                        ({statusTasks.length})
+                      </span>
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
+                  </div>
+
+                  {/* Tasks */}
+                  <div className="space-y-4 flex-1">
+                    {statusTasks.map((task) => (
+                      <div
+                        key={task.id}
+                        className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/10 hover:bg-white/20 transition-all duration-300 cursor-pointer group"
+                        onClick={() => handleViewReport(task)}
+                      >
+                        {/* Task ID */}
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-gray-400 text-sm font-medium">
+                            MBA-{task.id}
+                          </span>
+                          {getAssigneeAvatar(task)}
+                        </div>
+
+                        {/* Task Title */}
+                        <h3 className="text-white font-medium mb-3 line-clamp-2 group-hover:text-blue-300 transition-colors">
+                          {task.title}
+                        </h3>
+
+                        {/* Priority */}
+                        {task.priority && (
+                          <div className="flex flex-wrap items-center gap-2 mb-4">
+                            {getPriorityBadge(task.priority)}
+                          </div>
+                        )}
+
+                        {/* Assignee Info */}
+                        {(task.taskFor || task.user) && (
+                          <div className="flex items-center gap-2 text-gray-400 text-sm">
+                            <User className="w-3 h-3" />
+                            <span>{(task.taskFor || task.user)?.name}</span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+
+                    {/* Empty State */}
+                    {statusTasks.length === 0 && (
+                      <div className="text-center py-8 text-gray-500">
+                        <ClipboardList className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">No tasks</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Modal */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
               {/* Modal Header */}
-              <div className="flex items-center justify-between p-6 border-b border-slate-200">
+              <div className="flex items-center justify-between p-6 border-b border-gray-200">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: colors.accent.hex }}>
-                    <MessageSquare className="w-5 h-5" style={{ color: colors.primary.hex }} />
+                  <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+                    <MessageSquare className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold" style={{ color: colors.primary.hex }}>
+                    <h3 className="text-xl font-bold text-gray-900">
                       Task Report
                     </h3>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-gray-500">
                       {selectedTask?.title || 'Loading...'}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={closeModal}
-                  className="w-8 h-8 bg-slate-100 hover:bg-slate-200 rounded-full flex items-center justify-center transition-colors duration-200"
+                  className="w-8 h-8 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center justify-center transition-colors"
                 >
-                  <X className="w-4 h-4 text-slate-600" />
+                  <X className="w-4 h-4 text-gray-600" />
                 </button>
               </div>
 
@@ -533,34 +459,62 @@ const ShowSprintTask: React.FC = () => {
               <div className="p-6">
                 {modalLoading ? (
                   <div className="text-center py-8">
-                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" style={{ color: colors.primary.hex }} />
-                    <p className="text-slate-600">Loading task report...</p>
+                    <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-blue-600" />
+                    <p className="text-gray-600">Loading task report...</p>
                   </div>
                 ) : (
                   <div>
                     {selectedTask?.comment ? (
                       <div className="space-y-4">
                         <div className="flex items-center gap-2 mb-4">
-                          <MessageSquare className="w-5 h-5" style={{ color: colors.primary.hex }} />
-                          <span className="font-semibold" style={{ color: colors.primary.hex }}>
+                          <MessageSquare className="w-5 h-5 text-blue-600" />
+                          <span className="font-semibold text-gray-900">
                             Task Comment/Report
                           </span>
                         </div>
-                        <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200">
-                          <p className="text-slate-700 leading-relaxed whitespace-pre-wrap">
+                        <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
+                          <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
                             {selectedTask.comment}
                           </p>
+                        </div>
+                        
+                        {/* Task Details */}
+                        <div className="grid grid-cols-2 gap-4 mt-6 p-4 bg-blue-50 rounded-xl">
+                          <div>
+                            <p className="text-sm text-gray-600 mb-1">Status</p>
+                            <p className="font-medium text-gray-900 capitalize">
+                              {selectedTask.status}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600 mb-1">Priority</p>
+                            <p className="font-medium text-gray-900 capitalize">
+                              {selectedTask.priority || 'Not set'}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600 mb-1">Created</p>
+                            <p className="font-medium text-gray-900">
+                              {formatDate(selectedTask.createdAt)}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600 mb-1">Assignee</p>
+                            <p className="font-medium text-gray-900">
+                              {(selectedTask.taskFor || selectedTask.user)?.name || 'Unassigned'}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     ) : (
                       <div className="text-center py-8">
-                        <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: colors.accent.hex }}>
-                          <MessageSquare className="w-8 h-8" style={{ color: colors.primary.hex }} />
+                        <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
+                          <MessageSquare className="w-8 h-8 text-blue-600" />
                         </div>
-                        <h4 className="text-lg font-semibold text-slate-700 mb-2">
+                        <h4 className="text-lg font-semibold text-gray-700 mb-2">
                           No Comment Available
                         </h4>
-                        <p className="text-slate-500">
+                        <p className="text-gray-500">
                           This task doesn't have any comment or report yet.
                         </p>
                       </div>
@@ -570,10 +524,10 @@ const ShowSprintTask: React.FC = () => {
               </div>
 
               {/* Modal Footer */}
-              <div className="flex items-center justify-end gap-3 p-6 border-t border-slate-200">
+              <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200">
                 <button
                   onClick={closeModal}
-                  className="px-6 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-medium transition-colors duration-200"
+                  className="px-6 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors"
                 >
                   Close
                 </button>
