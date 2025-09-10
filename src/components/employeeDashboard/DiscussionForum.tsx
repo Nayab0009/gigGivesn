@@ -124,36 +124,42 @@ export default function ForumPage() {
   const selectedThread = threads.find((t) => t.id === selectedThreadId)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      <div className="max-w-6xl mx-auto p-8">
-        {/* Header */}
-        <div className="mb-12 text-center">
-          <div className="relative inline-block">
-            <h1 className="text-5xl font-extrabold bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 bg-clip-text text-transparent mb-4 tracking-tight">
-              Discussion Forum
-            </h1>
-            <div
-              className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 h-1 rounded-full"
-              style={{ backgroundColor: colors.primary.hex }}
-            ></div>
+  <div className="min-h-screen mx-4">
+      {/* Header Section */}
+      <div
+        className="mb-12 flex items-center justify-between  mt-6 opacity-100 mx-auto"
+       
+      >
+        <div className="flex flex-col justify-leftye sp">
+          <h1 className="font-inter font-semibold text-[20px] leading-[28px] text-white align-middle mb-1">Discussion Forum</h1>
+          <p className="font-inter font-normal text-[14px] leading-[20px] text-white align-middle">Connect, collaborate & share ideas with your team</p>
+        </div>
+        <div className="flex items-center gap-4">
+          {/* Example avatars, replace with real avatars if available */}
+          <div className="flex -space-x-3 mr-2">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="avatar1" className="w-8 h-8 rounded-full border-2 border-white" />
+            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="avatar2" className="w-8 h-8 rounded-full border-2 border-white" />
+            <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="avatar3" className="w-8 h-8 rounded-full border-2 border-white" />
+            <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs font-bold text-gray-700">+10</div>
           </div>
-          <p className="text-xl text-gray-600 mt-6 font-medium max-w-2xl mx-auto leading-relaxed">
-            Connect, collaborate, and share ideas with your team
-          </p>
-          {user && (
-            <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-gray-200 shadow-sm">
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: colors.accent.hex }}></div>
-              <span className="text-sm font-semibold text-gray-700">Welcome, {user.name}</span>
-              <span
-                className="text-xs px-2 py-1 rounded-full text-white font-medium"
-                style={{ backgroundColor: colors.secondary.hex }}
-              >
-                {user.role}
-              </span>
-            </div>
+          {/* Start New Discussion Button (moved and fully functional) */}
+          {isAuthenticated && (
+            <button
+              className="group relative inline-flex items-center gap-3 font-bold text-white text-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 active:scale-95 overflow-hidden rounded-lg opacity-100 px-4 py-2"
+              style={{
+                background: `linear-gradient(135deg, ${colors.primary.hex} 0%, ${colors.secondary.hex} 100%)`,
+              }}
+              onClick={() => setShowNewThreadForm(!showNewThreadForm)}
+              disabled={isLoading}
+            >
+              <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+              <Plus size={24} className="relative z-10" />
+              <span className="relative z-10 font-inter font-medium text-[14px] leading-[20px] text-center align-middle">{showNewThreadForm ? "Cancel" : "Start New"}</span>
+            </button>
           )}
         </div>
-
+      </div>
+  <div   className="relative  rounded-[20px] border border-white/30 p-[30px] gap-[20px] bg-black/30 opacity-100 mx-auto">
         {/* Authentication Check */}
         {!isAuthenticated ? (
           <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-2xl p-8 mb-10 shadow-lg">
@@ -169,21 +175,7 @@ export default function ForumPage() {
           </div>
         ) : (
           <>
-            {/* New Thread Button */}
-            <div className="mb-8 flex justify-center">
-              <button
-                className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-white text-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 active:scale-95 overflow-hidden"
-                style={{
-                  background: `linear-gradient(135deg, ${colors.primary.hex} 0%, ${colors.secondary.hex} 100%)`,
-                }}
-                onClick={() => setShowNewThreadForm(!showNewThreadForm)}
-                disabled={isLoading}
-              >
-                <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                <Plus size={24} className="relative z-10" />
-                <span className="relative z-10">{showNewThreadForm ? "Cancel" : "Start New Discussion"}</span>
-              </button>
-            </div>
+            {/* New Thread Button moved to header, removed from here */}
 
             {/* New Thread Form */}
             {showNewThreadForm && (
@@ -267,45 +259,55 @@ export default function ForumPage() {
               threads.map((thread) => (
                 <div
                   key={thread.id}
-                  className="group bg-white/90 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer border border-gray-200 overflow-hidden transform hover:-translate-y-2 hover:scale-[1.02]"
+                  className="group cursor-pointer overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] mb-6 w-full"
+                  style={{
+                    borderRadius: '15px',
+                    borderWidth: '1px',
+                    opacity: 1,
+                    background: '#0000004D',
+                    backgroundBlendMode: 'luminosity',
+                    border: '1px solid #FFFFFF4D',
+                    position: 'relative',
+                  }}
                   onClick={() => setSelectedThreadId(thread.id)}
                 >
-                  <div className="p-8 relative">
-                    <div
-                      className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      style={{ background: `linear-gradient(90deg, ${colors.primary.hex}, ${colors.secondary.hex})` }}
-                    ></div>
-
-                    {/* Title */}
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
-                      {thread.title}
-                    </h3>
-
+                  <div className="p-8 relative h-full flex flex-col justify-between min-h-[182px]">
+                    
                     {/* Author */}
                     <div className="flex items-center gap-3 mb-5">
                       <div className="p-2 rounded-full bg-gray-100 group-hover:bg-blue-100 transition-colors duration-300">
-                        <User size={16} className="text-gray-500 group-hover:text-blue-600" />
+                        <User size={28} className="text-gray-500 group-hover:text-blue-600" />
                       </div>
-                      <span className="text-sm font-semibold text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
+                      <span className="font-inter font-normal text-[13px] leading-[1] tracking-[0.05em] align-middle text-gray-200 group-hover:text-gray-100 transition-colors duration-300">
                         Started by {thread.discussionBy?.name || "Unknown"}
                       </span>
                     </div>
 
+                   
+                    {/* Updated Tailwind styling for thread title */}
+                    <h3
+                      className="font-inter font-bold text-[14px] leading-[1] tracking-[0.05em] align-middle mb-4 text-[#0CA9F6] transition-all duration-300"
+                    >
+                      {thread.title}
+                    </h3>
+
+                    
+
                     {/* Content Preview */}
-                    <p className="text-gray-700 mb-6 line-clamp-2 text-lg leading-relaxed">{thread.description}</p>
+                    <p className="font-inter font-light text-[14px] leading-[25px] tracking-[0.05em] text-gray-200 mb-6 line-clamp-2">{thread.description}</p>
 
                     {/* Comments Count */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-gray-50 group-hover:bg-blue-50 transition-colors duration-300">
+                        <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-gray-50/20 group-hover:bg-blue-50/30 transition-colors duration-300">
                           <MessageCircle size={18} style={{ color: colors.accent.hex }} />
                           <span style={{ color: colors.accent.hex }} className="font-bold text-sm">
-                            {(thread as any).comments?.length || 0}{" "}
+                            {(thread as any).comments?.length || 0} {" "}
                             {(thread as any).comments?.length === 1 ? "comment" : "comments"}
                           </span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-500 px-3 py-2 rounded-full bg-gray-50">
+                      <div className="flex items-center gap-2 text-sm text-gray-200 px-3 py-2 rounded-full bg-gray-50/10">
                         <Clock size={16} />
                         <span className="font-medium">{new Date(thread.createdAt).toLocaleString()}</span>
                       </div>
@@ -447,5 +449,6 @@ export default function ForumPage() {
         )}
       </div>
     </div>
+    
   )
 }

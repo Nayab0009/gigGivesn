@@ -229,7 +229,7 @@ export default function SignInForm() {
           <div
             className="w-[600px] h-[510px] rounded-[22px] p-8 flex flex-col justify-between shadow-2xl text-white opacity-100 backdrop-blur-[24px] "
             style={{
-              background: '#0000005D',
+              background: '#0000006D',
               backdropFilter: 'blur(24px) saturate(180%)',
               WebkitBackdropFilter: 'blur(24px) saturate(180%)',
             }}

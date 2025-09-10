@@ -21,13 +21,14 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         {/* Background Image */}
-        <div className="absolute inset-0 -z-10">
+        <div className="fixed inset-0 min-h-full min-w-full -z-10">
           <Image
-            src="/images/Rectangle 105.png" 
+            src="/images/Rectangle 105.png"
             alt="Background"
             fill
             priority
             className="object-cover"
+            style={{ zIndex: -10 }}
           />
         </div>
         <Providers>
