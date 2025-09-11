@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useMemo } from "react"
-import { Search, RefreshCw, AlertCircle, Users, X, Loader2, Trash2, Edit } from "lucide-react"
+import { Search, RefreshCw, AlertCircle, Users, X, Loader2, Trash2, Edit, Table, LayoutGrid } from "lucide-react"
 import { AssignTeamModal } from "../adminDashboard/AssignProjectTeam"
 import { AssignTaskModal } from "../adminDashboard/AssignProjectTicket"
 import { getProjectsForManagers } from "@/lib/SprintService"
@@ -8,7 +8,6 @@ import { getProjectTeam } from "@/lib/ProjectService"
 import { updateProjectStatus } from "@/lib/ProjectService"
 import { deleteProject } from "@/lib/ProjectService"
 import { useAuth } from "@/context/AuthContext"
-import axiosInstance from "@/lib/axios"
 import type { Task, Team } from "@/types"
 import { colors } from "@/colors"
 import Pagination from "../pagination"
@@ -138,7 +137,7 @@ function EditStatusModal({
   if (!open || !project) return null
 
   return (
-  <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
       <div className="bg-black/20 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-white/10">
         {/* Header */}
         <div className="p-6 text-white bg-black/30 backdrop-blur-sm border-b border-white/10">
@@ -246,7 +245,7 @@ function ViewTeamModal({
   if (!open || !projectId) return null
 
   return (
- <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
       <div className="bg-black/20 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden border border-white/10">
         {/* Header */}
         <div className="p-6 text-white bg-black/30 backdrop-blur-sm border-b border-white/10">
@@ -255,10 +254,7 @@ function ViewTeamModal({
               <h2 className="text-2xl font-bold mb-1 text-white">Project Team</h2>
               <p className="text-gray-300 text-sm">Team members for project {projectId}</p>
             </div>
-            <button
-              onClick={onClose}
-              className="p-2 rounded-full hover:bg-white/20 transition-colors"
-            >
+            <button onClick={onClose} className="p-2 rounded-full hover:bg-white/20 transition-colors">
               <X className="w-6 h-6 text-white" />
             </button>
           </div>
@@ -368,6 +364,8 @@ export default function ProjectDashboard() {
   // Get user data from AuthContext
   const { user } = useAuth()
 
+  const [currentView, setCurrentView] = useState<"table" | "kanban">("table")
+
   // State management
   const [isLoading, setIsLoading] = useState(true)
   const [projects, setProjects] = useState<BackendProject[]>([])
@@ -390,8 +388,8 @@ export default function ProjectDashboard() {
   const [isDeleting, setIsDeleting] = useState<number | null>(null)
 
   // Pagination logic
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 5
 
   // Fetch manager projects function
   const fetchManagerProjects = async () => {
@@ -446,32 +444,24 @@ export default function ProjectDashboard() {
   }
 
   // Update project status function
-  const handleUpdatedProjectStatus = async (
-    projectId: number,
-    newStatus: string
-  ) => {
-    setIsLoading(true);
-    setError(null);
-  
+  const handleUpdatedProjectStatus = async (projectId: number, newStatus: string) => {
+    setIsLoading(true)
+    setError(null)
+
     try {
-      await updateProjectStatus(projectId, newStatus);
-  
-      setProjects((prev) =>
-        prev.map((p) =>
-          p.id === projectId ? { ...p, status: newStatus } : p
-        )
-      );
-  
-      console.log("Project status updated successfully");
+      await updateProjectStatus(projectId, newStatus)
+
+      setProjects((prev) => prev.map((p) => (p.id === projectId ? { ...p, status: newStatus } : p)))
+
+      console.log("Project status updated successfully")
     } catch (error) {
-      console.error("Error updating project status:", error);
-      setError("Failed to update project status. Please try again.");
-      throw error;
+      console.error("Error updating project status:", error)
+      setError("Failed to update project status. Please try again.")
+      throw error
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
-  
+  }
 
   // Filter projects based on search and filters
   const filteredProjects = useMemo(() => {
@@ -485,13 +475,18 @@ export default function ProjectDashboard() {
   }, [projects, searchTerm])
 
   // Pagination logic
-  const paginatedProjects = filteredProjects.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const paginatedProjects = filteredProjects.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
   useEffect(() => {
-    setCurrentPage(1);
-  }, [filteredProjects]);
+    setCurrentPage(1)
+  }, [filteredProjects])
+
+  const handleViewChange = (view: "table" | "kanban") => {
+    setCurrentView(view)
+    if (view === "kanban") {
+      // Navigate to kanban view page
+      window.location.href = "/dashboard/manager/projectkanbanview"
+    }
+  }
 
   // --- Assign Team Logic ---
   const assignTeam = (projectId: string, team: Team) => {
@@ -536,13 +531,13 @@ export default function ProjectDashboard() {
   // --- RENDER ---
   return (
     <div
-  className="
-    min-h-screen 
-    p-4 sm:p-6 lg:p-8 ml-6
+      className="
+        min-h-screen 
+        p-4 sm:p-6 lg:p-8 ml-6
 
-    rounded-2xl
-  "
->
+        rounded-2xl
+      "
+    >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -570,69 +565,100 @@ export default function ProjectDashboard() {
         )}
 
         {/* Action Bar */}
-       <div
- className="
-  mb-8 
-  bg-black/40
-  backdrop-blur-xl 
-  rounded-2xl 
-  shadow-lg 
-  border border-white/10 
-  p-6
-"
->
-  <div className="flex flex-col sm:flex-row gap-4 items-center">
-    {/* Search Bar Full Width */}
-    <div className="relative flex-1 w-full">
-      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300 w-5 h-5" />
-      <input
-        type="text"
-        placeholder="Search projects by name, ID, or description..."
-        className="
-          w-full pl-10 pr-4 py-3 
-          rounded-2xl 
-          border border-white/30 
-          bg-black/20 
-          backdrop-blur-md
-          text-white placeholder-white/70
-          focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500
-          transition-all duration-300
-          shadow-sm focus:shadow-md
-        "
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-      />
-    </div>
+        <div
+          className="
+            mb-8 
+            bg-black/40
+            backdrop-blur-xl 
+            rounded-2xl 
+            shadow-lg 
+            border border-white/10 
+            p-6
+          "
+        >
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+            {/* Search Bar and View Toggle Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 items-center flex-1 w-full">
+              {/* Search Bar */}
+              <div className="relative flex-1 w-full">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="Search projects by name, ID, or description..."
+                  className="
+                    w-full pl-10 pr-4 py-3 
+                    rounded-2xl 
+                    border border-white/30 
+                    bg-black/20 
+                    backdrop-blur-md
+                    text-white placeholder-white/70
+                    focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500
+                    transition-all duration-300
+                    shadow-sm focus:shadow-md
+                  "
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
 
-    {/* Refresh Button */}
-    <button
-      onClick={refreshData}
-      disabled={isLoading}
-      style={{
-        background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-      }}
-      className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none w-full sm:w-auto"
-    >
-      <RefreshCw
-        className={`w-4 h-4 transition-transform duration-300 ${isLoading ? "animate-spin" : "group-hover:rotate-180"}`}
-      />
-      Refresh
-    </button>
-  </div>
-</div>
+              <div className="flex items-center gap-2 bg-black/30 backdrop-blur-md rounded-2xl p-1 border border-white/20">
+                <button
+                  onClick={() => handleViewChange("table")}
+                  className={`
+                    flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300
+                    ${
+                      currentView === "table"
+                        ? "bg-white/20 text-white shadow-md"
+                        : "text-white/70 hover:text-white hover:bg-white/10"
+                    }
+                  `}
+                >
+                  <Table className="w-4 h-4" />
+                  Table View
+                </button>
+                <button
+                  onClick={() => handleViewChange("kanban")}
+                  className={`
+                    flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300
+                    ${
+                      currentView === "kanban"
+                        ? "bg-white/20 text-white shadow-md"
+                        : "text-white/70 hover:text-white hover:bg-white/10"
+                    }
+                  `}
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                  Kanban View
+                </button>
+              </div>
+            </div>
 
+            {/* Refresh Button */}
+            <button
+              onClick={refreshData}
+              disabled={isLoading}
+              style={{
+                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+              }}
+              className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none w-full sm:w-auto"
+            >
+              <RefreshCw
+                className={`w-4 h-4 transition-transform duration-300 ${isLoading ? "animate-spin" : "group-hover:rotate-180"}`}
+              />
+              Refresh
+            </button>
+          </div>
+        </div>
 
         {/* Table Container */}
         <div
-  className="
-    bg-black/30 
-    backdrop-blur-xl 
-    rounded-2xl 
-    shadow-lg 
-    border border-white/10 
-    overflow-hidden
-  "
->
+          className="bg-black/30 
+            backdrop-blur-xl 
+            rounded-2xl 
+            shadow-lg 
+            border border-white/10 
+            overflow-hidden"
+        >
           {isLoading ? (
             <div className="p-12 text-center">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
@@ -642,201 +668,190 @@ export default function ProjectDashboard() {
             </div>
           ) : (
             <div className="overflow-x-auto ">
-                <table className="min-w-full divide-y divide-emerald-200 ">
-                  <thead
-  className="bg-white/5 
-    backdrop-blur-xl 
-    rounded-t-2xl 
-    shadow-lg 
-        border-b border-white
+              <table className="min-w-full divide-y divide-emerald-200 ">
+                <thead
+                  className="bg-white/5 
+                    backdrop-blur-xl 
+                    rounded-t-2xl 
+                    shadow-lg 
+                    border-b border-white
 
-    overflow-hidden
-  "
->
-  <tr className="h-[73px]">
-    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-      Name
-    </th>
-    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-      Description
-    </th>
-    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-      Start Date
-    </th>
-    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-      End Date
-    </th>
-    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider min-w-[120px]">
-      Status
-    </th>
-    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider min-w-[200px]">
-      Actions
-    </th>
-    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-      View Team
-    </th>
-    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-      Settings
-    </th>
-  </tr>
-</thead>
+                    overflow-hidden"
+                >
+                  <tr className="h-[73px]">
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                      Name
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                      Description
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                      Start Date
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                      End Date
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider min-w-[120px]">
+                      Status
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider min-w-[200px]">
+                      Actions
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                      View Team
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                      Settings
+                    </th>
+                  </tr>
+                </thead>
 
-                 <tbody
-  className="bg-white/5 
-    backdrop-blur-xl 
-    rounded-b-2xl 
-    shadow-lg 
-    border border-white/10 
-    overflow-hidden 
-    divide-y divide-white/10"
->
-  {filteredProjects.length === 0 ? (
-    <tr>
-      <td colSpan={8} className="px-6 py-12 text-center">
-        <div className="flex flex-col items-center justify-center">
-          <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
-            <AlertCircle className="w-8 h-8 text-emerald-500" />
-          </div>
-          <p className="text-gray-300 text-lg font-medium mb-1">
-            {error ? "Unable to load projects" : "No projects found"}
-          </p>
-          <p className="text-gray-400">
-            {error
-              ? "Please try refreshing the page"
-              : "You have no assigned projects matching the current filters"}
-          </p>
-        </div>
-      </td>
-    </tr>
-  ) : (
-    paginatedProjects.map((project) => (
-      <tr
-        key={project.id.toString()}
-        className="hover:bg-white/10 transition-all duration-300"
-      >
-        {/* Project Name */}
-        <td className="px-6 py-6">
-          <h3 className="text-lg font-semibold text-white leading-tight">
-            {project.name}
-          </h3>
-        </td>
+                <tbody
+                  className="bg-white/5 
+                    backdrop-blur-xl 
+                    rounded-b-2xl 
+                    shadow-lg 
+                    border border-white/10 
+                    overflow-hidden 
+                    divide-y divide-white/10"
+                >
+                  {filteredProjects.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="px-6 py-12 text-center">
+                        <div className="flex flex-col items-center justify-center">
+                          <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+                            <AlertCircle className="w-8 h-8 text-emerald-500" />
+                          </div>
+                          <p className="text-gray-300 text-lg font-medium mb-1">
+                            {error ? "Unable to load projects" : "No projects found"}
+                          </p>
+                          <p className="text-gray-400">
+                            {error
+                              ? "Please try refreshing the page"
+                              : "You have no assigned projects matching the current filters"}
+                          </p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    paginatedProjects.map((project) => (
+                      <tr key={project.id.toString()} className="hover:bg-white/10 transition-all duration-300">
+                        {/* Project Name */}
+                        <td className="px-6 py-6">
+                          <h3 className="text-lg font-semibold text-white leading-tight">{project.name}</h3>
+                        </td>
 
-        {/* Description */}
-        <td className="px-6 py-6">
-          <p className="text-gray-300 text-sm leading-relaxed max-w-xs">
-            {project.description}
-          </p>
-        </td>
+                        {/* Description */}
+                        <td className="px-6 py-6">
+                          <p className="text-gray-300 text-sm leading-relaxed max-w-xs">{project.description}</p>
+                        </td>
 
-        {/* Start Date */}
-        <td className="px-6 py-6">
-          <span className="text-gray-200 text-sm">
-            {new Date(project.startDate).toLocaleDateString()}
-          </span>
-        </td>
+                        {/* Start Date */}
+                        <td className="px-6 py-6">
+                          <span className="text-gray-200 text-sm">
+                            {new Date(project.startDate).toLocaleDateString()}
+                          </span>
+                        </td>
 
-        {/* End Date */}
-        <td className="px-6 py-6">
-          <span className="text-gray-200 text-sm">
-            {new Date(project.endDate).toLocaleDateString()}
-          </span>
-        </td>
+                        {/* End Date */}
+                        <td className="px-6 py-6">
+                          <span className="text-gray-200 text-sm">
+                            {new Date(project.endDate).toLocaleDateString()}
+                          </span>
+                        </td>
 
-        {/* Status */}
-        <td className="px-6 py-4">
-          {project.status ? (
-            <span
-              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize whitespace-nowrap ${getStatusColor(
-                project.status
-              )}`}
-            >
-              {project.status === "inprogress"
-                ? "In Progress"
-                : project.status
-                    .replace(/([A-Z])/g, " $1")
-                    .replace(/^./, (str) => str.toUpperCase())
-                    .trim()}
-            </span>
-          ) : (
-            <span
-              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
-                project.isActive
-                  ? "bg-emerald-100 text-emerald-700"
-                  : "bg-gray-100 text-gray-700"
-              }`}
-            >
-              {project.isActive ? "Active" : "Inactive"}
-            </span>
-          )}
-        </td>
+                        {/* Status */}
+                        <td className="px-6 py-4">
+                          {project.status ? (
+                            <span
+                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize whitespace-nowrap ${getStatusColor(
+                                project.status,
+                              )}`}
+                            >
+                              {project.status === "inprogress"
+                                ? "In Progress"
+                                : project.status
+                                    .replace(/([A-Z])/g, " $1")
+                                    .replace(/^./, (str) => str.toUpperCase())
+                                    .trim()}
+                            </span>
+                          ) : (
+                            <span
+                              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
+                                project.isActive ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-700"
+                              }`}
+                            >
+                              {project.isActive ? "Active" : "Inactive"}
+                            </span>
+                          )}
+                        </td>
 
-        {/* Actions - Assign Team */}
-        <td className="px-6 py-6">
-          <div className="flex flex-row gap-2">
-            <button
-              className="px-4 py-2 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-              style={{
-                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-              }}
-              onClick={() => setAssignTeamProjectId(String(project.id))}
-            >
-              Assign Team
-            </button>
-          </div>
-        </td>
+                        {/* Actions - Assign Team */}
+                        <td className="px-6 py-6">
+                          <div className="flex flex-row gap-2">
+                            <button
+                              className="px-4 py-2 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
+                              style={{
+                                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                              }}
+                              onClick={() => setAssignTeamProjectId(String(project.id))}
+                            >
+                              Assign Team
+                            </button>
+                          </div>
+                        </td>
 
-        {/* Actions - View Team */}
-        <td className="px-6 py-6">
-          <div className="flex items-center gap-2">
-            <button
-              className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 border border-white"
-              // style={{
-              //   background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-              // }}
-              onClick={() => setViewTeamProjectId(project.id)}
-            >
-              <Users className="w-4 h-4" />
-            </button>
-          </div>
-        </td>
+                        {/* Actions - View Team */}
+                        <td className="px-6 py-6">
+                          <div className="flex items-center gap-2">
+                            <button
+                              className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 border border-white"
+                              // style={{
+                              //   background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                              // }}
+                              onClick={() => setViewTeamProjectId(project.id)}
+                            >
+                              <Users className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </td>
 
-        {/* Actions - Edit / Delete */}
-        <td className="px-6 py-6">
-          <div className="flex items-center gap-2">
-            {/* Edit */}
-            <button
-              className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 border border-white"
-              // style={{
-              //   background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-              // }}
-              onClick={() => setEditStatusProjectId(project.id)}
-            >
-              <Edit className="w-4 h-4" />
-            </button>
+                        {/* Actions - Edit / Delete */}
+                        <td className="px-6 py-6">
+                          <div className="flex items-center gap-2">
+                            {/* Edit */}
+                            <button
+                              className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 border border-white"
+                              // style={{
+                              //   background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                              // }}
+                              onClick={() => setEditStatusProjectId(project.id)}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </button>
 
-            {/* Delete */}
-            <button
-              className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed border border-white"
-              // style={{
-              //   background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-              // }}
-              onClick={() => handleDeleteProject(project.id)}
-              disabled={isDeleting === project.id}
-            >
-              {isDeleting === project.id ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Trash2 className="w-4 h-4" />
-              )}
-            </button>
-          </div>
-        </td>
-      </tr>
-    ))
-  )}
-</tbody>
-
-                </table>
+                            {/* Delete */}
+                            <button
+                              className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed border border-white"
+                              // style={{
+                              //   background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                              // }}
+                              onClick={() => handleDeleteProject(project.id)}
+                              disabled={isDeleting === project.id}
+                            >
+                              {isDeleting === project.id ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <Trash2 className="w-4 h-4" />
+                              )}
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
           )}
         </div>

@@ -81,13 +81,20 @@ export default function UserDropdown() {
           <span className="block text-sm text-white">{user.email}</span>
 
           {/* Sign out button */}
-          <button
-            onClick={handleSignOut}
-            className="mt-4 flex items-center justify-center gap-2 px-3 py-2 font-medium text-white bg-red-500 hover:bg-red-600 rounded-lg text-sm"
-            disabled={isLoggingOut}
-          >
-            {isLoggingOut ? "Signing out..." : "Sign out"}
-          </button>
+          {/* Sign out button */}
+<button
+  onClick={handleSignOut}
+  className="mt-4 flex items-center justify-center gap-2 px-3 py-2 font-medium text-white rounded-lg text-sm transition-colors"
+  style={{
+    backgroundColor: colors.primary.hex,
+  }}
+  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = colors.accent.hex)}
+  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = colors.primary.hex)}
+  disabled={isLoggingOut}
+>
+  {isLoggingOut ? "Signing out..." : "Sign out"}
+</button>
+
         </div>
       )}
     </div>
