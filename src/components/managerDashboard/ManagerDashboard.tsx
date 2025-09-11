@@ -267,7 +267,7 @@ export default function ManagerDashboard() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})` }}>
+      <div className="min-h-screen flex items-center justify-center bg-black/40 backdrop-blur-md rounded-2xl">
         <div className="text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style={{ background: colors.accent.hex }}>
             <RefreshCw className="w-8 h-8" style={{ color: colors.primary.hex }} />
@@ -279,23 +279,20 @@ export default function ManagerDashboard() {
   }
 
   return (
-    <div className="min-h-screen pb-12" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`, color: '#fff' }}>
-      {/* Header */}
-      <header className="px-6 py-10 rounded-b-3xl shadow-xl mb-8 ml-6 mr-6" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`, color: '#fff' }}>
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight" style={{ color: '#fff' }}>Manager Dashboard</h1>
-            <p className="text-sm md:text-base mt-1" style={{ color: '#fff' }}>
-              Welcome back, {user?.name || 'Manager'}! Oversee your assigned projects and manage your team effectively
-            </p>
-          </div>
-          <div className="flex gap-4">
-         
-          </div>
-        </div>
-      </header>
+<div className="min-h-screen pb-12 bg-black/40 backdrop-blur-md text-white rounded-2xl">
+  {/* Header */}
+  <header className="px-6 py-10 rounded-b-3xl shadow-xl mb-8 ml-6 mr-6">
+    <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+      <div>
+        <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Manager Dashboard</h1>
+        <p className="text-sm md:text-base mt-1">
+          Welcome back, {user?.name || 'Manager'}! Oversee your assigned projects and manage your team effectively
+        </p>
+      </div>
+    </div>
+  </header>
 
-      <div className="max-w-7xl mx-auto px-10" style={{ color: '#fff' }}>
+      <div className="max-w-7xl mx-auto px-10" >
         {/* Error Message */}
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
