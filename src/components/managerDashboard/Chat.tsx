@@ -677,7 +677,7 @@ export default function ChatPage() {
   }
 
   return (
-<div className="flex h-screen bg-black/40 backdrop-blur-xl rounded-3xl border border-white/20 p-4 gap-10">
+<div className="flex h-screen  backdrop-blur-xl rounded-3xl border border-white/20 p-4 gap-10">
 
 
       {/* Sidebar */}
@@ -806,7 +806,8 @@ export default function ChatPage() {
       {/* Main Chat Area - Conditional Rendering */}
       {selectedUserId ? (
         <main className="flex flex-col flex-1">
-          {/* Chat Header */}
+          {/* Chat 
+           */}
           <header className="p-4 bg-white/5  rounded-xl backdrop-blur-sm " >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -919,7 +920,7 @@ export default function ChatPage() {
   className={`px-4 py-3 rounded-2xl shadow-sm ${
     isSentByMe 
       ? "text-white rounded-bl-sm border" 
-      : "bg-black/40 text-white rounded-bl-sm border border-white/20"
+      : " text-white rounded-bl-sm border border-white/20"
   } ${
     fontSize === "small" ? "text-sm" : fontSize === "large" ? "text-lg" : "text-base"
   }`}
@@ -978,7 +979,7 @@ export default function ChatPage() {
           </div>
           {/* Chat Input */}
         
-<div className="p-4 bg-black/40 backdrop-blur-xl border-t border-white/10">
+<div className="p-4 bg-black/4 backdrop-blur-xl border-t border-white/10">
             <div className="flex items-center justify-between gap-3">
               {/* File input button */}
               <input
@@ -1083,7 +1084,7 @@ export default function ChatPage() {
       {/* User Profile Panel */}
 {/* User Profile Panel */}
 {showUserProfile && selectedUserId && (
-  <aside className="w-80 bg-black/40 backdrop-blur-xl rounded-xl border border-white/10 flex flex-col">
+  <aside className="w-80 bg-white/5  backdrop-blur-xl rounded-xl border border-white/10 flex flex-col">
     {/* Profile Header */}
     <div className="p-6 border-b border-white/10">
       <div className="flex items-center gap-4 mb-4">
