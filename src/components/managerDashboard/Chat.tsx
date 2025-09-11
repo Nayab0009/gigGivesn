@@ -920,7 +920,7 @@ export default function ChatPage() {
   className={`px-4 py-3 rounded-2xl shadow-sm ${
     isSentByMe 
       ? "text-white rounded-bl-sm border" 
-      : " text-white rounded-bl-sm border border-white/20"
+      : "bg-black/40 backdrop-blur-sm  text-white rounded-bl-sm border border-white/20"
   } ${
     fontSize === "small" ? "text-sm" : fontSize === "large" ? "text-lg" : "text-base"
   }`}
@@ -1050,7 +1050,7 @@ export default function ChatPage() {
           </div>
         </main>
     ) : (
-        <div className="flex flex-col flex-1 items-center justify-center h-full bg-black/40 backdrop-blur-xl rounded-xl text-white">
+        <div className="flex flex-col flex-1 items-center justify-center h-full bg-white/5 backdrop-blur-xl rounded-xl text-white">
           <MessageCircle className="w-24 h-24 mb-4" />
           <h2 className="text-2xl font-semibold mb-2">Welcome to Chat!</h2>
           <p className="text-lg">Select a conversation from the sidebar to start messaging.</p>
