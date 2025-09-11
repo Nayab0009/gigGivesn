@@ -55,6 +55,7 @@ export default function ChatPage() {
   const [generatedLink, setGeneratedLink] = useState("")
   const [showMeetingDialog, setShowMeetingDialog] = useState(false)
   const [isUploadingFile, setIsUploadingFile] = useState(false)
+  const [showUserProfile, setShowUserProfile] = useState(false)
   const [fullScreenImageUrl, setFullScreenImageUrl] = useState<string | null>(null) // New state for full screen image
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "auto" })
@@ -723,7 +724,8 @@ export default function ChatPage() {
             }`}
           >
             <div className="relative">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-semibold">
+              <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold"
+                style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
                 {contact.name?.[0]?.toUpperCase() || "?"}
               </div>
               <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white/20"></div>
@@ -770,7 +772,8 @@ export default function ChatPage() {
             }`}
           >
             <div className="relative">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white text-sm font-semibold">
+              <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold"
+                style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
                 {contact.name?.[0]?.toUpperCase() || "?"}
               </div>
               <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-gray-400 rounded-full border-2 border-white/20"></div>
@@ -816,7 +819,7 @@ export default function ChatPage() {
                   </div>
                 </div>
                 <div>
-                  <h2 className="font-semibold" style={{ color: colors.primary.hex }}>
+                  <h2 className="font-semibold text-white" >
                     {selectedUser}
                   </h2>
                 </div>
@@ -824,14 +827,26 @@ export default function ChatPage() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setShowMeetingDialog(true)}
-                  className="p-1 rounded-full hover:bg-gray-100"
+                  className="p-1 rounded-full"
                   aria-label="Start meeting"
                   type="button"
                 >
-                  <Video className="w-6 h-6" style={{ color: "#006699" }} />
+                  <Video className="w-6 h-6" style={{ color: "#ffffff" }} />
                 </button>
                 {/* <Video className="w-6 h-6" style={{ color: "#006699" }}/> */}
+                         <button
+  onClick={() => setShowUserProfile(!showUserProfile)}
+  className="p-2 rounded-full hover:bg-white/10 transition"
+  aria-label="Toggle user profile"
+  type="button"
+>
+                  <div className="w-6 h-6 rounded-full  flex items-center justify-center text-white text-xs font-semibold"
+                  style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
+    {selectedUser[0]?.toUpperCase()}
+  </div>
+</button>
               </div>
+   
               {/* Meeting Dialog */}
               {typeof window !== "undefined" && (
                 <>
@@ -900,12 +915,19 @@ export default function ChatPage() {
                           </span>
                         </div>
                       )}
-                      <div
-                        className={`px-4 py-3 rounded-2xl shadow-sm ${isSentByMe ? "bg-blue-100" : "bg-white"} text-gray-900 rounded-bl-sm border ${
-                          fontSize === "small" ? "text-sm" : fontSize === "large" ? "text-lg" : "text-base"
-                        }`}
-                        style={{ borderColor: colors.primary.hex }}
-                      >
+                     <div
+  className={`px-4 py-3 rounded-2xl shadow-sm ${
+    isSentByMe 
+      ? "text-white rounded-bl-sm border" 
+      : "bg-black/40 text-white rounded-bl-sm border border-white/20"
+  } ${
+    fontSize === "small" ? "text-sm" : fontSize === "large" ? "text-lg" : "text-base"
+  }`}
+  style={isSentByMe ? { 
+    background: colors.primary.hex,
+    borderColor: colors.primary.hex 
+  } : {}}
+>
                         {msg.fileUrl && msg.fileType?.startsWith("image/") ? (
                           // Render image
                           <img
@@ -1012,7 +1034,7 @@ export default function ChatPage() {
               </div>
               <button
                 onClick={sendMessage}
-                disabled={(!message.trim() && !selectedFile) || isUploadingFile} // Disable if both message and file are empty OR uploading
+                disabled={(!message.trim() && !selectedFile) || isUploadingFile} 
                 className="p-3 rounded-full transition-all duration-200 hover:scale-105"
                 style={{
                   background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
@@ -1026,8 +1048,8 @@ export default function ChatPage() {
             </div>
           </div>
         </main>
-      ) : (
-        <div className="flex flex-col flex-1 items-center justify-center h-full bg-gray-50 text-gray-500">
+    ) : (
+        <div className="flex flex-col flex-1 items-center justify-center h-full bg-black/40 backdrop-blur-xl rounded-xl text-white">
           <MessageCircle className="w-24 h-24 mb-4" />
           <h2 className="text-2xl font-semibold mb-2">Welcome to Chat!</h2>
           <p className="text-lg">Select a conversation from the sidebar to start messaging.</p>
@@ -1058,6 +1080,103 @@ export default function ChatPage() {
       )}
       {/* Audio element for notifications */}
       <audio ref={audioRef} src="/audio/note.mp3" preload="auto" />
+      {/* User Profile Panel */}
+{/* User Profile Panel */}
+{showUserProfile && selectedUserId && (
+  <aside className="w-80 bg-black/40 backdrop-blur-xl rounded-xl border border-white/10 flex flex-col">
+    {/* Profile Header */}
+    <div className="p-6 border-b border-white/10">
+      <div className="flex items-center gap-4 mb-4">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-bold"
+                style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
+          {selectedUser[0]?.toUpperCase()}
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-white">{selectedUser}</h3>
+          <p className="text-white/60 text-sm">Online</p>
+        </div>
+      </div>
+      <button 
+        className="w-full px-4 py-2 rounded-lg text-white text-sm border border-white/20 hover:bg-white/10 transition"
+        onClick={() => setShowMeetingDialog(true)}
+      >
+        Call
+      </button>
+    </div>
+
+    {/* Profile Content */}
+    <div className="flex-1 p-4 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+      {/* All Files Section */}
+      <div className="mb-6">
+        <h4 className="text-white font-medium mb-3">All Files</h4>
+        <div className="space-y-3">
+          {messages
+            .filter(msg => msg.isFile && msg.fileUrl)
+            .map((fileMsg, index) => {
+              const isImage = fileMsg.fileType?.startsWith('image/')
+              const fileName = fileMsg.fileUrl?.split('/').pop() || 'Unknown file'
+              const fileExtension = fileName.split('.').pop()?.toLowerCase()
+              
+              const getFileIcon = (type) => {
+                if (type?.startsWith('image/')) return '🖼️'
+                if (type?.includes('pdf')) return '📄'
+                if (type?.includes('doc')) return '📝'
+                if (type?.includes('excel') || type?.includes('sheet')) return '📊'
+                return '📎'
+              }
+              
+              const getFileColor = (type) => {
+                if (type?.startsWith('image/')) return 'bg-green-500'
+                if (type?.includes('pdf')) return 'bg-red-500'
+                if (type?.includes('doc')) return 'bg-blue-500'
+                if (type?.includes('excel') || type?.includes('sheet')) return 'bg-orange-500'
+                return 'bg-gray-500'
+              }
+
+              return (
+                <div key={index} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition cursor-pointer">
+                  {isImage ? (
+                    <img 
+                      src={fileMsg.fileUrl} 
+                      alt="Shared image"
+                      className="w-8 h-8 rounded object-cover"
+                      onClick={() => setFullScreenImageUrl(fileMsg.fileUrl)}
+                    />
+                  ) : (
+                    <div className={`w-8 h-8 ${getFileColor(fileMsg.fileType)} rounded flex items-center justify-center`}>
+                      <span className="text-white text-xs">{getFileIcon(fileMsg.fileType)}</span>
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-sm font-medium truncate">
+                      {isImage ? 'Image' : fileName}
+                    </p>
+                    <p className="text-white/60 text-xs">
+                      {fileMsg.fileType || fileExtension} • {new Date(fileMsg.timestamp || 0).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <a 
+                    href={fileMsg.fileUrl}
+                    download={fileName}
+                    className="text-blue-400 hover:text-blue-300 text-xs"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Download
+                  </a>
+                </div>
+              )
+            })}
+          
+          {messages.filter(msg => msg.isFile && msg.fileUrl).length === 0 && (
+            <div className="text-center py-8 text-white/60">
+              <p>No files shared yet</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </aside>
+)}
     </div>
   )
 }
