@@ -434,76 +434,174 @@ export default function EnhancedManagersTable() {
         )}
 
         {showEditModal && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-opacity-60"
-            style={{
-              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-            }}
-          >
-            <div className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 w-full max-w-md transition-all">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">Edit Manager</h2>
-
-              <div className="space-y-4">
-                <input
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  name="name"
-                  value={editForm.name}
-                  onChange={handleEditFormChange}
-                  placeholder="Name"
-                />
-                {editFormErrors.name && (
-                  <div className="text-red-600 text-xs mt-1">{editFormErrors.name}</div>
-                )}
-                <input
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  name="email"
-                  value={editForm.email}
-                  onChange={handleEditFormChange}
-                  placeholder="Email"
-                />
-                {editFormErrors.email && (
-                  <div className="text-red-600 text-xs mt-1">{editFormErrors.email}</div>
-                )}
-                <input
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  name="phone"
-                  value={editForm.phone}
-                  onChange={handleEditFormChange}
-                  placeholder="Phone"
-                />
-                {editFormErrors.phone && (
-                  <div className="text-red-600 text-xs mt-1">{editFormErrors.phone}</div>
-                )}
-                <input
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  name="address"
-                  value={editForm.address}
-                  onChange={handleEditFormChange}
-                  placeholder="Address"
-                />
-                {editFormErrors.address && (
-                  <div className="text-red-600 text-xs mt-1">{editFormErrors.address}</div>
-                )}
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div
+              className="rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 custom-scrollbar"
+              style={{
+                background: "rgba(255, 255, 255, 0.08)",
+                border: `2px solid ${colors.primary.hex}40`,
+              }}
+            >
+              <style>{`
+                .custom-scrollbar::-webkit-scrollbar {
+                  width: 8px;
+                  background: transparent;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                  background: rgba(255,255,255,0.12);
+                  border-radius: 8px;
+                  border: 2px solid rgba(255,255,255,0.08);
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                  background: rgba(255,255,255,0.18);
+                }
+                .custom-scrollbar {
+                  scrollbar-width: thin;
+                  scrollbar-color: rgba(255,255,255,0.12) transparent;
+                }
+              `}</style>
+              {/* Header */}
+              <div
+                className="px-8 py-6 border-b relative overflow-hidden rounded-t-3xl"
+                style={{
+                  background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                  color: "#fff",
+                }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+                <div className="relative flex items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold mb-1">Edit Manager</h2>
+                    <p className="text-white/80 text-sm">Update manager information</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setShowEditModal(false);
+                      setEditFormErrors({ name: '', email: '', phone: '', address: '' });
+                    }}
+                    className="p-2 hover:bg-white/20 rounded-full transition-all duration-300 transform hover:scale-110"
+                    disabled={isUpdating}
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                </div>
               </div>
 
-              <div className="flex justify-end gap-3 mt-8">
-                <button
-                  className="px-4 py-2 rounded-lg border border-gray-400 text-gray-700 hover:bg-gray-100 transition"
-                  onClick={() => {
-                    setShowEditModal(false);
-                    setEditFormErrors({ name: '', email: '', phone: '', address: '' });
+              {/* Form */}
+              <form onSubmit={e => { e.preventDefault(); handleUpdateManager(); }} className="flex flex-col h-full">
+                <div className="px-8 py-6 space-y-6 text-white">
+                  {/* Name */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold mb-2 flex items-center gap-2">
+                      Name *
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={editForm.name}
+                      onChange={handleEditFormChange}
+                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
+                      style={{ borderColor: editFormErrors.name ? "#ef4444" : colors.primary.hex }}
+                      placeholder="Enter manager name"
+                      disabled={isUpdating}
+                    />
+                    {editFormErrors.name && (
+                      <div className="text-red-500 text-xs mt-1">{editFormErrors.name}</div>
+                    )}
+                  </div>
+                  {/* Email */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold mb-2 flex items-center gap-2">
+                      Email *
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={editForm.email}
+                      onChange={handleEditFormChange}
+                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
+                      style={{ borderColor: editFormErrors.email ? "#ef4444" : colors.primary.hex }}
+                      placeholder="Enter manager email"
+                      disabled={isUpdating}
+                    />
+                    {editFormErrors.email && (
+                      <div className="text-red-500 text-xs mt-1">{editFormErrors.email}</div>
+                    )}
+                  </div>
+                  {/* Phone */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold mb-2 flex items-center gap-2">
+                      Phone *
+                    </label>
+                    <input
+                      type="text"
+                      name="phone"
+                      value={editForm.phone}
+                      onChange={handleEditFormChange}
+                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
+                      style={{ borderColor: editFormErrors.phone ? "#ef4444" : colors.primary.hex }}
+                      placeholder="Enter manager phone"
+                      disabled={isUpdating}
+                    />
+                    {editFormErrors.phone && (
+                      <div className="text-red-500 text-xs mt-1">{editFormErrors.phone}</div>
+                    )}
+                  </div>
+                  {/* Address */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-semibold mb-2 flex items-center gap-2">
+                      Address *
+                    </label>
+                    <input
+                      type="text"
+                      name="address"
+                      value={editForm.address}
+                      onChange={handleEditFormChange}
+                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
+                      style={{ borderColor: editFormErrors.address ? "#ef4444" : colors.primary.hex }}
+                      placeholder="Enter manager address"
+                      disabled={isUpdating}
+                    />
+                    {editFormErrors.address && (
+                      <div className="text-red-500 text-xs mt-1">{editFormErrors.address}</div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div
+                  className="px-8 py-6 border-t rounded-b-3xl flex gap-4"
+                  style={{
+                    background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                    borderColor: `${colors.primary.hex}40`,
                   }}
                 >
-                  Cancel
-                </button>
-                <button
-                  className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition disabled:opacity-60"
-                  onClick={handleUpdateManager}
-                  disabled={isUpdating}
-                >
-                  {isUpdating ? "Updating..." : "Update"}
-                </button>
-              </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowEditModal(false);
+                      setEditFormErrors({ name: '', email: '', phone: '', address: '' });
+                    }}
+                    className="flex-1 px-6 py-3 border-2 rounded-xl font-semibold transition-all duration-300 hover:bg-white/20 transform hover:scale-105 text-white"
+                    style={{ borderColor: "#fff" }}
+                    disabled={isUpdating}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isUpdating || Object.values(editFormErrors).some(Boolean)}
+                    className="flex-1 px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transform hover:scale-105 disabled:transform-none shadow-lg"
+                    style={{ background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})` }}
+                  >
+                    {isUpdating ? (
+                      <span>Updating...</span>
+                    ) : (
+                      <span>Update</span>
+                    )}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         )}
