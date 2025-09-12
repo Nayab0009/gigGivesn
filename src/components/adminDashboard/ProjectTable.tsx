@@ -162,82 +162,123 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
     }
   }
 
-  if (!open || !project) return null
+    if (!open || !project) return null
 
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col">
+    return (
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div
-          className="p-6 flex items-center justify-between"
+          className="rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 custom-scrollbar"
           style={{
-            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-            color: "#fff",
+            background: "rgba(255, 255, 255, 0.08)",
+            border: `2px solid ${colors.primary.hex}40`,
           }}
         >
-          <div>
-            <h2 className="text-2xl font-bold">Edit Project</h2>
-            <p className="mt-1 text-white/90">Update project information</p>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-white/20 rounded-full transition-colors"
-            disabled={isUpdating}
+        <style>{`
+          .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            background: transparent;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.12);
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.08);
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.18);
+          }
+          .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.12) transparent;
+          }
+        `}</style>
+          {/* Header */}
+          <div
+            className="px-8 py-6 border-b relative overflow-hidden rounded-t-3xl"
+            style={{
+              background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
+              color: "#fff",
+            }}
           >
-            <X className="w-6 h-6" />
-          </button>
-        </div>
+            <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+            <div className="relative flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold mb-1">Edit Project</h2>
+                <p className="text-white/80 text-sm">Update project information</p>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-white/20 rounded-full transition-all duration-300 transform hover:scale-110"
+                disabled={isUpdating}
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+          </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col h-full">
-          <div className="p-6 flex-1 overflow-y-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="flex flex-col h-full">
+            <div className="px-8 py-6 space-y-6 text-white">
               {/* Project Name */}
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold mb-2 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full" style={{ background: colors.primary.hex }}></div>
                   Project Name *
                 </label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
+                  className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
                   style={{
                     borderColor: errors.name ? "#ef4444" : colors.primary.hex,
                   }}
                   placeholder="Enter project name"
                   disabled={isUpdating}
                 />
-                {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+                {errors.name && (
+                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.name}
+                  </p>
+                )}
               </div>
 
               {/* Description */}
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold mb-2 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full" style={{ background: colors.secondary.hex }}></div>
                   Description *
                 </label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => handleInputChange("description", e.target.value)}
                   rows={3}
-                  className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all resize-none"
+                  className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none resize-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
                   style={{
                     borderColor: errors.description ? "#ef4444" : colors.primary.hex,
                   }}
                   placeholder="Enter project description"
                   disabled={isUpdating}
                 />
-                {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
+                {errors.description && (
+                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.description}
+                  </p>
+                )}
               </div>
 
               {/* Start Date */}
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold mb-2 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full" style={{ background: colors.accent.hex }}></div>
                   Start Date
                 </label>
                 <input
                   type="date"
                   value={formData.startDate}
                   onChange={(e) => handleInputChange("startDate", e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
+                  className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
                   style={{
                     borderColor: colors.primary.hex,
                   }}
@@ -246,34 +287,42 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
               </div>
 
               {/* End Date */}
-              <div>
-                <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold mb-2 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full" style={{ background: colors.highlight.hex }}></div>
                   End Date
                 </label>
                 <input
                   type="date"
                   value={formData.endDate}
                   onChange={(e) => handleInputChange("endDate", e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
+                  className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
                   style={{
                     borderColor: errors.endDate ? "#ef4444" : colors.primary.hex,
                   }}
                   disabled={isUpdating}
                 />
-                {errors.endDate && <p className="mt-1 text-sm text-red-600">{errors.endDate}</p>}
+                {errors.endDate && (
+                  <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.endDate}
+                  </p>
+                )}
               </div>
 
               {/* Status */}
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium mb-2" style={{ color: colors.primary.hex }}>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full" style={{ background: colors.accent.hex }}></div>
                   Status
                 </label>
                 <select
                   value={formData.status}
                   onChange={(e) => handleInputChange("status", e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
+                  className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
                   style={{
                     borderColor: colors.primary.hex,
+                    background: "rgba(0,0,0,0.2)",
                   }}
                   disabled={isUpdating}
                 >
@@ -285,46 +334,51 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
                 </select>
               </div>
             </div>
-          </div>
 
-          {/* Footer with buttons */}
-          <div className="p-6 border-t border-gray-200 flex justify-end gap-4 flex-shrink-0">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-6 py-3 rounded-xl transition-colors disabled:opacity-50"
+            {/* Footer */}
+            <div
+              className="px-8 py-6 border-t rounded-b-3xl flex gap-4"
               style={{
-                background: "#fff",
-                color: colors.primary.hex,
-                border: `2px solid ${colors.primary.hex}`,
-              }}
-              disabled={isUpdating}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={isUpdating}
-              className="px-6 py-3 rounded-xl transition-colors disabled:opacity-50 flex items-center gap-2"
-              style={{
-                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                color: "#fff",
+                background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                borderColor: `${colors.primary.hex}40`,
               }}
             >
-              {isUpdating ? (
-                <>
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                  Updating...
-                </>
-              ) : (
-                "Update Project"
-              )}
-            </button>
-          </div>
-        </form>
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 px-6 py-3 border-2 rounded-xl font-semibold transition-all duration-300 hover:bg-white/20 transform hover:scale-105 text-white"
+                style={{
+                  borderColor: "#fff",
+                }}
+                disabled={isUpdating}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isUpdating || Object.keys(errors).length > 0}
+                className="flex-1 px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transform hover:scale-105 disabled:transform-none shadow-lg"
+                style={{
+                  background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                }}
+              >
+                {isUpdating ? (
+                  <>
+                    <RefreshCw className="w-5 h-5 animate-spin" />
+                    Updating...
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                    Save Changes
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
-    </div>
-  )
+    )
 }
 
 // --- Assign Manager Modal Component ---
