@@ -341,9 +341,9 @@ export default function ForumPage() {
             {/* Back Button */}
             <div className="p-8 border-b border-white/20 bg-black/40">
               <button
-                className="group inline-flex items-center gap-3 px-6 py-3 rounded-2xl font-bold transition-all duration-300 hover:shadow-lg transform hover:-translate-y-0.5"
+                className="group text-white inline-flex items-center gap-3 px-6 py-3 rounded-2xl font-bold transition-all duration-300 hover:shadow-lg transform hover:-translate-y-0.5"
                 style={{
-                  color: colors.primary.hex,
+                
                   backgroundColor: colors.primary.hex + '10',
                 }}
                 onClick={() => setSelectedThreadId(null)}
@@ -353,24 +353,32 @@ export default function ForumPage() {
               </button>
             </div>
 
-            {/* Thread Header */}
+            {/* Thread Header - styled like thread list */}
             <div className="p-10">
-              <h2 className="text-4xl font-bold mb-6 leading-tight" style={{ color: '#0CA9F6' }}>{selectedThread.title}</h2>
-              <div className="flex items-center gap-3 mb-8">
-                <div className="p-3 rounded-full bg-white/10">
-                  <User size={24} className="text-[#0CA9F6]" />
+              {/* Author */}
+              <div className="flex items-center gap-3 mb-5">
+                <div className="p-2 rounded-full bg-gray-100 group-hover:bg-blue-100 transition-colors duration-300">
+                  <User size={35} className="text-gray-500 group-hover:text-blue-600" />
                 </div>
-                <span className="text-xl font-semibold" style={{ color: '#fff' }}>
-                  {selectedThread.discussionBy?.name || "Unknown"}
+                <span className="font-inter font-normal text-[18px] leading-[1] tracking-[0.05em] align-middle text-gray-200 group-hover:text-gray-100 transition-colors duration-300">
+                  Started by {selectedThread.discussionBy?.name || "Unknown"}
                 </span>
               </div>
-              <div className="prose prose-xl max-w-none">
-                <p className="leading-relaxed text-lg" style={{ color: '#fff' }}>{selectedThread.description}</p>
-              </div>
-              <div className="flex items-center gap-2 text-sm mt-6 px-4 py-2 rounded-full bg-white/10 inline-flex" style={{ color: '#fff' }}>
+              {/* Title */}
+              <h3
+                className="font-inter font-bold text-[20px] leading-[1] tracking-[0.05em] align-middle mb-4 text-[#0CA9F6] transition-all duration-300"
+              >
+                {selectedThread.title}
+              </h3>
+              {/* Description */}
+              <p className="font-inter font-light text-[16px] leading-[25px] tracking-[0.05em] text-gray-200 mb-6">
+                {selectedThread.description}
+              </p>
+              <div className="flex items-center gap-2 text-[12px] text-sm mt-6 px-4 py-2 rounded-full bg-white/10 inline-flex" style={{ color: '#fff' }}>
                 <Clock size={16} />
                 <span className="font-medium">{new Date(selectedThread.createdAt).toLocaleString()}</span>
               </div>
+              
             </div>
 
             {/* Comments Section */}
@@ -379,7 +387,7 @@ export default function ForumPage() {
                 <div className="p-3 rounded-full bg-white/10">
                   <MessageCircle size={28} style={{ color: colors.primary.hex }} />
                 </div>
-                <h3 className="text-3xl font-bold" style={{ color: '#0CA9F6' }}>
+                <h3 className="text-3xl font-bold text-white" >
                   Comments {comments.length > 0 ? `(${comments.length})` : ""}
                 </h3>
               </div>
@@ -429,7 +437,7 @@ export default function ForumPage() {
               {/* Add Comment Form - Only show if authenticated */}
               {isAuthenticated ? (
                 <div className="bg-black/40 rounded-2xl p-8 border-2 border-white/20 shadow-lg">
-                  <h4 className="text-2xl font-bold mb-6" style={{ color: '#0CA9F6' }}>Add a comment</h4>
+                  <h4 className="text-2xl font-bold mb-6 text-white" >Add a comment</h4>
                   <textarea
                     placeholder="Share your thoughts..."
                     value={newCommentContent}

@@ -208,266 +208,215 @@ export default function EnhancedManagersTable() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
+  <div className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1
-            className="text-3xl sm:text-4xl font-bold mb-2"
-            style={{
-              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-              WebkitBackgroundClip: 'text',
-              color: 'transparent',
-            }}
-          >
-            Managers Dashboard
-          </h1>
-          <p
-            className="text-lg"
-            style={{
-              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-              WebkitBackgroundClip: 'text',
-              color: 'transparent',
-            }}
-          >
-            Manage and track all project managers
-          </p>
-        </div>
-
-        {/* Action Bar */}
-        <div
-          className="mb-8 rounded-2xl shadow-lg border p-6"
-          style={{
-            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-            color: '#fff',
-            borderColor: colors.primary.hex,
-          }}
-        >
-          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-            <div className="relative flex-1 max-w-md w-full">
+        {/* Header & Action Bar (improved layout) */}
+        <div className="mb-8 flex items-center justify-between gap-4">
+          {/* Left: Heading */}
+          <div className="flex flex-col gap-1 md:gap-2 justify-center flex-shrink-0" style={{ minWidth: 220 }}>
+            <h1
+              className="font-bold text-white font-sans not-italic text-2xl leading-9 tracking-normal [font-family:Montserrat,sans-serif] [font-weight:700] [vertical-align:middle] [background-clip:text]"
+              style={{
+                fontFamily: 'Montserrat, sans-serif',
+                fontWeight: 700,
+                fontStyle: 'normal',
+                fontSize: '20px',
+                lineHeight: '36px',
+                letterSpacing: '0px',
+                WebkitBackgroundClip: 'text',
+                verticalAlign: 'middle',
+              }}
+            >
+              Managers Dashboard
+            </h1>
+            <p
+              className="font-normal align-middle text-white font-sans not-italic text-sm leading-5 tracking-normal [font-family:Montserrat,sans-serif] [font-weight:400] [background-clip:text]"
+            >
+              Manage and track all project managers
+            </p>
+          </div>
+          {/* Center: Search */}
+          <div className="flex-1 flex justify-center">
+            <div className="relative w-full max-w-lg" style={{ marginLeft: '90px' }}>
               <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5"
-                style={{ color: colors.accent.hex }}
+                className="absolute text-[#9CA3AF] left-3 top-1/2 -translate-y-1/2 w-4 h-4"
               />
               <input
                 type="text"
-                placeholder="Search managers by name, email or ID..."
-                className="w-full pl-10 pr-4 py-3 rounded-2xl focus:ring-2 transition-all duration-300 shadow-sm focus:shadow-md"
+                placeholder="Search manager by name, email or ID"
+                className="w-[396px] h-[38px] rounded-[16px] border border-[#FFFFFF4D] bg-[#0000004D] opacity-100 px-[41px] py-[9px]   pr-[17px] text-[#9CA3AF] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm mx-auto"
                 style={{
-                  background: '#fff',
-                  color: colors.primary.hex,
-                  border: `1px solid ${colors.primary.hex}`,
+                  borderWidth: 1,
+                  background: '#0000004D',
+                  borderColor: '#FFFFFF4D',
+                  borderRadius: '16px',
+                  paddingTop: '9px',
+                  paddingBottom: '9px',
+                  paddingLeft: '41px',
+                  paddingRight: '17px',
+                  height: '38px',
+                  width: '396px',
+                  opacity: 1,
                 }}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
-              <div
-                className="text-sm px-4 py-2 rounded-full border"
-                style={{
-                  background: colors.accent.hex,
-                  color: colors.primary.hex,
-                  borderColor: colors.primary.hex,
-                }}
-              >
-                <span className="font-semibold" style={{ color: colors.primary.hex }}>{filteredManagers.length}</span> of {managers.length} managers
-              </div>
-              <button
-                type="button"
-                className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
-                style={{
-                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                  color: '#fff',
-                  border: `1px solid ${colors.primary.hex}`,
-                }}
-                onClick={() => router.push("/dashboard/admin/addmanager")}
-              >
-                <Plus className="w-4 h-4" style={{ color: colors.highlight.hex }} />
-                Add Manager
-              </button>
-              <button
-                className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
-                style={{
-                  background: '#fff',
-                  color: colors.primary.hex,
-                  border: `1px solid ${colors.primary.hex}`,
-                }}
-                onClick={handleRefresh}
-                disabled={isLoading}
-              >
-                <RefreshCw className="w-4 h-4" style={{ color: colors.secondary.hex }} />
-                Refresh
-              </button>
+          </div>
+          {/* Right: 3 Buttons */}
+          <div className="flex flex-row items-center gap-2 md:gap-3 flex-shrink-0">
+            <div
+              className="text-xs text-white sm:text-sm px-[24px] py-[8px] rounded-full border bg-[#0000004D] border-[#FFFFFF4D] opacity-100  focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm flex items-center"
+              style={{
+                borderWidth: 1,
+                background: '#0000004D',
+                borderColor: '#FFFFFF4D',
+                opacity: 1,
+              }}
+            >
+              <span className="font-semibold text-white" >{filteredManagers.length}</span>
+              <span className="mx-1">of</span>
+              {managers.length} Managers
             </div>
+            <button
+              type="button"
+              className="text-xs text-white sm:text-sm px-[24px] py-[8px] rounded-full border bg-[#0000004D] border-[#FFFFFF4D] opacity-100 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm inline-flex items-center gap-2 font-medium group hover:shadow-lg transform hover:scale-105"
+              style={{
+                borderWidth: 1,
+                background: '#0000004D',
+                borderColor: '#FFFFFF4D',
+                opacity: 1,
+              }}
+              onClick={() => router.push("/dashboard/admin/addmanager")}
+            >
+              <Plus className="w-4 h-4 text-white"  />
+              Add Manager
+            </button>
+            <button
+              className="group inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
+              style={{
+                background: colors.primary.hex,
+                color: '#fff',
+                border: `1px solid ${colors.primary.hex}`,
+              }}
+              onClick={handleRefresh}
+              disabled={isLoading}
+            >
+              <RefreshCw className="w-4 h-4 text-white"  />
+              Refresh
+            </button>
           </div>
         </div>
 
-        {/* Table Container */}
-        <div
-          className="rounded-2xl shadow-lg border overflow-hidden"
-          style={{
-            background: '#fff',
-            borderColor: colors.primary.hex,
-          }}
-        >
+        {/* Cards Grid */}
+        <div className="relative">
           {isLoading ? (
-            <div className="p-12 text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4"
-                style={{ background: colors.accent.hex }}
-              >
+            <div className="relative p-12 text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4" style={{ background: colors.accent.hex }}>
                 <RefreshCw className="w-6 h-6 animate-spin" style={{ color: colors.primary.hex }} />
               </div>
-              <p className="text-lg" style={{ color: colors.primary.hex }}>Loading managers...</p>
+              <p className="text-lg text-slate-200">Loading managers...</p>
+            </div>
+          ) : filteredManagers.length === 0 ? (
+            <div className="px-6 py-16 text-center">
+              <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4" style={{ background: '#ffffff14' }}>
+                <AlertCircle className="w-8 h-8 text-slate-300" />
+              </div>
+              <p className="text-slate-200 text-lg font-medium mb-1">No managers found</p>
+              <p className="text-slate-400">Try adjusting your search criteria</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y" style={{ borderColor: colors.primary.hex }}>
-                <thead style={{ background: colors.accent.hex }}>
-                  <tr>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Manager Details</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Contact Info</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Team Members</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider" style={{ color: colors.primary.hex }}>Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-slate-200">
-                  {filteredManagers.length === 0 ? (
-                    <tr>
-                      <td colSpan={4} className="px-6 py-12 text-center">
-                        <div className="flex flex-col items-center justify-center">
-                          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                            <AlertCircle className="w-8 h-8 text-slate-400" />
-                          </div>
-                          <p className="text-slate-600 text-lg font-medium mb-1">No managers found</p>
-                          <p className="text-slate-500">Try adjusting your search criteria</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {paginatedManagers.map((manager, index) => {
+                const initials = manager.name
+                  .split(' ')
+                  .map((n) => n[0])
+                  .join('')
+                  .slice(0, 2)
+                  .toUpperCase();
+                const teamSize = manager.team?.length || 0;
+                return (
+                  <div
+                    key={manager.id || index}
+                    className="relative rounded-2xl border overflow-hidden p-5 shadow-2xl backdrop-blur-md"
+                    style={{
+                      background: '#0000005D',
+                      borderColor: '#FFFFFF4D',
+                      boxShadow: '0 16px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05)',
+                    }}
+                  >
+                    {/* Removed decorative gradient overlay to match search bar's solid background style */}
+
+                    <div className="relative flex items-start justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm shadow-lg"
+                          style={{
+                            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                            color: '#fff',
+                          }}
+                        >
+                          {initials}
                         </div>
-                      </td>
-                    </tr>
-                  ) : (
-                    paginatedManagers.map((manager, index) => (
-                      <tr
-                        key={manager.id || index}
-                        className={
-                          `bg-white transition-all duration-300 hover:bg-gradient-to-r hover:from-[${colors.primary.hex}] hover:to-[${colors.secondary.hex}] hover:text-white`
-                        }
+                        <div>
+                          <h3 className="text-white font-semibold text-[16px] leading-tight">{manager.name}</h3>
+                          <div className="text-xs text-slate-300">Project Manager</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="relative mt-4 grid grid-cols-2 gap-y-2 text-sm">
+                      <div
+                        className="text-[#A8A8A8] [font-family:Montserrat,sans-serif] font-normal not-italic text-sm leading-5 tracking-normal align-middle"
                       >
-                        <td className="px-6 py-6">
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-3">
-                              <div
-                                className="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg shadow-lg"
-                                style={{
-                                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                                  color: '#fff',
-                                }}
-                              >
-                                {manager.name.charAt(0).toUpperCase()}
-                              </div>
-                              <div>
-                                <h3 className="text-lg font-semibold leading-tight" style={{ color: colors.primary.hex }}>{manager.name}</h3>
-                                <div className="flex items-center gap-2 mt-1">
-                                
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium" style={{ background: colors.highlight.hex, color: colors.primary.hex }}>
-                                    Manager
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-6">
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 rounded-full" style={{ background: colors.primary.hex }}></div>
-                              <span className="text-sm font-medium" style={{ color: colors.primary.hex }}>{manager.email}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 rounded-full" style={{ background: colors.secondary.hex }}></div>
-                              <span className="text-sm" style={{ color: colors.secondary.hex }}>{manager.phone}</span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 rounded-full" style={{ background: colors.accent.hex }}></div>
-                              <span className="text-sm max-w-xs truncate" title={manager.address} style={{ color: colors.accent.hex }}>
-                                {manager.address}
-                              </span>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-6">
-                          <div className="space-y-3">
-                            <div className="flex items-center gap-2">
-                              <div className="flex -space-x-2">
-                                {(manager.team ?? []).slice(0, 4).map((member, idx) => (
-                                  <div key={member.name + idx} className="relative group">
-                                    <img
-                                      src={member.avatar || "/placeholder.svg"}
-                                      alt={member.name}
-                                      className="w-8 h-8 rounded-full border-2 border-white shadow-sm hover:scale-110 transition-transform duration-200 cursor-pointer"
-                                      style={{ zIndex: 10 - idx }}
-                                      title={`${member.name} - ${member.role}`}
-                                    />
-                                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-20">
-                                      <div className="font-semibold">{member.name}</div>
-                                      <div className="text-gray-300">{member.role}</div>
-                                    </div>
-                                  </div>
-                                ))}
-                                {manager.team && manager.team.length > 4 && (
-                                  <div className="w-8 h-8 rounded-full" style={{ background: colors.accent.hex, color: colors.primary.hex, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 500, border: `2px solid #fff` }}>
-                                    +{manager.team.length - 4}
-                                  </div>
-                                )}
-                              </div>
-                              <span className="text-sm" style={{ color: colors.secondary.hex }}>
-                                {manager.team?.length || 0} member{(manager.team?.length || 0) !== 1 ? "s" : ""}
-                              </span>
-                            </div>
-                            {manager.team && manager.team.length > 0 && (
-                              <div className="w-full rounded-full h-2 shadow-inner" style={{ background: colors.accent.hex }}>
-                                <div
-                                  className="h-2 rounded-full transition-all duration-500 shadow-sm relative overflow-hidden"
-                                  style={{
-                                    background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                                    width: `${Math.min((manager.team.length / 10) * 100, 100)}%`,
-                                  }}
-                                >
-                                  <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, transparent, #fff3, transparent)', animation: 'pulse 2s infinite' }}></div>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-6 py-6">
-                          <div className="flex items-center gap-2">
-                        
-                            <button
-                              onClick={() => handleEditClick(manager)}
-                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
-                              style={{
-                                background: colors.highlight.hex,
-                                color: colors.primary.hex,
-                              }}
-                            >
-                              <Edit className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(manager.id)}
-                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
-                              style={{
-                                background: colors.warning.hex,
-                                color: '#fff',
-                              }}
-                            >
-                              <Trash2 className="w-4 h-4" style={{ color: '#fff' }} />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+                        Email:
+                      </div>
+                      <div className="text-right text-white font-medium truncate" title={manager.email}>{manager.email}</div>
+                      <div className="text-[#A8A8A8] [font-family:Montserrat,sans-serif] text-[14px] not-italic text-sm leading-5 tracking-normal align-middle">Phone:</div>
+                      <div className="text-right text-slate-200 font-medium truncate" title={manager.phone}>{manager.phone}</div>
+                      <div className="text-[#A8A8A8] [font-family:Montserrat,sans-serif] font-normal not-italic text-sm leading-5 tracking-normal align-middle">Location:</div>
+                      <div className="text-right text-slate-200 font-medium truncate" title={manager.address}>{manager.address}</div>
+                      <div className="text-[#A8A8A8] [font-family:Montserrat,sans-serif] font-normal not-italic text-sm leading-5 tracking-normal align-middle">Team Size:</div>
+                      <div className="text-right text-white font-medium">{teamSize} members</div>
+                    </div>
+
+                    <div className="relative mt-5 flex items-center justify-between">
+                      <button
+                        className="group inline-flex items-center justify-center gap-2 px-7 py-2 rounded-full text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md min-w-[130px] text-center"
+                        style={{
+                          background: '#0CA9F6',
+                          color: '#fff',
+                          border: `1px solid ${colors.primary.hex}`,
+                          minWidth: '250px',
+                          textAlign: 'center',
+                        }}
+                        onClick={() => {}}
+                      >
+                        View Details
+                      </button>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleDelete(manager.id)}
+                          className="inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200"
+                          style={{ background: '#0000004D', border: '1px solid #FFFFFF4D' }}
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4 text-slate-200" />
+                        </button>
+                        <button
+                          onClick={() => handleEditClick(manager)}
+                          className="inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200"
+                          style={{ background: '#0000005D', border: '1px solid #FFFFFF4D' }}
+                          title="Edit"
+                        >
+                          <Edit className="w-4 h-4" style={{ color: '#B0B9C6' }} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>

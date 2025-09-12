@@ -2,8 +2,8 @@
 
 import type React from "react"
 
-import { useState, useEffect, useMemo } from "react"
-import { Search, Edit, Trash2, RefreshCw, AlertCircle, ChevronDown, Plus, X } from "lucide-react"
+import { useState, useEffect, useMemo, useRef } from "react"
+import { Search, Trash2, RefreshCw, AlertCircle, Plus, X, ChevronDown } from "lucide-react"
 import { useRouter } from "next/navigation"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
@@ -202,7 +202,6 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
                   className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
                   style={{
                     borderColor: errors.name ? "#ef4444" : colors.primary.hex,
-                    focusRingColor: colors.primary.hex,
                   }}
                   placeholder="Enter project name"
                   disabled={isUpdating}
@@ -222,7 +221,6 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
                   className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all resize-none"
                   style={{
                     borderColor: errors.description ? "#ef4444" : colors.primary.hex,
-                    focusRingColor: colors.primary.hex,
                   }}
                   placeholder="Enter project description"
                   disabled={isUpdating}
@@ -242,7 +240,6 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
                   className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
                   style={{
                     borderColor: colors.primary.hex,
-                    focusRingColor: colors.primary.hex,
                   }}
                   disabled={isUpdating}
                 />
@@ -260,7 +257,6 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
                   className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
                   style={{
                     borderColor: errors.endDate ? "#ef4444" : colors.primary.hex,
-                    focusRingColor: colors.primary.hex,
                   }}
                   disabled={isUpdating}
                 />
@@ -278,7 +274,6 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
                   className="w-full px-4 py-3 rounded-xl border-2 focus:ring-2 focus:ring-opacity-50 transition-all"
                   style={{
                     borderColor: colors.primary.hex,
-                    focusRingColor: colors.primary.hex,
                   }}
                   disabled={isUpdating}
                 >
@@ -447,6 +442,8 @@ export default function ProjectDashboard() {
   const [managers, setManagers] = useState<Manager[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [statusOpen, setStatusOpen] = useState(false)
+  const statusRef = useRef<HTMLDivElement | null>(null)
   const [assignManagerProjectId, setAssignManagerProjectId] = useState<string | null>(null)
   const [editProjectId, setEditProjectId] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
@@ -570,179 +567,263 @@ export default function ProjectDashboard() {
   const currentProject = assignManagerProjectId ? projects.find((p) => p.id === assignManagerProjectId) : null
   const editProject = editProjectId ? projects.find((p) => p.id === editProjectId) : null
 
+  // Refresh projects list (used by header Refresh button)
+  const handleRefresh = async () => {
+    setIsLoading(true)
+    try {
+      const response = await axiosInstance.get("/projects")
+      setProjects(response.data || [])
+    } catch (error) {
+      console.error("Error refreshing projects:", error)
+      setProjects([])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  // Close custom status dropdown on outside click
+  useEffect(() => {
+    const onDocClick = (e: MouseEvent) => {
+      if (statusRef.current && !statusRef.current.contains(e.target as Node)) {
+        setStatusOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', onDocClick)
+    return () => document.removeEventListener('mousedown', onDocClick)
+  }, [])
+
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto bg-green-600">
-        {/* Header */}
-        <div className="mb-8">
-          <h1
-            className="text-3xl sm:text-4xl font-bold mb-2 bg-amber-500"
-            style={{
-              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
-          >
-            Project Dashboard
-          </h1>
-          <p
-            className="text-lg"
-            style={{
-              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-            }}
-          >
-            Manage and track your project progress
-          </p>
-        </div>
+      <div className="max-w-7xl mx-auto">
+        {/* Header & Action Bar - match Manager header styling */}
+        <div className="mb-8 flex items-center justify-between gap-4">
+          {/* Left: Heading */}
+          <div className="flex flex-col gap-1 md:gap-2 justify-center flex-shrink-0" style={{ minWidth: 220 }}>
+            <h1
+              className="font-bold text-white font-sans not-italic text-2xl leading-9 tracking-normal [font-family:Montserrat,sans-serif] [font-weight:700] [vertical-align:middle] [background-clip:text]"
+              style={{
+                fontFamily: 'Montserrat, sans-serif',
+                fontWeight: 700,
+                fontStyle: 'normal',
+                fontSize: '20px',
+                lineHeight: '36px',
+                letterSpacing: '0px',
+                WebkitBackgroundClip: 'text',
+                verticalAlign: 'middle',
+              }}
+            >
+              Project Dashboard
+            </h1>
+            <p
+              className="font-normal align-middle text-[#E5E5E5] text-opacity-75  font-montserrat not-italic text-sm leading-5 tracking-normal [font-family:Montserrat,sans-serif] [font-weight:400] [background-clip:text]"
+            >
+              Manage and track your project progress
+            </p>
+          </div>
 
-        {/* Action Bar */}
-        <div
-          className="mb-8 rounded-2xl shadow-lg border p-6"
-          style={{
-            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-            color: "#fff",
-            borderColor: colors.primary.hex,
-          }}
-        >
-          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-            <div className="relative flex-1 max-w-md w-full">
+          {/* Center: Search */}
+          <div className="flex-1 flex justify-center">
+            <div className="relative w-full max-w-lg" style={{ marginLeft: '90px' }}>
               <Search
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5"
-                style={{ color: colors.accent.hex }}
+                className="absolute text-[#9CA3AF] left-3 top-1/2 -translate-y-1/2 w-4 h-4"
               />
               <input
                 type="text"
-                placeholder="Search projects by name or description..."
-                className="w-full pl-10 pr-4 py-3 rounded-2xl focus:ring-2 transition-all duration-300 shadow-sm focus:shadow-md"
+                placeholder="Search projects by name or description"
+                className="w-[396px] h-[38px] rounded-[16px] border border-[#FFFFFF4D] bg-[#0000004D] opacity-100 px-[41px] py-[9px]   pr-[17px] text-[#9CA3AF] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm mx-auto"
                 style={{
-                  background: "#fff",
-                  color: colors.primary.hex,
-                  border: `1px solid ${colors.primary.hex}`,
+                  borderWidth: 1,
+                  background: '#0000004D',
+                  borderColor: '#FFFFFF4D',
+                  borderRadius: '16px',
+                  paddingTop: '9px',
+                  paddingBottom: '9px',
+                  paddingLeft: '41px',
+                  paddingRight: '17px',
+                  height: '38px',
+                  width: '396px',
+                  opacity: 1,
                 }}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
-              <div className="relative">
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="appearance-none rounded-2xl px-4 py-3 pr-10 min-w-[140px] shadow-sm focus:shadow-md"
-                  style={{
-                    background: "#fff",
-                    color: colors.primary.hex,
-                    border: `1px solid ${colors.primary.hex}`,
-                  }}
-                >
-                  <option value="all">All Status</option>
-                  <option value="in-progress">In Progress</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-                <ChevronDown
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none"
-                  style={{ color: colors.secondary.hex }}
-                />
-              </div>
+          </div>
+
+          {/* Right: status filter and add */}
+          <div className="flex flex-row items-center gap-2 md:gap-3 flex-shrink-0">
+            <div className="relative" ref={statusRef}>
               <button
                 type="button"
-                className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
+                onClick={() => setStatusOpen((v) => !v)}
+                className="text-xs text-white sm:text-sm px-[24px] py-[8px] rounded-full border opacity-100 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm inline-flex items-center gap-2"
                 style={{
-                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-                  color: "#fff",
-                  border: `1px solid ${colors.primary.hex}`,
+                  borderWidth: 1,
+                  background: '#0000004D',
+                  borderColor: '#FFFFFF4D',
                 }}
-                onClick={() => router.push("/dashboard/admin/addProject")}
               >
-                <Plus className="w-4 h-4" style={{ color: colors.highlight.hex }} />
-                Add Project
+                {statusFilter === 'all'
+                  ? 'All Status'
+                  : statusFilter === 'in-progress'
+                  ? 'In Progress'
+                  : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
+                <ChevronDown className="w-4 h-4 text-white" />
               </button>
+              {statusOpen && (
+                <div
+                  className="absolute right-0 mt-2 z-20 w-48 rounded-2xl border shadow-lg backdrop-blur-md"
+                  style={{
+                    background: '#0000004D',
+                    borderColor: '#FFFFFF4D',
+                  }}
+                >
+                  {[
+                    { value: 'all', label: 'All Status' },
+                    { value: 'in-progress', label: 'In Progress' },
+                    { value: 'completed', label: 'Completed' },
+                    { value: 'cancelled', label: 'Cancelled' },
+                  ].map((opt) => (
+                    <button
+                      key={opt.value}
+                      className="w-full text-left px-4 py-2 text-white hover:bg-white/10 transition-colors first:rounded-t-2xl last:rounded-b-2xl"
+                      onClick={() => {
+                        setStatusFilter(opt.value)
+                        setStatusOpen(false)
+                      }}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
+            <button
+              type="button"
+              className="group inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
+              style={{
+                background: colors.primary.hex,
+                color: '#fff',
+                border: `1px solid ${colors.primary.hex}`,
+              }}
+              onClick={() => router.push("/dashboard/admin/addProject")}
+            >
+              <Plus className="w-4 h-4 text-white" />
+              Add Project
+            </button>
           </div>
         </div>
 
-        {/* Table Container */}
+        {/* Table Container - match Manager cards background and screenshot */}
         <div
-          className="rounded-2xl shadow-lg border overflow-hidden"
+          className="relative rounded-2xl overflow-hidden border shadow-2xl backdrop-blur-md"
           style={{
-            background: "#fff",
-            borderColor: colors.primary.hex,
+            background: "#0000005D",
+            borderColor: "#FFFFFF4D",
+            boxShadow: "0 16px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05)",
           }}
         >
           {isLoading ? (
             <div className="p-12 text-center">
-              <div
-                className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4"
-                style={{ background: colors.accent.hex }}
-              >
-                <RefreshCw className="w-6 h-6 animate-spin" style={{ color: colors.primary.hex }} />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 bg-white/10 border border-white/20">
+                <RefreshCw className="w-6 h-6 animate-spin text-white" />
               </div>
-              <p className="text-lg" style={{ color: colors.primary.hex }}>
-                Loading projects...
-              </p>
+              <p className="text-lg text-white/90">Loading projects...</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y" style={{ borderColor: colors.primary.hex }}>
-                <thead style={{ background: colors.accent.hex }}>
+            <div className="overflow-x-hidden">
+              <table className="min-w-full table-fixed divide-y divide-white/10">
+                <thead className="backdrop-blur-md bg-white/5">
                   <tr>
-                    <th
-                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: colors.primary.hex }}
-                    >
-                      Name
+                    <th className="px-4 sm:px-6 py-4 text-left w-[180px]">
+                      <div
+                        className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white"
+                      >
+                        <span
+                          className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]"
+                        >
+                          Name
+                        </span>
+                      </div>
                     </th>
-                    <th
-                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: colors.primary.hex }}
-                    >
-                      Description
+                    <th className="px-4 sm:px-6 py-4 text-left w-[260px]">
+                      <div
+                        className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white"
+                      >
+                        <span
+                          className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]"
+                        >
+                          Description
+                        </span>
+                      </div>
                     </th>
-                    <th
-                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: colors.primary.hex }}
-                    >
-                      Start Date
+                    <th className="px-4 sm:px-6 py-4 text-left w-[110px]">
+                      <div
+                        className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white"
+                      >
+                        <span
+                          className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px] whitespace-nowrap"
+                        >
+                          Start Date
+                        </span>
+                      </div>
                     </th>
-                    <th
-                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: colors.primary.hex }}
-                    >
-                      End Date
+                    <th className="px-4 sm:px-6 py-4 text-left w-[110px]">
+                      <div
+                        className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white"
+                      >
+                        <span
+                          className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px] whitespace-nowrap"
+                        >
+                          End Date
+                        </span>
+                      </div>
                     </th>
-                    <th
-                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: colors.primary.hex }}
-                    >
-                      Status
+                    <th className="px-4 sm:px-6 py-4 text-left w-[140px]">
+                      <div
+                        className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white"
+                      >
+                        <span
+                          className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]"
+                        >
+                          Status
+                        </span>
+                      </div>
                     </th>
-                    <th
-                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: colors.primary.hex }}
-                    >
-                      Manager
+                    <th className="px-4 sm:px-6 py-4 text-left w-[160px]">
+                      <div
+                        className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white"
+                      >
+                        <span
+                          className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]"
+                        >
+                          Manager
+                        </span>
+                      </div>
                     </th>
-                    <th
-                      className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider"
-                      style={{ color: colors.primary.hex }}
-                    >
-                      Actions
+                    <th className="px-4 sm:px-6 py-4 text-left w-[120px]">
+                      <div
+                        className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white"
+                      >
+                        <span
+                          className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]"
+                        >
+                          Actions
+                        </span>
+                      </div>
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-slate-200">
+                <tbody className="bg-transparent divide-y divide-gray-400" style={{ borderColor: '#BDBDBD' }}>
                   {paginatedProjects.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center justify-center">
-                          <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-                            <AlertCircle className="w-8 h-8 text-slate-400" />
+                          <div className="w-16 h-16 bg-white/10 border border-white/20 rounded-full flex items-center justify-center mb-4">
+                            <AlertCircle className="w-8 h-8 text-white/70" />
                           </div>
-                          <p className="text-slate-600 text-lg font-medium mb-1">No projects found</p>
-                          <p className="text-slate-500">Try adjusting your search or filter criteria</p>
+                          <p className="text-white/90 text-lg font-medium mb-1">No projects found</p>
+                          <p className="text-white/60">Try adjusting your search or filter criteria</p>
                         </div>
                       </td>
                     </tr>
@@ -750,16 +831,33 @@ export default function ProjectDashboard() {
                     paginatedProjects.map((project, index) => (
                       <tr
                         key={project.id}
-                        className={`bg-white transition-all duration-300 hover:bg-gradient-to-r hover:from-[${colors.primary.hex}] hover:to-[${colors.secondary.hex}] hover:text-white`}
+                        className="transition-colors duration-300 bg-transparent hover:bg-white/5"
                       >
                         <td className="px-6 py-6">
                           <div className="space-y-2">
-                            <h3 className="text-lg font-semibold leading-tight" style={{ color: colors.primary.hex }}>
-                              {project.name}
+                            <h3
+                              className="text-xs sm:text-sm font-normal leading-tight break-words whitespace-normal"
+                              style={{ color: "#6AD0F4", fontWeight: 400, wordBreak: 'break-word', fontSize: '13px' }}
+                            >
+                              {(() => {
+                                // Split name into words, insert <br/> after every 30 words
+                                if (!project.name) return null;
+                                const words = project.name.split(' ');
+                                const lines = [];
+                                for (let i = 0; i < words.length; i += 30) {
+                                  lines.push(words.slice(i, i + 30).join(' '));
+                                }
+                                return lines.map((line, idx) => (
+                                  <span key={idx}>
+                                    {line}
+                                    {idx !== lines.length - 1 && <br />}
+                                  </span>
+                                ));
+                              })()}
                             </h3>
                             <div className="flex items-center gap-2">
                               {project.budget && (
-                                <span className="text-sm" style={{ color: colors.secondary.hex }}>
+                                <span className="text-sm text-white/70">
                                   ${project.budget.toLocaleString()}
                                 </span>
                               )}
@@ -767,50 +865,63 @@ export default function ProjectDashboard() {
                           </div>
                         </td>
                         <td className="px-6 py-6">
-                          <p className="text-sm leading-relaxed max-w-xs" style={{ color: colors.secondary.hex }}>
+                          <p className="text-sm leading-relaxed break-words whitespace-normal max-w-2xl" style={{ color: "#A8A8A8" }}>
                             {project.description}
                           </p>
                         </td>
                         <td className="px-6 py-6">
-                          <span className="text-sm" style={{ color: colors.primary.hex }}>
+                          <span className="text-sm text-white/80 whitespace-nowrap">
                             {project.startDate ? new Date(project.startDate).toLocaleDateString() : "—"}
                           </span>
                         </td>
                         <td className="px-6 py-6">
-                          <span className="text-sm" style={{ color: colors.primary.hex }}>
+                          <span className="text-sm text-white/80">
                             {project.endDate ? new Date(project.endDate).toLocaleDateString() : "—"}
                           </span>
                         </td>
                         <td className="px-6 py-6">
                           {project.status ? (
                             <span
-                              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize"
-                              style={{
-                                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                                color: "#fff",
-                              }}
+                              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize shadow-sm whitespace-nowrap"
+                              style={(() => {
+                                const status = project.status.toLowerCase().replace(/\s/g, "");
+                                if (status === "active") {
+                                  return { background: "#D1FAE5", color: "#065F46", border: "1px solid #A7F3D0" };
+                                }
+                                if (status === "inprogress" || status === "in-progress") {
+                                  return { background: "#FDE68A", color: "#92400E", border: "1px solid #FCD34D" };
+                                }
+                                if (status === "completed") {
+                                  return { background: "#99F6E4", color: "#115E59", border: "1px solid #5EEAD4" };
+                                }
+                                if (status === "onhold" || status === "on-hold") {
+                                  return { background: "#FECACA", color: "#9F1239", border: "1px solid #FDA4AF" };
+                                }
+                                return { background: "#E5E7EB", color: "#111827", border: "1px solid #D1D5DB" };
+                              })()}
                             >
                               {(() => {
                                 const status = project.status.toLowerCase()
-                                if (status === "inprogress" || status === "in-progress") return "In Progress"
+                                if (status === "inprogress" || status === "in-progress") return <span style={{whiteSpace:'nowrap'}}>In Progress</span>;
+                                if (status === "completed") return <span style={{whiteSpace:'nowrap'}}>Completed</span>;
                                 if (status === "onhold" || status === "on-hold") return "On Hold"
                                 return status.charAt(0).toUpperCase() + status.slice(1)
                               })()}
                             </span>
                           ) : (
-                            <span className="text-xs" style={{ color: colors.secondary.hex }}>
+                            <span className="text-xs text-white/60">
                               —
                             </span>
                           )}
                         </td>
                         <td className="px-6 py-6">
                           {project.manager ? (
-                            <span className="font-semibold" style={{ color: colors.primary.hex }}>
+                            <span className="font-semibold text-white break-words whitespace-normal">
                               {project.manager.name}
                             </span>
                           ) : (
                             <div className="flex items-center gap-2">
-                              <span className="text-sm" style={{ color: colors.secondary.hex }}>
+                              <span className="text-sm text-white/60">
                                 No manager
                               </span>
                               <button
@@ -818,9 +929,9 @@ export default function ProjectDashboard() {
                                 onClick={() => setAssignManagerProjectId(project.id)}
                                 disabled={isAssigning}
                                 style={{
-                                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+                                  background: "#0000004D",
                                   color: "#fff",
-                                  border: `1px solid ${colors.primary.hex}`,
+                                  border: "1px solid #FFFFFF4D",
                                 }}
                               >
                                 Assign
@@ -832,27 +943,36 @@ export default function ProjectDashboard() {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => setEditProjectId(project.id)}
-                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"
+                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1 border"
                               style={{
-                                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                                color: "#fff",
+                                background: "#0000004D",
+                                borderColor: "#FFFFFF4D",
+                                color: "#BDBDBD", // light gray
                               }}
+                              title="Edit"
                             >
-                              <Edit className="w-4 h-4" style={{ color: "#fff" }} />
+                              {/* Custom pencil with underline icon, matching the provided image */}
+                              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <g>
+                                  <rect x="5" y="17" width="12" height="2" rx="1" fill="#BDBDBD" />
+                                  <path d="M15.5 4.5L17.5 6.5C17.7761 6.77614 17.7761 7.22386 17.5 7.5L8.5 16.5L5 17L5.5 13.5L14.5 4.5C14.7761 4.22386 15.2239 4.22386 15.5 4.5Z" stroke="#BDBDBD" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                                </g>
+                              </svg>
                             </button>
                             <button
                               onClick={() => deleteProject(project.id)}
                               disabled={isDeleting === project.id}
-                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed border"
                               style={{
-                                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                                background: "#0000004D",
+                                borderColor: "#FFFFFF4D",
                                 color: "#fff",
                               }}
                             >
                               {isDeleting === project.id ? (
-                                <RefreshCw className="w-4 h-4 animate-spin" style={{ color: "#fff" }} />
+                                <RefreshCw className="w-4 h-4 animate-spin text-white" />
                               ) : (
-                                <Trash2 className="w-4 h-4" style={{ color: "#fff" }} />
+                                <Trash2 className="w-4 h-4 text-white" />
                               )}
                             </button>
                           </div>
@@ -864,26 +984,40 @@ export default function ProjectDashboard() {
               </table>
             </div>
           )}
+          {/* Footer inside container: showing count + pagination */}
+          {!isLoading && (
+            <div
+              className="flex flex-col md:flex-row items-center justify-between gap-4 px-4 sm:px-6 py-4 border-t"
+              style={{ borderColor: "#FFFFFF26", background: "rgba(0,0,0,0.15)" }}
+            >
+              <div className="text-sm" style={{ color: "#E5E7EB" }}>
+                {(() => {
+                  const total = filteredProjects.length
+                  const start = total === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1
+                  const end = Math.min(currentPage * itemsPerPage, total)
+                  return `Showing ${start} to ${end} of ${total} results`
+                })()}
+              </div>
+              {filteredProjects.length > itemsPerPage && (
+                <div className="w-full md:w-auto ml-auto">
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={Math.max(Math.ceil(filteredProjects.length / itemsPerPage), 1)}
+                    onPageChange={setCurrentPage}
+                    colors={colors}
+                  />
+                </div>
+              )}
+            </div>
+          )}
         </div>
-
-        {/* Pagination */}
-        {!isLoading && filteredProjects.length > itemsPerPage && (
-          <div className="flex justify-center my-6">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={Math.max(Math.ceil(filteredProjects.length / itemsPerPage), 1)}
-              onPageChange={setCurrentPage}
-              colors={colors}
-            />
-          </div>
-        )}
 
         {/* Edit Project Modal */}
         <EditProjectModal
           open={!!editProjectId}
           onClose={() => setEditProjectId(null)}
           onUpdate={updateProject}
-          project={editProject}
+          project={editProject ?? null}
           isUpdating={isUpdating}
         />
 
