@@ -188,7 +188,7 @@ export default function TeamListPage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
+    <div className="p-2 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
      <div className="mb-8 flex flex-col lg:flex-row items-center justify-between gap-6">
@@ -267,7 +267,7 @@ export default function TeamListPage() {
     >
       {/* Header */}
       <div
-        className="px-8 py-6 border-b relative overflow-hidden rounded-t-3xl"
+        className="px-8 py-6  relative overflow-hidden rounded-t-3xl"
         style={{
           background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
           color: "#fff",
@@ -392,7 +392,7 @@ export default function TeamListPage() {
 
       {/* Footer */}
       <div
-        className="px-8 py-6 border-t rounded-b-3xl flex gap-4"
+        className="px-8 py-6  rounded-b-3xl flex gap-4"
         style={{
           background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
           borderColor: `${colors.primary.hex}40`,
@@ -435,7 +435,7 @@ export default function TeamListPage() {
 
 {/* Table Container */}
 <div
-  className="rounded-2xl shadow-2xl border overflow-hidden backdrop-blur-xl"
+  className="rounded-2xl border border-gray-400   shadow-2xl overflow-hidden backdrop-blur-xl"
   style={{
     background: "rgba(255, 255, 255, 0.05)",
     borderColor: "rgba(255, 255, 255, 0.1)",
@@ -465,9 +465,9 @@ export default function TeamListPage() {
       <table className="min-w-full">
         <thead
   className="backdrop-blur-md bg-black/40 text-white   rounded-t-2xl  h-[32px]"
-  style={{
-    borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-  }}
+  // style={{
+  //   borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+  // }}
 >
           <tr className="h-[73px]">
             <th className="px-6 py-4 text-left text-sm font-medium text-white/90">
@@ -487,12 +487,7 @@ export default function TeamListPage() {
           </tr>
         </thead>
 
-    <tbody
-  className="backdrop-blur-md bg-black/40 text-white  rounded-b-2xl "
-  style={{
-    borderTop: "1px solid rgba(255, 255, 255, 0.1)",
-  }}
->
+<tbody className="backdrop-blur-md bg-black/40 text-white rounded-b-2xl">
   {paginatedMembers.length === 0 ? (
     <tr>
       <td colSpan={4} className="px-6 py-12 text-center">
@@ -511,9 +506,10 @@ export default function TeamListPage() {
     paginatedMembers.map((member, index) => (
       <tr
         key={member.id || index}
-        className="transition-all duration-300 hover:bg-white/5 border-b border-white/10"
+        className="transition-all duration-300 hover:bg-white/5 my-2"
       >
-        <td className="px-6 py-4">
+        {/* Employee Details Cell */}
+        <td className="px-6 py-5">
           <div className="flex items-center gap-3">
             <div
               className="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm shadow-lg backdrop-blur-xl relative"
@@ -534,13 +530,15 @@ export default function TeamListPage() {
           </div>
         </td>
 
-        <td className="px-6 py-4">
+        {/* Role Cell */}
+        <td className="px-6 py-5">
           <span className="text-sm text-white/70 capitalize">
             {member.role || "Employee"}
           </span>
         </td>
 
-        <td className="px-6 py-4">
+        {/* Contact Info Cell */}
+        <td className="px-6 py-5">
           <div className="space-y-1">
             <div className="text-sm text-white/90">{member.email}</div>
             {member.phone && (
@@ -557,9 +555,10 @@ export default function TeamListPage() {
           </div>
         </td>
 
+        {/* Actions Cell (Manager Only) */}
         {userRole === "manager" && (
-          <td className="px-6 py-4">
-            <div className="flex items-center gap-2">
+          <td className="px-6 py-5">
+            <div className="flex items-center gap-2 justify-end">
               <button
                 onClick={() => handleEditStart(member)}
                 className="inline-flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:bg-white/10 backdrop-blur-xl"
@@ -574,11 +573,10 @@ export default function TeamListPage() {
                 onClick={() => handleEmployeeDelete(String(member.id))}
                 className="inline-flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:bg-red-500/20 backdrop-blur-xl"
                 style={{
-                  background: "rgba(239, 68, 68, 0.1)",
-                  border: "1px solid rgba(239, 68, 68, 0.2)",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
                 }}
               >
-                <Trash2 className="w-4 h-4 text-red-400" />
+                <Trash2 className="w-4 h-4 text-white" />
               </button>
             </div>
           </td>
@@ -587,6 +585,7 @@ export default function TeamListPage() {
     ))
   )}
 </tbody>
+
 
       </table>
     </div>
