@@ -364,7 +364,7 @@ const ShowSprintTask: React.FC = () => {
               }
               
               return (
-                <div key={status} className="flex flex-col">
+                <div key={status} className="flex flex-col bg-black/40 backdrop-blur-md rounded-2xl p-4 shadow-lg">
                   {/* Column Header */}
                   <div className="flex items-center justify-between p-4 mb-4">
                     <div className="flex items-center gap-3">

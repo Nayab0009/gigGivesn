@@ -618,21 +618,21 @@ export default function ProjectKanbanDashboard() {
       title: "Planning",
       color: "from-blue-500 to-indigo-600",
       bgColor: "bg-blue-50/10",
-      borderColor: "border-blue-200/30",
+    
     },
     {
       id: KanbanStatus.INPROGRESS,
       title: "In Progress",
       color: "from-emerald-500 to-green-600",
       bgColor: "bg-emerald-50/10",
-      borderColor: "border-emerald-200/30",
+     
     },
     {
       id: KanbanStatus.COMPLETED,
       title: "Completed",
       color: "from-green-500 to-emerald-600",
       bgColor: "bg-green-50/10",
-      borderColor: "border-green-200/30",
+   
     },
     {
       id: KanbanStatus.CANCELLED,
@@ -776,49 +776,47 @@ export default function ProjectKanbanDashboard() {
             <p className="text-gray-300 text-lg">Loading your assigned projects...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {KANBAN_COLUMNS.map((column) => (
-              <div key={column.id} className="flex flex-col">
-                {/* Column Header */}
-                <div
-                  className={`${column.bgColor} backdrop-blur-xl rounded-t-2xl border ${column.borderColor} p-4 mb-4`}
-                >
-                  <div className="flex items-center justify-between">
-                    <h2 className="font-semibold text-white text-lg">{column.title}</h2>
-                    <div className="flex items-center gap-2">
-                      <span className="bg-white/20 backdrop-blur-sm text-white text-sm px-2 py-1 rounded-full font-medium border border-white/10">
-                        {projectsByStatus[column.id].length}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Column Content */}
-                <div className="flex-1 space-y-4 min-h-[400px]">
-                  {projectsByStatus[column.id].length === 0 ? (
-                    <div className="bg-black/20 backdrop-blur-xl rounded-xl border border-white/10 p-8 text-center">
-                      <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mb-3 mx-auto">
-                        <Plus className="w-6 h-6 text-white/50" />
-                      </div>
-                      <p className="text-gray-400 text-sm">No projects in {column.title.toLowerCase()}</p>
-                    </div>
-                  ) : (
-                    projectsByStatus[column.id].map((project) => (
-                      <ProjectCard
-                        key={project.id}
-                        project={project}
-                        onViewTeam={setViewTeamProjectId}
-                        onEditStatus={setEditStatusProjectId}
-                        onDelete={handleDeleteProject}
-                        onAssignTeam={setAssignTeamProjectId}
-                        isDeleting={isDeleting === project.id}
-                      />
-                    ))
-                  )}
-                </div>
-              </div>
-            ))}
+       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+  {KANBAN_COLUMNS.map((column) => (
+    <div key={column.id} className="bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 p-4">
+      {/* Column Header */}
+      <div className="mb-4">
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold text-white text-lg">{column.title}</h2>
+          <div className="flex items-center gap-2">
+            <span className="bg-white/20 backdrop-blur-sm text-white text-sm px-2 py-1 rounded-full font-medium border border-white/10">
+              {projectsByStatus[column.id].length}
+            </span>
           </div>
+        </div>
+      </div>
+
+      {/* Column Content - Removed fixed min-height */}
+      <div className="space-y-4">
+        {projectsByStatus[column.id].length === 0 ? (
+          <div className="bg-black/30 backdrop-blur-md rounded-xl border border-white/20 p-8 text-center">
+            <div className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center mb-3 mx-auto">
+              <Plus className="w-6 h-6 text-white/50" />
+            </div>
+            <p className="text-gray-400 text-sm">No projects in {column.title.toLowerCase()}</p>
+          </div>
+        ) : (
+          projectsByStatus[column.id].map((project) => (
+            <ProjectCard
+              key={project.id}
+              project={project}
+              onViewTeam={setViewTeamProjectId}
+              onEditStatus={setEditStatusProjectId}
+              onDelete={handleDeleteProject}
+              onAssignTeam={setAssignTeamProjectId}
+              isDeleting={isDeleting === project.id}
+            />
+          ))
+        )}
+      </div>
+    </div>
+  ))}
+</div>
         )}
 
         {/* MODALS */}
