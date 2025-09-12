@@ -890,8 +890,8 @@ export default function ProjectDashboard() {
                         <td className="px-6 py-6">
                           <div className="space-y-2">
                             <h3
-                              className="text-xs sm:text-sm font-normal leading-tight break-words whitespace-normal"
-                              style={{ color: "#6AD0F4", fontWeight: 400, wordBreak: 'break-word', fontSize: '13px' }}
+                              className="text-xs sm:text-sm  leading-tight break-words whitespace-normal"
+                              style={{ color: "#0CA9F6", fontWeight: 500, wordBreak: 'break-word', fontSize: '14px' }}
                             >
                               {(() => {
                                 // Split name into words, insert <br/> after every 30 words
@@ -970,7 +970,7 @@ export default function ProjectDashboard() {
                         </td>
                         <td className="px-6 py-6">
                           {project.manager ? (
-                            <span className="font-semibold text-white break-words whitespace-normal">
+                            <span className="text-sm leading-relaxed break-words whitespace-normal max-w-2xl" style={{ color: "#A8A8A8" }}>
                               {project.manager.name}
                             </span>
                           ) : (

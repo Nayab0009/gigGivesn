@@ -233,12 +233,13 @@ const EmployeeTasks = () => {
 
   // Format date
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
+    return new Date(dateString).toLocaleString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
+      hour12: true,
     })
   }
 
@@ -291,126 +292,115 @@ const EmployeeTasks = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-4 sm:p-6 lg:p-8">
+    <div className="min-h-screen bg-gradient-to-br  p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-10">
-          <div className="text-center mb-8">
+        {/* Header & Action Bar - match ProjectTable styling */}
+        <div className="mb-8 flex items-center justify-between gap-4">
+          {/* Left: Heading */}
+          <div className="flex flex-col gap-1 md:gap-2 justify-center flex-shrink-0" style={{ minWidth: 220 }}>
             <h1
-              className="text-5xl sm:text-6xl font-bold mb-4"
+              className="font-bold text-white font-sans not-italic text-2xl leading-9 tracking-normal [font-family:Montserrat,sans-serif] [font-weight:700] [vertical-align:middle] [background-clip:text]"
               style={{
-                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                WebkitBackgroundClip: "text",
-                color: "transparent",
+                fontFamily: 'Montserrat, sans-serif',
+                fontWeight: 700,
+                fontStyle: 'normal',
+                fontSize: '20px',
+                lineHeight: '36px',
+                letterSpacing: '0px',
+                WebkitBackgroundClip: 'text',
+                verticalAlign: 'middle',
               }}
             >
               {viewMode === "projects" ? "My Projects" : selectedProject?.name}
             </h1>
-            <div
-              className="w-24 h-1 mx-auto rounded-full mb-6"
-              style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}
-            ></div>
-            <p className="text-xl max-w-2xl mx-auto" style={{ color: colors.primary.hex }}>
-              {viewMode === "projects" ? (
-                <>
-                  Welcome back,{" "}
-                  <span style={{ color: colors.secondary.hex, fontWeight: 600 }}>{user.name || user.email}</span>! Here
-                  are your assigned projects
-                </>
-              ) : (
-                <>
-                  Tasks for project:{" "}
-                  <span style={{ color: colors.secondary.hex, fontWeight: 600 }}>{selectedProject?.name}</span>
-                </>
-              )}
+            <p
+              className="font-normal align-middle text-[#E5E5E5] text-opacity-75  font-montserrat not-italic text-sm leading-5 tracking-normal [font-family:Montserrat,sans-serif] [font-weight:400] [background-clip:text]"
+            >
+              {viewMode === "projects"
+                ? `Welcome back, ${user.name || user.email}! Here are your assigned projects`
+                : `Tasks for project: ${selectedProject?.name}`}
             </p>
+          </div>
+
+          {/* Center: Search */}
+          <div className="flex-1 flex justify-center">
+            <div className="relative w-full max-w-lg" style={{ marginLeft: '90px' }}>
+              <svg className="absolute text-[#9CA3AF] left-3 top-1/2 -translate-y-1/2 w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+              <input
+                type="text"
+                placeholder="Search projects by name or description"
+                className="w-[396px] h-[38px] rounded-[16px] border border-[#FFFFFF4D] bg-[#0000004D] opacity-100 px-[41px] py-[9px]   pr-[17px] text-[#9CA3AF] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm mx-auto"
+                style={{
+                  borderWidth: 1,
+                  background: '#0000004D',
+                  borderColor: '#FFFFFF4D',
+                  borderRadius: '16px',
+                  paddingTop: '9px',
+                  paddingBottom: '9px',
+                  paddingLeft: '41px',
+                  paddingRight: '17px',
+                  height: '38px',
+                  width: '396px',
+                  opacity: 1,
+                }}
+                // value={searchTerm}
+                // onChange={(e) => setSearchTerm(e.target.value)}
+                disabled
+              />
+            </div>
+          </div>
+
+          {/* Right: stats and refresh */}
+          <div className="flex flex-row items-center gap-2 md:gap-3 flex-shrink-0">
+            <div
+              className="text-xs text-white sm:text-sm px-[24px] py-[8px] rounded-full border bg-[#0000004D] border-[#FFFFFF4D] opacity-100  focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm flex items-center"
+              style={{
+                borderWidth: 1,
+                background: '#0000004D',
+                borderColor: '#FFFFFF4D',
+                opacity: 1,
+              }}
+            >
+              <span className="font-semibold text-white">{projects.length}</span>
+              <span className="mx-1">Projects</span>
+              <span className="font-semibold text-white ml-4">{tasks.length}</span>
+              <span className="mx-1">Tasks</span>
+            </div>
+            <button
+              className="group inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
+              style={{
+                background: colors.primary.hex,
+                color: '#fff',
+                border: `1px solid ${colors.primary.hex}`,
+              }}
+              onClick={refreshData}
+              disabled={isLoading}
+            >
+              <RefreshCw className="w-4 h-4 text-white" />
+              Refresh
+            </button>
           </div>
         </div>
 
-        {/* Back Button for Tasks View */}
+  {/* Back Button for Tasks View */}
         {viewMode === "tasks" && (
           <div className="mb-6">
             <button
               onClick={goBackToProjects}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
               style={{
-                background: "#fff",
-                color: colors.primary.hex,
-                border: `1px solid ${colors.primary.hex}`,
+                background: "#0000004D",
+                color: "#fff",
+                border: "1px solid #FFFFFF4D",
               }}
             >
-              <ArrowLeft className="w-5 h-5" style={{ color: colors.secondary.hex }} />
+              <ArrowLeft className="w-5 h-5" style={{ color: "#fff" }} />
               Back to Projects
             </button>
           </div>
         )}
 
-        {/* Stats Bar */}
-        <div
-          className="mb-8 rounded-3xl shadow-2xl p-8 text-white"
-          style={{
-            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-          }}
-        >
-          <div className="flex flex-col sm:flex-row gap-6 items-center justify-between">
-            <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-8">
-              <div className="flex items-center space-x-3">
-                <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-sm"
-                  style={{ background: colors.accent.hex }}
-                >
-                  {viewMode === "projects" ? (
-                    <Building2 className="w-6 h-6" style={{ color: colors.primary.hex }} />
-                  ) : (
-                    <ClipboardList className="w-6 h-6" style={{ color: colors.primary.hex }} />
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm" style={{ color: colors.highlight.hex }}>
-                    {viewMode === "projects" ? "Total Projects" : "Total Tasks"}
-                  </p>
-                  <p className="font-bold text-lg" style={{ color: "#fff" }}>
-                    {viewMode === "projects" ? projects.length : tasks.length}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center backdrop-blur-sm"
-                  style={{ background: colors.accent.hex }}
-                >
-                  <Star className="w-6 h-6" style={{ color: colors.primary.hex }} />
-                </div>
-                <div>
-                  <p className="text-sm" style={{ color: colors.highlight.hex }}>
-                    {viewMode === "projects" ? "Total Tasks" : "Completed"}
-                  </p>
-                  <p className="font-bold text-lg" style={{ color: "#fff" }}>
-                    {viewMode === "projects"
-                      ? tasks.length
-                      : tasks.filter((task) => task.status.toLowerCase() === "completed").length}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <button
-              onClick={refreshData}
-              disabled={refreshing || isLoading}
-              className="group inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-sm font-semibold transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none border"
-              style={{
-                background: colors.accent.hex,
-                color: colors.primary.hex,
-                borderColor: colors.primary.hex,
-              }}
-            >
-              <RefreshCw
-                className={`w-5 h-5 transition-transform duration-300 ${refreshing ? "animate-spin" : "group-hover:rotate-180"}`}
-                style={{ color: colors.secondary.hex }}
-              />
-              Refresh {viewMode === "projects" ? "Projects" : "Tasks"}
-            </button>
-          </div>
-        </div>
+  {/* Stats Bar removed, now in header */}
 
         {/* Error Message */}
         {error && (
@@ -439,7 +429,15 @@ const EmployeeTasks = () => {
         )}
 
         {/* Content Container */}
-        <div className="bg-white/60 backdrop-blur-xl rounded-3xl shadow-2xl border overflow-hidden">
+        {/* Table Container - mirror ProjectTable UI */}
+        <div
+          className="relative rounded-3xl overflow-hidden border shadow-2xl backdrop-blur-xl"
+          style={{
+            background: "#0000005D",
+            borderColor: "#FFFFFF4D",
+            boxShadow: "0 16px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05)",
+          }}
+        >
           {isLoading ? (
             <div className="p-16 text-center">
               <div
@@ -471,63 +469,60 @@ const EmployeeTasks = () => {
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr
-                      className="border-b-2"
-                      style={{ borderColor: colors.primary.hex, background: colors.accent.hex }}
-                    >
-                      <th className="text-left p-6 font-bold text-lg" style={{ color: colors.primary.hex }}>
-                        Project Name
+                <table className="min-w-full table-fixed divide-y divide-white/10">
+                  <thead className="backdrop-blur-md bg-white/5">
+                    <tr>
+                      <th className="px-4 sm:px-6 py-4 text-left w-[180px]">
+                        <div className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white">
+                          <span className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]">Project Name</span>
+                        </div>
                       </th>
-                      <th
-                        className="text-left p-6 font-bold text-lg hidden md:table-cell"
-                        style={{ color: colors.primary.hex }}
-                      >
-                        Description
+                      <th className="px-4 sm:px-6 py-4 text-left w-[260px]">
+                        <div className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white">
+                          <span className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]">Description</span>
+                        </div>
                       </th>
-                      <th className="text-center p-6 font-bold text-lg" style={{ color: colors.primary.hex }}>
-                        Status
+                      <th className="px-4 sm:px-6 py-4 text-left w-[110px]">
+                        <div className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white">
+                          <span className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px] whitespace-nowrap">Status</span>
+                        </div>
                       </th>
-                      <th
-                        className="text-center p-6 font-bold text-lg hidden lg:table-cell"
-                        style={{ color: colors.primary.hex }}
-                      >
-                        Start Date
+                      <th className="px-4 sm:px-6 py-4 text-left w-[200px]">
+                        <div className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white">
+                          <span className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px] whitespace-nowrap">Start Date</span>
+                        </div>
                       </th>
-                      <th
-                        className="text-center p-6 font-bold text-lg hidden lg:table-cell"
-                        style={{ color: colors.primary.hex }}
-                      >
-                        End Date
+                      <th className="px-4 sm:px-6 py-4 text-left w-[200px]">
+                        <div className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white">
+                          <span className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px] whitespace-nowrap">End Date</span>
+                        </div>
                       </th>
-                      <th className="text-center p-6 font-bold text-lg" style={{ color: colors.primary.hex }}>
-                        Actions
+                      <th className="px-4 sm:px-6 py-4 text-left w-[160px]">
+                        <div className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white">
+                          <span className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]">Actions</span>
+                        </div>
                       </th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="bg-transparent divide-y divide-white/10 text-white/90" style={{ borderColor: '#FFFFFF26' }}>
                     {projects.map((project, index) => (
                       <tr
                         key={project.id}
-                        className="border-b transition-all duration-300 hover:shadow-lg"
-                        style={{
-                          borderColor: colors.accent.hex,
-                          background: index % 2 === 0 ? "#fff" : colors.accent.hex + "20",
-                        }}
+                        className="border-b transition-all duration-300 hover:shadow-lg hover:bg-white/5"
+                        style={{ borderColor: "#FFFFFF26" }}
                       >
                         <td className="p-6">
                           <div className="flex flex-col">
-                            <h3 className="text-lg font-semibold mb-1" style={{ color: colors.primary.hex }}>
+                            <h3 className="text-lg font-semibold mb-1 text-[#0CA9F6]">
                               {project.name}
                             </h3>
-                            <div className="md:hidden text-sm" style={{ color: colors.secondary.hex }}>
+                            <div className="md:hidden text-sm text-white/70">
                               {project.description || "No description provided"}
                             </div>
                           </div>
                         </td>
                         <td className="p-6 hidden md:table-cell">
-                          <p className="text-sm max-w-xs" style={{ color: colors.secondary.hex }}>
+                          <p className="text-sm max-w-xs text-white/70">
                             {project.description || "No description provided"}
                           </p>
                         </td>
@@ -535,9 +530,9 @@ const EmployeeTasks = () => {
                           <span
                             className="px-4 py-2 rounded-full text-sm font-medium border inline-flex items-center gap-2"
                             style={{
-                              background: project.isActive ? colors.accent.hex : "#f1f5f9",
-                              color: project.isActive ? colors.primary.hex : colors.secondary.hex,
-                              borderColor: colors.primary.hex,
+                              background: project.isActive ? "rgba(16,185,129,0.15)" : "rgba(255,255,255,0.08)",
+                              color: project.isActive ? "#a7f3d0" : "#E5E7EB",
+                              borderColor: "#FFFFFF33",
                             }}
                           >
                             {project.isActive ? (
@@ -548,35 +543,35 @@ const EmployeeTasks = () => {
                             {project.isActive ? "Active" : "Inactive"}
                           </span>
                         </td>
-                        <td className="p-6 text-center hidden lg:table-cell">
+            <td className="p-6 text-center hidden lg:table-cell">
                           <div
-                            className="flex items-center justify-center gap-2 text-sm"
-                            style={{ color: colors.secondary.hex }}
+              className="flex items-center justify-center gap-2 text-sm"
+                            style={{ color: "#E5E7EB" }}
                           >
-                            <Calendar className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                            {formatDate(project.startDate)}
+                            <Calendar className="w-4 h-4 text-white/80" />
+              <span className="whitespace-nowrap">{formatDate(project.startDate)}</span>
                           </div>
                         </td>
-                        <td className="p-6 text-center hidden lg:table-cell">
+            <td className="p-6 text-center hidden lg:table-cell">
                           <div
-                            className="flex items-center justify-center gap-2 text-sm"
-                            style={{ color: colors.secondary.hex }}
+              className="flex items-center justify-center gap-2 text-sm"
+                            style={{ color: "#E5E7EB" }}
                           >
-                            <Calendar className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                            {formatDate(project.endDate)}
+                            <Calendar className="w-4 h-4 text-white/80" />
+              <span className="whitespace-nowrap">{formatDate(project.endDate)}</span>
                           </div>
                         </td>
                         <td className="p-6 text-center">
                           <button
                             onClick={() => handleProjectSelect(project)}
-                            className="px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 shadow hover:shadow-lg transform hover:scale-105 inline-flex items-center gap-2"
+                            className="px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 shadow hover:shadow-lg transform hover:scale-105 inline-flex items-center gap-2 whitespace-nowrap"
                             style={{
                               background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
                               color: "#fff",
                             }}
                           >
                             <Eye className="w-4 h-4" />
-                            View Tasks
+                            <span className="whitespace-nowrap">View Tasks</span>
                           </button>
                         </td>
                       </tr>
@@ -618,56 +613,57 @@ const EmployeeTasks = () => {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b-2" style={{ borderColor: colors.primary.hex, background: colors.accent.hex }}>
-                    <th className="text-left p-6 font-bold text-lg" style={{ color: colors.primary.hex }}>
-                      Task Title
+              <table className="min-w-full table-fixed divide-y divide-white/10">
+                <thead className="backdrop-blur-md bg-white/5">
+                  <tr>
+                    <th className="px-4 sm:px-6 py-4 text-left w-[180px]">
+                      <div className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white">
+                        <span className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]">Task Title</span>
+                      </div>
                     </th>
-                    <th
-                      className="text-left p-6 font-bold text-lg hidden md:table-cell"
-                      style={{ color: colors.primary.hex }}
-                    >
-                      Description
+                    <th className="px-4 sm:px-6 py-4 text-left w-[260px]">
+                      <div className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white">
+                        <span className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]">Description</span>
+                      </div>
                     </th>
-                    <th className="text-center p-6 font-bold text-lg" style={{ color: colors.primary.hex }}>
-                      Status
+                    <th className="px-4 sm:px-6 py-4 text-left w-[110px]">
+                      <div className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white">
+                        <span className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px] whitespace-nowrap">Status</span>
+                      </div>
                     </th>
-                    <th
-                      className="text-center p-6 font-bold text-lg hidden lg:table-cell"
-                      style={{ color: colors.primary.hex }}
-                    >
-                      Created
+                    <th className="px-4 sm:px-6 py-4 text-left w-[110px]">
+                      <div className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white">
+                        <span className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px] whitespace-nowrap">Created</span>
+                      </div>
                     </th>
-                    <th className="text-center p-6 font-bold text-lg" style={{ color: colors.primary.hex }}>
-                      Actions
+                    <th className="px-4 sm:px-6 py-4 text-left w-[120px]">
+                      <div className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white">
+                        <span className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]">Actions</span>
+                      </div>
                     </th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="bg-transparent divide-y divide-white/10 text-white/90" style={{ borderColor: '#FFFFFF26' }}>
                   {tasks.map((task, index) => {
                     const statusInfo = getStatusInfo(task.status)
                     return (
                       <tr
                         key={task.id}
-                        className="border-b transition-all duration-300 hover:shadow-lg"
-                        style={{
-                          borderColor: colors.accent.hex,
-                          background: index % 2 === 0 ? "#fff" : colors.accent.hex + "20",
-                        }}
+                        className="border-b transition-all duration-300 hover:shadow-lg hover:bg-white/5"
+                        style={{ borderColor: "#FFFFFF26" }}
                       >
                         <td className="p-6">
                           <div className="flex flex-col">
-                            <h3 className="text-lg font-semibold mb-1" style={{ color: colors.primary.hex }}>
+                            <h3 className="text-lg font-semibold mb-1 text-white">
                               {task.title}
                             </h3>
-                            <div className="md:hidden text-sm" style={{ color: colors.secondary.hex }}>
+                            <div className="md:hidden text-sm text-white/70">
                               {task.description || "No description provided"}
                             </div>
                           </div>
                         </td>
                         <td className="p-6 hidden md:table-cell">
-                          <p className="text-sm max-w-xs" style={{ color: colors.secondary.hex }}>
+                          <p className="text-sm max-w-xs text-white/70">
                             {task.description || "No description provided"}
                           </p>
                         </td>
@@ -686,9 +682,9 @@ const EmployeeTasks = () => {
                         <td className="p-6 text-center hidden lg:table-cell">
                           <div
                             className="flex items-center justify-center gap-2 text-sm"
-                            style={{ color: colors.secondary.hex }}
+                            style={{ color: "#E5E7EB" }}
                           >
-                            <Calendar className="w-4 h-4" style={{ color: colors.primary.hex }} />
+                            <Calendar className="w-4 h-4 text-white/80" />
                             {formatDate(task.createdAt)}
                           </div>
                         </td>
@@ -711,7 +707,7 @@ const EmployeeTasks = () => {
                               className="px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300 shadow hover:shadow-lg transform hover:scale-105 inline-flex items-center gap-2"
                               style={{
                                 background: colors.accent.hex,
-                                color: colors.primary.hex,
+                                color: "#fff",
                                 border: `1px solid ${colors.primary.hex}`,
                               }}
                             >
