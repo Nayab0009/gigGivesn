@@ -194,15 +194,15 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
           {/* Header */}
           <div
             className="px-8 py-6 border-b relative overflow-hidden rounded-t-3xl"
-            style={{
-              background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
-              color: "#fff",
-            }}
+            // style={{
+            //   background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
+            //   color: "#fff",
+            // }}
           >
             <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
             <div className="relative flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold mb-1">Edit Project</h2>
+                <h2 className="text-2xl font-bold mb-1 text-white">Edit Project</h2>
                 <p className="text-white/80 text-sm">Update project information</p>
               </div>
               <button
@@ -338,10 +338,10 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
             {/* Footer */}
             <div
               className="px-8 py-6 border-t rounded-b-3xl flex gap-4"
-              style={{
-                background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                borderColor: `${colors.primary.hex}40`,
-              }}
+              // style={{
+              //   background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
+              //   borderColor: `${colors.primary.hex}40`,
+              // }}
             >
               <button
                 type="button"

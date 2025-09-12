@@ -259,7 +259,7 @@ export default function TeamListPage() {
        {editingMember && (
   <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
     <div
-      className="rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100"
+      className="rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto scrollbar-hide transform transition-all duration-300 scale-100"
       style={{
         background: "rgba(255, 255, 255, 0.08)", // glassy modal bg
         border: `2px solid ${colors.primary.hex}40`,
