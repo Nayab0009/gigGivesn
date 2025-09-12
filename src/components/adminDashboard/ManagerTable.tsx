@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect, useMemo } from "react"
-import { Search, Plus, RefreshCw, Edit, Trash2, Eye, AlertCircle } from "lucide-react"
+import { Search, Plus, RefreshCw, Edit, Trash2, Eye, AlertCircle, MapPin, Phone, Clock, MoreHorizontal, X } from "lucide-react"
 import { useRouter } from "next/navigation"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
@@ -32,6 +32,8 @@ export default function EnhancedManagersTable() {
   const [managers, setManagers] = useState<Manager[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [showEditModal, setShowEditModal] = useState(false)
+  const [showDetailsModal, setShowDetailsModal] = useState(false)
+  const [detailManager, setDetailManager] = useState<Manager | null>(null)
   const [editManager, setEditManager] = useState<Manager | null>(null)
   const [editForm, setEditForm] = useState({
     name: "",
@@ -145,6 +147,11 @@ export default function EnhancedManagersTable() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleViewDetails = (manager: Manager) => {
+    setDetailManager(manager)
+    setShowDetailsModal(true)
   }
 
   const handleEditClick = (manager: Manager) => {
@@ -390,7 +397,7 @@ export default function EnhancedManagersTable() {
                           minWidth: '250px',
                           textAlign: 'center',
                         }}
-                        onClick={() => {}}
+                        onClick={() => handleViewDetails(manager)}
                       >
                         View Details
                       </button>
@@ -430,6 +437,164 @@ export default function EnhancedManagersTable() {
               onPageChange={setCurrentPage}
               colors={colors}
             />
+          </div>
+        )}
+
+        {/* Details Modal */}
+        {showDetailsModal && detailManager && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div
+              className="w-full max-w-5xl h-[600px]  rounded-[24px] border shadow-2xl overflow-hidden"
+              style={{
+                background: "rgba(0,0,0,0.55)",
+                borderColor: "#FFFFFF26",
+                boxShadow: "0 24px 80px rgba(0,0,0,0.55)",
+              }}
+            >
+              {/* Top bar close */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowDetailsModal(false)}
+                  className="absolute right-4 top-4 w-9 h-9 inline-flex items-center justify-center rounded-full hover:bg-white/10 transition"
+                  title="Close"
+                >
+                  <X className="w-5 h-5 text-white" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6 lg:p-8">
+                {/* Left main panel */}
+                <div className="lg:col-span-2">
+                  <div
+                    className="rounded-2xl border p-5 sm:p-6 lg:p-7"
+                    style={{ background: "#00000066", borderColor: "#FFFFFF26" }}
+                  >
+                    {/* Header profile + mini task */}
+                    <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                      <div className="flex items-center gap-4">
+                        <div className="relative">
+                          <div className="w-[72px] h-[72px] rounded-full overflow-hidden border-2" style={{ borderColor: colors.primary.hex }}>
+                            <img
+                              src={detailManager.team?.[0]?.avatar || generateAvatar(detailManager.name, 0)}
+                              alt={detailManager.name}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="absolute -right-1 -bottom-1 w-6 h-6 rounded-full border-2" style={{ background: colors.primary.hex, borderColor: "#0B0B0B" }} />
+                        </div>
+                        <div>
+                          <div className="text-white text-xl sm:text-2xl font-semibold">{detailManager.name}</div>
+                          <div className="text-slate-300 -mt-0.5">UI/UX Designer</div>
+                          <div className="mt-3 flex items-center gap-4 text-slate-200 text-sm">
+                            <div className="inline-flex items-center gap-2"><Phone className="w-4 h-4 text-slate-400" /> {detailManager.phone}</div>
+                            <div className="inline-flex items-center gap-2"><MapPin className="w-4 h-4 text-slate-400" /> {detailManager.address}</div>
+                          </div>
+                        </div>
+                      </div>
+                      {/* Mini task card */}
+                      <div
+                        className="rounded-xl border p-4 w-full md:w-[360px]"
+                        style={{ background: "#0B0B0B80", borderColor: "#FFFFFF26" }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="text-[11px] px-2 py-0.5 rounded-full" style={{ background: "#0CA9F61A", color: colors.primary.hex }}>AER-001</div>
+                          <div className="flex items-center gap-2">
+                            <div className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400">High</div>
+                            <MoreHorizontal className="w-4 h-4 text-slate-400" />
+                          </div>
+                        </div>
+                        <div className="mt-2 text-white font-semibold">Aeronaa UI Design</div>
+                        <div className="text-slate-300 text-sm">Review Project Goals and Objective</div>
+                        <div className="mt-3 flex items-center justify-between">
+                          {/* Avatars */}
+                          <div className="flex -space-x-2">
+                            {[0,1,2,3].slice(0, (detailManager.team?.length || 3)).map((i) => (
+                              <img
+                                key={i}
+                                className="w-7 h-7 rounded-full border border-black"
+                                src={detailManager.team?.[i]?.avatar || generateAvatar(`${detailManager.name}-${i}`, i)}
+                                alt="team"
+                              />
+                            ))}
+                          </div>
+                          <div className="inline-flex items-center gap-2 text-slate-300 text-xs"><Clock className="w-4 h-4" /> 01h 52m</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Stats row */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
+                      {[
+                        { label: "Active goals", value: "3" },
+                        { label: "Progress", value: "40%" },
+                        { label: "Completed Tasks", value: "6" },
+                        { label: "Due Tasks", value: "2" },
+                      ].map((s) => (
+                        <div key={s.label} className="rounded-xl border p-4" style={{ background: "#0B0B0B66", borderColor: "#FFFFFF26" }}>
+                          <div className="text-slate-300 text-xs">{s.label}</div>
+                          <div className="text-white text-xl font-semibold mt-1">{s.value}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Tasks list */}
+                    <div className="mt-6 space-y-4">
+                      {[1,2,3].map((i) => (
+                        <div key={i} className="rounded-xl border p-4 flex items-start justify-between" style={{ background: "#0B0B0B66", borderColor: "#FFFFFF26" }}>
+                          <div>
+                            <div className="text-white font-medium">Aeronaa UI Design</div>
+                            <div className="text-slate-300 text-sm">Review Project Goals and Objective</div>
+                            <div className="mt-2 inline-flex items-center gap-2 text-slate-400 text-xs"><Clock className="w-4 h-4" /> 01h 52m</div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400">High</div>
+                            <div className="flex -space-x-2">
+                              {[0,1,2].map((j) => (
+                                <img key={j} className="w-7 h-7 rounded-full border border-black" src={generateAvatar(`${detailManager.name}-${i}-${j}`, j)} />
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right panel */}
+                <div>
+                  <div className="rounded-2xl border p-6" style={{ background: "#00000066", borderColor: "#FFFFFF26" }}>
+                    {/* Donut */}
+                    <div className="flex items-center justify-center">
+                      <div className="relative w-56 h-56">
+                        <div className="absolute inset-0 rounded-full" style={{ background: `conic-gradient(${colors.secondary.hex} 0 220deg, ${colors.accent.hex} 220deg 270deg, ${colors.primary.hex} 270deg 360deg)` }}></div>
+                        <div className="absolute inset-[18px] rounded-full" style={{ background: "rgba(0,0,0,0.75)" }}></div>
+                        <div className="absolute inset-0 flex items-center justify-center flex-col">
+                          <div className="text-white text-2xl font-bold">9,999</div>
+                          <div className="text-emerald-400 text-sm">▲ 10%</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-center text-slate-300 text-xs mt-3">Last 24-hours efficiency</div>
+
+                    <div className="mt-8">
+                      <div className="text-white text-lg font-semibold mb-3">Statistics</div>
+                      <div className="space-y-3">
+                        {[
+                          { title: "Performance", desc: "Based on work" },
+                          { title: "Success", desc: "Based on projects" },
+                          { title: "Innovation", desc: "Worked ideas" },
+                        ].map((b) => (
+                          <div key={b.title} className="rounded-xl border p-4" style={{ background: "#0B0B0B66", borderColor: "#FFFFFF26" }}>
+                            <div className="text-white font-medium">{b.title}</div>
+                            <div className="text-slate-300 text-sm">{b.desc}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
