@@ -541,10 +541,34 @@ export default function ProjectDashboard() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl sm:text-4xl font-[600] text-white mb-2">Project Dashboard</h1>
-          <p className="text-white text-lg">
-            Welcome back, {user.name || user.email}! Manage and track your assigned projects
-          </p>
+          <h1
+  className="
+    font-roboto 
+    font-semibold 
+    text-[20px] 
+    leading-[28px] 
+    tracking-[0px] 
+    align-middle 
+    text-white 
+    mb-2
+  "
+>
+  Project Dashboard
+</h1>
+
+          <p
+  className="
+    font-roboto 
+    font-normal 
+    text-[14px] 
+    leading-[20px] 
+    tracking-[0px] 
+    align-middle 
+    text-white
+  "
+>
+  Welcome back, {user.name || user.email}! Manage and track your assigned projects
+</p>
         </div>
 
         {/* Error Message */}
@@ -581,24 +605,36 @@ export default function ProjectDashboard() {
             <div className="flex flex-col sm:flex-row gap-4 items-center flex-1 w-full">
               {/* Search Bar */}
               <div className="relative flex-1 w-full">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Search projects by name, ID, or description..."
-                  className="
-                    w-full pl-10 pr-4 py-3 
-                    rounded-2xl 
-                    border border-white/30 
-                    bg-black/20 
-                    backdrop-blur-md
-                    text-white placeholder-white/70
-                    focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500
-                    transition-all duration-300
-                    shadow-sm focus:shadow-md
-                  "
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+              <Search
+  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300 w-[16.66px] h-[16px]"
+/>
+<input
+  type="text"
+  placeholder="Search projects by name, ID, or description..."
+  className="
+    w-full pl-10 pr-4 py-3 
+    rounded-2xl 
+    border border-white/30 
+    bg-black/20 
+    backdrop-blur-md
+    text-white 
+    focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500
+    transition-all duration-300
+    shadow-sm focus:shadow-md
+
+    placeholder:font-inter
+    placeholder:font-medium
+    placeholder:text-[14px]
+    placeholder:leading-[20px]
+    placeholder:tracking-[0px]
+    placeholder:align-middle
+    placeholder:text-gray-400
+  "
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+/>
+
+
               </div>
 
               <div className="flex items-center gap-2 bg-black/30 backdrop-blur-md rounded-2xl p-1 border border-white/20">
