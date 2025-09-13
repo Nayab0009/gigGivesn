@@ -19,7 +19,7 @@ export default function DashboardLayout({
 
       {/* Page content */}
       <main
-        className="flex-1 p-4 md:p-6 overflow-x-hidden transition-all duration-500 ease-in-out"
+        className="flex-1 p-4 md:p-6  transition-all duration-500 ease-in-out"
         style={{
           marginTop: `${headerHeight}px`,
           minHeight: `calc(100vh - ${headerHeight}px)`,

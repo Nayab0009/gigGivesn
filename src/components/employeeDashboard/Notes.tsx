@@ -81,7 +81,8 @@ const ProfessionalNotesEditor = () => {
       const payload: Notespayload = {
         title: "Untitled Document",
         content: "<p>i am fixing the 500 internal server error</p>", // Updated default content
-        createdBy: user.id, // Pass the current user's ID
+              // createdBy: user.id, // Pass the current user's ID
+
       }
       const newNote = await addNote(payload)
       setNotes([newNote, ...notes])
@@ -195,93 +196,71 @@ const ProfessionalNotesEditor = () => {
 
   const themeClass = isDarkMode ? "dark bg-gray-900" : "bg-gray-50"
   const cardClass = isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
-  const textClass = isDarkMode ? "text-gray-100" : "text-gray-900"
+  const textClass = isDarkMode ? "text-white" : "text-white"
   const mutedTextClass = isDarkMode ? "text-gray-400" : "text-gray-500"
 
   return (
-    <div className={`min-h-screen transition-all duration-300 ${themeClass}`}>
-      <div className="flex h-screen">
+    <div className={`min-h-screen transition-all duration-300 ${themeClass} bg-transparent`}>
+      
+
+{/* Header Searchbar */}
+<div className="bg-black/30 backdrop-blur-md py-6 px-9 rounded-4xl border-[1px] my-5 border-gray-500 text-white mx-4">
+  <div className="flex flex-row items-center gap-4">
+    <div className="relative group flex-grow">
+      <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white  transition-colors" />
+      <input
+        type="text"
+        placeholder="Search notes..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="pl-12 pr-4 py-3 rounded-4xl dark:border-gray-600/50 border-none transition-all duration-200 placeholder:text-white/40 w-full bg-black/30 backdrop-blur-md outline-none focus:ring-1 focus:ring-gray-500 focus:border-none"
+      />
+    </div>
+    <button
+      onClick={handleAddNote}
+      className="flex items-center gap-2 px-4 py-2 bg-[#0CA9F6] text-white text-sm rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+    >
+      <Plus className="w-4 h-4" />
+      New Note
+    </button>
+  </div>
+</div>
+
+
+
+      
+      <div className="flex flex-col md:flex-row bg-black/30 backdrop-blur-md py-6 px-4 md:px-9 rounded-4xl border-[1px] my-5 border-gray-500 text-white mx-4">
         {/* Sidebar */}
-        <aside className={`w-80 ${cardClass} border-r shadow-xl flex flex-col transition-all duration-300`}>
-          <div className="p-6 border-b border-gray-200/50 dark:border-gray-700/50">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <Edit3 className="w-5 h-5 text-white" />
-                </div>
-                <h1
-                  className={`text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent`}
-                >
-                  MyNotes
-                </h1>
-              </div>
-              {/* <button
-                onClick={() => setIsDarkMode(!isDarkMode)}
-                className={`p-2.5 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-700/50 transition-all duration-200 ${textClass}`}
-              >
-                {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-              </button> */}
-            </div>
-            {/* Search */}
-            <div className="relative group">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
-              <input
-                type="text"
-                placeholder="Search notes..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className={`w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200/50 dark:border-gray-600/50 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 ${cardClass} ${textClass} placeholder:text-gray-400`}
-              />
-            </div>
-          </div>
+        <aside className={`w-full md:w-80 flex flex-col transition-all duration-300 bg-none`}>
+          
           {/* Notes List */}
-          <div className="flex-1 overflow-y-auto px-4 py-6">
-            <div className="flex items-center justify-between mb-6">
-              <span className={`text-sm font-semibold ${mutedTextClass} tracking-wide uppercase`}>
-                {filteredNotes.length} Documents
-              </span>
-              <button
-                onClick={handleAddNote}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white text-sm rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-              >
-                <Plus className="w-4 h-4" />
-                New Note
-              </button>
-            </div>
-            <div className="space-y-2">
+          <div className="flex-1">
+            <div className="space-y-3 mr-0 md:mr-4 mb-4 md:mb-0">
               {filteredNotes.map((note: any) => (
                 <div
                   key={note.id}
                   onClick={() => setSelectedNoteId(note.id)}
-                  className={`group cursor-pointer p-4 rounded-xl transition-all duration-200 border hover:shadow-md hover:-translate-y-0.5 ${
+                  className={`group cursor-pointer p-5 rounded-xl transition-all duration-200 hover:-translate-y-0.5 ${
                     note.id === selectedNoteId
-                      ? "bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/10 border-blue-200 dark:border-blue-700 shadow-sm"
-                      : `hover:bg-gray-50/50 dark:hover:bg-gray-700/20 border-gray-200/20 dark:border-gray-700/20 ${cardClass}`
+                      ? "bg-[#00000083] text-white shadow-md border-l-4 border-[#0CA9F6]"
+                      : `bg-black/30 backdrop-blur-md border-none text-white hover:bg-black/40 hover:shadow-md`
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <h3
-                      className={`font-semibold text-sm ${textClass} group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate pr-2 flex-1`}
-                    >
-                      {note.title}
-                    </h3>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <span className={`text-xs ${mutedTextClass}`}>{formatDate(note.lastModified)}</span>
-                      <div
-                        className={`w-6 h-6 rounded-lg flex items-center justify-center ${
-                          note.id === selectedNoteId
-                            ? "bg-blue-100 dark:bg-blue-800/50"
-                            : "bg-gray-100/50 dark:bg-gray-700/50 group-hover:bg-blue-100/50 dark:group-hover:bg-blue-800/30"
-                        } transition-all duration-200`}
+                  <div className="flex flex-col">
+                    <div className="flex items-center justify-between">
+                      <h3
+                        className={`font-semibold text-base ${textClass} transition-colors truncate pr-2 flex-1`}
                       >
-                        <FileText
-                          className={`w-3.5 h-3.5 ${
-                            note.id === selectedNoteId
-                              ? "text-blue-600 dark:text-blue-400"
-                              : `${mutedTextClass} group-hover:text-blue-500`
-                          }`}
-                        />
+                        {note.title}
+                      </h3>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                    
                       </div>
+                    </div>
+                    <div className={`mt-1.5 text-xs text-white/65 ${mutedTextClass} line-clamp-2 overflow-hidden`}>
+                      {/* Strip HTML tags for preview */}
+                      {note.content.replace(/<[^>]*>?/gm, '').substring(0, 120)}
+                      {note.content.replace(/<[^>]*>?/gm, '').length > 120 ? '...' : ''}
                     </div>
                   </div>
                 </div>
@@ -290,30 +269,97 @@ const ProfessionalNotesEditor = () => {
           </div>
         </aside>
         {/* Main Editor */}
-        <main className="flex-1 flex flex-col">
-          <header className={`${cardClass} border-b border-gray-200 dark:border-gray-700 px-6 py-4 shadow-sm`}>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4 flex-1">
-                {isEditingTitle ? (
-                  <input
-                    ref={titleInputRef}
-                    type="text"
-                    value={tempTitle}
-                    onChange={(e) => setTempTitle(e.target.value)}
-                    onBlur={handleTitleSave}
-                    onKeyDown={handleTitleKeyDown}
-                    className={`text-2xl font-bold bg-transparent border-none outline-none ${textClass} flex-1`}
-                  />
-                ) : (
-                  <h1
-                    onClick={handleTitleEdit}
-                    className={`text-2xl font-bold cursor-pointer hover:text-blue-600 transition-colors ${textClass} flex-1`}
+        <main className="flex-1 flex flex-col border-[1px] border-grey-50/50 rounded-2xl dark:hover:bg-gray-700/20 bg-black/15 backdrop-blur-md border-gray-500">
+        
+          {/* Enhanced Toolbar */}
+          <div className={`border-gray-200 dark:border-gray-700 px-3 md:px-6 py-3 overflow-x-auto`}>
+            <div className="flex flex-wrap md:flex-nowrap items-center gap-1 justify-between">
+              {/* Text Formatting */}
+              <div className="flex flex-wrap md:flex-nowrap">
+                <div className="flex items-center gap-1 dark:border-gray-700 mb-2 md:mb-0">
+                  <button
+                    onClick={() => handleCommand("bold")}
+                    className={`p-2 hover:bg-transparent dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
+                    title="Bold"
                   >
-                    {selectedNote?.title}
-                  </h1>
-                )}
+                    <Bold className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleCommand("italic")}
+                    className={`p-2 hover:bg-transparent dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
+                    title="Italic"
+                  >
+                    <Italic className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleCommand("underline")}
+                    className={`p-2 hover:bg-transparent dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
+                    title="Underline"
+                  >
+                    <Underline className="w-4 h-4" />
+                  </button>
+                </div>
+                {/* Lists */}
+                <div className="flex items-center gap-1 dark:border-gray-700 mb-2 md:mb-0 ml-0 md:ml-2">
+                  <button
+                    onClick={() => handleCommand("insertUnorderedList")}
+                    className={`p-2 hover:bg-transparent dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
+                    title="Bullet List"
+                  >
+                    <List className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleCommand("insertOrderedList")}
+                    className={`p-2 hover:bg-transparent dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
+                    title="Numbered List"
+                  >
+                    <ListOrdered className="w-4 h-4" />
+                  </button>
+                </div>
+                {/* Alignment */}
+                <div className="flex items-center gap-1 dark:border-gray-700 mb-2 md:mb-0 ml-0 md:ml-2">
+                  <button
+                    onClick={() => handleCommand("justifyLeft")}
+                    className={`p-2 hover:bg-transparent dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
+                    title="Align Left"
+                  >
+                    <AlignLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleCommand("justifyCenter")}
+                    className={`p-2 hover:bg-transparent dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
+                    title="Align Center"
+                  >
+                    <AlignCenter className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleCommand("justifyRight")}
+                    className={`p-2 hover:bg-transparent dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
+                    title="Align Right"
+                  >
+                    <AlignRight className="w-4 h-4" />
+                  </button>
+                </div>
+                {/* Special Elements */}
+                <div className="flex items-center gap-1 ml-0 md:ml-2">
+                  <button
+                    onClick={() => handleCommand("formatBlock", "blockquote")}
+                    className={`p-2 hover:bg-transparent dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
+                    title="Quote"
+                  >
+                    <Quote className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => handleCommand("formatBlock", "h2")}
+                    className={`p-2 hover:bg-transparent dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
+                    title="Heading"
+                  >
+                    <Type className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
+
+              <div className="flex items-center gap-2 mt-2 md:mt-0 w-full md:w-auto md:justify-end">
                 <button
                   onClick={handleSave}
                   className="save-btn flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-all shadow-sm"
@@ -321,118 +367,46 @@ const ProfessionalNotesEditor = () => {
                   <Save className="w-4 h-4" />
                   Save
                 </button>
-                <button
-                  className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
-                >
-                  <Share className="w-4 h-4" />
-                </button>
-                <button
-                  className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
-                >
-                  <Download className="w-4 h-4" />
-                </button>
+                
                 <button
                   onClick={handleDeleteNote}
-                  className="p-2 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 rounded-lg transition-colors"
+                  className="p-2 hover:bg-red-900 bg-red-700 text-white rounded-lg transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             </div>
-          </header>
-          {/* Enhanced Toolbar */}
-          <div className={`${cardClass} border-b border-gray-200 dark:border-gray-700 px-6 py-3`}>
-            <div className="flex items-center gap-1">
-              {/* Text Formatting */}
-              <div className="flex items-center gap-1 pr-3 border-r border-gray-200 dark:border-gray-700">
-                <button
-                  onClick={() => handleCommand("bold")}
-                  className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
-                  title="Bold"
-                >
-                  <Bold className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handleCommand("italic")}
-                  className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
-                  title="Italic"
-                >
-                  <Italic className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handleCommand("underline")}
-                  className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
-                  title="Underline"
-                >
-                  <Underline className="w-4 h-4" />
-                </button>
-              </div>
-              {/* Lists */}
-              <div className="flex items-center gap-1 px-3 border-r border-gray-200 dark:border-gray-700">
-                <button
-                  onClick={() => handleCommand("insertUnorderedList")}
-                  className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
-                  title="Bullet List"
-                >
-                  <List className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handleCommand("insertOrderedList")}
-                  className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
-                  title="Numbered List"
-                >
-                  <ListOrdered className="w-4 h-4" />
-                </button>
-              </div>
-              {/* Alignment */}
-              <div className="flex items-center gap-1 px-3 border-r border-gray-200 dark:border-gray-700">
-                <button
-                  onClick={() => handleCommand("justifyLeft")}
-                  className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
-                  title="Align Left"
-                >
-                  <AlignLeft className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handleCommand("justifyCenter")}
-                  className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
-                  title="Align Center"
-                >
-                  <AlignCenter className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handleCommand("justifyRight")}
-                  className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
-                  title="Align Right"
-                >
-                  <AlignRight className="w-4 h-4" />
-                </button>
-              </div>
-              {/* Special Elements */}
-              <div className="flex items-center gap-1 px-3">
-                <button
-                  onClick={() => handleCommand("formatBlock", "blockquote")}
-                  className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
-                  title="Quote"
-                >
-                  <Quote className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => handleCommand("formatBlock", "h2")}
-                  className={`p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors ${textClass}`}
-                  title="Heading"
-                >
-                  <Type className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
           </div>
           {/* Editor Area */}
-          <div className="flex-1 p-8 overflow-y-auto">
-            <div className="max-w-4xl mx-auto">
+          <div className="flex-1">
+            <div className="mx-auto">
+               <header className={`px-3 md:px-6 py-2`}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 md:gap-4 flex-1">
+                    {isEditingTitle ? (
+                      <input
+                        ref={titleInputRef}
+                        type="text"
+                        value={tempTitle}
+                        onChange={(e) => setTempTitle(e.target.value)}
+                        onBlur={handleTitleSave}
+                        onKeyDown={handleTitleKeyDown}
+                        className={`text-lg md:text-2xl font-bold bg-transparent border-none outline-none ${textClass} flex-1`}
+                      />
+                    ) : (
+                      <h1
+                        onClick={handleTitleEdit}
+                        className={`text-lg md:text-2xl font-bold cursor-pointer transition-colors ${textClass} flex-1 break-words`}
+                      >
+                        {selectedNote?.title}
+                      </h1>
+                    )}
+                  </div>
+                </div>
+              </header>
               <div
                 ref={editorRef}
-                className={`min-h-[500px] p-8 rounded-2xl border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all shadow-sm ${cardClass} ${textClass}`}
+                className={`min-h-[300px] md:min-h-[500px] p-3 md:p-6 md:px-6 pt-0 focus:border-transparent outline-none transition-all text-white overflow-auto`}
                 contentEditable
                 dangerouslySetInnerHTML={{ __html: selectedNote?.content || "" }}
                 style={{
@@ -443,20 +417,6 @@ const ProfessionalNotesEditor = () => {
               />
             </div>
           </div>
-          {/* Status Bar */}
-          <footer className={`${cardClass} border-t border-gray-200 dark:border-gray-700 px-6 py-3`}>
-            <div className="flex items-center justify-between text-sm">
-              <div className={`flex items-center gap-4 ${mutedTextClass}`}>
-                <span>Last saved: {selectedNote ? formatDate(selectedNote.lastModified) : "Never"}</span>
-                <span>•</span>
-                <span>Words: {selectedNote ? selectedNote.content.replace(/<[^>]*>/g, "").split(" ").length : 0}</span>
-              </div>
-              <div className={`flex items-center gap-2 ${mutedTextClass}`}>
-                <span>Ready</span>
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              </div>
-            </div>
-          </footer>
         </main>
       </div>
     </div>
