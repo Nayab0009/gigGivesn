@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect, useMemo } from "react"
+import Link from "next/link"
 import { Search, RefreshCw, AlertCircle, Users, X, Loader2, Trash2, Edit, Table, LayoutGrid } from "lucide-react"
 import { AssignTeamModal } from "../adminDashboard/AssignProjectTeam"
 import { AssignTaskModal } from "../adminDashboard/AssignProjectTicket"
@@ -400,7 +401,7 @@ export default function ProjectDashboard() {
 
     try {
       console.log("Fetching projects for manager:", user.id)
-      const projectsData = await getProjectsForManagers(user.id)
+  const projectsData = await getProjectsForManagers(String(user.id))
       setProjects(Array.isArray(projectsData) ? projectsData : [])
     } catch (error) {
       console.error("Error fetching manager projects:", error)
@@ -783,11 +784,15 @@ export default function ProjectDashboard() {
                     paginatedProjects.map((project) => (
                       <tr key={project.id.toString()} className="hover:bg-white/10 transition-all duration-300">
                         {/* Project Name */}
-                       <td className="px-6 py-6">
-  <h3 className="font-roboto font-semibold text-[16px] leading-[24px] text-white">
-    {project.name}
-  </h3>
-</td>
+                        <td className="px-6 py-6">
+                          <Link
+                            href={`/dashboard/manager/projects/${project.id}`}
+                            className="text-lg font-semibold text-white leading-tight hover:underline decoration-white/60"
+                            title="Open project details"
+                          >
+                            {project.name}
+                          </Link>
+                        </td>
 
                         {/* Description */}
                        <td className="px-6 py-6">
