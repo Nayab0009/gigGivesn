@@ -1,13 +1,14 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import { Search, Plus, RefreshCw, AlertCircle, Edit, Trash2, X, Save } from "lucide-react"
+import { Search, Plus, RefreshCw, AlertCircle, Edit, Trash2, X, Save, Bold } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { deleteEmployee, updateTeamMember } from "@/lib/TeamService"
 import { ShowEmployee } from "@/lib/TeamService"
 import { colors } from "@/colors"
 import Pagination from "../pagination"
 import { useAuth } from "@/context/AuthContext"
+import Image from "next/image"
 
 interface TeamMember {
   id?: string | number
@@ -123,7 +124,7 @@ export default function TeamListPage() {
     if (!confirmDelete) return
 
     try {
-      await deleteEmployee(teamId)
+      await deleteEmployee(String(teamId))
       setTeamMembers((prev) => {
         const updated = prev.filter((team) => String(team.id) !== String(teamId))
         // If the current page is now empty, go to the previous page (if not on page 1)
@@ -189,17 +190,18 @@ export default function TeamListPage() {
 
   return (
     <div className="p-2 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
+
+      <div className="mx-auto">
         {/* Header */}
      <div className="mb-8 flex flex-col lg:flex-row items-center justify-between gap-6">
   {/* Heading Section */}
   <div className="flex flex-col">
-    <h1 className="text-2xl sm:text-2xl font-bold text-white">Team Members</h1>
-    <p className="text-lg text-white">Manage and track all team members</p>
+    <h1 className="text-2xl sm:text-2xl font-medium text-white">Team Members</h1>
+    <p className="text-white" style={{fontWeight: 100}}>Manage and track all team members</p>
   </div>
 
   {/* Action Bar */}
-  <div className="flex flex-1 items-center gap-6 w-full lg:w-auto justify-end">
+  <div className="flex flex-1 items-center gap-6 w-full lg:w-auto justify-between ml-20">
     {/* Search Bar */}
   <div className="relative flex-1 max-w-md w-full">
   <Search
@@ -209,7 +211,7 @@ export default function TeamListPage() {
  <input
   type="text"
   placeholder="Search employees by name, email or ID..."
-  className="w-full pl-10 pr-4 py-3 rounded-full focus:ring-2 transition-all duration-300 shadow-lg focus:shadow-xl text-white placeholder-gray-300"
+  className="w-full pl-10 pr-4 py-3 rounded-full focus:ring-2 transition-all duration-300 shadow-lg focus:shadow-xl text-white focus:outline-none"
   style={{
     background: "rgba(0, 0, 0, 0.4)", 
     backdropFilter: "blur(12px)",
@@ -227,10 +229,10 @@ export default function TeamListPage() {
 
     {/* Stats Badge */}
     <div
-      className="text-sm px-4 py-2 rounded-full border text-white border"
+      className="text-sm px-4 py-2 rounded-full text-white border border-[#0CA9F6]"
   
     >
-      <span className="font-semibold " >
+      <span className="font-semibold" >
         {filteredMembers.length}
       </span>{" "}
       of {teamMembers.length} employees
@@ -248,7 +250,7 @@ export default function TeamListPage() {
         }}
         onClick={() => router.push("/dashboard/admin/addemployee")}
       >
-        <Plus className="w-4 h-4" style={{ color: colors.highlight.hex }} />
+        <Plus className="w-4 h-4" />
         Add Employee
       </button>
     )}
@@ -447,7 +449,7 @@ export default function TeamListPage() {
   {isLoading ? (
     <div className="p-12 text-center">
       <div
-        className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 backdrop-blur-xl"
+        className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 backdrop-blur-xl "
         style={{ 
           background: "rgba(255, 255, 255, 0.1)",
           backdropFilter: "blur(20px)",
@@ -462,32 +464,34 @@ export default function TeamListPage() {
     </div>
   ) : (
     <div className="overflow-x-auto">
-      <table className="min-w-full">
+      <table className="min-w-full border-separate border-spacing-y-4 backdrop-blur-md bg-black/40 px-5">
         <thead
-  className="backdrop-blur-md bg-black/40 text-white   rounded-t-2xl  h-[32px]"
+
+  className="text-white rounded-t-2xl h-[32px] "
   // style={{
   //   borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
   // }}
 >
-          <tr className="h-[73px]">
-            <th className="px-6 py-4 text-left text-sm font-medium text-white/90">
+          <tr className="h-[60px]">
+            <th className="px-6 text-left text-sm font-medium text-white/90">
               Employee Details
             </th>
-            <th className="px-6 py-4 text-left text-sm font-medium text-white/90">
+            <th className="px-6 text-left text-sm font-medium text-white/90">
               Role
             </th>
-            <th className="px-6 py-4 text-left text-sm font-medium text-white/90">
+            <th className="px-6 text-left text-sm font-medium text-white/90">
               Contact Info
             </th>
             {userRole === "manager" && (
-              <th className="px-6 py-4 text-left text-sm font-medium text-white/90">
+              <th className="px-6 text-left text-sm font-medium text-white/90">
                 Actions
               </th>
             )}
           </tr>
         </thead>
 
-<tbody className="backdrop-blur-md bg-black/40 text-white rounded-b-2xl">
+
+<tbody className="text-white rounded-b-2xl">
   {paginatedMembers.length === 0 ? (
     <tr>
       <td colSpan={4} className="px-6 py-12 text-center">
@@ -504,22 +508,34 @@ export default function TeamListPage() {
     </tr>
   ) : (
     paginatedMembers.map((member, index) => (
+      
       <tr
         key={member.id || index}
-        className="transition-all duration-300 hover:bg-white/5 my-2"
+
+        className="transition-all duration-300 hover:bg-white/5"
+        style={{ 
+          // background: "linear-gradient(180deg, rgba(0,40,60,0.3) 0%, rgba(0,30,40,0.2) 100%)",
+          borderRadius: "12px",
+          overflow: "hidden",
+          boxShadow: "0 0 0 1px rgba(255,255,255,0.1)",
+          outline: "none",
+          
+        }}
       >
+        
         {/* Employee Details Cell */}
-        <td className="px-6 py-5">
+        
+        <td className="px-6 py-5 rounded-l-xl" style={{ background: "transparent", border: "none" }}>
           <div className="flex items-center gap-3">
             <div
-              className="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm shadow-lg backdrop-blur-xl relative"
+              className="w-20 h-20 rounded-full flex items-center justify-center font-semibold text-sm shadow-lg backdrop-blur-xl relative"
               style={{
                 background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
                 color: "#fff",
               }}
             >
               {member.name.charAt(0).toUpperCase()}
-              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
+              <div className="absolute -bottom-[-6px] -right-0.5 w-5 h-5 bg-green-400 rounded-full border-2 border-white"></div>
             </div>
             <div>
               <h3 className="text-base font-semibold text-white">
@@ -531,14 +547,16 @@ export default function TeamListPage() {
         </td>
 
         {/* Role Cell */}
-        <td className="px-6 py-5">
+
+        <td className="px-6 py-5" style={{ background: "transparent", border: "none" }}>
           <span className="text-sm text-white/70 capitalize">
             {member.role || "Employee"}
           </span>
         </td>
 
         {/* Contact Info Cell */}
-        <td className="px-6 py-5">
+
+        <td className={`px-6 py-5 ${userRole !== 'manager' ? 'rounded-r-xl' : ''}`} style={{ background: "transparent", border: "none" }}>
           <div className="space-y-1">
             <div className="text-sm text-white/90">{member.email}</div>
             {member.phone && (
@@ -557,29 +575,34 @@ export default function TeamListPage() {
 
         {/* Actions Cell (Manager Only) */}
         {userRole === "manager" && (
-          <td className="px-6 py-5">
-            <div className="flex items-center gap-2 justify-end">
+
+          <td className="px-6 py-5 rounded-r-xl" style={{ background: "transparent", border: "none" }}>
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => handleEditStart(member)}
-                className="inline-flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:bg-white/10 backdrop-blur-xl"
+                className="inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 hover:bg-white/10 backdrop-blur-xl"
                 style={{
                   background: "rgba(255, 255, 255, 0.05)",
                   border: "1px solid rgba(255, 255, 255, 0.1)",
                 }}
               >
-                <Edit className="w-4 h-4 text-white/70" />
+                <Image src="/images/edit.svg" alt="Edit" width={16} height={16} />
+                {/* <Edit className="w-4 h-4 text-white/70" /> */}
               </button>
               <button
                 onClick={() => handleEmployeeDelete(String(member.id))}
-                className="inline-flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:bg-red-500/20 backdrop-blur-xl"
+                className="inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 hover:bg-red-500/20 backdrop-blur-xl"
                 style={{
                   border: "1px solid rgba(255, 255, 255, 0.2)",
                 }}
               >
-                <Trash2 className="w-4 h-4 text-white" />
+
+                <Image src="/images/delete.svg" alt="Delete" width={16} height={16} />
+                {/* <Trash2 className="w-4 h-4 text-white" /> */}
               </button>
             </div>
           </td>
+          
         )}
       </tr>
     ))
