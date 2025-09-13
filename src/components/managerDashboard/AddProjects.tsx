@@ -531,12 +531,7 @@ export default function ProjectDashboard() {
   // --- RENDER ---
   return (
     <div
-      className="
-        min-h-screen 
-        p-4 sm:p-6 lg:p-8 ml-6
-
-        rounded-2xl
-      "
+      className="min-h-screen p-4 sm:p-6 lg:p-8 rounded-2xl w-[95%] mx-auto"
     >
       <div className="max-w-7xl mx-auto">
         {/* Header */}
@@ -706,6 +701,7 @@ export default function ProjectDashboard() {
             border border-white/10 
             overflow-hidden"
         >
+          
           {isLoading ? (
             <div className="p-12 text-center">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
@@ -722,8 +718,8 @@ export default function ProjectDashboard() {
     shadow-lg 
     border-b border-white/20 
     overflow-hidden 
-    bg-[rgba(0,0,0,0.3)] 
-   backdrop-blur-[100px]
+
+   
   "
 >
   <tr className="h-[73px]">
