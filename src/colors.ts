@@ -26,4 +26,11 @@ export const colors = {
     hex: "#ffffff",
     rgb: "rgba(255,255,255,1)",
   },
+  black: {
+    hex: "#000000",
+    rgb: "rgba(0,0,0,1)",
+    transparent30: "rgba(0,0,0,0.3)",
+    transparent40: "rgba(0,0,0,0.4)",
+    transparent50: "rgba(0,0,0,0.5)",
+  },
 };

@@ -300,26 +300,49 @@ const AppHeader: React.FC = () => {
           
           {/* Mobile Dropdown */}
           <div className="absolute top-full right-0 mt-2 w-64 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-            <ul className="py-2 max-h-80 overflow-y-auto">
-              {navItems.map((item) => (
-                <li key={item.name}>
-                  {item.path ? (
-                    <Link
-                      href={item.path}
-                      className={`block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors duration-200 ${
-                        isActive(item.path) ? "bg-blue-50 text-blue-600 border-r-2 border-blue-500" : ""
-                      }`}
-                    >
-                      {item.name}
-                    </Link>
-                  ) : (
-                    <span className="block px-4 py-2 text-gray-800 hover:bg-gray-100 cursor-pointer">
-                      {item.name}
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
+           <ul className="flex items-center justify-center gap-14 text-sm font-medium">
+  {navItems.slice(0, 6).map((item, index) => (
+    <li key={item.name}>
+      {item.path ? (
+        <Link
+          href={item.path}
+          className={`transition-all duration-200 ease-in-out hover:scale-105 flex items-center justify-center
+            ${isActive(item.path)
+              ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-1.5 rounded-full shadow-lg"
+              : "hover:text-blue-400 cursor-pointer"
+            }`}
+          style={{
+            fontFamily: "'Montserrat', sans-serif",
+            fontWeight: 500,
+            fontSize: "14px",
+            lineHeight: "20px",
+            letterSpacing: "0px",
+            color: "rgba(255, 255, 255, 1)",
+            textAlign: "center",
+          }}
+        >
+          {item.name}
+        </Link>
+      ) : (
+        <span
+          className="flex items-center justify-center hover:text-blue-400 cursor-pointer"
+          style={{
+            fontFamily: "'Montserrat', sans-serif",
+            fontWeight: 500,
+            fontSize: "14px",
+            lineHeight: "20px",
+            letterSpacing: "0px",
+            color: "rgba(255, 255, 255, 1)",
+            textAlign: "center",
+          }}
+        >
+          {item.name}
+        </span>
+      )}
+    </li>
+  ))}
+</ul>
+
           </div>
         </div>
       </nav>

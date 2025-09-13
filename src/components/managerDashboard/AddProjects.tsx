@@ -604,85 +604,96 @@ export default function ProjectDashboard() {
             {/* Search Bar and View Toggle Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 items-center flex-1 w-full">
               {/* Search Bar */}
-              <div className="relative flex-1 w-full">
-              <Search
-  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-300 w-[16.66px] h-[16px]"
-/>
-<input
-  type="text"
-  placeholder="Search projects by name, ID, or description..."
-  className="
-    w-full pl-10 pr-4 py-3 
-    rounded-2xl 
-    border border-white/30 
-    bg-black/20 
-    backdrop-blur-md
-    text-white 
-    focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500
-    transition-all duration-300
-    shadow-sm focus:shadow-md
+  <div className="relative flex-1 w-full h-[44px]">
+  <Search
+    className="absolute left-[16px] top-1/2 transform -translate-y-1/2 text-gray-300 w-[16.66px] h-[16px]"
+  />
+  <input
+    type="text"
+    placeholder="Search projects by name, ID, or description..."
+    style={{ backgroundColor: colors.black.transparent40 }}
+    className="
+      w-full h-[44px]
+      pl-[48px] pr-[16px] py-[12px]
+      rounded-[16px]
+      backdrop-blur-[100px]
+      text-white
+      focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500
+      transition-all duration-300
+      shadow-sm focus:shadow-md
 
-    placeholder:font-inter
-    placeholder:font-medium
-    placeholder:text-[14px]
-    placeholder:leading-[20px]
-    placeholder:tracking-[0px]
-    placeholder:align-middle
-    placeholder:text-gray-400
-  "
-  value={searchTerm}
-  onChange={(e) => setSearchTerm(e.target.value)}
-/>
-
-
-              </div>
-
-              <div className="flex items-center gap-2 bg-black/30 backdrop-blur-md rounded-2xl p-1 border border-white/20">
-                <button
-                  onClick={() => handleViewChange("table")}
-                  className={`
-                    flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300
-                    ${
-                      currentView === "table"
-                        ? "bg-white/20 text-white shadow-md"
-                        : "text-white/70 hover:text-white hover:bg-white/10"
-                    }
-                  `}
-                >
-                  <Table className="w-4 h-4" />
-                  Table View
-                </button>
-                <button
-                  onClick={() => handleViewChange("kanban")}
-                  className={`
-                    flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300
-                    ${
-                      currentView === "kanban"
-                        ? "bg-white/20 text-white shadow-md"
-                        : "text-white/70 hover:text-white hover:bg-white/10"
-                    }
-                  `}
-                >
-                  <LayoutGrid className="w-4 h-4" />
-                  Kanban View
-                </button>
-              </div>
+      placeholder:font-inter
+      placeholder:font-medium
+      placeholder:text-[14px]
+      placeholder:leading-[20px]
+      placeholder:tracking-[0px]
+      placeholder:align-middle
+      placeholder:text-gray-400
+    "
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+  />
+</div>
+                {/* <div className="flex items-center gap-2 bg-black/30 backdrop-blur-md rounded-2xl p-1 border border-white/20">
+                  <button
+                    onClick={() => handleViewChange("table")}
+                    className={`
+                      flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300
+                      ${
+                        currentView === "table"
+                          ? "bg-white/20 text-white shadow-md"
+                          : "text-white/70 hover:text-white hover:bg-white/10"
+                      }
+                    `}
+                  >
+                    <Table className="w-4 h-4" />
+                    Table View
+                  </button>
+                  <button
+                    onClick={() => handleViewChange("kanban")}
+                    className={`
+                      flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300
+                      ${
+                        currentView === "kanban"
+                          ? "bg-white/20 text-white shadow-md"
+                          : "text-white/70 hover:text-white hover:bg-white/10"
+                      }
+                    `}
+                  >
+                    <LayoutGrid className="w-4 h-4" />
+                    Kanban View
+                  </button>
+                </div> */}
             </div>
 
             {/* Refresh Button */}
-            <button
-              onClick={refreshData}
-              disabled={isLoading}
-              style={{
-                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-              }}
-              className="group inline-flex items-center justify-center gap-2 px-6 py-3 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none w-full sm:w-auto"
-            >
-              <RefreshCw
-                className={`w-4 h-4 transition-transform duration-300 ${isLoading ? "animate-spin" : "group-hover:rotate-180"}`}
-              />
-              Refresh
-            </button>
+          <button
+  onClick={refreshData}
+  disabled={isLoading}
+  style={{
+    background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+  }}
+  className="
+    group inline-flex items-center justify-center gap-2
+    w-[122.52px] h-[46px]
+    px-[25px] py-[13px]
+    rounded-[99px]
+    border border-[rgba(87,181,231,0.9)]
+    text-white text-sm font-medium
+    transition-all duration-300 ease-in-out
+    shadow-lg hover:shadow-xl
+    transform hover:scale-105 hover:-translate-y-0.5
+    disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
+  "
+>
+  <RefreshCw
+    className={`w-4 h-4 transition-transform duration-300 ${
+      isLoading ? "animate-spin" : "group-hover:rotate-180"
+    }`}
+  />
+  Refresh
+</button>
+
           </div>
         </div>
 
@@ -705,52 +716,55 @@ export default function ProjectDashboard() {
           ) : (
             <div className="overflow-x-auto ">
               <table className="min-w-full divide-y divide-emerald-200 ">
-                <thead
-                  className="bg-white/5 
-                    backdrop-blur-xl 
-                    rounded-t-2xl 
-                    shadow-lg 
-                    border-b border-white
+  <thead
+  className="
+    rounded-t-2xl 
+    shadow-lg 
+    border-b border-white/20 
+    overflow-hidden 
+    bg-[rgba(0,0,0,0.3)] 
+   backdrop-blur-[100px]
+  "
+>
+  <tr className="h-[73px]">
+    <th className="px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px]">
+      Name
+    </th>
+    <th className="px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px]">
+      Description
+    </th>
+    <th className="px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px]">
+      Start Date
+    </th>
+    <th className="px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px]">
+      End Date
+    </th>
+    <th className="px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] min-w-[120px]">
+      Status
+    </th>
+    <th className="px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] min-w-[200px]">
+      Actions
+    </th>
+    <th className="px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px]">
+      View Team
+    </th>
+    <th className="px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px]">
+      Settings
+    </th>
+  </tr>
+</thead>
 
-                    overflow-hidden"
-                >
-                  <tr className="h-[73px]">
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                      Description
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                      Start Date
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                      End Date
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider min-w-[120px]">
-                      Status
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider min-w-[200px]">
-                      Actions
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                      View Team
-                    </th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                      Settings
-                    </th>
-                  </tr>
-                </thead>
 
-                <tbody
-                  className="bg-white/5 
-                    backdrop-blur-xl 
-                    rounded-b-2xl 
-                    shadow-lg 
-                    border border-white/10 
-                    overflow-hidden 
-                    divide-y divide-white/10"
-                >
+<tbody
+  className="
+    rounded-b-2xl 
+    shadow-lg 
+     border border-[rgba(255,255,255,0.1)] 
+    overflow-hidden 
+    divide-y divide-white/10
+    backdrop-blur-xl
+  "
+>
                   {filteredProjects.length === 0 ? (
                     <tr>
                       <td colSpan={8} className="px-6 py-12 text-center">
@@ -773,63 +787,79 @@ export default function ProjectDashboard() {
                     paginatedProjects.map((project) => (
                       <tr key={project.id.toString()} className="hover:bg-white/10 transition-all duration-300">
                         {/* Project Name */}
-                        <td className="px-6 py-6">
-                          <h3 className="text-lg font-semibold text-white leading-tight">{project.name}</h3>
-                        </td>
+                       <td className="px-6 py-6">
+  <h3 className="font-roboto font-semibold text-[16px] leading-[24px] text-white">
+    {project.name}
+  </h3>
+</td>
 
                         {/* Description */}
-                        <td className="px-6 py-6">
-                          <p className="text-gray-300 text-sm leading-relaxed max-w-xs">{project.description}</p>
-                        </td>
+                       <td className="px-6 py-6">
+  <p className="font-roboto font-normal text-[14px] leading-[20px] text-[rgba(164,167,174,1)] max-w-xs">
+    {project.description}
+  </p>
+</td>
 
                         {/* Start Date */}
-                        <td className="px-6 py-6">
-                          <span className="text-gray-200 text-sm">
-                            {new Date(project.startDate).toLocaleDateString()}
-                          </span>
-                        </td>
+                       <td className="px-6 py-6">
+  <span className="font-roboto font-normal text-[14px] leading-[20px] text-[rgba(164,167,174,1)]">
+    {new Date(project.startDate).toLocaleDateString()}
+  </span>
+</td>
 
                         {/* End Date */}
-                        <td className="px-6 py-6">
-                          <span className="text-gray-200 text-sm">
-                            {new Date(project.endDate).toLocaleDateString()}
-                          </span>
-                        </td>
+                    <td className="px-6 py-6">
+  <span className="font-roboto font-normal text-[14px] leading-[20px] text-[rgba(164,167,174,1)]">
+    {new Date(project.endDate).toLocaleDateString()}
+  </span>
+</td>
 
                         {/* Status */}
-                        <td className="px-6 py-4">
-                          {project.status ? (
-                            <span
-                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize whitespace-nowrap ${getStatusColor(
-                                project.status,
-                              )}`}
-                            >
-                              {project.status === "inprogress"
-                                ? "In Progress"
-                                : project.status
-                                    .replace(/([A-Z])/g, " $1")
-                                    .replace(/^./, (str) => str.toUpperCase())
-                                    .trim()}
-                            </span>
-                          ) : (
-                            <span
-                              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
-                                project.isActive ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-700"
-                              }`}
-                            >
-                              {project.isActive ? "Active" : "Inactive"}
-                            </span>
-                          )}
-                        </td>
+                     <td className="px-6 py-4">
+  {project.status ? (
+    <span
+      className={`inline-flex items-center justify-center 
+        min-w-[88px] h-[26px] 
+        px-[9px] py-[5px] 
+        rounded-full border border-white/20 
+        text-[12px] font-roboto font-semibold capitalize 
+        whitespace-nowrap ${getStatusColor(project.status)}`}
+    >
+      {project.status === "inprogress"
+        ? "In Progress"
+        : project.status
+            .replace(/([A-Z])/g, " $1")
+            .replace(/^./, (str) => str.toUpperCase())
+            .trim()}
+    </span>
+  ) : (
+    <span
+      className={`inline-flex items-center justify-center 
+        min-w-[88px] h-[26px] 
+        px-[9px] py-[5px] 
+        rounded-full border border-white/20 
+        text-[12px] font-roboto font-medium whitespace-nowrap ${
+          project.isActive
+            ? "bg-emerald-100 text-emerald-700"
+            : "bg-gray-100 text-gray-700"
+        }`}
+    >
+      {project.isActive ? "Active" : "Inactive"}
+    </span>
+  )}
+</td>
+
 
                         {/* Actions - Assign Team */}
                         <td className="px-6 py-6">
                           <div className="flex flex-row gap-2">
                             <button
                               className="px-4 py-2 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-                              style={{
-                                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-                              }}
+                               style={{
+    background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+    borderColor: "rgba(87, 181, 231, 0.9)",
+    borderWidth: "1px",
+  }}
                               onClick={() => setAssignTeamProjectId(String(project.id))}
                             >
                               Assign Team
@@ -838,51 +868,64 @@ export default function ProjectDashboard() {
                         </td>
 
                         {/* Actions - View Team */}
-                        <td className="px-6 py-6">
-                          <div className="flex items-center gap-2">
-                            <button
-                              className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 border border-white"
-                              // style={{
-                              //   background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-                              // }}
-                              onClick={() => setViewTeamProjectId(project.id)}
-                            >
-                              <Users className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
+  <td className="px-6 py-6">
+  <div className="flex items-center gap-2">
+    <button
+      className="group inline-flex items-center justify-center text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110"
+      style={{
+        width: "32px",
+        height: "32px",
+        borderRadius: "16px",
+        border: "1px solid rgba(255, 255, 255, 0.4)",
+        padding: "1px",
+      }}
+      onClick={() => setViewTeamProjectId(project.id)}
+    >
+      <Users style={{ width: "14.58px", height: "14px" }} />
+    </button>
+  </div>
+</td>
+
+
 
                         {/* Actions - Edit / Delete */}
-                        <td className="px-6 py-6">
-                          <div className="flex items-center gap-2">
-                            {/* Edit */}
-                            <button
-                              className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 border border-white"
-                              // style={{
-                              //   background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-                              // }}
-                              onClick={() => setEditStatusProjectId(project.id)}
-                            >
-                              <Edit className="w-4 h-4" />
-                            </button>
+                       <td className="px-6 py-6">
+  <div className="flex items-center gap-2">
+    {/* Edit */}
+    <button
+  className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 border"
+  style={{ borderColor: "rgba(255, 255, 255, 0.4)", borderWidth: "1px" }}
+  onClick={() => setEditStatusProjectId(project.id)}
+>
+  <img
+    src="/images/I-169.svg"
+    alt="Edit"
+    style={{ width: "14.58px", height: "14px" }}
+  />
+</button>
 
-                            {/* Delete */}
-                            <button
-                              className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed border border-white"
-                              // style={{
-                              //   background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-                              // }}
-                              onClick={() => handleDeleteProject(project.id)}
-                              disabled={isDeleting === project.id}
-                            >
-                              {isDeleting === project.id ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                              ) : (
-                                <Trash2 className="w-4 h-4" />
-                              )}
-                            </button>
-                          </div>
-                        </td>
+
+    {/* Delete */}
+ <button
+  className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed border"
+  style={{ borderColor: "rgba(255, 255, 255, 0.4)", borderWidth: "1px" }}
+  onClick={() => handleDeleteProject(project.id)}
+  disabled={isDeleting === project.id}
+>
+  {isDeleting === project.id ? (
+    <Loader2 className="animate-spin" style={{ width: "14.58px", height: "14px" }} />
+  ) : (
+    <img
+      src="/images/Icon-173.svg"
+      alt="Delete"
+      style={{ width: "14.58px", height: "14px" }}
+    />
+  )}
+</button>
+
+  </div>
+</td>
+
                       </tr>
                     ))
                   )}
