@@ -193,7 +193,7 @@ export default function TeamListPage() {
 
       <div className="mx-auto">
         {/* Header */}
-     <div className="mb-8 flex flex-col lg:flex-row items-center justify-between gap-6">
+     <div className="mb-8 md:flex flex-col  md:flex-row items-center justify-between gap-6">
   {/* Heading Section */}
   <div className="flex flex-col">
     <h1 className="text-2xl sm:text-2xl font-medium text-white">Team Members</h1>
@@ -201,9 +201,9 @@ export default function TeamListPage() {
   </div>
 
   {/* Action Bar */}
-  <div className="flex flex-1 items-center gap-6 w-full lg:w-auto justify-between ml-20">
+  <div className="md:flex md:flex-1 items-center gap-6 w-full lg:w-auto justify-between mt-5 md:mt-0 md:ml-20 space-y-4">
     {/* Search Bar */}
-  <div className="relative flex-1 max-w-md w-full">
+  <div className="relative block sm:flex flex-1 max-w-md w-full">
   <Search
     className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5"
     style={{ color: colors.accent.hex }}
@@ -229,7 +229,7 @@ export default function TeamListPage() {
 
     {/* Stats Badge */}
     <div
-      className="text-sm px-4 py-2 rounded-full text-white border border-[#0CA9F6]"
+      className="text-sm px-4 py-2 rounded-full text-white border border-[#0CA9F6] inline mr-5"
   
     >
       <span className="font-semibold" >
@@ -242,7 +242,7 @@ export default function TeamListPage() {
     {userRole === "manager" && (
       <button
         type="button"
-        className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
+        className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5 mt-4 sm:mt-0"
         style={{
           background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
           color: "#fff",
@@ -294,7 +294,7 @@ export default function TeamListPage() {
       <div className="px-8 py-6 space-y-6 text-white">
         {/* Name Field */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
+          <label className="text-sm font-semibold mb-2 flex items-center gap-2">
             <div className="w-2 h-2 rounded-full" style={{ background: colors.primary.hex }}></div>
             Full Name *
           </label>
@@ -318,7 +318,7 @@ export default function TeamListPage() {
 
         {/* Email Field */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
+          <label className="text-sm font-semibold mb-2 flex items-center gap-2">
             <div className="w-2 h-2 rounded-full" style={{ background: colors.secondary.hex }}></div>
             Email Address *
           </label>
@@ -345,7 +345,7 @@ export default function TeamListPage() {
 
         {/* Phone Field */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
+          <label className="text-sm font-semibold mb-2 flex items-center gap-2">
             <div className="w-2 h-2 rounded-full" style={{ background: colors.accent.hex }}></div>
             Phone Number *
           </label>
@@ -369,7 +369,7 @@ export default function TeamListPage() {
 
         {/* Address Field */}
         <div className="space-y-2">
-          <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
+          <label className="text-sm font-semibold mb-2 flex items-center gap-2">
             <div className="w-2 h-2 rounded-full" style={{ background: colors.highlight.hex }}></div>
             Address *
           </label>
@@ -465,25 +465,19 @@ export default function TeamListPage() {
   ) : (
     <div className="overflow-x-auto">
       <table className="min-w-full border-separate border-spacing-y-4 backdrop-blur-md bg-black/40 px-5">
-        <thead
-
-  className="text-white rounded-t-2xl h-[32px] "
-  // style={{
-  //   borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-  // }}
->
+        <thead className="text-white rounded-t-2xl h-[32px]">
           <tr className="h-[60px]">
-            <th className="px-6 text-left text-sm font-medium text-white/90">
+            <th className="px-6 text-left text-sm font-medium text-white/90 w-[35%]">
               Employee Details
             </th>
-            <th className="px-6 text-left text-sm font-medium text-white/90">
+            <th className="px-6 text-left text-sm font-medium text-white/90 w-[25%]">
               Role
             </th>
-            <th className="px-6 text-left text-sm font-medium text-white/90">
+            <th className="px-6 text-left text-sm font-medium text-white/90 w-[25%]">
               Contact Info
             </th>
             {userRole === "manager" && (
-              <th className="px-6 text-left text-sm font-medium text-white/90">
+              <th className="px-6 text-right text-sm font-medium text-white/90 w-[15%] pr-[50px]">
                 Actions
               </th>
             )}
@@ -511,20 +505,19 @@ export default function TeamListPage() {
       
       <tr
         key={member.id || index}
-
         className="transition-all duration-300 hover:bg-white/5"
         style={{ 
-          // background: "linear-gradient(180deg, rgba(0,40,60,0.3) 0%, rgba(0,30,40,0.2) 100%)",
+          background: "rgba(0, 0, 0, 0.2)",
           borderRadius: "12px",
           overflow: "hidden",
           boxShadow: "0 0 0 1px rgba(255,255,255,0.1)",
           outline: "none",
-          
         }}
       >
         
         {/* Employee Details Cell */}
         
+
  <td className="px-6 py-5 rounded-l-xl" style={{ background: "transparent", border: "none" }}>
   <div className="flex items-center gap-3">
     <div
@@ -558,7 +551,7 @@ export default function TeamListPage() {
         {/* Role Cell */}
 
         <td className="px-6 py-5" style={{ background: "transparent", border: "none" }}>
-          <span className="text-sm text-white/70 capitalize">
+          <span className="text-sm text-white/80 capitalize font-medium">
             {member.role || "Employee"}
           </span>
         </td>
@@ -567,13 +560,13 @@ export default function TeamListPage() {
 
         <td className={`px-6 py-5 ${userRole !== 'manager' ? 'rounded-r-xl' : ''}`} style={{ background: "transparent", border: "none" }}>
           <div className="space-y-1">
-            <div className="text-sm text-white/90">{member.email}</div>
+            <div className="text-sm text-white/90 font-medium">{member.email}</div>
             {member.phone && (
-              <div className="text-xs text-white/60">{member.phone}</div>
+              <div className="text-xs text-white/70">{member.phone}</div>
             )}
             {member.address && (
               <div
-                className="text-xs text-white/60 truncate max-w-xs"
+                className="text-xs text-white/70 truncate max-w-xs"
                 title={member.address}
               >
                 {member.address}
@@ -584,9 +577,8 @@ export default function TeamListPage() {
 
         {/* Actions Cell (Manager Only) */}
         {userRole === "manager" && (
-
           <td className="px-6 py-5 rounded-r-xl" style={{ background: "transparent", border: "none" }}>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-end gap-2">
               <button
                 onClick={() => handleEditStart(member)}
                 className="inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 hover:bg-white/10 backdrop-blur-xl"
@@ -595,8 +587,7 @@ export default function TeamListPage() {
                   border: "1px solid rgba(255, 255, 255, 0.1)",
                 }}
               >
-                <Image src="/images/edit.svg" alt="Edit" width={16} height={16} />
-                {/* <Edit className="w-4 h-4 text-white/70" /> */}
+                <Edit className="w-4 h-4 text-white/70" />
               </button>
               <button
                 onClick={() => handleEmployeeDelete(String(member.id))}
@@ -605,9 +596,7 @@ export default function TeamListPage() {
                   border: "1px solid rgba(255, 255, 255, 0.2)",
                 }}
               >
-
-                <Image src="/images/delete.svg" alt="Delete" width={16} height={16} />
-                {/* <Trash2 className="w-4 h-4 text-white" /> */}
+                <Trash2 className="w-4 h-4 text-white" />
               </button>
             </div>
           </td>
