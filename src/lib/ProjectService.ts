@@ -32,3 +32,25 @@ export const updateProjectDetails = async (projectId: number|string) => {
     const { data } = await axiosInstance.patch(`/projects/${projectId}`);
     return data;
 }
+
+export const getProjectTaskCounts = async (projectId: string) => {
+    const { data } = await axiosInstance.get(`/projects/task/count/${projectId}`);
+    return data;
+}
+
+export const getProjectTaskPriorities = async (projectId: string) => {
+    const { data } = await axiosInstance.get(`/projects/task/priority/${projectId}`);
+    return data;
+}
+
+export interface MemberTaskCount {
+    userId: number;
+    userName: string;
+    projectId: number;
+    taskCount: string;
+}
+
+export const getProjectMemberTaskCounts = async (projectId: string) => {
+    const { data } = await axiosInstance.get(`/tasks/member/project/count/${projectId}`);
+    return data as MemberTaskCount[];
+}

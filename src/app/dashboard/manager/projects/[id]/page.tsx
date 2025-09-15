@@ -1,9 +1,10 @@
 "use client"
 import { useEffect, useMemo, useState } from "react"
 import { useParams } from "next/navigation"
-import { getProjectTeam } from "@/lib/ProjectService"
-import { AlertCircle, Calendar, LayoutGrid, Plus, RefreshCw, Search, Table, Users, Filter, ChevronDown } from "lucide-react"
+import { getProjectTeam, getProjectTaskCounts, getProjectTaskPriorities, getProjectMemberTaskCounts, type MemberTaskCount } from "@/lib/ProjectService"
+import { AlertCircle, Calendar, LayoutGrid, Plus, RefreshCw, Search, Table, Users, Filter, ChevronDown, Clock, MoreHorizontal, CheckCircle2, RefreshCcw, XCircle, BarChart } from "lucide-react"
 import { colors } from "@/colors"
+import axiosInstance from "@/lib/axios"
 
 type TeamMember = {
   id: string
@@ -31,9 +32,40 @@ export default function ProjectDetailsPage() {
   const [error, setError] = useState<string | null>(null)
   const [project, setProject] = useState<Project | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
+  const [taskCounts, setTaskCounts] = useState({
+    totalTask: 0,
+    inProgressTask: 0,
+    completedTask: 0,
+    cancelledTask: 0
+  })
+  const [taskPriorities, setTaskPriorities] = useState({
+    highTask: 0,
+    lowTask: 0,
+    mediumTask: 0
+  })
+  const [memberTaskCounts, setMemberTaskCounts] = useState<MemberTaskCount[]>([])
   const [activeTab, setActiveTab] = useState<"summary" | "tasks" | "calendar" | "notes" | "members" | "settings">(
     "summary",
   )
+  // tasks tab view toggle
+  const [taskView, setTaskView] = useState<"table" | "kanban">("table")
+
+  // Fetch task counts, priorities and member task counts
+  const fetchTaskData = async () => {
+    if (!id) return
+    try {
+      const [countsResponse, prioritiesResponse, memberTasksResponse] = await Promise.all([
+        getProjectTaskCounts(id),
+        getProjectTaskPriorities(id),
+        getProjectMemberTaskCounts(id)
+      ])
+      setTaskCounts(countsResponse)
+      setTaskPriorities(prioritiesResponse)
+      setMemberTaskCounts(memberTasksResponse)
+    } catch (error) {
+      console.error('Error fetching task data:', error)
+    }
+  }
 
   useEffect(() => {
     let isMounted = true
@@ -41,10 +73,12 @@ export default function ProjectDetailsPage() {
       setIsLoading(true)
       setError(null)
       try {
-    if (!id) return
-    const resp = await getProjectTeam(String(id))
+        if (!id) return
+        const resp = await getProjectTeam(String(id))
         if (!isMounted) return
         setProject(resp.data)
+        // Fetch task counts after project details are loaded
+        await fetchTaskData()
       } catch (e) {
         if (!isMounted) return
         setError("Failed to load project. Please try again.")
@@ -60,28 +94,22 @@ export default function ProjectDetailsPage() {
 
   const statCards = [
     {
-      label: "completed",
-      value: 0,
-      icon: <svg className="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeOpacity=".3" /><path d="M9 12l2 2 4-4" strokeLinecap="round" strokeLinejoin="round" /></svg>,
-    
+      label: "Completed",
+      value: taskCounts.completedTask,
+      icon: <CheckCircle2 className="w-5 h-5 text-emerald-400" />,
+      subText: "in the last 7 days",
     },
     {
-      label: "updated",
-      value: 0,
-      icon: <RefreshCw className="w-5 h-5 text-sky-400" />, 
-   
+      label: "In Progress",
+      value: taskCounts.inProgressTask,
+      icon: <RefreshCcw className="w-5 h-5 text-sky-400" />,
+      subText: "in the last 7 days",
     },
     {
-      label: "created",
-      value: 0,
-      icon: <Plus className="w-5 h-5 text-white/80" />, 
-     
-    },
-    {
-      label: "due soon",
-      value: 0,
-      icon: <Calendar className="w-5 h-5 text-orange-400" />, 
-   
+      label: "Cancelled",
+      value: taskCounts.cancelledTask,
+      icon: <XCircle className="w-5 h-5 text-rose-400" />,
+      subText: "in the last 7 days",
     },
   ]
 
@@ -96,7 +124,7 @@ export default function ProjectDetailsPage() {
               {project ? project.name : isLoading ? "Loading…" : "—"}
             </h1>
           </div>
-    </div>
+        </div>
 
         {/* Search */}
   <div className="backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex items-center gap-4"
@@ -157,16 +185,32 @@ export default function ProjectDetailsPage() {
               ))}
             </div>
           </div>
-          {/* View toggles */}
-    <div className="flex border border-white/20 rounded-full p-1 gap-1 shadow-inner"
-      style={{ background: '#0000004D' }}>
-            <button className="flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 text-white/90 hover:text-white hover:bg-white/10 border border-transparent focus:outline-none">
-              <Table className="w-4 h-4" /> Table View
-            </button>
-            <button className="flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 text-white/90 hover:text-white hover:bg-white/10 border border-transparent focus:outline-none">
-              <LayoutGrid className="w-4 h-4" /> Kanban Board
-            </button>
-          </div>
+          {/* View toggles: only show on 'tasks' tab */}
+          {activeTab === "tasks" && (
+            <div className="flex border border-white/20 rounded-full p-1 gap-1 shadow-inner"
+              style={{ background: '#0000004D' }}>
+              <button
+                onClick={() => setTaskView("table")}
+                className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
+                  taskView === "table"
+                    ? "bg-white/10 text-white border border-white/20"
+                    : "text-white/90 hover:text-white hover:bg-white/10 border border-transparent"
+                }`}
+              >
+                <Table className="w-4 h-4" /> Table View
+              </button>
+              <button
+                onClick={() => setTaskView("kanban")}
+                className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
+                  taskView === "kanban"
+                    ? "bg-white/10 text-white border border-white/20"
+                    : "text-white/90 hover:text-white hover:bg-white/10 border border-transparent"
+                }`}
+              >
+                <LayoutGrid className="w-4 h-4" /> Kanban Board
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Content */}
@@ -187,101 +231,203 @@ export default function ProjectDetailsPage() {
           </div>
         ) : project ? (
           <div className="space-y-6">
-            {activeTab === "tasks" ? (
-              <div className="space-y-6">
-                {/* Active Tasks Table */}
-                <div className="rounded-2xl border border-white/10 backdrop-blur-xl" style={{ background: '#0000004D' }}>
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full">
-                      <thead>
-                        <tr className="text-white/70 text-sm border-b border-white/10">
-                          <th className="px-6 py-3 text-left font-medium">
-                            <div className="flex items-center gap-2 text-white">
-                              <ChevronDown className="w-4 h-4 text-white/80" />
-                              <span className="font-semibold">Active tasks</span>
-                              <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/10 text-white/80">1</span>
-                            </div>
-                          </th>
-                          <th className="px-6 py-3 text-white text-left font-medium">Status</th>
-                          <th className="px-6 py-3 text-left font-medium">Type</th>
-                          <th className="px-6 py-3 text-left font-medium ">Due Date</th>
-                          <th className="px-6 py-3 text-left font-medium">Priority</th>
-                          <th className="px-6 py-3 text-left font-medium">Assignee</th>
-                          <th className="px-6 py-3 text-left font-medium">Estimate Time</th>
-                          <th className="px-6 py-3 text-left font-medium">Spent Time</th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-transparent">
-                        {/* Example row, replace with dynamic data as needed */}
-                        <tr className="text-white text-sm">
-                          <td className="px-6 py-4 whitespace-nowrap font-medium">AER001</td>
-                          <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
-                            <span className="inline-flex items-center gap-2">
-                              <span className="w-2 h-2 rounded-full bg-white"></span>
-                              New Task
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
-                            <span className="inline-flex items-center gap-2">
-                              <span className="w-2 h-2 rounded-full bg-sky-400"></span>
-                              <span>Operational</span>
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">Yesterday</td>
-                          <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
-                            <span className="inline-flex items-center gap-2">
-                              <ChevronDown className="w-4 h-4 text-red-400" />
-                              <span>High</span>
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
-                            <span className="inline-flex items-center gap-2">
-                              <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
-                                <img src="/images/user/1.png" alt="Assignee" className="w-6 h-6 rounded-full" />
-                              </span>
-                              <span className="text-white/80 text-sm font-medium">High</span>
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">0.15h</td>
-                          <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">0.15h</td>
-                        </tr>
-                        {/* Add more rows dynamically here */}
-                      </tbody>
-                    </table>
+            {activeTab === "members" ? (
+              <div className="rounded-2xl border border-white/10 backdrop-blur-xl overflow-hidden" style={{ background: '#0000004D' }}>
+                <div className="p-6 border-b border-white/10">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
+                        <BarChart className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">Members Task Breakdown</h3>
+                        <p className="text-sm text-white/70">Task distribution across team members</p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="px-6 py-3 text-white/70 text-sm">+ Create task</div>
                 </div>
-                {/* Completed Tasks Table */}
-                <div className="rounded-2xl border border-white/10 backdrop-blur-xl" style={{ background: '#0000004D' }}>
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full">
-                      <thead>
-                        <tr className="text-white/70 text-sm border-b border-white/10">
-                          <th className="px-6 py-3 text-left font-medium">
-                            <div className="flex items-center gap-2 text-white">
-                              <ChevronDown className="w-4 h-4 text-white/80" />
-                              <span className="font-semibold">Completed Task</span>
-                              <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/10 text-white/80">0</span>
-                            </div>
-                          </th>
-                          <th className="px-6 py-3 text-left font-medium">Status</th>
-                          <th className="px-6 py-3 text-left font-medium ">Type</th>
-                          <th className="px-6 py-3 text-left font-medium ">Due Date</th>
-                          <th className="px-6 py-3 text-left font-medium ">Priority</th>
-                          <th className="px-6 py-3 text-left font-medium ">Assignee</th>
-                          <th className="px-6 py-3 text-left font-medium ">Estimate Time</th>
-                          <th className="px-6 py-3 text-left font-medium ">Spent Time</th>
-                        </tr>
-                      </thead>
-                    </table>
+                <div className="p-6">
+                  <div className="space-y-4">
+                    {memberTaskCounts.map((member) => (
+                      <div key={member.userId} className="flex items-center justify-between p-4 rounded-xl border border-white/10 hover:bg-white/5 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold">
+                            {member.userName.charAt(0)}
+                          </div>
+                          <div>
+                            <h4 className="text-white font-medium">{member.userName}</h4>
+                            <p className="text-sm text-white/70">{member.taskCount} tasks assigned</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className="px-4 py-2 rounded-full text-sm font-medium bg-white/10 text-white">
+                            {((parseInt(member.taskCount) / taskCounts.totalTask) * 100).toFixed(1)}% of total tasks
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {memberTaskCounts.length === 0 && (
+                      <div className="text-center py-8">
+                        <Users className="w-12 h-12 text-white/20 mx-auto mb-3" />
+                        <p className="text-white/70">No members with tasks found</p>
+                      </div>
+                    )}
                   </div>
-                  <div className="px-6 py-6 text-white/60 text-sm">No completed tasks yet</div>
                 </div>
               </div>
+            ) : activeTab === "tasks" ? (
+              taskView === "table" ? (
+                <div className="space-y-6">
+                  {/* Active Tasks Table */}
+                  <div className="rounded-2xl border border-white/10 backdrop-blur-xl" style={{ background: '#0000004D' }}>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full">
+                        <thead>
+                          <tr className="text-white/70 text-sm border-b border-white/10">
+                            <th className="px-6 py-3 text-left font-medium">
+                              <div className="flex items-center gap-2 text-white">
+                                <ChevronDown className="w-4 h-4 text-white/80" />
+                                <span className="font-semibold">Active tasks</span>
+                                <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/10 text-white/80">{taskCounts.inProgressTask}</span>
+                              </div>
+                            </th>
+                            <th className="px-6 py-3 text-white text-left font-medium">Status</th>
+                            <th className="px-6 py-3 text-left font-medium">Type</th>
+                            <th className="px-6 py-3 text-left font-medium ">Due Date</th>
+                            <th className="px-6 py-3 text-left font-medium">Priority</th>
+                            <th className="px-6 py-3 text-left font-medium">Assignee</th>
+                            <th className="px-6 py-3 text-left font-medium">Estimate Time</th>
+                            <th className="px-6 py-3 text-left font-medium">Spent Time</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-transparent">
+                          {/* Example row, replace with dynamic data as needed */}
+                          <tr className="text-white text-sm">
+                            <td className="px-6 py-4 whitespace-nowrap font-medium">AER001</td>
+                            <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                              <span className="inline-flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-white"></span>
+                                New Task
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                              <span className="inline-flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-sky-400"></span>
+                                <span>Operational</span>
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">Yesterday</td>
+                            <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                              <span className="inline-flex items-center gap-2">
+                                <ChevronDown className="w-4 h-4 text-red-400" />
+                                <span>High</span>
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                              <span className="inline-flex items-center gap-2">
+                                <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
+                                  <img src="/images/user/1.png" alt="Assignee" className="w-6 h-6 rounded-full" />
+                                </span>
+                                <span className="text-white/80 text-sm font-medium">High</span>
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">0.15h</td>
+                            <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">0.15h</td>
+                          </tr>
+                          {/* Add more rows dynamically here */}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="px-6 py-3 text-white/70 text-sm">+ Create task</div>
+                  </div>
+                  {/* Completed Tasks Table */}
+                  <div className="rounded-2xl border border-white/10 backdrop-blur-xl" style={{ background: '#0000004D' }}>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full">
+                        <thead>
+                          <tr className="text-white/70 text-sm border-b border-white/10">
+                            <th className="px-6 py-3 text-left font-medium">
+                              <div className="flex items-center gap-2 text-white">
+                                <ChevronDown className="w-4 h-4 text-white/80" />
+                                <span className="font-semibold">Completed Task</span>
+                                <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/10 text-white/80">{taskCounts.completedTask}</span>
+                              </div>
+                            </th>
+                            <th className="px-6 py-3 text-left font-medium">Status</th>
+                            <th className="px-6 py-3 text-left font-medium ">Type</th>
+                            <th className="px-6 py-3 text-left font-medium ">Due Date</th>
+                            <th className="px-6 py-3 text-left font-medium ">Priority</th>
+                            <th className="px-6 py-3 text-left font-medium ">Assignee</th>
+                            <th className="px-6 py-3 text-left font-medium ">Estimate Time</th>
+                            <th className="px-6 py-3 text-left font-medium ">Spent Time</th>
+                          </tr>
+                        </thead>
+                      </table>
+                    </div>
+                    <div className="px-6 py-6 text-white/60 text-sm">No completed tasks yet</div>
+                  </div>
+                </div>
+              ) : (
+                /* Kanban board view */
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                  {(
+                    [
+                      { key: "cancelled", title: "Cancelled", count: taskCounts.cancelledTask },
+                      { key: "new", title: "New Task", count: taskCounts.totalTask - (taskCounts.inProgressTask + taskCounts.completedTask + taskCounts.cancelledTask) },
+                      { key: "inprogress", title: "In Progress", count: taskCounts.inProgressTask },
+                      { key: "completed", title: "Completed", count: taskCounts.completedTask },
+                    ] as const
+                  ).map((col) => (
+                    <div key={col.key} className="rounded-2xl border border-white/10 backdrop-blur-xl flex flex-col" style={{ background: '#0000004D' }}>
+                      <div className="px-4 sm:px-5 py-3 border-b border-white/10">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-white inline-block"></span>
+                            <span className="text-white font-semibold text-sm">{col.title}</span>
+                            <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/10 text-white/80">{col.count}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-4 sm:p-5 space-y-3 min-h-[420px]">
+                        {col.key === "new" && (
+                          <div className="rounded-xl border border-white/10 bg-black/30 text-white p-4 shadow-sm">
+                            <div className="flex items-start justify-between">
+                              <div className="text-xs text-white/60 font-semibold">AER-001</div>
+                              <span className="text-[10px] uppercase px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-300/30">High</span>
+                            </div>
+                            <div className="mt-1 font-semibold">Aeronaa UI Design</div>
+                            <div className="text-sm text-white/70 mt-1">Review Project Goals and Objective</div>
+                            <div className="mt-3 flex items-center justify-between">
+                              <div className="flex -space-x-2">
+                                <img src="/images/user/1.png" className="w-7 h-7 rounded-full border border-white/20" alt="Assignee 1" />
+                                <img src="/images/user/2.png" className="w-7 h-7 rounded-full border border-white/20" alt="Assignee 2" />
+                                <img src="/images/user/3.png" className="w-7 h-7 rounded-full border border-white/20" alt="Assignee 3" />
+                              </div>
+                              <div className="flex items-center gap-1 text-white/70 text-sm">
+                                <Clock className="w-4 h-4" />
+                                01h 52m
+                              </div>
+                            </div>
+                            <div className="mt-2 flex justify-end">
+                              <button className="p-1.5 rounded-full hover:bg-white/10">
+                                <MoreHorizontal className="w-4 h-4 text-white/70" />
+                              </button>
+                            </div>
+                          </div>
+                        )}
+
+                        {col.key !== "new" && (
+                          <button className="text-white/70 text-sm hover:text-white flex items-center gap-2">+ Create task</button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )
             ) : (
               // ...existing code for summary, stats, etc...
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {statCards.map((c) => (
                     <div
                       key={c.label}
@@ -304,25 +450,31 @@ export default function ProjectDetailsPage() {
                   <div className="rounded-2xl border border-white/10 p-6 text-white/90 backdrop-blur-xl min-h-[320px]" style={{ background: '#0000004D' }}>
                     <div className="text-lg font-semibold mb-2">Status overview</div>
                     <div className="text-white/70 text-sm mb-6">
-                      The status overview for this project will display here after you <span style={{ color: '#0CA9F6' }}>create some work items</span>
+                      {taskCounts.totalTask > 0 ? (
+                        "Current status overview of all work items in this project"
+                      ) : (
+                        <>The status overview for this project will display here after you <span style={{ color: '#0CA9F6' }}>create some work items</span></>
+                      )}
                     </div>
-                    <div className="text-center mt-18 text-4xl">0</div>
+                    <div className="text-center mt-18 text-4xl">{taskCounts.totalTask}</div>
                     <div className="text-center text-white/60 text-sm">Total work items</div>
                   </div>
                   <div className="rounded-2xl border border-white/10 p-6 text-white/90 backdrop-blur-xl min-h-[320px]" style={{ background: '#0000004D' }}>
-                    <div className="text-lg font-semibold mb-2">Activity</div>
-                    <div className="flex flex-col mt-12 items-center justify-center h-[150px]">
-                      <div className="w-15 h-15 rounded-full flex items-center justify-center mb-3" style={{ background: '#DBEAFE4D' }}>
-                        <Calendar className="w-5 h-5 text-white" />
+                    <div className="text-lg font-semibold mb-2">Description</div>
+                    {project?.description ? (
+                      <div className="mt-4 text-white/80">
+                        {project.description}
                       </div>
-                      <div className="font-medium">No activity yet</div>
-                      <div className="text-white/70 text-sm text-center mt-1">
-                        Create a few work items and invite some teammates to your project to see your project activity.
+                    ) : (
+                      <div className="flex flex-col mt-12 items-center justify-center h-[150px]">
+                        <div className="font-medium text-white/60">No description available</div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+
                   <div className="rounded-2xl border border-white/10 p-6 text-white/90 backdrop-blur-xl min-h-[320px]" style={{ background: '#0000004D' }}>
                     <div className="text-lg font-semibold mb-2">Priority breakdown</div>
                     <div className="text-white/70 text-sm mb-6">
@@ -331,64 +483,132 @@ export default function ProjectDetailsPage() {
                         How to manage priorities for projects
                       </a>
                     </div>
-                    <div className="flex flex-col justify-end h-36">
-                      <div className="flex items-center justify-center w-full">
-                        <div className="w-4/5">
-                          <div style={{ height: 2, background: 'linear-gradient(90deg, #0CA9F6 0%, #0CA9F6 100%)', borderRadius: 2 }} />
-                        </div>
-                      </div>
-                      <div className="flex justify-between w-4/5 mx-auto mt-2 text-white/60 text-sm">
-                        <span className="font-medium" style={{ color: '#6EE7B7' }}>Highest</span>
-                        <span>High</span>
-                        <span>Medium</span>
-                        <span>Low</span>
-                        <span>Lowest</span>
+                    <div className="w-full flex justify-center items-center" style={{ minHeight: 300 }}>
+                      {/* Unified grid-based chart for clean axis/bar alignment */}
+                      <div className="relative w-full max-w-xl" style={{ height: 260 }}>
+                        {(() => {
+                          // Compute nice tick values and scaling
+                          const rawMax = Math.max(
+                            taskPriorities.highTask,
+                            taskPriorities.mediumTask,
+                            taskPriorities.lowTask,
+                            0
+                          );
+                          const paddedMax = Math.max(1, Math.ceil(rawMax * 1.1));
+                          const tickCount = 4; // plus 0 at bottom => 5 labels
+                          const step = Math.max(1, Math.ceil(paddedMax / tickCount));
+                          const topTick = step * tickCount;
+                          const yTicks = Array.from({ length: tickCount + 1 }, (_, i) => i * step);
+
+                          const chartHeight = 180; // px
+
+                          const scale = (v: number) => (v / topTick) * chartHeight;
+
+                          return (
+                            <div className="grid grid-cols-[64px_1fr] grid-rows-[180px_auto] gap-x-0 px-4 py-4">
+                              {/* Y-axis column */}
+                              <div className="relative col-start-1 row-start-1" style={{ height: chartHeight }}>
+                                {/* Vertical axis line */}
+                                <div className="absolute top-0 bottom-0 right-0" style={{ width: 2, background: '#ffffff', borderRadius: 2 }} />
+                                {/* Tick labels */}
+                                {yTicks.map((t, i) => {
+                                  const pos = (t / topTick) * 100; // percentage from bottom
+                                  return (
+                                    <div
+                                      key={`tick-${i}`}
+                                      className="absolute text-white/90 text-xs"
+                                      style={{ bottom: `${pos}%`, right: 8, transform: 'translateY(50%)' }}
+                                    >
+                                      {t}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+
+                              {/* Bars area */}
+                              <div className="relative col-start-2 row-start-1 flex items-end justify-around" style={{ height: chartHeight }}>
+                                {/* X-axis line (only here) */}
+                                <div className="absolute left-0 right-0 bottom-0" style={{ height: 2, background: '#ffffff', borderRadius: 2 }} />
+
+                                {[
+                                  { priority: 'High Task', value: taskPriorities.highTask, color: '#34D399' },
+                                  { priority: 'Medium Task', value: taskPriorities.mediumTask, color: '#0CA9F6' },
+                                  { priority: 'Low Task', value: taskPriorities.lowTask, color: '#F472B6' }
+                                ].map((bar) => {
+                                  const h = Math.max(2, scale(bar.value));
+                                  return (
+                                    <div key={bar.priority} className="relative group flex flex-col items-center" style={{ width: 64 }}>
+                                      {/* Value label */}
+                                      <div className="text-white text-sm font-medium mb-1">{bar.value}</div>
+                                      <div
+                                        className="w-full transition-all duration-300 rounded-t-lg"
+                                        style={{ height: h, backgroundColor: bar.color, position: 'relative' }}
+                                      >
+                                        {/* Bar gloss */}
+                                        <div className="absolute inset-0">
+                                          <div className="w-full h-full bg-gradient-to-t from-white/10 to-transparent rounded-t-lg" />
+                                        </div>
+                                        {/* Hover tooltip */}
+                                        <div
+                                          className="absolute opacity-0 group-hover:opacity-100 left-full top-1/2 -translate-y-1/2 ml-2 bg-black/80 text-white text-xs px-3 py-2 rounded-lg shadow-lg transition-opacity z-10"
+                                          style={{ whiteSpace: 'nowrap' }}
+                                        >
+                                          {bar.priority}
+                                          <br />
+                                          <span className="font-semibold">{bar.value} tasks</span>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+
+                              {/* X-axis labels row aligned with bars */}
+                              <div className="col-start-2 row-start-2 mt-2">
+                                <div className="flex justify-around text-[13px] font-medium">
+                                  <div className="text-center" style={{ color: '#34D399', width: 64 }}>High Task</div>
+                                  <div className="text-center" style={{ color: '#0CA9F6', width: 64 }}>Medium Task</div>
+                                  <div className="text-center" style={{ color: '#F472B6', width: 64 }}>Low Task</div>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
                     </div>
                   </div>
-                  <div className="rounded-2xl border border-white/10 p-6 text-white/90 backdrop-blur-xl min-h-[220px]" style={{ background: '#0000004D' }}>
-                    <div className="text-lg font-semibold mb-2">Types of work</div>
-                    <div className="text-white/70 text-sm mb-4">
-                      Create some work items to view a breakdown of total work by work type.{' '}
-                      <a href="#" className="text-[#0CA9F6] hover:underline" style={{ color: '#0CA9F6' }}>
-                        What are work types?
-                      </a>
-                    </div>
-                    <div className="flex justify-between items-center px-2 mb-2">
-                      <span className=" text-[12px] text-white">Type</span>
-                      <span className=" text-[12px] text-white">Distribution</span>
-                    </div>
-                    <div className="space-y-4">
-                      {/* Task Row */}
-                      <div className="flex items-center gap-4 bg-[#0000004D] text-white shadow border border-white/20 rounded-xl px-6 py-4">
-                        <span className="inline-flex items-center justify-center w-5 h-5 border-2 border-[#0CA9F6] rounded text-[#0CA9F6] bg-black/40 mr-3">
-                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="3" y="3" width="10" height="10" rx="2" fill="#0CA9F6" fillOpacity="0.1"/>
-                            <path d="M5 8.5L7 10.5L11 6.5" stroke="#0CA9F6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </span>
-                        <span className="text-white text-base font-medium mr-4">Task</span>
-                        <div className="flex-1 flex items-center">
-                          <div className="w-full h-2 rounded-full bg-white/20 overflow-hidden">
-                            <div className="h-2 bg-white/80 rounded-full w-11/12" />
-                          </div>
+                  <div className="rounded-2xl border border-white/10 p-6 text-white/90 backdrop-blur-xl min-h-[320px] flex flex-col justify-center" style={{ background: '#0000004D' }}>
+                    <div className="text-lg font-semibold mb-2">Members Task Breakdown</div>
+                    <div className="text-white/70 text-base font-semibold mb-4">Member</div>
+                    <div className="space-y-4 flex-1 flex flex-col justify-center">
+                      {memberTaskCounts.length === 0 ? (
+                        <div className="text-center py-8">
+                          <Users className="w-12 h-12 text-white/20 mx-auto mb-3" />
+                          <p className="text-white/70">No members with tasks found</p>
                         </div>
-                      </div>
-                      {/* Sub-task Row */}
-                      <div className="flex items-center gap-4 bg-[#0000004D] text-white shadow border border-white/20 rounded-xl px-6 py-4">
-                        <span className="inline-flex items-center justify-center w-5 h-5 rounded text-[#6EE7B7] mr-3">
-                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="3" y="3" width="10" height="10" rx="2" fill="#6EE7B7" fillOpacity="0.1"/>
-                            <path d="M5 8H11" stroke="#6EE7B7" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </span>
-                        <span className="text-white text-base font-medium mr-4">Sub-task</span>
-                        <div className="flex-1 flex items-center">
-                          <div className="w-full h-2 rounded-full bg-white/20 overflow-hidden">
-                            <div className="h-2 bg-white/60 rounded-full w-9/12" />
-                          </div>
-                        </div>
-                      </div>
+                      ) : (
+                        memberTaskCounts.map((member) => {
+                          const taskPercentage = ((parseInt(member.taskCount) / taskCounts.totalTask) * 100).toFixed(0)
+                          return (
+                            <div key={member.userId} className="bg-[#0000004D] rounded-xl px-4 py-2 flex flex-col gap-1 shadow border border-white/20">
+                              <div className="flex justify-between items-center mb-1">
+                                <span className="text-white text-xs font-medium">{member.userName}</span>
+                                <span className="text-white/70 text-xs">{member.taskCount} tasks</span>
+                              </div>
+                              <div className="w-full h-3 rounded-full bg-white/20 overflow-hidden">
+                                <div
+                                  className="h-3 rounded-full"
+                                  style={{
+                                    width: `${taskPercentage}%`,
+                                    background: 'linear-gradient(90deg, #3B82F6 60%, #60A5FA 100%)',
+                                    transition: 'width 0.4s',
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          )
+                        })
+                      )}
                     </div>
                   </div>
                 </div>
