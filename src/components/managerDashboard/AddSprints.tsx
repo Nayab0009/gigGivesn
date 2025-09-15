@@ -55,7 +55,7 @@ const AddSprint: React.FC = () => {
 
   return (
    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
-  <div className="rounded-3xl shadow-2xl w-full max-w-4xl max-h-[95vh] overflow-y-auto border-2 border-white/40">
+  <div className="rounded-3xl shadow-2xl w-full max-w-3xl max-h-[95vh] overflow-y-auto border-2 border-white/40 scrollbar-hide">
     <div className="p-6 sm:p-8">
           {/* Header */}
           <div className="text-center mb-8">

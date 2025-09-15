@@ -4,6 +4,11 @@ import axiosInstance from "@/lib/axios";
 import type { Project, Task, User, Team } from "@/types";
 import { useAuth } from "@/context/AuthContext";
 import { colors } from "@/colors";
+export enum TaskPriority {
+  HIGH = 'high',
+  MEDIUM = 'medium',
+  LOW = 'low'
+}
 interface AssignTaskModalProps {
   open: boolean;
   onClose: () => void;
@@ -13,7 +18,8 @@ interface AssignTaskModalProps {
   getUserStatusIcon: (status: string) => React.ReactElement;
   projectId?: string | number; // Allow both string and number
   sprintId?: string | number; // Add sprintId prop]
-  ticketNumber?:string | number;
+  ticketNumber?: string | number;
+    priority?: TaskPriority; 
 }
 
 // Helper function to generate avatar
@@ -157,6 +163,7 @@ export function AssignTaskModal({
           assignedBy: user?.id, // ID of the user who is assigning the task
           sprint: sprintId ? { id: sprintId } : undefined,
           taskDate: task.dueDate ? new Date(task.dueDate).toISOString() : undefined,
+           priority: task.priority || TaskPriority.MEDIUM,
         };
 
         console.log('Sending task data:', taskData);
@@ -319,6 +326,20 @@ export function AssignTaskModal({
     disabled={isCreating}
     className="w-full px-4 py-3 rounded-xl bg-black/70 text-white focus:outline-none"
   />
+</div>
+{/* Task Priority */}
+<div>
+  <label className="block text-sm font-medium text-white mb-2">Priority*</label>
+  <select
+    value={task.priority || TaskPriority.MEDIUM} // Default to MEDIUM
+    onChange={(e) => setTask({ ...task, priority: e.target.value as TaskPriority })}
+    disabled={isCreating}
+    className="w-full px-4 py-3 rounded-xl bg-black/70 text-white focus:outline-none"
+  >
+    <option value={TaskPriority.HIGH}>High</option>
+    <option value={TaskPriority.MEDIUM}>Medium</option>
+    <option value={TaskPriority.LOW}>Low</option>
+  </select>
 </div>
 
         {/* Assign Team Members */}
