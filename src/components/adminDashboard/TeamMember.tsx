@@ -525,26 +525,35 @@ export default function TeamListPage() {
         
         {/* Employee Details Cell */}
         
-        <td className="px-6 py-5 rounded-l-xl" style={{ background: "transparent", border: "none" }}>
-          <div className="flex items-center gap-3">
-            <div
-              className="w-20 h-20 rounded-full flex items-center justify-center font-semibold text-sm shadow-lg backdrop-blur-xl relative"
-              style={{
-                background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                color: "#fff",
-              }}
-            >
-              {member.name.charAt(0).toUpperCase()}
-              <div className="absolute -bottom-[-6px] -right-0.5 w-5 h-5 bg-green-400 rounded-full border-2 border-white"></div>
-            </div>
-            <div>
-              <h3 className="text-base font-semibold text-white">
-                {member.name}
-              </h3>
-              <p className="text-sm text-blue-400">Team Member</p>
-            </div>
-          </div>
-        </td>
+ <td className="px-6 py-5 rounded-l-xl" style={{ background: "transparent", border: "none" }}>
+  <div className="flex items-center gap-3">
+    <div
+      className="w-20 h-20 rounded-full flex items-center justify-center font-semibold text-sm shadow-lg backdrop-blur-xl overflow-hidden"
+      style={{
+        background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
+        color: "#fff",
+      }}
+    >
+      {member.avatar ? (
+        <Image
+          src={member.avatar}
+          alt={member.name}
+          width={80}
+          height={80}
+          className="w-full h-full object-cover rounded-full"
+        />
+      ) : (
+        member.name.charAt(0).toUpperCase()
+      )}
+    </div>
+    <div>
+      <h3 className="text-base font-semibold text-white">{member.name}</h3>
+      <p className="text-sm text-blue-400">Team Member</p>
+    </div>
+  </div>
+</td>
+
+
 
         {/* Role Cell */}
 

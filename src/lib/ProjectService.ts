@@ -5,9 +5,12 @@ export interface CreateProject {
     startDate: string,
     endDate: string,
 }
-export const createProject = async (project: CreateProject) => {
-    const { data } = await axiosInstance.post('/projects', project);
-    return data;
+
+export const createProject = async (project: FormData) => {
+  const { data } = await axiosInstance.post("/projects", project, {
+    headers: { "Content-Type": "multipart/form-data" },
+  })
+  return data
 }
 export const getAllProjects=async () => {
     const { data } = await axiosInstance.get('/projects');

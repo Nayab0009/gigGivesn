@@ -12,7 +12,8 @@ interface AssignTaskModalProps {
   setTask: (task: Task) => void;
   getUserStatusIcon: (status: string) => React.ReactElement;
   projectId?: string | number; // Allow both string and number
-  sprintId?: string | number; // Add sprintId prop
+  sprintId?: string | number; // Add sprintId prop]
+  ticketNumber?:string | number;
 }
 
 // Helper function to generate avatar
@@ -148,6 +149,7 @@ export function AssignTaskModal({
       // Create a task for each assigned user
       const createTaskPromises = task.assignedTo.map(async (userId: string) => {
         const taskData = {
+            ticketNumber: task.ticketNumber?.trim(),
           title: task.title.trim(),
           description: task.description.trim() || '',
           taskFor: parseInt(userId), // ID of the user the task is assigned to
@@ -179,6 +181,7 @@ export function AssignTaskModal({
       // Reset the task
       setTask({
         ...task,
+        ticketNumber: '',
         title: '',
         description: '',
         assignedTo: [],
@@ -241,354 +244,130 @@ export function AssignTaskModal({
   }
 
   return (
-  <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
+ <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
+  <div className="bg-black/40 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[95vh] overflow-hidden border-2 border-white/40">
 
-     <div className="bg-black/40 backdrop-blur-md rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] overflow-hidden border border-white/20 mx-4 ml-16 lg:ml-20">
-
-        {/* Header */}
-       <div
-  className="p-6 text-white bg-black/40 backdrop-blur-md border-b border-white/20 shadow-lg"
->
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                <Clock className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold mb-1">Create New Task</h2>
-                <p className="text-blue-200 text-sm">Add a task and assign team members</p>
-                {task.assignedTo.length > 0 && (
-                  <p className="text-blue-100 text-sm mt-1">
-                    {task.assignedTo.length} member{task.assignedTo.length !== 1 ? 's' : ''} assigned
-                  </p>
-                )}
-                <p className="text-blue-100 text-sm mt-1">
-                  Assigned by: {user?.name} ({user?.role})
-                </p>
-              </div>
-            </div>
-            <button 
-              onClick={onClose} 
-              className="p-2 rounded-full hover:bg-white/20 transition-colors"
-              disabled={isCreating}
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
-
-        {/* Scrollable Content with Hidden Scrollbar */}
-        <div 
-          className="p-6 space-y-6 overflow-y-auto"
-          style={{
-            maxHeight: 'calc(95vh - 280px)',
-            scrollbarWidth: 'none', // Firefox
-            msOverflowStyle: 'none', // IE/Edge
-          }}
-        >
-          <style jsx>{`
-            .overflow-y-auto::-webkit-scrollbar {
-              display: none !important; /* Chrome, Safari, Opera */
-              width: 0 !important;
-              height: 0 !important;
-            }
-            .overflow-y-auto::-webkit-scrollbar-track {
-              display: none !important;
-            }
-            .overflow-y-auto::-webkit-scrollbar-thumb {
-              display: none !important;
-            }
-            .overflow-y-auto::-webkit-scrollbar-corner {
-              display: none !important;
-            }
-          `}</style>
-
-          {/* Task Title */}
-          <div className="group">
-            <label htmlFor="task-title" className="block text-sm font-semibold text-white mb-2">
-              Task Title*
-            </label>
-            <input
-              id="task-title"
-              type="text"
-              value={task.title}
-              onChange={(e) => setTask({ ...task, title: e.target.value })}
-              className="w-full px-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 text-white placeholder-white bg-black/30"
-    placeholder="Enter a descriptive task title..."
-              disabled={isCreating}
-            />
-          </div>
-
-          {/* Task Description */}
-          <div className="group">
-            <label htmlFor="task-description" className="block text-sm font-semibold text-white mb-2">
-              Description
-            </label>
-            <textarea
-              id="task-description"
-              value={task.description}
-              onChange={(e) => setTask({ ...task, description: e.target.value })}
-               className="w-full px-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 resize-none text-white placeholder-white bg-black/30"
-             
-              placeholder="Describe the task details and requirements..."
-              rows={3}
-              disabled={isCreating}
-            />
-          </div>
-
-          {/* Task Due Date Picker */}
-          <div className="group">
-            <label htmlFor="task-due-date" className="block text-sm font-semibold text-white mb-2">
-              Task Due Date*
-            </label>
-            <input
-              id="task-due-date"
-              type="date"
-              value={task.dueDate ? task.dueDate.substring(0, 10) : ''}
-              onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
-            className="w-full px-4 py-3 border rounded-xl focus:outline-none transition-all duration-200 text-white placeholder-white bg-black/30"
-
-              disabled={isCreating}
-              placeholder="Select due date for the task"
-            />
-          </div>
-
-          {/* Team Member Assignment */}
-          <div className="group">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-2">
-                <Users className="w-4 h-4 text-white" />
-                <span className="font-semibold text-sm text-white">Assign Team Members*</span>
-              </div>
-              <span className="text-sm px-4 py-2 text-white rounded-full font-semibold border"
-                
-              >
-                {task.assignedTo.length} selected
-              </span>
-            </div>
-
-            {/* Loading State */}
-            {isLoading && (
-              <div className="text-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" style={{ color: colors.primary.hex }} />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Loading Teams...</h3>
-                <p className="text-gray-500">Fetching available teams from the backend.</p>
-              </div>
-            )}
-
-            {/* Error State */}
-            {error && (
-              <div className="text-center py-12">
-                <AlertCircle className="w-8 h-8 text-red-600 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Error</h3>
-                <p className="text-gray-500 mb-4">{error}</p>
-                {!isCreating && (
-                  <button
-                    onClick={fetchTeams}
-                    className="px-4 py-2 rounded-lg transition-colors text-white"
-                    style={{
-                      background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                    }}
-                  >
-                    Try Again
-                  </button>
-                )}
-              </div>
-            )}
-
-            {/* Teams List */}
-            {!isLoading && !error && teams.map((team) => (
-              <div
-                key={team.id}
-                className="border rounded-xl p-6 hover:shadow-lg transition-all duration-300 relative overflow-hidden mb-4"
-            
-              >
-                {/* Team Header */}
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center space-x-4">
-                    <div className="p-3 rounded-xl"
-                
-                    >
-                      <Users className="w-6 h-6" style={{ color: '#fff' }} />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-xl text-white">
-                        {team.name}
-                      </h3>
-                      <p className="text-sm text-white font-medium">
-                        {team.department} Department
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <span className="text-sm px-4 py-2 rounded-full font-semibold border text-white"
-            
-                    >
-                      {team.members.length} member{team.members.length !== 1 ? 's' : ''}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Team Members */}
-                <div>
-                  <div className="flex items-center space-x-2 mb-4">
-                    <Users className="w-4 h-4 text-white" />
-                    <span className="font-semibold text-sm text-gray-700 text-white">Select Team Members</span>
-                  </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-  {team.members.map((member: any) => (
-    <div
-      key={member.id}
-      className={`relative flex items-center space-x-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer ${
-        task.assignedTo.includes(member.id)
-          ? 'shadow-md'
-          : 'hover:shadow'
-      } ${isCreating ? 'opacity-50 cursor-not-allowed' : ''}`}
-      style={{
-        background: task.assignedTo.includes(member.id)
-          ? 'rgba(255,255,255,0.1)' // glass effect for selected
-          : 'rgba(0,0,0,0.4)',       // glass effect default
-        borderColor: 'rgba(255,255,255,0.2)', // subtle white border
-      }}
-      onClick={() => !isCreating && toggleAssignment(member.id)}
-    >
-      {/* Selection indicator */}
-      {task.assignedTo.includes(member.id) && (
-        <div
-          className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center"
-          style={{ background: 'rgba(255,255,255,0.6)' }}
-        >
-          <Check className="w-3 h-3 text-black" />
-        </div>
-      )}
-
-      <div className="relative flex-shrink-0">
-        <img
-          src={member.avatar}
-          alt={member.name}
-          className="w-10 h-10 rounded-full border-2 border-white shadow-sm"
-        />
-        <div className="absolute -bottom-0.5 -right-0.5 p-0.5 bg-white rounded-full shadow-sm">
-          {getUserStatusIcon(member.status)}
-        </div>
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="font-medium text-white truncate">
-          {member.name}
-        </div>
-        <div className="text-sm text-gray-300 truncate">
-          {member.role}
-        </div>
-      </div>
+      {/* Header */}
+     <div className="p-6 text-center">
+      <h2 className="text-2xl font-bold text-white mb-1">Create New Task</h2>
+      <p className="text-gray-300 text-sm">Add a task and assign team members</p>
     </div>
-  ))}
+
+      {/* Content */}
+      <div  className="p-6 border border-white/30 rounded-2xl space-y-6 overflow-y-auto scrollbar-hide m-4" style={{ maxHeight: "calc(95vh - 220px)" }}>
+        {/* Ticket Number */}
+<div>
+  <label className="block text-sm font-medium text-white mb-2">Ticket Number*</label>
+  <div className="flex items-center">
+    {/* Prefix */}
+    <span className="px-4 py-3 rounded-l-xl bg-black/50 text-white font-semibold border-r border-white/10">
+      {task.ticketNumber?.split('-')[0] || ''}
+    </span>
+
+    {/* Editable Suffix */}
+    <input
+      type="text"
+      value={task.ticketNumber?.split('-')[1] ?? ''}
+      onChange={(e) => {
+        const prefix = task.ticketNumber?.split('-')[0] || '';
+        setTask({
+          ...task,
+          ticketNumber: `${prefix}-${e.target.value}`,
+        });
+      }}
+      placeholder="001"
+      disabled={isCreating}
+      className="w-full px-4 py-3 rounded-r-xl bg-black/70 text-white placeholder-white focus:outline-none"
+    />
+  </div>
 </div>
 
-                </div>
+
+        {/* Task Title */}
+        <div>
+  <label className="block text-sm font-medium text-white mb-2">Task Title*</label>
+  <input
+    type="text"
+    value={task.title ?? ""}
+    onChange={(e) => setTask({ ...task, title: e.target.value })}
+    placeholder="Title ..."
+    disabled={isCreating}
+    className="w-full px-4 py-3 rounded-xl bg-black/70 text-white placeholder-white focus:outline-none"
+  />
+</div>
+
+        {/* Description */}
+       <div>
+  <label className="block text-sm font-medium text-white mb-2">Description</label>
+  <textarea
+    value={task.description ?? ""}
+    onChange={(e) => setTask({ ...task, description: e.target.value })}
+    placeholder="Description ..."
+    rows={3}
+    disabled={isCreating}
+    className="w-full px-4 py-3 rounded-xl bg-black/70 text-white placeholder-white resize-none focus:outline-none"
+  />
+</div>
+
+        {/* Due Date */}
+      <div>
+  <label className="block text-sm font-medium text-white mb-2">Task Due Date*</label>
+  <input
+    type="date"
+    value={task.dueDate ? task.dueDate.substring(0, 10) : ""}
+    onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
+    disabled={isCreating}
+    className="w-full px-4 py-3 rounded-xl bg-black/70 text-white focus:outline-none"
+  />
+</div>
+
+        {/* Assign Team Members */}
+        <div>
+          <h3 className="text-white font-semibold text-sm mb-3">Assign Team Members*</h3>
+          {teams.map((team) => (
+            <div key={team.id} className="mb-4">
+              <p className="text-sm text-gray-300 mb-2">{team.department} Department</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {team.members.map((member: any) => (
+                  <div
+                    key={member.id}
+                    onClick={() => !isCreating && toggleAssignment(member.id)}
+                    className={`p-3 rounded-xl border flex items-center space-x-3 cursor-pointer ${
+                      task.assignedTo.includes(member.id) ? "bg-white/10" : "bg-black/30"
+                    }`}
+                  >
+                    <img src={member.avatar} alt={member.name} className="w-10 h-10 rounded-full border" />
+                    <div>
+                      <p className="text-white font-medium">{member.name}</p>
+                      <p className="text-gray-400 text-sm">{member.role}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-
-            {/* No Teams State */}
-            {!isLoading && !error && teams.length === 0 && (
-              <div className="text-center py-12">
-                <Users className="w-16 h-16" style={{ color: colors.accent.hex }} />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Teams Available</h3>
-                <p className="text-gray-500">No employees found to create teams from.</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Footer - Fixed at bottom with better button visibility */}
-       <div
-  className="border-t px-6 py-6 rounded-b-2xl backdrop-blur-md shadow-lg"
-  style={{
-    background: `linear-gradient(to right, ${colors.primary.hex}20, ${colors.secondary.hex}20, rgba(0,0,0,0.4))`,
-
-  }}
->
-
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-black/40 backdrop-blur-md rounded-xl border border-white/20 p-4 shadow-lg">
-
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <Users className="w-4 h-4 text-white"  />
-                <p className="text-sm text-white font-medium">
-                  {task.assignedTo.length > 0 
-                    ? `${task.assignedTo.length} member${task.assignedTo.length !== 1 ? 's' : ''} selected`
-                    : 'Select team members to assign to your task'
-                  }
-                </p>
-              </div>
-              {task.title.trim() && (
-                <div className="flex items-center space-x-2">
-                  <Check className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                  <p className="text-sm font-medium" style={{color:colors.primary.hex}}>Task title provided</p>
-                </div>
-              )}
             </div>
-            <div className="flex items-center space-x-3 w-full sm:w-auto">
-              <button
-                onClick={onClose}
-                disabled={isCreating}
-                className="px-6 py-3 border-2 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex-1 sm:flex-none"
-                style={{
-                  borderColor: colors.primary.hex,
-                  color: colors.primary.hex,
-                  background: '#fff',
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleCreateTask}
-                disabled={!task.title.trim() || task.assignedTo.length === 0 || isCreating}
-                className="px-8 py-3 rounded-xl font-bold transition-all duration-300 flex items-center justify-center space-x-2 flex-1 sm:flex-none shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                style={
-                  !task.title.trim() || task.assignedTo.length === 0 || isCreating
-                    ? { background: '#ccc', color: '#fff' }
-                    : { background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`, color: '#fff' }
-                }
-              >
-                {isCreating ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" style={{ color: '#fff' }} />
-                    <span>Creating Tasks...</span>
-                  </>
-                ) : (
-                  <>
-                    <Check className="w-5 h-5" style={{ color: '#fff' }} />
-                    <span>Create Task ({task.assignedTo.length})</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-          
-          {/* Validation Messages */}
-          <div className="mt-3 space-y-1">
-            {!task.title.trim() && (
-              <p className="text-sm text-red-600 flex items-center space-x-1">
-                <AlertCircle className="w-3 h-3" />
-                <span>Task title is required</span>
-              </p>
-            )}
-            {task.title.trim() && task.assignedTo.length === 0 && (
-              <p className="text-sm text-red-600 flex items-center space-x-1">
-                <AlertCircle className="w-3 h-3" />
-                <span>Please select at least one team member</span>
-              </p>
-            )}
-            {task.title.trim() && task.assignedTo.length > 0 && (
-              <p className="text-sm" style={{ color: colors.primary.hex }}>
-                <Check className="w-3 h-3" style={{ color: colors.primary.hex }} />
-                <span>Ready to create task for {task.assignedTo.length} member{task.assignedTo.length !== 1 ? 's' : ''}</span>
-              </p>
-            )}
-          </div>
+          ))}
         </div>
       </div>
+
+      {/* Footer */}
+      <div className=" border-white/20 p-6 flex justify-end space-x-3">
+        <button
+          onClick={onClose}
+          disabled={isCreating}
+          className="px-6 py-2 rounded-xl border border-gray-400 text-gray-200 hover:bg-white/10"
+        >
+          Cancel
+        </button>
+       <button
+    onClick={handleCreateTask}
+    disabled={!task.title.trim() || task.assignedTo.length === 0 || isCreating}
+    style={{ backgroundColor: colors.primary.hex }}
+    className="px-6 py-2 rounded-xl text-white font-semibold shadow hover:shadow-lg disabled:opacity-50"
+  >
+    {isCreating ? "Creating..." : `Create Task (${task.assignedTo.length})`}
+  </button>
+      </div>
     </div>
+  </div>
   );
 }

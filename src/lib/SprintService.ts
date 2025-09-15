@@ -13,7 +13,16 @@ export const createSprint = async (sprintData:any) => {
         throw error;
     }
 }
-export  const  getSprintsForManagers=async (managerId:String)=> {
+export  const  getSprintsForManagers=async (managerId:string)=> {
     const { data } = await axiosInstance.get(`/sprint/manager/all?managerId=${managerId}`)
     return data
+}
+export const deleteSprint = async (sprintId: string) => {
+    try {
+        const response = await axiosInstance.delete(`/sprint/${sprintId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error Deleting Sprint');
+        throw error;
+    }
 }
