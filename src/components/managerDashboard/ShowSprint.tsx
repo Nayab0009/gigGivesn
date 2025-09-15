@@ -92,23 +92,28 @@ const ManagerSprintsCards: React.FC = () => {
   };
 
   // Handle add task button click
-  const handleAddTask = (sprint: any) => {
-    setSelectedSprintId(sprint.id);
-    setSelectedSprintName(sprint.name);
-    setIsModalOpen(true);
-    
-    // Reset task state
-    setTask({
-      id: '',
-      title: '',
-      description: '',
-      status: 'pending',
-      priority: 'medium',
-      assignedTo: [],
-      dueDate: '',
-      estimatedHours: 0,
-    });
-  };
+const handleAddTask = (sprint: any) => {
+  setSelectedSprintId(sprint.id);
+  setSelectedSprintName(sprint.name);
+  setIsModalOpen(true);
+
+  // Generate ticket prefix from project name
+  const prefix = getProjectPrefix(selectedProject.name);
+
+  // Reset task state with prefix
+  setTask({
+    id: '',
+    ticketNumber: prefix,   // 👈 Add prefix here
+    title: '',
+    description: '',
+    status: 'pending',
+    priority: 'medium',
+    assignedTo: [],
+    dueDate: '',
+    estimatedHours: 0,
+  });
+};
+
 
   // Handle modal close
   const handleModalClose = () => {
@@ -116,7 +121,9 @@ const ManagerSprintsCards: React.FC = () => {
     setSelectedSprintId(null);
     setSelectedSprintName('');
   };
-
+const getProjectPrefix = (name: string) => {
+  return name.slice(0, 3).toUpperCase();
+};
   // Handle task creation success
   const handleTaskAdd = () => {
     console.log('Tasks created successfully for sprint:', selectedSprintId);

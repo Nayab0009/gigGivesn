@@ -82,7 +82,7 @@ const managerNavItems: NavItem[] = [
     path: "/dashboard/manager/showsprints",
   },
   {
-    name: "Chats",
+    name: "Communication",
     path: "/dashboard/manager/chat",
   },
   {
@@ -114,7 +114,7 @@ const employeeNavItems: NavItem[] = [
     path: "/dashboard/teammember/calendertasks",
   },
   {
-    name: "Chats",
+    name: "Communication",
     path: "/dashboard/manager/chat",
   },
   {

@@ -444,13 +444,31 @@ export default function EnhancedManagersTable() {
         {showDetailsModal && detailManager && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <div
-              className="w-full max-w-5xl h-[600px]  rounded-[24px] border shadow-2xl overflow-hidden"
+              className="w-full max-w-5xl max-h-screen rounded-[24px] border shadow-2xl overflow-y-auto custom-scrollbar"
               style={{
                 background: "rgba(0,0,0,0.55)",
                 borderColor: "#FFFFFF26",
                 boxShadow: "0 24px 80px rgba(0,0,0,0.55)",
               }}
             >
+              <style>{`
+                .custom-scrollbar::-webkit-scrollbar {
+                  width: 8px;
+                  background: transparent;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                  background: rgba(255,255,255,0.12);
+                  border-radius: 8px;
+                  border: 2px solid rgba(255,255,255,0.08);
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                  background: rgba(255,255,255,0.18);
+                }
+                .custom-scrollbar {
+                  scrollbar-width: thin;
+                  scrollbar-color: rgba(255,255,255,0.12) transparent;
+                }
+              `}</style>
               {/* Top bar close */}
               <div className="relative">
                 <button
@@ -472,42 +490,49 @@ export default function EnhancedManagersTable() {
                     {/* Header profile + mini task */}
                     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="relative">
-                          <div className="w-[72px] h-[72px] rounded-full overflow-hidden border-2" style={{ borderColor: colors.primary.hex }}>
-                            <img
-                              src={detailManager.team?.[0]?.avatar || generateAvatar(detailManager.name, 0)}
-                              alt={detailManager.name}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <div className="absolute -right-1 -bottom-1 w-6 h-6 rounded-full border-2" style={{ background: colors.primary.hex, borderColor: "#0B0B0B" }} />
-                        </div>
+                      <div className="relative">
+  <div
+    className="w-[120px] h-[120px] rounded-full overflow-hidden border-2"
+    style={{ borderColor: "white" }}
+  >
+    <img
+      src={detailManager.team?.[0]?.avatar || generateAvatar(detailManager.name, 0)}
+      alt={detailManager.name}
+      className="w-full h-full object-cover"
+    />
+  </div>
+
+  {/* Dot inside the circle */}
+  <div
+    className="absolute right-1 bottom-1 w-6 h-6 rounded-full border-2"
+    style={{ background: colors.primary.hex, borderColor: "#0B0B0B" }}
+  />
+</div>
+
                         <div>
                           <div className="text-white text-xl sm:text-2xl font-semibold">{detailManager.name}</div>
-                          <div className="text-slate-300 -mt-0.5">UI/UX Designer</div>
-                          <div className="mt-3 flex items-center gap-4 text-slate-200 text-sm">
-                            <div className="inline-flex items-center gap-2"><Phone className="w-4 h-4 text-slate-400" /> {detailManager.phone}</div>
-                            <div className="inline-flex items-center gap-2"><MapPin className="w-4 h-4 text-slate-400" /> {detailManager.address}</div>
+                          <div className="text-white -mt-0.5">UI/UX Designer</div>
+                          <div className="mt-3 flex flex-col gap-4 text-white text-sm">
+                            <div className="inline-flex items-center gap-2"><Phone className="w-4 h-4 text-white" /> {detailManager.phone}</div>
+                            <div className="inline-flex items-center gap-2"><MapPin className="w-4 h-4 text-white" /> {detailManager.address}</div>
                           </div>
                         </div>
                       </div>
                       {/* Mini task card */}
                       <div
-                        className="rounded-xl border p-4 w-full md:w-[360px]"
+                        className="rounded-xl border p-4 w-full md:w-[260px]"
                         style={{ background: "#0B0B0B80", borderColor: "#FFFFFF26" }}
                       >
                         <div className="flex items-center justify-between">
                           <div className="text-[11px] px-2 py-0.5 rounded-full" style={{ background: "#0CA9F61A", color: colors.primary.hex }}>AER-001</div>
                           <div className="flex items-center gap-2">
-                            <div className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400">High</div>
-                            <MoreHorizontal className="w-4 h-4 text-slate-400" />
+                            <div className="text-[10px] px-2 py-0.5 rounded-full bg-[#BD4242] text-white">High</div>
+                          
                           </div>
                         </div>
                         <div className="mt-2 text-white font-semibold">Aeronaa UI Design</div>
-                        <div className="text-slate-300 text-sm">Review Project Goals and Objective</div>
-                        <div className="mt-3 flex items-center justify-between">
-                          {/* Avatars */}
-                          <div className="flex -space-x-2">
+                        <div className="text-slate-300 text-sm ">Review Project Goals and Objective</div>
+                         <div className="flex -space-x-2 mt-2">
                             {[0,1,2,3].slice(0, (detailManager.team?.length || 3)).map((i) => (
                               <img
                                 key={i}
@@ -517,8 +542,13 @@ export default function EnhancedManagersTable() {
                               />
                             ))}
                           </div>
+                        <div className="mt-3 flex items-center justify-between">
+                          {/* Avatars */}
+                         
                           <div className="inline-flex items-center gap-2 text-slate-300 text-xs"><Clock className="w-4 h-4" /> 01h 52m</div>
+                            <MoreHorizontal className="w-4 h-4 text-slate-400" />
                         </div>
+                        
                       </div>
                     </div>
 
@@ -546,8 +576,8 @@ export default function EnhancedManagersTable() {
                             <div className="text-slate-300 text-sm">Review Project Goals and Objective</div>
                             <div className="mt-2 inline-flex items-center gap-2 text-slate-400 text-xs"><Clock className="w-4 h-4" /> 01h 52m</div>
                           </div>
-                          <div className="flex items-center gap-3">
-                            <div className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400">High</div>
+                          <div className="flex flex-col items-center gap-3">
+                            <div className="text-[10px] px-2 py-0.5 rounded-full bg-[#BD4242] text-white">High</div>
                             <div className="flex -space-x-2">
                               {[0,1,2].map((j) => (
                                 <img key={j} className="w-7 h-7 rounded-full border border-black" src={generateAvatar(`${detailManager.name}-${i}-${j}`, j)} />
@@ -564,16 +594,37 @@ export default function EnhancedManagersTable() {
                 <div>
                   <div className="rounded-2xl border p-6" style={{ background: "#00000066", borderColor: "#FFFFFF26" }}>
                     {/* Donut */}
-                    <div className="flex items-center justify-center">
-                      <div className="relative w-56 h-56">
-                        <div className="absolute inset-0 rounded-full" style={{ background: `conic-gradient(${colors.secondary.hex} 0 220deg, ${colors.accent.hex} 220deg 270deg, ${colors.primary.hex} 270deg 360deg)` }}></div>
-                        <div className="absolute inset-[18px] rounded-full" style={{ background: "rgba(0,0,0,0.75)" }}></div>
-                        <div className="absolute inset-0 flex items-center justify-center flex-col">
-                          <div className="text-white text-2xl font-bold">9,999</div>
-                          <div className="text-emerald-400 text-sm">▲ 10%</div>
-                        </div>
-                      </div>
-                    </div>
+<div className="flex items-center justify-center">
+  <div className="relative w-56 h-56">
+    {/* Outer Donut with 4 Segments */}
+    <div
+      className="absolute inset-0 rounded-full"
+      style={{
+        background: `
+          conic-gradient(
+            #4379A8 0deg 100deg,   /* Blue */
+            #C656A0 100deg 190deg, /* Pink */
+            #3A96A5 190deg 260deg, /* Teal */
+            #C098F9 260deg 360deg  /* Purple */
+          )
+        `,
+      }}
+    ></div>
+
+    {/* Inner Circle (to create hollow effect) */}
+    <div
+      className="absolute inset-[18px] rounded-full"
+      style={{ background: "rgba(0,0,0,0.85)" }}
+    ></div>
+
+    {/* Center Content */}
+    <div className="absolute inset-0 flex items-center justify-center flex-col">
+      <div className="text-white text-2xl font-bold">9,999</div>
+      <div className="text-emerald-400 text-sm">▲ 10%</div>
+    </div>
+  </div>
+</div>
+
                     <div className="text-center text-slate-300 text-xs mt-3">Last 24-hours efficiency</div>
 
                     <div className="mt-8">

@@ -21,6 +21,8 @@ const AddProject: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [logoPreview, setLogoPreview] = useState<string | null>(null)
+  const [logoFile, setLogoFile] = useState<File | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -29,7 +31,17 @@ const AddProject: React.FC = () => {
       [name]: value,
     }))
   }
-
+const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0]
+  if (file) {
+    setLogoFile(file) // store file for backend upload
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setLogoPreview(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+  }
+}
   const handleDateChange = (date: Date | null, field: "startDate" | "endDate") => {
     setForm((prev) => ({
       ...prev,
@@ -38,37 +50,34 @@ const AddProject: React.FC = () => {
   }
 
   // --- API POST handler ---
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setError(null);
-    setSuccess(null);
-  
-    const payload = {
-      name: form.title,
-      description: form.description,
-      startDate: form.startDate ? form.startDate.toISOString() : '',
-      endDate: form.endDate ? form.endDate.toISOString() : '',
-    };
-  
-    try {
-      const response = await createProject(payload);
-      setForm({
-        title: "",
-        description: "",
-        startDate: null,
-        endDate: null,
-      });
-      setSuccess("Project added successfully!");
-      setTimeout(() => {
-        router.push("/dashboard/admin/projects");
-      }, 1200);
-    } catch (err: any) {
-      setError(err?.response?.data?.message || "Failed to add project");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault()
+  setIsSubmitting(true)
+  setError(null)
+  setSuccess(null)
+
+  try {
+    const formData = new FormData()
+    formData.append("name", form.title)
+    formData.append("description", form.description)
+    if (form.startDate) formData.append("startDate", form.startDate.toISOString())
+    if (form.endDate) formData.append("endDate", form.endDate.toISOString())
+    if (logoFile) formData.append("logo", logoFile) // 👈 backend expects `logo`
+
+    await createProject(formData)
+
+    setForm({ title: "", description: "", startDate: null, endDate: null })
+    setLogoPreview(null)
+    setLogoFile(null)
+
+    setSuccess("Project added successfully!")
+    setTimeout(() => router.push("/dashboard/admin/projects"), 1200)
+  } catch (err: any) {
+    setError(err?.response?.data?.message || "Failed to add project")
+  } finally {
+    setIsSubmitting(false)
+  }
+}
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6">
@@ -98,6 +107,32 @@ const AddProject: React.FC = () => {
         </div>
 
         <form onSubmit={handleSubmit}>
+          {/* Project Logo Upload */}
+<div className="flex justify-center mb-8">
+  <label className="relative cursor-pointer group">
+    <input
+      type="file"
+      accept="image/*"
+      onChange={handleLogoChange} // 👈 you’ll define this function
+      className="hidden"
+    />
+    <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-2 border-dashed border-white/30 flex items-center justify-center overflow-hidden bg-black/50 group-hover:border-[#0CA9F6] transition-all duration-300">
+      {logoPreview ? (
+        <img
+          src={logoPreview}
+          alt="Project Logo Preview"
+          className="object-cover w-full h-full"
+        />
+      ) : (
+        <div className="flex flex-col items-center justify-center text-gray-400">
+          <FileText className="w-6 h-6 mb-1" />
+          <span className="text-xs">Upload Logo</span>
+        </div>
+      )}
+    </div>
+  </label>
+</div>
+
           <div className="space-y-8">
             {/* Project Title */}
             <div className="group">
