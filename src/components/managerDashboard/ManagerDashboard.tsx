@@ -251,7 +251,7 @@ export default function ManagerDashboard() {
         console.error("Error fetching manager projects:", error)
         setError("Failed to load projects. Please try again.")
         setProjects([])
-        
+
       } finally {
         setIsLoading(false)
       }
@@ -395,12 +395,12 @@ export default function ManagerDashboard() {
       >
         <div className="flex items-center justify-between mb-4">
           <h4 className="text-lg md:text-xl font-bold tracking-tight">Today Task</h4>
-          <button
+          {/* <button
             className="text-sm font-medium text-blue-300 hover:underline focus:outline-none"
             onClick={() => router.push('/dashboard/manager/tasks')}
           >
             See All
-          </button>
+          </button> */}
         </div>
         {/* Task Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
