@@ -46,6 +46,36 @@ export const createManagerTask = async (taskData: any): Promise<any> => {
     }
 }   
 
+//get tasks created by manager
+export const getManagerTasks = async (): Promise<any> => {
+    try {
+        console.log("Calling GET /tasks/created/manager API endpoint");
+        
+        // First try the specific manager endpoint
+        try {
+            const response = await axiosInstance.get('/tasks/created/manager');
+            // console.log("API response from /tasks/created/manager:", response);
+            return response.data;
+        } catch (managerError: any) {
+            console.error("Error with /tasks/created/manager:", managerError);
+            
+            // If that fails, try the general tasks endpoint as fallback
+            // console.log("Trying fallback to GET /tasks");
+            const fallbackResponse = await axiosInstance.get('/tasks');
+            // console.log("Fallback API response from /tasks:", fallbackResponse);
+            return fallbackResponse.data;
+        }
+    } catch (error: any) {
+        console.error("All task fetching attempts failed", error);
+        // Log more detailed error information
+        if (error.response) {
+             console.error("Response data:", error.response.data);
+             console.error("Response status:", error.response.status);
+        }
+        throw error;
+    }
+}
+
 //update a task
 export const updateTask = async (taskId: string, taskData: any): Promise<any> => {
     try {
