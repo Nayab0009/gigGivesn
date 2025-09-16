@@ -1,10 +1,9 @@
 "use client"
 import { useEffect, useMemo, useState } from "react"
 import { useParams } from "next/navigation"
-import { getProjectTeam, getProjectTaskCounts, getProjectTaskPriorities, getProjectMemberTaskCounts, type MemberTaskCount } from "@/lib/ProjectService"
+import { getProjectTeam, getProjectTaskCounts, getProjectTaskPriorities, getProjectMemberTaskCounts, getProjectTasks, type MemberTaskCount, type ProjectTask } from "@/lib/ProjectService"
 import { AlertCircle, Calendar, LayoutGrid, Plus, RefreshCw, Search, Table, Users, Filter, ChevronDown, Clock, MoreHorizontal, CheckCircle2, RefreshCcw, XCircle, BarChart } from "lucide-react"
 import { colors } from "@/colors"
-import axiosInstance from "@/lib/axios"
 
 type TeamMember = {
   id: string
@@ -44,6 +43,23 @@ export default function ProjectDetailsPage() {
     mediumTask: 0
   })
   const [memberTaskCounts, setMemberTaskCounts] = useState<MemberTaskCount[]>([])
+  const [tasks, setTasks] = useState<ProjectTask[]>([])
+  // Helpers to read and format time fields
+  const getEstimatedHours = (t: ProjectTask) => {
+    const val = (t.estimatedHours ?? (typeof t.estimatedTime === 'number' ? t.estimatedTime : undefined))
+    return typeof val === 'number' ? val : undefined
+  }
+  const getSpentHours = (t: ProjectTask) => {
+    const raw = t.spentHours ?? (typeof t.spentTime === 'number' ? t.spentTime : undefined) ?? (typeof t.timeSpent === 'number' ? t.timeSpent : undefined)
+    return typeof raw === 'number' ? raw : undefined
+  }
+  const formatHours = (h?: number | string | null) => {
+    if (h == null) return '—'
+    if (typeof h === 'string') return h || '—'
+    // if value looks like minutes (> 40 maybe minutes), try to convert when > 24 to hours; otherwise assume hours
+    const asHours = h > 24 ? h : h
+    return `${asHours.toFixed(2)}h`
+  }
   const [activeTab, setActiveTab] = useState<"summary" | "tasks" | "calendar" | "notes" | "members" | "settings">(
     "summary",
   )
@@ -54,14 +70,16 @@ export default function ProjectDetailsPage() {
   const fetchTaskData = async () => {
     if (!id) return
     try {
-      const [countsResponse, prioritiesResponse, memberTasksResponse] = await Promise.all([
+      const [countsResponse, prioritiesResponse, memberTasksResponse, projectTasks] = await Promise.all([
         getProjectTaskCounts(id),
         getProjectTaskPriorities(id),
-        getProjectMemberTaskCounts(id)
+        getProjectMemberTaskCounts(id),
+        getProjectTasks(id)
       ])
       setTaskCounts(countsResponse)
       setTaskPriorities(prioritiesResponse)
       setMemberTaskCounts(memberTasksResponse)
+      setTasks(projectTasks)
     } catch (error) {
       console.error('Error fetching task data:', error)
     }
@@ -91,6 +109,14 @@ export default function ProjectDetailsPage() {
       isMounted = false
     }
   }, [id])
+
+  // When switching to the Tasks tab, refresh tasks to keep them up to date
+  useEffect(() => {
+    if (activeTab === "tasks") {
+      fetchTaskData()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab])
 
   const statCards = [
     {
@@ -301,40 +327,50 @@ export default function ProjectDetailsPage() {
                           </tr>
                         </thead>
                         <tbody className="bg-transparent">
-                          {/* Example row, replace with dynamic data as needed */}
-                          <tr className="text-white text-sm">
-                            <td className="px-6 py-4 whitespace-nowrap font-medium">AER001</td>
-                            <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
-                              <span className="inline-flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-white"></span>
-                                New Task
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
-                              <span className="inline-flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-sky-400"></span>
-                                <span>Operational</span>
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">Yesterday</td>
-                            <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
-                              <span className="inline-flex items-center gap-2">
-                                <ChevronDown className="w-4 h-4 text-red-400" />
-                                <span>High</span>
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
-                              <span className="inline-flex items-center gap-2">
-                                <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
-                                  <img src="/images/user/1.png" alt="Assignee" className="w-6 h-6 rounded-full" />
-                                </span>
-                                <span className="text-white/80 text-sm font-medium">High</span>
-                              </span>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">0.15h</td>
-                            <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">0.15h</td>
-                          </tr>
-                          {/* Add more rows dynamically here */}
+                          {tasks
+                            .filter(t => t.status?.toLowerCase() === "inprogress")
+                            .map((t) => (
+                              <tr key={t.id} className="text-white text-sm border-b border-white/10 last:border-b-0">
+                                <td className="px-6 py-4 whitespace-nowrap font-medium">
+                                  {t.title}
+                                  <span className="ml-2 text-white/50 text-xs">{t.ticketNumber ?? `#${t.id}`}</span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                  <span className="inline-flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded-full bg-white"></span>
+                                    In Progress
+                                  </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                  <span className="inline-flex items-center gap-2">
+                                    <span className="w-2 h-2 rounded-full bg-sky-400"></span>
+                                    <span>{t.description ? "Task" : "—"}</span>
+                                  </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">{t.taskDate ? new Date(t.taskDate).toLocaleDateString() : "—"}</td>
+                                <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                  <span className="inline-flex items-center gap-2">
+                                    <ChevronDown className={`w-4 h-4 ${t.priority === "high" ? "text-red-400" : t.priority === "medium" ? "text-yellow-300" : "text-emerald-400"}`} />
+                                    <span className="capitalize">{t.priority}</span>
+                                  </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                  <span className="inline-flex items-center gap-2">
+                                    <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
+                                      <img src={t.taskFor?.avatar ?? "/images/user/1.png"} alt="Assignee" className="w-6 h-6 rounded-full" />
+                                    </span>
+                                    <span className="text-white/80 text-sm font-medium">{t.taskFor?.name ?? "Unassigned"}</span>
+                                  </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">{formatHours(getEstimatedHours(t))}</td>
+                                <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">{formatHours(getSpentHours(t))}</td>
+                              </tr>
+                          ))}
+                          {tasks.filter(t => t.status?.toLowerCase() === "inprogress").length === 0 && (
+                            <tr>
+                              <td className="px-6 py-4 text-white/60 text-sm" colSpan={8}>No active tasks</td>
+                            </tr>
+                          )}
                         </tbody>
                       </table>
                     </div>
@@ -362,50 +398,78 @@ export default function ProjectDetailsPage() {
                             <th className="px-6 py-3 text-left font-medium ">Spent Time</th>
                           </tr>
                         </thead>
+                        <tbody className="bg-transparent">
+                          {tasks
+                            .filter(t => t.status?.toLowerCase() === "completed")
+                            .map((t) => (
+                              <tr key={`completed-${t.id}`} className="text-white text-sm border-b border-white/10 last:border-b-0">
+                                <td className="px-6 py-4 whitespace-nowrap font-medium">{t.ticketNumber ?? `TASK-${t.id}`}</td>
+                                <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">Completed</td>
+                                <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">Task</td>
+                                <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">{t.taskDate ? new Date(t.taskDate).toLocaleDateString() : "—"}</td>
+                                <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                  <span className="inline-flex items-center gap-2">
+                                    <ChevronDown className={`w-4 h-4 ${t.priority === "high" ? "text-red-400" : t.priority === "medium" ? "text-yellow-300" : "text-emerald-400"}`} />
+                                    <span className="capitalize">{t.priority}</span>
+                                  </span>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">{t.taskFor?.name ?? "Unassigned"}</td>
+                                <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">{formatHours(getEstimatedHours(t))}</td>
+                                <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">{formatHours(getSpentHours(t))}</td>
+                              </tr>
+                          ))}
+                          {tasks.filter(t => t.status?.toLowerCase() === "completed").length === 0 && (
+                            <tr>
+                              <td className="px-6 py-6 text-white/60 text-sm" colSpan={8}>No completed tasks yet</td>
+                            </tr>
+                          )}
+                        </tbody>
                       </table>
                     </div>
-                    <div className="px-6 py-6 text-white/60 text-sm">No completed tasks yet</div>
                   </div>
                 </div>
               ) : (
                 /* Kanban board view */
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-                  {(
-                    [
-                      { key: "cancelled", title: "Cancelled", count: taskCounts.cancelledTask },
-                      { key: "new", title: "New Task", count: taskCounts.totalTask - (taskCounts.inProgressTask + taskCounts.completedTask + taskCounts.cancelledTask) },
-                      { key: "inprogress", title: "In Progress", count: taskCounts.inProgressTask },
-                      { key: "completed", title: "Completed", count: taskCounts.completedTask },
-                    ] as const
-                  ).map((col) => (
+                  {([
+                      { key: "cancelled", title: "Cancelled" },
+                      { key: "new", title: "New Task" },
+                      { key: "inprogress", title: "In Progress" },
+                      { key: "completed", title: "Completed" },
+                    ] as const).map((col) => {
+                      const columnTasks = tasks.filter(t => {
+                        const s = t.status?.toLowerCase()
+                        if (col.key === "new") return !["inprogress","completed","cancelled"].includes(s || "")
+                        return s === col.key
+                      })
+                      const count = columnTasks.length
+                      return (
                     <div key={col.key} className="rounded-2xl border border-white/10 backdrop-blur-xl flex flex-col" style={{ background: '#0000004D' }}>
                       <div className="px-4 sm:px-5 py-3 border-b border-white/10">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-white inline-block"></span>
                             <span className="text-white font-semibold text-sm">{col.title}</span>
-                            <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/10 text-white/80">{col.count}</span>
+                            <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/10 text-white/80">{count}</span>
                           </div>
                         </div>
                       </div>
                       <div className="p-4 sm:p-5 space-y-3 min-h-[420px]">
-                        {col.key === "new" && (
-                          <div className="rounded-xl border border-white/10 bg-black/30 text-white p-4 shadow-sm">
+                        {columnTasks.map((t) => (
+                          <div key={`${col.key}-${t.id}`} className="rounded-xl border border-white/10 bg-black/30 text-white p-4 shadow-sm">
                             <div className="flex items-start justify-between">
-                              <div className="text-xs text-white/60 font-semibold">AER-001</div>
-                              <span className="text-[10px] uppercase px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 border border-red-300/30">High</span>
+                              <div className="text-xs text-white/60 font-semibold">{t.ticketNumber ?? `TASK-${t.id}`}</div>
+                              <span className={`text-[10px] uppercase px-2 py-0.5 rounded-full border ${t.priority === 'high' ? 'bg-red-500/20 text-red-300 border-red-300/30' : t.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-300 border-yellow-300/30' : 'bg-emerald-500/20 text-emerald-300 border-emerald-300/30'}`}>{t.priority}</span>
                             </div>
-                            <div className="mt-1 font-semibold">Aeronaa UI Design</div>
-                            <div className="text-sm text-white/70 mt-1">Review Project Goals and Objective</div>
+                            <div className="mt-1 font-semibold">{t.title}</div>
+                            {t.description && <div className="text-sm text-white/70 mt-1">{t.description}</div>}
                             <div className="mt-3 flex items-center justify-between">
                               <div className="flex -space-x-2">
-                                <img src="/images/user/1.png" className="w-7 h-7 rounded-full border border-white/20" alt="Assignee 1" />
-                                <img src="/images/user/2.png" className="w-7 h-7 rounded-full border border-white/20" alt="Assignee 2" />
-                                <img src="/images/user/3.png" className="w-7 h-7 rounded-full border border-white/20" alt="Assignee 3" />
+                                <img src={t.taskFor?.avatar ?? "/images/user/1.png"} className="w-7 h-7 rounded-full border border-white/20" alt="Assignee" />
                               </div>
                               <div className="flex items-center gap-1 text-white/70 text-sm">
                                 <Clock className="w-4 h-4" />
-                                01h 52m
+                                {t.taskDate ? new Date(t.taskDate).toLocaleDateString() : '—'}
                               </div>
                             </div>
                             <div className="mt-2 flex justify-end">
@@ -414,14 +478,13 @@ export default function ProjectDetailsPage() {
                               </button>
                             </div>
                           </div>
-                        )}
-
-                        {col.key !== "new" && (
-                          <button className="text-white/70 text-sm hover:text-white flex items-center gap-2">+ Create task</button>
+                        ))}
+                        {columnTasks.length === 0 && (
+                          <div className="text-white/60 text-sm">No tasks</div>
                         )}
                       </div>
                     </div>
-                  ))}
+                  )})}
                 </div>
               )
             ) : (

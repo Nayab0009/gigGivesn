@@ -54,3 +54,36 @@ export const getProjectMemberTaskCounts = async (projectId: string) => {
     const { data } = await axiosInstance.get(`/tasks/member/project/count/${projectId}`);
     return data as MemberTaskCount[];
 }
+
+// Get all tasks for a project (GET /tasks/project/{id})
+export interface ProjectTask {
+    id: number;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+    title: string;
+    description: string | null;
+    status: string; // e.g. "inprogress" | "completed" | "cancelled" | others
+    comment: string | null;
+    taskDate: string | null;
+    ticketNumber: string | null;
+    priority: string; // e.g. "low" | "medium" | "high"
+    // Optional timing fields (backend may expose any of these)
+    estimatedHours?: number; // preferred if provided as hours
+    spentHours?: number;     // preferred if provided as hours
+    estimatedTime?: number | string; // fallback: minutes or formatted string
+    spentTime?: number | string;     // fallback: minutes or formatted string
+    timeSpent?: number | string;     // alt naming
+    taskFor?: {
+        id: number;
+        name: string;
+        email?: string;
+        role?: string;
+        avatar?: string | null;
+    } | null;
+}
+
+export const getProjectTasks = async (projectId: string) => {
+    const { data } = await axiosInstance.get(`/tasks/project/${projectId}`)
+    return data as ProjectTask[]
+}
