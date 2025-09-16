@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import {
   getProjectTaskById, // <-- Make sure you have this in your ProjectService
   type ProjectTask,
-  type TaskLog // <-- Add this type in your API types
+  type TaskLog, // <-- Add this type in your API types
 } from "@/lib/ProjectService"
 import {
   ChevronDown,
@@ -18,7 +18,8 @@ import {
   Timer,
   MessageCircle,
   MoreHorizontal,
-  Edit
+  Edit,
+  X,
 } from "lucide-react"
 
 type TaskDetailsPanelProps = {
@@ -71,10 +72,10 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
 
   // Example field extraction
   const statusColor = {
-    "new": "bg-sky-400",
-    "inprogress": "bg-emerald-400",
-    "completed": "bg-emerald-700",
-    "cancelled": "bg-rose-400"
+    new: "bg-sky-400",
+    inprogress: "bg-emerald-400",
+    completed: "bg-emerald-700",
+    cancelled: "bg-rose-400",
   }[task.status?.toLowerCase() || "new"]
 
   return (
@@ -84,15 +85,28 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
         {/* Top: Breadcrumb + Edit */}
         <div className="flex items-center justify-between mb-2">
           <div className="text-xs text-white/60">
-            {task.projectName ? `${task.projectName} / ` : ""}{task.title}
+            {task.projectName ? `${task.projectName} / ` : ""}
+            {task.title}
           </div>
-          <button className="p-1 rounded hover:bg-white/10"><Edit className="w-4 h-4 text-white/60" /></button>
+          <div className="flex items-center gap-2">
+            <button className="p-1 rounded hover:bg-white/10">
+              <Edit className="w-4 h-4 text-white/60" />
+            </button>
+            {onClose && (
+              <button onClick={onClose} className="p-1 rounded hover:bg-white/10">
+                <X className="w-4 h-4 text-white/60" />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Ticket + status */}
         <div className="flex items-center gap-2">
           <span className="text-lg font-bold text-white">{task.ticketNumber ?? `TASK-${task.id}`}</span>
-          <span className="flex items-center text-xs px-2 py-1 rounded-full border bg-white/10 border-white/20 font-semibold capitalize" style={{ color: "#0CA9F6" }}>
+          <span
+            className="flex items-center text-xs px-2 py-1 rounded-full border bg-white/10 border-white/20 font-semibold capitalize"
+            style={{ color: "#0CA9F6" }}
+          >
             {task.status ?? "New Task"}
             <ChevronDown className="w-3 h-3 ml-1" />
           </span>
@@ -106,7 +120,9 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4" />
             <span>Due date</span>
-            <span className="ml-auto font-semibold">{task.taskDate ? new Date(task.taskDate).toLocaleDateString() : "—"}</span>
+            <span className="ml-auto font-semibold">
+              {task.taskDate ? new Date(task.taskDate).toLocaleDateString() : "—"}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <User className="w-4 h-4" />
@@ -126,9 +142,17 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4" />
             <span>Priority</span>
-            <span className={`ml-auto font-semibold capitalize ${
-              task.priority === "high" ? "text-red-400" : task.priority === "medium" ? "text-yellow-300" : "text-emerald-400"
-            }`}>{task.priority ?? "—"}</span>
+            <span
+              className={`ml-auto font-semibold capitalize ${
+                task.priority === "high"
+                  ? "text-red-400"
+                  : task.priority === "medium"
+                    ? "text-yellow-300"
+                    : "text-emerald-400"
+              }`}
+            >
+              {task.priority ?? "—"}
+            </span>
           </div>
         </div>
 
@@ -176,7 +200,9 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
                 <div key={idx} className="flex items-center gap-2 text-xs text-white/70">
                   <span className="font-semibold">{log.user?.name ?? "System"}:</span>
                   <span>{log.message}</span>
-                  <span className="ml-auto text-white/40">{log.time ? new Date(log.time).toLocaleTimeString() : ""}</span>
+                  <span className="ml-auto text-white/40">
+                    {log.time ? new Date(log.time).toLocaleTimeString() : ""}
+                  </span>
                 </div>
               ))
             )}
@@ -191,7 +217,11 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
               placeholder="Type a message…"
               disabled
             />
-            <button type="submit" className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-1" disabled>
+            <button
+              type="submit"
+              className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-1"
+              disabled
+            >
               <MessageCircle className="w-4 h-4" />
               Send
             </button>

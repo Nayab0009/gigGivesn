@@ -25,9 +25,12 @@ import {
   RefreshCcw,
   XCircle,
   Save,
-  Settings as SettingsIcon,
+  SettingsIcon,
+  X,
 } from "lucide-react"
 import TimeTable from "./ProjectTimeTable"
+
+import TaskDetailsPanel from "@/components/managerDashboard/TaskDetailScreen"
 
 type TeamMember = {
   id: string
@@ -82,9 +85,9 @@ export default function ProjectDetailsPage() {
   const [membersLoading, setMembersLoading] = useState(false)
   const [members, setMembers] = useState<TeamMember[]>([])
 
-  const [activeTab, setActiveTab] = useState<
-    "summary" | "tasks" | "calendar" | "notes" | "members" | "settings"
-  >("summary")
+  const [activeTab, setActiveTab] = useState<"summary" | "tasks" | "calendar" | "notes" | "members" | "settings">(
+    "summary",
+  )
   const [taskView, setTaskView] = useState<"table" | "kanban">("table")
 
   // Settings state
@@ -92,7 +95,21 @@ export default function ProjectDetailsPage() {
   const [settingsSaving, setSettingsSaving] = useState(false)
   const [settingsSuccess, setSettingsSuccess] = useState(false)
   const [settingsError, setSettingsError] = useState<string | null>(null)
-  console.log("activeTab:", activeTab);
+
+  const [selectedTaskId, setSelectedTaskId] = useState<string | number | null>(null)
+  const [showTaskDetails, setShowTaskDetails] = useState(false)
+
+  const handleTaskClick = (taskId: string | number) => {
+    setSelectedTaskId(taskId)
+    setShowTaskDetails(true)
+  }
+
+  const handleCloseTaskDetails = () => {
+    setShowTaskDetails(false)
+    setSelectedTaskId(null)
+  }
+
+  console.log("activeTab:", activeTab)
   // Fetch summary data (except for members tab)
   useEffect(() => {
     let isMounted = true
@@ -252,8 +269,24 @@ export default function ProjectDetailsPage() {
   ]
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      {showTaskDetails && selectedTaskId && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-6xl max-h-[90vh] overflow-auto">
+            <div className="mb-4 flex justify-end">
+              <button
+                onClick={handleCloseTaskDetails}
+                className="text-white/60 hover:text-white p-2 rounded-lg hover:bg-white/10"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <TaskDetailsPanel taskId={selectedTaskId} onClose={handleCloseTaskDetails} />
+          </div>
+        </div>
+      )}
+
+      <div className="container mx-auto px-4 py-8">
         {/* Top bar */}
         <div className="flex items-center justify-between">
           <div>
@@ -298,7 +331,7 @@ export default function ProjectDetailsPage() {
               ))}
             </div>
           </div>
-          
+
           {activeTab === "tasks" && (
             <div
               className="flex border border-white/20 rounded-full p-1 gap-1 shadow-inner"
@@ -329,69 +362,74 @@ export default function ProjectDetailsPage() {
         </div>
 
         {/* Content */}
-      {isLoading && activeTab !== "members" && activeTab !== "settings" ? (
-  <div className="p-12 text-center border border-white/10 rounded-2xl max-w-xl w-full mx-auto" style={{ background: "#0000004D" }}>
-    <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
-      <RefreshCw className="w-6 h-6 text-emerald-600 animate-spin" />
-    </div>
-    <p className="text-white/80">Loading project…</p>
-  </div>
-) : error && activeTab !== "members" && activeTab !== "settings" ? (
-  <div className="p-6 border border-red-200/40 rounded-2xl text-white max-w-xl w-full mx-auto" style={{ background: "#0000004D" }}>
-    <div className="flex items-center gap-2 mb-1">
-      <AlertCircle className="w-5 h-5 text-red-300" />
-      <div className="font-semibold">Error loading project</div>
-    </div>
-    <div className="text-white/80 text-sm">{error}</div>
-  </div>
-) : activeTab === "settings" ? (
-  <div className="rounded-2xl border border-white/10 backdrop-blur-xl overflow-hidden  w-full mx-auto" style={{ background: "#0000004D" }}>
-    <div className="border-b border-white/10 px-8 py-5 flex items-center gap-3">
-      <SettingsIcon className="w-6 h-6 text-white/70" />
-      <span className="text-2xl font-bold text-white">Project Settings</span>
-    </div>
-    <form
-      className="px-8 py-8"
-      onSubmit={(e) => {
-        e.preventDefault()
-        handleProjectNameSave()
-      }}
-    >
-      <div className="mb-6">
-        <label className="block mb-2 text-sm font-medium text-white/90">Project Name</label>
-        <input
-          type="text"
-          value={settingsProjectName}
-          onChange={(e) => setSettingsProjectName(e.target.value)}
-          className="w-3xl px-4 py-3 rounded-xl bg-black/30 border border-white/20 text-white focus:outline-none focus:border-emerald-400 transition-all text-lg font-semibold"
-          disabled={settingsSaving}
-          maxLength={80}
-          required
-          placeholder="Enter project name"
-        />
-      </div>
-      <div className="flex items-center gap-4">
-        <button
-  type="submit"
-  className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white transition-colors shadow border border-white/20 hover:opacity-90 focus:outline-none ${
-    settingsSaving ? "opacity-70 cursor-not-allowed" : ""
-  }`}
-  style={{ backgroundColor: "rgba(12, 169, 246, 1)" }}
-  disabled={settingsSaving}
->
-  <Save className="w-5 h-5" />
-  {settingsSaving ? "Saving..." : "Save"}
-</button>
+        {isLoading && activeTab !== "members" && activeTab !== "settings" ? (
+          <div
+            className="p-12 text-center border border-white/10 rounded-2xl max-w-xl w-full mx-auto"
+            style={{ background: "#0000004D" }}
+          >
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
+              <RefreshCw className="w-6 h-6 text-emerald-600 animate-spin" />
+            </div>
+            <p className="text-white/80">Loading project…</p>
+          </div>
+        ) : error && activeTab !== "members" && activeTab !== "settings" ? (
+          <div
+            className="p-6 border border-red-200/40 rounded-2xl text-white max-w-xl w-full mx-auto"
+            style={{ background: "#0000004D" }}
+          >
+            <div className="flex items-center gap-2 mb-1">
+              <AlertCircle className="w-5 h-5 text-red-300" />
+              <div className="font-semibold">Error loading project</div>
+            </div>
+            <div className="text-white/80 text-sm">{error}</div>
+          </div>
+        ) : activeTab === "settings" ? (
+          <div
+            className="rounded-2xl border border-white/10 backdrop-blur-xl overflow-hidden  w-full mx-auto"
+            style={{ background: "#0000004D" }}
+          >
+            <div className="border-b border-white/10 px-8 py-5 flex items-center gap-3">
+              <SettingsIcon className="w-6 h-6 text-white/70" />
+              <span className="text-2xl font-bold text-white">Project Settings</span>
+            </div>
+            <form
+              className="px-8 py-8"
+              onSubmit={(e) => {
+                e.preventDefault()
+                handleProjectNameSave()
+              }}
+            >
+              <div className="mb-6">
+                <label className="block mb-2 text-sm font-medium text-white/90">Project Name</label>
+                <input
+                  type="text"
+                  value={settingsProjectName}
+                  onChange={(e) => setSettingsProjectName(e.target.value)}
+                  className="w-3xl px-4 py-3 rounded-xl bg-black/30 border border-white/20 text-white focus:outline-none focus:border-emerald-400 transition-all text-lg font-semibold"
+                  disabled={settingsSaving}
+                  maxLength={80}
+                  required
+                  placeholder="Enter project name"
+                />
+              </div>
+              <div className="flex items-center gap-4">
+                <button
+                  type="submit"
+                  className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white transition-colors shadow border border-white/20 hover:opacity-90 focus:outline-none ${
+                    settingsSaving ? "opacity-70 cursor-not-allowed" : ""
+                  }`}
+                  style={{ backgroundColor: "rgba(12, 169, 246, 1)" }}
+                  disabled={settingsSaving}
+                >
+                  <Save className="w-5 h-5" />
+                  {settingsSaving ? "Saving..." : "Save"}
+                </button>
 
-        {settingsSuccess && (
-          <span className="text-emerald-400 font-semibold">Saved!</span>
-        )}
-        {settingsError && (
-          <span className="text-rose-400 font-semibold">{settingsError}</span>
-        )}
-      </div>
-    </form>
-  </div>
+                {settingsSuccess && <span className="text-emerald-400 font-semibold">Saved!</span>}
+                {settingsError && <span className="text-rose-400 font-semibold">{settingsError}</span>}
+              </div>
+            </form>
+          </div>
         ) : activeTab === "members" ? (
           <div
             className="rounded-2xl border border-white/10 backdrop-blur-xl overflow-hidden"
@@ -420,15 +458,12 @@ export default function ProjectDetailsPage() {
                             {project.manager.name.charAt(0)}
                           </div>
                           <span className="text-white font-medium">
-                            {project.manager.name}{" "}
-                            <span className="ml-1 text-xs text-emerald-400"></span>
+                            {project.manager.name} <span className="ml-1 text-xs text-emerald-400"></span>
                           </span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-white/80">{project.manager.email}</td>
-                      <td className="px-6 py-4 text-white/80">
-                        {project.manager.role || "Manager"}
-                      </td>
+                      <td className="px-6 py-4 text-white/80">{project.manager.role || "Manager"}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
@@ -442,10 +477,7 @@ export default function ProjectDetailsPage() {
 
                   {/* Render team members */}
                   {project?.teamMembers?.map((member) => (
-                    <tr
-                      key={member.id}
-                      className="hover:bg-white/5 transition-colors divide-x divide-white/10"
-                    >
+                    <tr key={member.id} className="hover:bg-white/5 transition-colors divide-x divide-white/10">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm">
@@ -455,18 +487,12 @@ export default function ProjectDetailsPage() {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-white/80">{member.email}</td>
-                      <td className="px-6 py-4 text-white/80">
-                        {member.role || "Project Member"}
-                      </td>
+                      <td className="px-6 py-4 text-white/80">{member.role || "Project Member"}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
                           <span className="text-white font-medium">
-                            {"isActive" in member
-                              ? member.isActive
-                                ? "Active"
-                                : "Inactive"
-                              : "Active"}
+                            {"isActive" in member ? (member.isActive ? "Active" : "Inactive") : "Active"}
                           </span>
                         </div>
                       </td>
@@ -495,7 +521,10 @@ export default function ProjectDetailsPage() {
               taskView === "table" ? (
                 <div className="space-y-6">
                   {/* Active Tasks Table */}
-                  <div className="rounded-2xl border border-white/10 backdrop-blur-xl" style={{ background: "#0000004D" }}>
+                  <div
+                    className="rounded-2xl border border-white/10 backdrop-blur-xl"
+                    style={{ background: "#0000004D" }}
+                  >
                     <div className="overflow-x-auto">
                       <table className="min-w-full">
                         <thead>
@@ -520,7 +549,11 @@ export default function ProjectDetailsPage() {
                           {tasks
                             .filter((t) => t.status?.toLowerCase() === "inprogress")
                             .map((t) => (
-                              <tr key={t.id} className="text-white text-sm border-b border-white/10 last:border-b-0">
+                              <tr
+                                key={t.id}
+                                className="text-white text-sm border-b border-white/10 last:border-b-0 hover:bg-white/5 cursor-pointer transition-colors"
+                                onClick={() => handleTaskClick(t.id)}
+                              >
                                 <td className="px-6 py-4 whitespace-nowrap font-medium">
                                   {t.title}
                                   <span className="ml-2 text-white/50 text-xs">{t.ticketNumber ?? `#${t.id}`}</span>
@@ -547,8 +580,8 @@ export default function ProjectDetailsPage() {
                                         t.priority === "high"
                                           ? "text-red-400"
                                           : t.priority === "medium"
-                                          ? "text-yellow-300"
-                                          : "text-emerald-400"
+                                            ? "text-yellow-300"
+                                            : "text-emerald-400"
                                       }`}
                                     />
                                     <span className="capitalize">{t.priority}</span>
@@ -582,8 +615,12 @@ export default function ProjectDetailsPage() {
                     </div>
                     <div className="px-6 py-3 text-white/70 text-sm">+ Create task</div>
                   </div>
+
                   {/* Completed Tasks Table */}
-                  <div className="rounded-2xl border border-white/10 backdrop-blur-xl" style={{ background: "#0000004D" }}>
+                  <div
+                    className="rounded-2xl border border-white/10 backdrop-blur-xl"
+                    style={{ background: "#0000004D" }}
+                  >
                     <div className="overflow-x-auto">
                       <table className="min-w-full">
                         <thead>
@@ -608,7 +645,11 @@ export default function ProjectDetailsPage() {
                           {tasks
                             .filter((t) => t.status?.toLowerCase() === "completed")
                             .map((t) => (
-                              <tr key={`completed-${t.id}`} className="text-white text-sm border-b border-white/10 last:border-b-0">
+                              <tr
+                                key={`completed-${t.id}`}
+                                className="text-white text-sm border-b border-white/10 last:border-b-0 hover:bg-white/5 cursor-pointer transition-colors"
+                                onClick={() => handleTaskClick(t.id)}
+                              >
                                 <td className="px-6 py-4 whitespace-nowrap font-medium">
                                   {t.ticketNumber ?? `TASK-${t.id}`}
                                 </td>
@@ -624,8 +665,8 @@ export default function ProjectDetailsPage() {
                                         t.priority === "high"
                                           ? "text-red-400"
                                           : t.priority === "medium"
-                                          ? "text-yellow-300"
-                                          : "text-emerald-400"
+                                            ? "text-yellow-300"
+                                            : "text-emerald-400"
                                       }`}
                                     />
                                     <span className="capitalize">{t.priority}</span>
@@ -697,8 +738,8 @@ export default function ProjectDetailsPage() {
                                     t.priority === "high"
                                       ? "bg-red-500/20 text-red-300 border-red-300/30"
                                       : t.priority === "medium"
-                                      ? "bg-yellow-500/20 text-yellow-300 border-yellow-300/30"
-                                      : "bg-emerald-500/20 text-emerald-300 border-emerald-300/30"
+                                        ? "bg-yellow-500/20 text-yellow-300 border-yellow-300/30"
+                                        : "bg-emerald-500/20 text-emerald-300 border-emerald-300/30"
                                   }`}
                                 >
                                   {t.priority}
@@ -726,9 +767,7 @@ export default function ProjectDetailsPage() {
                               </div>
                             </div>
                           ))}
-                          {columnTasks.length === 0 && (
-                            <div className="text-white/60 text-sm">No tasks</div>
-                          )}
+                          {columnTasks.length === 0 && <div className="text-white/60 text-sm">No tasks</div>}
                         </div>
                       </div>
                     )
@@ -798,11 +837,7 @@ export default function ProjectDetailsPage() {
                     <div className="text-lg font-semibold mb-2">Priority breakdown</div>
                     <div className="text-white/70 text-sm mb-6">
                       Get a holistic view of how work is being prioritized.{" "}
-                      <a
-                        href="#"
-                        className="text-[#0CA9F6] hover:underline"
-                        style={{ color: "#0CA9F6" }}
-                      >
+                      <a href="#" className="text-[#0CA9F6] hover:underline" style={{ color: "#0CA9F6" }}>
                         How to manage priorities for projects
                       </a>
                     </div>
@@ -815,7 +850,7 @@ export default function ProjectDetailsPage() {
                             taskPriorities.highTask,
                             taskPriorities.mediumTask,
                             taskPriorities.lowTask,
-                            0
+                            0,
                           )
                           const paddedMax = Math.max(1, Math.ceil(rawMax * 1.1))
                           const tickCount = 4 // plus 0 at bottom => 5 labels
@@ -873,7 +908,11 @@ export default function ProjectDetailsPage() {
                                 ].map((bar) => {
                                   const h = Math.max(2, scale(bar.value))
                                   return (
-                                    <div key={bar.priority} className="relative group flex flex-col items-center" style={{ width: 64 }}>
+                                    <div
+                                      key={bar.priority}
+                                      className="relative group flex flex-col items-center"
+                                      style={{ width: 64 }}
+                                    >
                                       {/* Value label */}
                                       <div className="text-white text-sm font-medium mb-1">{bar.value}</div>
                                       <div
@@ -934,7 +973,7 @@ export default function ProjectDetailsPage() {
                       ) : (
                         memberTaskCounts.map((member) => {
                           const taskPercentage = (
-                            (parseInt(member.taskCount) / taskCounts.totalTask) *
+                            (Number.parseInt(member.taskCount) / taskCounts.totalTask) *
                             100
                           ).toFixed(0)
                           return (
