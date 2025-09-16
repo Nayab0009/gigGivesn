@@ -89,6 +89,10 @@ const managerNavItems: NavItem[] = [
     name: "Discussions",
     path: "/dashboard/teammember/discussions",
   },
+   {
+    name: "Notes",
+    path: "/dashboard/teammember/notes",
+  },
 ]
 
 // Employee-specific navigation items

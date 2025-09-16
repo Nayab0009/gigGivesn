@@ -276,7 +276,7 @@ export default function ProjectDetailsPage() {
                 { key: "summary", label: "Summary" },
                 { key: "tasks", label: "Tasks" },
                 { key: "calendar", label: "Calendar" },
-                { key: "notes", label: "Notes" },
+                // { key: "notes", label: "Notes" },
                 { key: "members", label: "Members" },
                 { key: "settings", label: "Settings" },
               ].map((t) => (
@@ -342,7 +342,7 @@ export default function ProjectDetailsPage() {
     <div className="text-white/80 text-sm">{error}</div>
   </div>
 ) : activeTab === "settings" ? (
-  <div className="rounded-2xl border border-white/10 backdrop-blur-xl overflow-hidden max-w-2xl w-full mx-auto" style={{ background: "#0000004D" }}>
+  <div className="rounded-2xl border border-white/10 backdrop-blur-xl overflow-hidden  w-full mx-auto" style={{ background: "#0000004D" }}>
     <div className="border-b border-white/10 px-8 py-5 flex items-center gap-3">
       <SettingsIcon className="w-6 h-6 text-white/70" />
       <span className="text-2xl font-bold text-white">Project Settings</span>
@@ -360,7 +360,7 @@ export default function ProjectDetailsPage() {
           type="text"
           value={settingsProjectName}
           onChange={(e) => setSettingsProjectName(e.target.value)}
-          className="w-full px-4 py-3 rounded-xl bg-black/30 border border-white/20 text-white focus:outline-none focus:border-emerald-400 transition-all text-lg font-semibold"
+          className="w-3xl px-4 py-3 rounded-xl bg-black/30 border border-white/20 text-white focus:outline-none focus:border-emerald-400 transition-all text-lg font-semibold"
           disabled={settingsSaving}
           maxLength={80}
           required
