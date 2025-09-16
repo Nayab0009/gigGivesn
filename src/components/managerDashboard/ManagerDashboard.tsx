@@ -1,5 +1,8 @@
 "use client"
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { ShowEmployee } from "@/lib/TeamService"
+import { sendMessage as fetchChatHistoryAPI } from "@/lib/chatService"
 import {
   Users,
   BarChart2,
@@ -19,8 +22,11 @@ import {
   AlertCircle,
 } from "lucide-react"
 import axiosInstance from "@/lib/axios"
-import { useAuth } from "@/context/AuthContext" // Import your AuthContext
+import { useAuth } from "@/context/AuthContext" 
 import { colors } from "@/colors"
+
+import TimeTable from "./TimeTable"
+import { getAllTasks } from "@/lib/TaskService"
 
 // Static team members data (you can replace with API call later)
 const staticTeamMembers = [
@@ -131,6 +137,24 @@ interface AnalyticsData {
 }
 
 export default function ManagerDashboard() {
+  // Today Task State
+   const [todayTasks, setTodayTasks] = useState<any[]>([]) // Removed duplicate declaration
+  const [tasksLoading, setTasksLoading] = useState(false)
+  // Fetch first 3 tasks for Today Task section
+  useEffect(() => {
+    const fetchTasks = async () => {
+      setTasksLoading(true)
+      try {
+        const data = await getAllTasks()
+        setTodayTasks(Array.isArray(data) ? data.slice(0, 3) : [])
+      } catch {
+        setTodayTasks([])
+      } finally {
+        setTasksLoading(false)
+      }
+    }
+    fetchTasks()
+  }, [])
   const { user } = useAuth() // Get logged-in manager info
   const [projects, setProjects] = useState<Project[]>([])
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
@@ -145,6 +169,52 @@ export default function ManagerDashboard() {
     avgTeamRating: "0.0",
   })
 
+  // Communication Logs State
+  const [commLogs, setCommLogs] = useState<any[]>([])
+  const [commLoading, setCommLoading] = useState(false)
+  const router = useRouter()
+  // Fetch first 4 chat contacts/messages for Communication Logs
+  useEffect(() => {
+    const fetchCommLogs = async () => {
+      if (!user?.id || !user?.role) return
+      setCommLoading(true)
+      try {
+        // Get opposite role for chat contacts
+        const contactRole = user.role === "manager" ? "employee" : "manager"
+        const response = await ShowEmployee(contactRole)
+        const contacts = (response?.data || []).slice(0, 4)
+        // For each contact, fetch last message
+        const logs = await Promise.all(
+          contacts.map(async (contact: any) => {
+            let lastMsg = null
+            try {
+              const data = await fetchChatHistoryAPI(user.id.toString(), contact.id.toString())
+              const arr = Array.isArray(data) ? data : data.messages || []
+              if (arr.length > 0) {
+                const msg = arr[arr.length - 1]
+                lastMsg = typeof msg.messageBody === "string" && msg.messageBody.startsWith("http")
+                  ? "File"
+                  : msg.messageBody || "Voice Message"
+              }
+            } catch {}
+            return {
+              id: contact.id,
+              name: contact.name,
+              avatar: contact.avatar || undefined,
+              lastMessage: lastMsg || "Voice Message",
+            }
+          })
+        )
+        setCommLogs(logs)
+      } catch (e) {
+        setCommLogs([])
+      } finally {
+        setCommLoading(false)
+      }
+    }
+    fetchCommLogs()
+  }, [user?.id, user?.role])
+
   // Fetch projects assigned to the manager
   useEffect(() => {
     const fetchManagerProjects = async () => {
@@ -152,35 +222,36 @@ export default function ManagerDashboard() {
 
       setIsLoading(true)
       setError(null)
-      
+
       try {
         console.log('Fetching projects for manager:', user.id)
         const response = await axiosInstance.get('/projects/manager/all')
         console.log('API Response:', response.data)
-        
+
         const projectsData = Array.isArray(response.data) ? response.data : []
         setProjects(projectsData)
-        
+
         // Calculate analytics from fetched projects
         const totalProjects = projectsData.length
-        const activeProjects = projectsData.filter((p: Project) => 
+        const activeProjects = projectsData.filter((p: Project) =>
           p.status?.toLowerCase() === 'active' || p.status?.toLowerCase() === 'in-progress'
         ).length
-        const completedProjects = projectsData.filter((p: Project) => 
+        const completedProjects = projectsData.filter((p: Project) =>
           p.status?.toLowerCase() === 'completed'
         ).length
-        
+
         setAnalytics(prev => ({
           ...prev,
           totalProjects,
           activeProjects,
           completedProjects,
         }))
-        
+
       } catch (error) {
         console.error("Error fetching manager projects:", error)
         setError("Failed to load projects. Please try again.")
         setProjects([])
+        
       } finally {
         setIsLoading(false)
       }
@@ -261,7 +332,7 @@ export default function ManagerDashboard() {
   }
 
   // Filter active projects
-  const activeProjects = projects.filter((p) => 
+  const activeProjects = projects.filter((p) =>
     p.status?.toLowerCase() === 'active' || p.status?.toLowerCase() === 'in-progress'
   )
 
@@ -278,22 +349,25 @@ export default function ManagerDashboard() {
     )
   }
 
-  return (
-<div className="min-h-screen pb-12 bg-black/40 backdrop-blur-md text-white rounded-2xl">
-  {/* Header */}
-  <header className="px-6 py-10 rounded-b-3xl shadow-xl mb-8 ml-6 mr-6">
-    <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-      <div>
-        <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Manager Dashboard</h1>
-        <p className="text-sm md:text-base mt-1">
-          Welcome back, {user?.name || 'Manager'}! Oversee your assigned projects and manage your team effectively
-        </p>
-      </div>
-    </div>
-  </header>
 
-      <div className="max-w-7xl mx-auto px-10" >
-        {/* Error Message */}
+
+
+  return (
+    <div className="min-h-screen pb-12 bg-black/40 backdrop-blur-md text-white rounded-2xl">
+      {/* Header */}
+      <header className="px-6 py-10 rounded-b-3xl  mb-8 ml-6 mr-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Manager Dashboard</h1>
+            <p className="text-sm md:text-base mt-1">
+              Welcome back, {user?.name || 'Manager'}! Oversee your assigned projects and manage your team effectively
+            </p>
+          </div>
+        </div>
+      </header>
+
+      {/* Error Message */}
+      <div className="max-w-7xl mx-auto px-10">
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <div className="flex items-center gap-2">
@@ -302,229 +376,194 @@ export default function ManagerDashboard() {
             </div>
           </div>
         )}
+      </div>
 
-        {/* Analytics Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          <div className="rounded-2xl shadow-lg p-6 hover:shadow-xl transition border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex, color: '#fff' }}>
-            <div className="flex items-center justify-between mb-4">
-              <div className="rounded-full p-3" style={{ background: colors.secondary.hex, color: '#fff' }}>
-                <FolderKanban className="w-6 h-6" style={{ color: '#fff' }} />
-              </div>
-              <TrendingUp className="w-5 h-5" style={{ color: '#fff' }} />
-            </div>
-            <div className="text-3xl font-bold" style={{ color: '#fff' }}>{analytics.totalProjects}</div>
-            <div className="text-sm mt-1 font-medium" style={{ color: '#fff' }}>Total Projects</div>
-          </div>
+      {/* Today Task Section - new modern cards */}
+   
+<div className="max-w-7xl mx-auto px-6 mb-10">
+  <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    
 
-          <div className="rounded-2xl shadow-lg p-6 hover:shadow-xl transition border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex, color: '#fff' }}>
-            <div className="flex items-center justify-between mb-4">
-              <div className="rounded-full p-3" style={{ background: colors.secondary.hex, color: '#fff' }}>
-                <Target className="w-6 h-6" style={{ color: '#fff' }} />
+    {/* Today Task Section - take 3 columns */}
+    <div className="lg:col-span-3">
+      <div className="rounded-2xl p-4"
+        style={{
+          background: 'linear-gradient(120deg, rgba(255,255,255,0.10) 0%, rgba(60,120,180,0.10) 100%)',
+          border: '1.5px solid rgba(255,255,255,0.13)',
+          boxShadow: '0 4px 24px 0 rgba(31, 38, 135, 0.10)'
+        }}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h4 className="text-lg md:text-xl font-bold tracking-tight">Today Task</h4>
+          <button
+            className="text-sm font-medium text-blue-300 hover:underline focus:outline-none"
+            onClick={() => router.push('/dashboard/manager/tasks')}
+          >
+            See All
+          </button>
+        </div>
+        {/* Task Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {tasksLoading ? (
+            <div className="col-span-3 text-center text-blue-200 py-8">Loading...</div>
+          ) : todayTasks.length === 0 ? (
+            <div className="col-span-3 text-center text-blue-200 py-8">No tasks found.</div>
+          ) : (
+            todayTasks.map((task, idx) => (
+              <div key={task.id || idx} className="rounded-xl border border-blue-200/30 p-6 bg-black/30 flex flex-col justify-between min-h-[160px]">
+                <span className="text-xs font-semibold text-blue-400 mb-2">{task.priority || 'Task'}</span>
+                <div className="font-bold text-lg mb-3">{task.title || task.name || 'Untitled Task'}</div>
+                <div className="flex items-center mb-4">
+                  {/* Optionally show assigned users/avatars if available */}
+                  {Array.isArray(task.assignees) && task.assignees.length > 0 ? (
+                     task.assignees.slice(0, 3).map((assignee: any, i: number) => (
+                      <img
+                        key={assignee.id || i}
+                        src={assignee.avatar || '/avatars/u1.png'}
+                        className={`w-7 h-7 rounded-full border-2 border-white ${i > 0 ? '-ml-2' : '-ml-1'}`}
+                        alt={assignee.name || ''}
+                      />
+                    ))
+                  ) : (
+                    <img src="/avatars/u1.png" className="w-7 h-7 rounded-full border-2 border-white -ml-1" alt="" />
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="w-24 h-2 bg-blue-900 rounded-full overflow-hidden">
+                    <div className="h-2 bg-blue-400 rounded-full" style={{ width: `${task.progress || 0}%` }}></div>
+                  </div>
+                  <span className="text-xs text-blue-300 font-semibold ml-2">{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : ''}</span>
+                </div>
               </div>
-              <Clock className="w-5 h-5" style={{ color: '#fff' }} />
-            </div>
-            <div className="text-3xl font-bold" style={{ color: '#fff' }}>{analytics.activeProjects}</div>
-            <div className="text-sm mt-1 font-medium" style={{ color: '#fff' }}>Active Projects</div>
-          </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
 
-          <div className="rounded-2xl shadow-lg p-6 hover:shadow-xl transition border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex, color: '#fff' }}>
-            <div className="flex items-center justify-between mb-4">
-              <div className="rounded-full p-3" style={{ background: colors.secondary.hex, color: '#fff' }}>
-                <CheckCircle className="w-6 h-6" style={{ color: '#fff' }} />
-              </div>
-              <Award className="w-5 h-5" style={{ color: '#fff' }} />
-            </div>
-            <div className="text-3xl font-bold" style={{ color: '#fff' }}>{analytics.completedProjects}</div>
-            <div className="text-sm mt-1 font-medium" style={{ color: '#fff' }}>Completed Projects</div>
-          </div>
-
-          <div className="rounded-2xl shadow-lg p-6 hover:shadow-xl transition border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex, color: '#fff' }}>
-            <div className="flex items-center justify-between mb-4">
-              <div className="rounded-full p-3" style={{ background: colors.secondary.hex, color: '#fff' }}>
-                <Users className="w-6 h-6" style={{ color: '#fff' }} />
-              </div>
-              <Star className="w-5 h-5" style={{ color: '#fff' }} />
-            </div>
-            <div className="text-3xl font-bold" style={{ color: '#fff' }}>{analytics.teamMembers}</div>
-            <div className="text-sm mt-1 font-medium" style={{ color: '#fff' }}>Team Members</div>
-          </div>
+    {/* Project Status Card - takes 1 column */}
+    <div>
+      <div
+        className="rounded-xl p-5 flex flex-col justify-between border border-blue-200/30 
+                   bg-gradient-to-br from-[#18323b] to-[#1a2a3a] shadow-md w-[320px]"
+        style={{
+          minHeight: '150px',
+          boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)',
+        }}
+      >
+        {/* Top row */}
+        <div className="flex items-center justify-between mb-2"> 
+          <span className="text-lg font-semibold text-white">Project Completed</span>
+          <span className="text-xs font-medium text-blue-300">
+            Total projects {analytics.totalProjects}
+          </span>
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10" style={{ color: '#fff' }}>
-          {/* Projects Section */}
+        {/* Bottom row */}
+        <div className="flex items-center gap-2 justify-between">
+          <div className="flex flex-col gap-2 ml-2">
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full" style={{ background: '#8b5cf6' }}></span>
+              <span className="text-xs text-white">Project Done <span className="font-bold">{analytics.completedProjects}</span></span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full" style={{ background: '#fbbf24' }}></span>
+              <span className="text-xs text-white">In Progress <span className="font-bold">{analytics.activeProjects}</span></span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full" style={{ background: '#38bdf8' }}></span>
+              <span className="text-xs text-white">Backlog <span className="font-bold">{analytics.totalProjects - analytics.completedProjects - analytics.activeProjects}</span></span>
+            </div>
+          </div>
+
+          {/* Donut chart */}
+          <svg width="180" height="180" viewBox="0 0 36 36" className="mr-2">
+            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="white" strokeWidth="3.5" />
+            {/* Completed */}
+            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#8b5cf6" strokeWidth="3.5" strokeDasharray={`${analytics.completedProjects / (analytics.totalProjects || 1) * 100},100`} strokeDashoffset="25" />
+            {/* Active */}
+            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#fbbf24" strokeWidth="3.5" strokeDasharray={`${analytics.activeProjects / (analytics.totalProjects || 1) * 100},100`} strokeDashoffset="75" />
+            {/* Backlog */}
+            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#38bdf8" strokeWidth="3.5" strokeDasharray={`${(analytics.totalProjects - analytics.completedProjects - analytics.activeProjects) / (analytics.totalProjects || 1) * 100},100`} strokeDashoffset="100" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+  
+  
+
+      {/* Main Content Grid */}
+      <div className="max-w-7xl mx-auto px-10">
+  <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 items-start" style={{ color: '#fff' }}>
+
+         
+        
           <div className="lg:col-span-2">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold" style={{ color: '#fff' }}>Your Assigned Projects</h2>
+
+            <div className="space-y-6">
+               <TimeTable />
+              </div>
+          </div>
+
+          {/* Right Sidebar */}
+         <div className="space-y-6">
+          {/* Communication Logs */}
+          <div
+            className="rounded-xl p-5 flex flex-col justify-between border border-blue-200/30 
+                      bg-gradient-to-br from-[#18323b] to-[#1a2a3a] shadow-md 
+                      w-[420px]"
+            style={{
+              minHeight: '300px',
+              boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)',
+              transition: 'box-shadow 0.2s',
+            }}
+          >
+            {/* Top row */}
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-lg font-semibold text-white">Communication Logs</span>
               <button
-                onClick={() => window.location.reload()}
-                className="text-sm font-medium flex items-center gap-1"
-                style={{ color: colors.primary.hex }}
+                className="text-xs font-medium text-blue-300 hover:underline focus:outline-none"
+                onClick={() => router.push('/dashboard/manager/chat')}
               >
-                <RefreshCw className="w-4 h-4" style={{ color: colors.primary.hex }} />
-                Refresh
+                See All
               </button>
             </div>
-            
-            <div className="space-y-6">
-              {activeProjects.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: colors.accent.hex }}>
-                    <FolderKanban className="w-8 h-8" style={{ color: colors.primary.hex }} />
-                  </div>
-                  <p className="text-lg font-medium mb-1" style={{ color: colors.primary.hex }}>No Active Projects</p>
-                  <p className="text-gray-500">You don't have any active projects assigned yet.</p>
-                </div>
+
+            {/* Logs list */}
+            <div className="flex flex-col gap-4">
+              {commLoading ? (
+                <div className="text-center text-blue-200 py-8">Loading...</div>
+              ) : commLogs.length === 0 ? (
+                <div className="text-center text-blue-200 py-8">No communication logs found.</div>
               ) : (
-                activeProjects.map((project, index) => (
-                  <div
-                    key={project.id}
-                    className="rounded-xl shadow-lg hover:shadow-xl transition p-6 border"
-                    style={{ background: colors.accent.hex, borderColor: colors.primary.hex }}
-                  >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1">
-                        <h3 className="font-bold text-lg mb-2" style={{ color: colors.primary.hex }}>
-                          {project.name || project.title}
-                        </h3>
-                        <p className="text-sm mb-3" style={{ color: colors.secondary.hex }}>{project.description}</p>
-                        <div className="flex items-center gap-4 text-xs" style={{ color: colors.primary.hex }}>
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3" style={{ color: colors.primary.hex }} />
-                            Start: {project.startDate && new Date(project.startDate).toLocaleDateString()}
-                          </span>
-                          {project.endDate && (
-                            <span className="flex items-center gap-1">
-                              <Calendar className="w-3 h-3" style={{ color: colors.primary.hex }} />
-                              Due: {new Date(project.endDate).toLocaleDateString()}
-                            </span>
-                          )}
-                          {project.budget && (
-                            <span>${project.budget.toLocaleString()}</span>
-                          )}
-                        </div>
+                commLogs.map((log, idx) => (
+                  <div key={log.id || idx} className="flex items-center justify-between bg-black/20 rounded-lg px-3 py-2">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center bg-blue-900 text-white font-bold text-lg">
+                        {log.name?.[0]?.toUpperCase() || "?"}
                       </div>
-                      <div className="flex flex-col gap-2 items-end">
-                        <span
-                          className="text-xs font-semibold px-3 py-1 rounded-full"
-                          style={{ background: colors.primary.hex, color: colors.highlight.hex }}
-                        >
-                          {project.status?.replace('-', ' ')}
-                        </span>
-                        {project.priority && (
-                          <span
-                            className="text-xs font-medium px-2 py-1 rounded-md border"
-                            style={{ background: colors.highlight.hex, color: colors.warning.hex, borderColor: colors.warning.hex }}
-                          >
-                            {project.priority}
-                          </span>
-                        )}
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-white">{log.name}</span>
+                        <span className="text-xs text-blue-300">{log.lastMessage}</span>
                       </div>
                     </div>
-
-                    {(project.progress !== undefined || project.completion !== undefined) && (
-                      <div>
-                        <div className="flex justify-between text-sm mb-2" style={{ color: colors.primary.hex }}>
-                          <span>Progress</span>
-                          <span className="font-medium" style={{ color: colors.primary.hex }}>
-                            {project.progress || project.completion || 0}%
-                          </span>
-                        </div>
-                        <div className="w-full bg-white/60 rounded-full h-2">
-                          <div
-                            className="h-2 rounded-full transition-all duration-500"
-                            style={{ width: `${project.progress || project.completion || 0}%`, background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})` }}
-                          />
-                        </div>
-                      </div>
-                    )}
+                    <div className="flex gap-3">
+                      <button className="p-2 rounded-full bg-black/30 hover:bg-black/50">📞</button>
+                      <button className="p-2 rounded-full bg-black/30 hover:bg-black/50">🎥</button>
+                    </div>
                   </div>
                 ))
               )}
             </div>
           </div>
-
-          {/* Right Sidebar */}
-          <div className="space-y-6">
-            {/* Team Performance */}
-            <div className="rounded-2xl shadow-lg px-6 py-8 border" style={{ background: colors.highlight.hex, borderColor: colors.primary.hex }}>
-              <h3 className="font-bold text-lg mb-4" style={{ color: colors.primary.hex }}>Team Performance</h3>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm" style={{ color: colors.primary.hex }}>Total Tasks Completed</span>
-                  <span className="font-bold" style={{ color: colors.primary.hex }}>{analytics.totalTasks}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm" style={{ color: colors.primary.hex }}>Average Rating</span>
-                  <span className="font-bold flex items-center gap-1" style={{ color: colors.warning.hex }}>
-                    <Star className="w-4 h-4 fill-current" style={{ color: colors.warning.hex }} />
-                    {analytics.avgTeamRating}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm" style={{ color: colors.primary.hex }}>Active Members</span>
-                  <span className="font-bold" style={{ color: colors.primary.hex }}>
-                    {teamMembers.filter((m) => m.status === "online").length}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Recent Team Activity */}
-            <div className="rounded-2xl shadow-lg px-6 py-8 border" style={{ background: colors.accent.hex, borderColor: colors.primary.hex }}>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-lg" style={{ color: colors.primary.hex }}>Team Members</h3>
-                <a href="#" className="text-xs font-medium hover:underline" style={{ color: colors.primary.hex }}>
-                  View all
-                </a>
-              </div>
-              <div className="space-y-4">
-                {teamMembers.slice(0, 4).map((member) => (
-                  <div key={member.id} className="flex items-center gap-3">
-                    <div className="relative">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: colors.primary.hex, color: colors.highlight.hex }}>
-                        {member.avatar}
-                      </div>
-                      <div
-                        className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white"
-                        style={{ background: member.status === 'online' ? colors.primary.hex : member.status === 'away' ? colors.warning.hex : '#ccc' }}
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-sm truncate" style={{ color: colors.primary.hex }}>{member.name}</div>
-                      <div className="text-xs truncate" style={{ color: colors.secondary.hex }}>{member.role}</div>
-                    </div>
-                    <div className="text-xs font-medium" style={{ color: colors.primary.hex }}>{member.tasksCompleted} tasks</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="rounded-2xl shadow-lg px-6 py-7" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`, color: colors.highlight.hex }}>
-              <h3 className="font-semibold text-lg mb-4">Quick Actions</h3>
-              <div className="space-y-3">
-                <button className="w-full text-left hover:bg-white/10 rounded-lg p-2 transition flex items-center gap-2" style={{ color: colors.highlight.hex }}>
-                  <MessageSquare className="h-4 w-4" style={{ color: colors.highlight.hex }} />
-                  <span className="text-sm">Team Meeting</span>
-                </button>
-                <button className="w-full text-left hover:bg-white/10 rounded-lg p-2 transition flex items-center gap-2" style={{ color: colors.highlight.hex }}>
-                  <BarChart2 className="h-4 w-4" style={{ color: colors.highlight.hex }} />
-                  <span className="text-sm">View Reports</span>
-                </button>
-                <button className="w-full text-left hover:bg-white/10 rounded-lg p-2 transition flex items-center gap-2" style={{ color: colors.highlight.hex }}>
-                  <Settings className="h-4 w-4" style={{ color: colors.highlight.hex }} />
-                  <span className="text-sm">Project Settings</span>
-                </button>
-                <button className="w-full text-left hover:bg-white/10 rounded-lg p-2 transition flex items-center gap-2" style={{ color: colors.highlight.hex }}>
-                  <Calendar className="h-4 w-4" style={{ color: colors.highlight.hex }} />
-                  <span className="text-sm">Schedule Review</span>
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
+
+      </div>
       </div>
     </div>
+   
   )
 }

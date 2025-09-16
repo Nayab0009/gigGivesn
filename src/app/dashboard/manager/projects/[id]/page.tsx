@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useMemo, useState } from "react"
 import { useParams } from "next/navigation"
+import TimeTable from "./ProjectTimeTable"
 import { getProjectTeam, getProjectTaskCounts, getProjectTaskPriorities, getProjectMemberTaskCounts, getProjectTasks, type MemberTaskCount, type ProjectTask } from "@/lib/ProjectService"
 import { AlertCircle, Calendar, LayoutGrid, Plus, RefreshCw, Search, Table, Users, Filter, ChevronDown, Clock, MoreHorizontal, CheckCircle2, RefreshCcw, XCircle, BarChart } from "lucide-react"
 import { colors } from "@/colors"
@@ -257,7 +258,9 @@ export default function ProjectDetailsPage() {
           </div>
         ) : project ? (
           <div className="space-y-6">
-            {activeTab === "members" ? (
+              {activeTab === "calendar" ? (
+                <TimeTable projectId={id} />
+              ) : activeTab === "members" ? (
               <div className="rounded-2xl border border-white/10 backdrop-blur-xl overflow-hidden" style={{ background: '#0000004D' }}>
                 <div className="p-6 border-b border-white/10">
                   <div className="flex items-center justify-between">
