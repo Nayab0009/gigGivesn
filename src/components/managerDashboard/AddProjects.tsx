@@ -345,16 +345,7 @@ function ViewTeamModal({
         </div>
 
         {/* Footer */}
-        <div className="border-t border-white/10 bg-black/30 backdrop-blur-sm px-6 py-4">
-          <div className="flex justify-end">
-            <button
-              onClick={onClose}
-              className="px-6 py-2.5 border border-white/20 rounded-xl text-white font-medium hover:bg-white/10 transition-all duration-200 bg-white/5 backdrop-blur-sm"
-            >
-              Close
-            </button>
-          </div>
-        </div>
+        
       </div>
     </div>
   )
@@ -907,7 +898,7 @@ export default function ProjectDashboard() {
 
 
     {/* Delete */}
- <button
+ {/* <button
   className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed border"
   style={{ borderColor: "rgba(255, 255, 255, 0.4)", borderWidth: "1px" }}
   onClick={() => handleDeleteProject(project.id)}
@@ -922,7 +913,7 @@ export default function ProjectDashboard() {
       style={{ width: "14.58px", height: "14px" }}
     />
   )}
-</button>
+</button> */}
 
   </div>
 </td>
