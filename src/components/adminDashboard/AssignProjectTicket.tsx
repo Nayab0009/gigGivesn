@@ -137,7 +137,6 @@ export function AssignTaskModal({
     }
   };
 
-  // Create tasks for each assigned user
   const handleCreateTask = async () => {
     if (!isAuthorizedToAssignTasks()) {
       setError('You are not authorized to assign tasks. Only admins and managers can assign tasks.');
