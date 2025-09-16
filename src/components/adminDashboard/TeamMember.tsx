@@ -9,6 +9,8 @@ import { colors } from "@/colors"
 import Pagination from "../pagination"
 import { useAuth } from "@/context/AuthContext"
 import Image from "next/image"
+import UserDetail from "@/components/generic/UserDetail"
+
 
 interface TeamMember {
   id?: string | number
@@ -54,6 +56,8 @@ export default function TeamListPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [editingMember, setEditingMember] = useState<EditingMember | null>(null)
   const [isUpdating, setIsUpdating] = useState(false)
+  const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null)
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
 
   const router = useRouter()
   const { user } = useAuth()
@@ -117,7 +121,14 @@ export default function TeamListPage() {
       editingMember.address.trim() !== ""
     )
   }
-
+  const handleOpenDetails = (member: TeamMember) => {
+    setSelectedMember(member)
+    setIsDetailsOpen(true)
+  }
+  const handleCloseDetails = () => {
+  setSelectedMember(null)
+  setIsDetailsOpen(false)
+}
   const handleEmployeeDelete = async (teamId: string | number) => {
     if (!teamId) return
     const confirmDelete = window.confirm("Are you sure you want to delete this employee?")
@@ -513,6 +524,7 @@ export default function TeamListPage() {
           boxShadow: "0 0 0 1px rgba(255,255,255,0.1)",
           outline: "none",
         }}
+         onClick={() => handleOpenDetails(member)}
       >
         
         {/* Employee Details Cell */}
@@ -666,6 +678,12 @@ export default function TeamListPage() {
 
         )}
       </div>
+     <UserDetail
+  isOpen={isDetailsOpen}
+  onClose={handleCloseDetails}
+  user={selectedMember}
+/>
     </div>
+    
   )
 }

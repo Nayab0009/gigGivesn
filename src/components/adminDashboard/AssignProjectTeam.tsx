@@ -3,6 +3,7 @@ import { X, UserCheck, Users, Crown, ChevronRight, Loader2, AlertCircle, Check }
 import axiosInstance from "@/lib/axios";
 import type { Team, Project } from "@/types";
 import { colors } from "@/colors";
+
 interface AssignTeamModalProps {
   open: boolean;
   onClose: () => void;
@@ -19,9 +20,9 @@ const generateAvatar = (name: string, index: number) => {
     `https://api.dicebear.com/7.x/personas/svg?seed=${name}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`,
     `https://api.dicebear.com/7.x/miniavs/svg?seed=${name}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`,
     `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${name}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`,
-  ]
-  return avatarStyles[index % avatarStyles.length]
-}
+  ];
+  return avatarStyles[index % avatarStyles.length];
+};
 
 export function AssignTeamModal({
   open,
@@ -41,17 +42,17 @@ export function AssignTeamModal({
   const fetchTeams = async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const response = await axiosInstance.get('/user?role=employee');
       const employees = Array.isArray(response.data) ? response.data : [];
-      
+
       // Group employees by department to create teams
       const teamsMap = new Map<string, Team>();
-      
+
       employees.forEach((employee: any, index: number) => {
         const department = employee.department || 'General';
-        
+
         if (!teamsMap.has(department)) {
           teamsMap.set(department, {
             id: `team-${department.toLowerCase().replace(/\s+/g, '-')}`,
@@ -61,7 +62,7 @@ export function AssignTeamModal({
             members: []
           });
         }
-        
+
         const team = teamsMap.get(department)!;
         const teamMember = {
           id: employee.id,
@@ -71,10 +72,10 @@ export function AssignTeamModal({
           avatar: employee.avatar || generateAvatar(employee.name || employee.email, index),
           status: employee.status || 'active'
         };
-        
+
         team.members.push(teamMember);
       });
-      
+
       setTeams(Array.from(teamsMap.values()));
     } catch (error) {
       console.error('Error fetching employees:', error);
@@ -98,19 +99,19 @@ export function AssignTeamModal({
       });
 
       console.log('Team members assigned successfully:', response.data);
-      
+
       // Call the onAssign callback with the selected team
-      const selectedTeam = teams.find(team => 
+      const selectedTeam = teams.find(team =>
         team.members.some(member => selectedMembers.includes(member.id))
       );
       if (selectedTeam) {
         onAssign(selectedTeam);
       }
-      
+
       // Reset selection and close modal
       setSelectedMembers([]);
       onClose();
-      
+
     } catch (error) {
       console.error('Error assigning team members:', error);
       setError('Failed to assign team members. Please try again.');
@@ -121,8 +122,8 @@ export function AssignTeamModal({
 
   // Toggle member selection
   const toggleMemberSelection = (memberId: string) => {
-    setSelectedMembers(prev => 
-      prev.includes(memberId) 
+    setSelectedMembers(prev =>
+      prev.includes(memberId)
         ? prev.filter(id => id !== memberId)
         : [...prev, memberId]
     );
@@ -139,45 +140,26 @@ export function AssignTeamModal({
   if (!open || !project) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div className="bg-black/20 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] overflow-hidden border border-white/10 flex flex-col">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
+      <div className="bg-black/40 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[95vh] overflow-hidden border-2 border-white/40 flex flex-col">
         {/* Header */}
-        <div className="p-6 text-white flex-shrink-0 bg-black/30 backdrop-blur-sm border-b border-white/10">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold mb-1">Assign Team Members</h2>
-              <p className="text-gray-300 text-sm">
-                Select team members for <span className="font-semibold">{project.title}</span>
-              </p>
-              {selectedMembers.length > 0 && (
-                <p className="text-gray-400 text-sm mt-1">
-                  {selectedMembers.length} member{selectedMembers.length !== 1 ? 's' : ''} selected
-                </p>
-              )}
-            </div>
-            <button 
-              onClick={onClose} 
-              className="p-2 rounded-full hover:bg-white/20 transition-colors flex-shrink-0"
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
+        <div className="p-6 text-center">
+          <h2 className="text-2xl font-bold text-white mb-1">Assign Team Members</h2>
+          <p className="text-gray-300 text-sm">
+            Select team members for <span className="font-semibold">{project.title}</span>
+          </p>
+          {selectedMembers.length > 0 && (
+            <p className="text-gray-400 text-sm mt-1">
+              {selectedMembers.length} member{selectedMembers.length !== 1 ? 's' : ''} selected
+            </p>
+          )}
         </div>
 
-        {/* Content with hidden scrollbar */}
-        <div 
-          className="p-6 space-y-4 overflow-y-auto scrollbar-hide flex-1"
-          style={{
-            scrollbarWidth: 'none', // Firefox
-            msOverflowStyle: 'none', // IE/Edge
-          }}
+        {/* Content */}
+        <div
+          className="p-6 border border-white/30 rounded-2xl space-y-6 overflow-y-auto scrollbar-hide m-4"
+          style={{ maxHeight: "calc(95vh - 220px)" }}
         >
-          <style jsx>{`
-            .scrollbar-hide::-webkit-scrollbar {
-              display: none; /* Chrome, Safari, Opera */
-            }
-          `}</style>
-          
           {/* Loading State */}
           {isLoading && (
             <div className="text-center py-12">
@@ -206,12 +188,12 @@ export function AssignTeamModal({
           {!isLoading && !error && teams.map((team, index) => (
             <div
               key={team.id}
-              className="border border-white/20 rounded-xl p-6 hover:bg-white/5 transition-all duration-300 relative overflow-hidden bg-white/10 backdrop-blur-sm"
+              className="border border-white/20 rounded-xl p-6 bg-white/10 backdrop-blur-sm transition-all duration-300 relative overflow-hidden mb-6"
             >
               {/* Team Header */}
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-4">
-                  <div className="p-3 rounded-xl bg-white/20 backdrop-blur-sm border border-white/10">
+                  <div className="p-3 rounded-xl  backdrop-blur-sm border border-white/10">
                     <Users className="w-6 h-6 text-white" />
                   </div>
                   <div>
@@ -223,11 +205,9 @@ export function AssignTeamModal({
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-3">
-                  <span className="text-sm px-4 py-2 rounded-full font-semibold border border-white/20 bg-white/10 backdrop-blur-sm text-white">
-                    {team.members.length} member{team.members.length !== 1 ? 's' : ''}
-                  </span>
-                </div>
+                <span className="text-sm px-4 py-2 rounded-full font-semibold border border-white/20 bg-white/10 backdrop-blur-sm text-white">
+                  {team.members.length} member{team.members.length !== 1 ? 's' : ''}
+                </span>
               </div>
 
               {/* Team Members */}
@@ -240,10 +220,10 @@ export function AssignTeamModal({
                   {team.members.map((member: any) => (
                     <div
                       key={member.id}
-                      className={`relative flex items-center space-x-3 p-3 rounded-xl border transition-all duration-200 cursor-pointer backdrop-blur-sm ${
+                      className={`relative flex items-center space-x-3 p-3 rounded-xl border cursor-pointer backdrop-blur-sm transition-all duration-200 ${
                         selectedMembers.includes(member.id)
-                          ? 'bg-white/20 border-white/30 shadow-md'
-                          : 'bg-white/10 border-white/20 hover:bg-white/15'
+                          ? 'bg-white/10 border-white/30 shadow-md'
+                          : 'bg-black/30 border-white/20 hover:bg-white/15'
                       }`}
                       onClick={() => toggleMemberSelection(member.id)}
                     >
@@ -253,7 +233,7 @@ export function AssignTeamModal({
                           <Check className="w-3 h-3 text-white" />
                         </div>
                       )}
-                      
+
                       <div className="relative flex-shrink-0">
                         <img
                           src={member.avatar}
@@ -289,39 +269,23 @@ export function AssignTeamModal({
           )}
         </div>
 
-        {/* Footer - Fixed at bottom */}
-        <div className="border-t border-white/10 px-6 py-4 flex-shrink-0 bg-black/30 backdrop-blur-sm">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="flex items-center space-x-4">
-              <p className="text-sm text-gray-300">
-                {selectedMembers.length > 0 
-                  ? `${selectedMembers.length} member${selectedMembers.length !== 1 ? 's' : ''} selected`
-                  : 'Select team members to assign to your project'
-                }
-              </p>
-            </div>
-            <div className="flex items-center space-x-3 w-full sm:w-auto">
-              <button
-                onClick={onClose}
-                className="flex-1 sm:flex-none px-6 py-2.5 border border-white/20 rounded-xl font-medium hover:bg-white/10 transition-all duration-200 text-white bg-white/5 backdrop-blur-sm"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={assignTeamMembers}
-                disabled={selectedMembers.length === 0 || isAssigning}
-                className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl font-medium transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 whitespace-nowrap backdrop-blur-sm border border-white/20"
-                style={
-                  selectedMembers.length === 0 || isAssigning
-                    ? { background: 'rgba(255, 255, 255, 0.1)', color: '#fff' }
-                    : { background: 'rgba(255, 255, 255, 0.2)', color: '#fff' }
-                }
-              >
-                {isAssigning && <Loader2 className="w-4 h-4 animate-spin text-white" />}
-                <span>{isAssigning ? 'Assigning...' : 'Assign Members'}</span>
-              </button>
-            </div>
-          </div>
+        {/* Footer */}
+        <div className="border-white/20 p-6 flex justify-end space-x-3 bg-transparent">
+          <button
+            onClick={onClose}
+            className="px-6 py-2 rounded-xl border border-gray-400 text-gray-200 hover:bg-white/10"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={assignTeamMembers}
+            disabled={selectedMembers.length === 0 || isAssigning}
+            style={{ backgroundColor: colors.primary.hex }}
+            className="px-6 py-2 rounded-xl text-white font-semibold shadow hover:shadow-lg disabled:opacity-50 flex items-center justify-center space-x-2"
+          >
+            {isAssigning && <Loader2 className="w-4 h-4 animate-spin text-white mr-2" />}
+            <span>{isAssigning ? 'Assigning...' : 'Assign Members'}</span>
+          </button>
         </div>
       </div>
     </div>
