@@ -9,6 +9,7 @@ import {
   getProjectTasks,
   type MemberTaskCount,
   type ProjectTask,
+  // add updateProjectName if you have it
 } from "@/lib/ProjectService"
 import {
   AlertCircle,
@@ -23,6 +24,8 @@ import {
   CheckCircle2,
   RefreshCcw,
   XCircle,
+  Save,
+  Settings as SettingsIcon,
 } from "lucide-react"
 
 type TeamMember = {
@@ -32,6 +35,15 @@ type TeamMember = {
   role: string
   avatar?: string
   status?: string
+  isActive?: boolean
+}
+
+type Manager = {
+  id: string
+  name: string
+  email: string
+  role?: string
+  isActive?: boolean
 }
 
 type Project = {
@@ -43,6 +55,7 @@ type Project = {
   status?: string
   isActive?: boolean
   teamMembers?: TeamMember[]
+  manager?: Manager
 }
 
 export default function ProjectDetailsPage() {
@@ -73,6 +86,12 @@ export default function ProjectDetailsPage() {
   >("summary")
   const [taskView, setTaskView] = useState<"table" | "kanban">("table")
 
+  // Settings state
+  const [settingsProjectName, setSettingsProjectName] = useState("")
+  const [settingsSaving, setSettingsSaving] = useState(false)
+  const [settingsSuccess, setSettingsSuccess] = useState(false)
+  const [settingsError, setSettingsError] = useState<string | null>(null)
+  console.log("activeTab:", activeTab);
   // Fetch summary data (except for members tab)
   useEffect(() => {
     let isMounted = true
@@ -84,6 +103,7 @@ export default function ProjectDetailsPage() {
         const resp = await getProjectTeam(String(id))
         if (!isMounted) return
         setProject(resp.data)
+        setSettingsProjectName(resp.data.name) // initialize settings field
         // Fetch task counts, priorities, member task counts, tasks
         const [countsResponse, prioritiesResponse, memberTasksResponse, projectTasks] = await Promise.all([
           getProjectTaskCounts(id),
@@ -106,7 +126,7 @@ export default function ProjectDetailsPage() {
     return () => {
       isMounted = false
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, activeTab])
 
   // Fetch only members list for members tab
@@ -154,8 +174,58 @@ export default function ProjectDetailsPage() {
     if (activeTab === "tasks") {
       fetchTaskData()
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab])
+
+  // When switching to settings, populate field with current name
+  useEffect(() => {
+    if (activeTab === "settings" && project) {
+      setSettingsProjectName(project.name)
+      setSettingsSuccess(false)
+      setSettingsError(null)
+    }
+  }, [activeTab, project])
+
+  // Example update function (replace with your actual updateProjectName)
+  async function updateProjectName(projectId: number, name: string) {
+    // TODO: Replace with real API call
+    // Simulate API delay
+    return new Promise<{ success: boolean; data?: Project; error?: string }>((resolve) => {
+      setTimeout(() => {
+        if (name.trim().length === 0) {
+          resolve({ success: false, error: "Project name cannot be empty." })
+        } else {
+          resolve({
+            success: true,
+            data: {
+              ...project!,
+              name,
+            },
+          })
+        }
+      }, 1200)
+    })
+  }
+
+  async function handleProjectNameSave() {
+    if (!project) return
+    setSettingsSaving(true)
+    setSettingsSuccess(false)
+    setSettingsError(null)
+    try {
+      const resp = await updateProjectName(project.id, settingsProjectName.trim())
+      if (resp.success && resp.data) {
+        setProject(resp.data)
+        setSettingsSuccess(true)
+      } else {
+        setSettingsError(resp.error ?? "Failed to update project name.")
+      }
+    } catch {
+      setSettingsError("Failed to update project name.")
+    } finally {
+      setSettingsSaving(false)
+    }
+  }
 
   const statCards = [
     {
@@ -225,6 +295,7 @@ export default function ProjectDetailsPage() {
               ))}
             </div>
           </div>
+          
           {activeTab === "tasks" && (
             <div
               className="flex border border-white/20 rounded-full p-1 gap-1 shadow-inner"
@@ -255,21 +326,69 @@ export default function ProjectDetailsPage() {
         </div>
 
         {/* Content */}
-        {isLoading && activeTab !== "members" ? (
-          <div className="p-12 text-center border border-white/10 rounded-2xl" style={{ background: "#0000004D" }}>
-            <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
-              <RefreshCw className="w-6 h-6 text-emerald-600 animate-spin" />
-            </div>
-            <p className="text-white/80">Loading project…</p>
-          </div>
-        ) : error && activeTab !== "members" ? (
-          <div className="p-6 border border-red-200/40 rounded-2xl text-white" style={{ background: "#0000004D" }}>
-            <div className="flex items-center gap-2 mb-1">
-              <AlertCircle className="w-5 h-5 text-red-300" />
-              <div className="font-semibold">Error loading project</div>
-            </div>
-            <div className="text-white/80 text-sm">{error}</div>
-          </div>
+      {isLoading && activeTab !== "members" && activeTab !== "settings" ? (
+  <div className="p-12 text-center border border-white/10 rounded-2xl max-w-xl w-full mx-auto" style={{ background: "#0000004D" }}>
+    <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
+      <RefreshCw className="w-6 h-6 text-emerald-600 animate-spin" />
+    </div>
+    <p className="text-white/80">Loading project…</p>
+  </div>
+) : error && activeTab !== "members" && activeTab !== "settings" ? (
+  <div className="p-6 border border-red-200/40 rounded-2xl text-white max-w-xl w-full mx-auto" style={{ background: "#0000004D" }}>
+    <div className="flex items-center gap-2 mb-1">
+      <AlertCircle className="w-5 h-5 text-red-300" />
+      <div className="font-semibold">Error loading project</div>
+    </div>
+    <div className="text-white/80 text-sm">{error}</div>
+  </div>
+) : activeTab === "settings" ? (
+  <div className="rounded-2xl border border-white/10 backdrop-blur-xl overflow-hidden max-w-2xl w-full mx-auto" style={{ background: "#0000004D" }}>
+    <div className="border-b border-white/10 px-8 py-5 flex items-center gap-3">
+      <SettingsIcon className="w-6 h-6 text-white/70" />
+      <span className="text-2xl font-bold text-white">Project Settings</span>
+    </div>
+    <form
+      className="px-8 py-8"
+      onSubmit={(e) => {
+        e.preventDefault()
+        handleProjectNameSave()
+      }}
+    >
+      <div className="mb-6">
+        <label className="block mb-2 text-sm font-medium text-white/90">Project Name</label>
+        <input
+          type="text"
+          value={settingsProjectName}
+          onChange={(e) => setSettingsProjectName(e.target.value)}
+          className="w-full px-4 py-3 rounded-xl bg-black/30 border border-white/20 text-white focus:outline-none focus:border-emerald-400 transition-all text-lg font-semibold"
+          disabled={settingsSaving}
+          maxLength={80}
+          required
+          placeholder="Enter project name"
+        />
+      </div>
+      <div className="flex items-center gap-4">
+        <button
+  type="submit"
+  className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white transition-colors shadow border border-white/20 hover:opacity-90 focus:outline-none ${
+    settingsSaving ? "opacity-70 cursor-not-allowed" : ""
+  }`}
+  style={{ backgroundColor: "rgba(12, 169, 246, 1)" }}
+  disabled={settingsSaving}
+>
+  <Save className="w-5 h-5" />
+  {settingsSaving ? "Saving..." : "Save"}
+</button>
+
+        {settingsSuccess && (
+          <span className="text-emerald-400 font-semibold">Saved!</span>
+        )}
+        {settingsError && (
+          <span className="text-rose-400 font-semibold">{settingsError}</span>
+        )}
+      </div>
+    </form>
+  </div>
         ) : activeTab === "members" ? (
           <div
             className="rounded-2xl border border-white/10 backdrop-blur-xl overflow-hidden"
@@ -285,73 +404,80 @@ export default function ProjectDetailsPage() {
                     <th className="px-6 py-4 text-left text-sm font-semibold text-white">Status</th>
                   </tr>
                 </thead>
-<tbody>
-  {/* Render manager first if exists */}
-  {project.manager && (
-    <tr
-      key={`manager-${project.manager.id}`}
-      className="hover:bg-white/5 transition-colors divide-x divide-white/10"
-    >
-      <td className="px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm">
-            {project.manager.name.charAt(0)}
-          </div>
-          <span className="text-white font-medium">
-            {project.manager.name}{" "}
-            <span className="ml-1 text-xs text-emerald-400"></span>
-          </span>
-        </div>
-      </td>
-      <td className="px-6 py-4 text-white/80">{project.manager.email}</td>
-      <td className="px-6 py-4 text-white/80">
-        {project.manager.role || "Manager"}
-      </td>
-      <td className="px-6 py-4">
-        <div className="flex items-center gap-2">
-          {/* Green dot */}
-          <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
-          {/* White text */}
-          <span className="text-white font-medium">
-            {project.manager.isActive ? "Active" : "Inactive"}
-          </span>
-        </div>
-      </td>
-    </tr>
-  )}
+                <tbody>
+                  {/* Render manager first if exists */}
+                  {project?.manager && (
+                    <tr
+                      key={`manager-${project.manager.id}`}
+                      className="hover:bg-white/5 transition-colors divide-x divide-white/10"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm">
+                            {project.manager.name.charAt(0)}
+                          </div>
+                          <span className="text-white font-medium">
+                            {project.manager.name}{" "}
+                            <span className="ml-1 text-xs text-emerald-400"></span>
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-white/80">{project.manager.email}</td>
+                      <td className="px-6 py-4 text-white/80">
+                        {project.manager.role || "Manager"}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
+                          <span className="text-white font-medium">
+                            {project.manager.isActive ? "Active" : "Inactive"}
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
 
-  {/* Render team members */}
-  {project.teamMembers?.map((member) => (
-    <tr
-      key={member.id}
-      className="hover:bg-white/5 transition-colors divide-x divide-white/10"
-    >
-      <td className="px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm">
-            {member.name.charAt(0)}
-          </div>
-          <span className="text-white font-medium">{member.name}</span>
-        </div>
-      </td>
-      <td className="px-6 py-4 text-white/80">{member.email}</td>
-      <td className="px-6 py-4 text-white/80">
-        {member.role || "Project Member"}
-      </td>
-      <td className="px-6 py-4">
-        <div className="flex items-center gap-2">
-          {/* Green dot */}
-          <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
-          {/* White text */}
-          <span className="text-white font-medium">
-            {member.isActive ? "Active" : "Inactive"}
-          </span>
-        </div>
-      </td>
-    </tr>
-  ))}
-</tbody>
-
+                  {/* Render team members */}
+                  {project?.teamMembers?.map((member) => (
+                    <tr
+                      key={member.id}
+                      className="hover:bg-white/5 transition-colors divide-x divide-white/10"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm">
+                            {member.name.charAt(0)}
+                          </div>
+                          <span className="text-white font-medium">{member.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-white/80">{member.email}</td>
+                      <td className="px-6 py-4 text-white/80">
+                        {member.role || "Project Member"}
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
+                          <span className="text-white font-medium">
+                            {"isActive" in member
+                              ? member.isActive
+                                ? "Active"
+                                : "Inactive"
+                              : "Active"}
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {(!project?.teamMembers || project.teamMembers.length === 0) && (
+                    <tr>
+                      <td className="px-6 py-8 text-center text-white/60" colSpan={5}>
+                        <Users className="w-12 h-12 text-white/20 mx-auto mb-3" />
+                        <p>No team members found</p>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
               </table>
             </div>
           </div>
