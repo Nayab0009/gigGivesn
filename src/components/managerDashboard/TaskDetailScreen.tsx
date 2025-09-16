@@ -1,6 +1,19 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { getTaskById } from "@/lib/TaskService"
+import { useAuth } from "@/context/AuthContext"
+import { initiateSocket, getSocket } from "@/lib/socket"
+import { sendMessage as sendChatMessage } from "@/lib/chatService"
+// Chat message type
+type ChatMessage = {
+  id?: string
+  message: string
+  timestamp?: number
+  userId?: string
+  username?: string
+  senderId?: string
+  receiverId?: string
+}
 
 // Define custom types needed for the component
 type ProjectTask = {
@@ -78,6 +91,12 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
   const [task, setTask] = useState<ProjectTask | null>(null)
   const [logs, setLogs] = useState<TaskLog[]>([])
 
+  // Chat state
+  const { user: currentUser } = useAuth()
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
+  const [chatInput, setChatInput] = useState("")
+  const chatEndRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
     async function fetchTask() {
       setLoading(true)
@@ -123,6 +142,52 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
     }
     fetchTask()
   }, [taskId])
+
+  // Chat: Initialize socket and join task room
+  useEffect(() => {
+    if (!currentUser) return
+    initiateSocket(currentUser.id.toString())
+    const socket = getSocket()
+    if (!socket) return
+    // Join a room for this task
+    socket.emit("join_task_room", { taskId: String(taskId) })
+    // Listen for incoming messages
+    socket.on("task_message", (msg: ChatMessage) => {
+      setChatMessages((prev) => [...prev, msg])
+    })
+    // Optionally: fetch previous messages for this task from your backend here
+    return () => {
+      socket.off("task_message")
+      socket.emit("leave_task_room", { taskId: String(taskId) })
+    }
+  }, [currentUser, taskId])
+
+  // Scroll chat to bottom on new message
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [chatMessages])
+
+  // Send chat message
+  const handleSendChat = async () => {
+    if (!chatInput.trim() || !currentUser) return
+    const socket = getSocket()
+    const msg: ChatMessage = {
+      message: chatInput,
+      userId: currentUser.id.toString(),
+      username: currentUser.name,
+      senderId: currentUser.id.toString(),
+      receiverId: String(taskId), // Use taskId as receiver/room
+      timestamp: Date.now(),
+    }
+    setChatMessages((prev) => [...prev, msg])
+    setChatInput("")
+    // Emit to socket
+    socket?.emit("task_message", { ...msg, taskId: String(taskId) })
+    // Optionally: persist to backend
+    try {
+      await sendChatMessage(currentUser.id, taskId)
+    } catch {}
+  }
 
   if (loading) {
     return (
@@ -257,46 +322,45 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
         </div>
       </div>
 
-      {/* Right: Chat/Log */}
+      {/* Right: Task Chat */}
       <div className="flex flex-col h-full bg-black/20">
-        {/* History/Activity header */}
+        {/* Chat header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
-          <div className="font-semibold text-white/80">Activity</div>
-          <button className="p-1 rounded hover:bg-white/10">
-            <MoreHorizontal className="w-5 h-5 text-white/60" />
-          </button>
+          <div className="font-semibold text-white/80">Task Chat</div>
         </div>
-        {/* Chat/Log area */}
+        {/* Chat area */}
         <div className="flex-1 overflow-y-auto px-6 py-4">
           <div className="space-y-3">
-            {logs.length === 0 ? (
-              <div className="text-white/40 text-sm text-center mt-12">No activity yet</div>
+            {chatMessages.length === 0 ? (
+              <div className="text-white/40 text-sm text-center mt-12">No messages yet</div>
             ) : (
-              logs.map((log, idx) => (
-                <div key={idx} className="flex items-center gap-2 text-xs text-white/70">
-                  <span className="font-semibold">{log.user?.name ?? "System"}:</span>
-                  <span>{log.message}</span>
+              chatMessages.map((msg, idx) => (
+                <div key={idx} className={`flex items-center gap-2 text-xs ${msg.userId === currentUser?.id.toString() ? "text-emerald-300" : "text-white/70"}`}>
+                  <span className="font-semibold">{msg.username ?? "User"}:</span>
+                  <span>{msg.message}</span>
                   <span className="ml-auto text-white/40">
-                    {log.time ? new Date(log.time).toLocaleTimeString() : ""}
+                    {msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : ""}
                   </span>
                 </div>
               ))
             )}
+            <div ref={chatEndRef} />
           </div>
         </div>
         {/* Chat input */}
         <div className="border-t border-white/10 px-6 py-4">
-          <form className="flex gap-2">
+          <form className="flex gap-2" onSubmit={e => { e.preventDefault(); handleSendChat(); }}>
             <input
               type="text"
               className="flex-1 px-4 py-2 rounded-lg bg-white/10 text-white focus:outline-none"
               placeholder="Type a message…"
-              disabled
+              value={chatInput}
+              onChange={e => setChatInput(e.target.value)}
             />
             <button
               type="submit"
               className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-1"
-              disabled
+              disabled={!chatInput.trim()}
             >
               <MessageCircle className="w-4 h-4" />
               Send
