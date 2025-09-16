@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import {
   getProjectTeam,
   getProjectTaskCounts,
@@ -61,6 +61,7 @@ type Project = {
 
 export default function ProjectDetailsPage() {
   const { id } = useParams<{ id: string }>()
+  const router = useRouter()
   // For summary, tasks, etc.
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -520,7 +521,11 @@ export default function ProjectDetailsPage() {
                           {tasks
                             .filter((t) => t.status?.toLowerCase() === "inprogress")
                             .map((t) => (
-                              <tr key={t.id} className="text-white text-sm border-b border-white/10 last:border-b-0">
+                              <tr 
+                                key={t.id} 
+                                className="text-white text-sm border-b border-white/10 last:border-b-0 cursor-pointer hover:bg-white/5"
+                                onClick={() => router.push(`/dashboard/manager/tasks/${t.id}`)}
+                              >
                                 <td className="px-6 py-4 whitespace-nowrap font-medium">
                                   {t.title}
                                   <span className="ml-2 text-white/50 text-xs">{t.ticketNumber ?? `#${t.id}`}</span>
@@ -608,7 +613,11 @@ export default function ProjectDetailsPage() {
                           {tasks
                             .filter((t) => t.status?.toLowerCase() === "completed")
                             .map((t) => (
-                              <tr key={`completed-${t.id}`} className="text-white text-sm border-b border-white/10 last:border-b-0">
+                              <tr 
+                                key={`completed-${t.id}`} 
+                                className="text-white text-sm border-b border-white/10 last:border-b-0 cursor-pointer hover:bg-white/5"
+                                onClick={() => router.push(`/dashboard/manager/tasks/${t.id}`)}
+                              >
                                 <td className="px-6 py-4 whitespace-nowrap font-medium">
                                   {t.ticketNumber ?? `TASK-${t.id}`}
                                 </td>
@@ -686,7 +695,8 @@ export default function ProjectDetailsPage() {
                           {columnTasks.map((t) => (
                             <div
                               key={`${col.key}-${t.id}`}
-                              className="rounded-xl border border-white/10 bg-black/30 text-white p-4 shadow-sm"
+                              className="rounded-xl border border-white/10 bg-black/30 text-white p-4 shadow-sm cursor-pointer hover:bg-black/40"
+                              onClick={() => router.push(`/dashboard/manager/tasks/${t.id}`)}
                             >
                               <div className="flex items-start justify-between">
                                 <div className="text-xs text-white/60 font-semibold">

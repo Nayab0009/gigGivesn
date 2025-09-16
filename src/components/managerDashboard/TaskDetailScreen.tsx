@@ -1,10 +1,55 @@
 "use client"
 import { useEffect, useState } from "react"
-import {
-  getProjectTaskById, // <-- Make sure you have this in your ProjectService
-  type ProjectTask,
-  type TaskLog, // <-- Add this type in your API types
-} from "@/lib/ProjectService"
+import { getTaskById } from "@/lib/TaskService"
+
+// Define custom types needed for the component
+type ProjectTask = {
+  id: string | number
+  title: string
+  description?: string
+  status?: string
+  statusLabel?: string
+  priority?: string
+  taskDate?: string
+  ticketNumber?: string
+  isActive?: boolean
+  createdAt?: string
+  updatedAt?: string
+  comment?: string | null
+  // Project reference
+  taskOf?: {
+    id: number
+    name: string
+    description?: string
+    startDate?: string
+    endDate?: string
+    status?: string
+  }
+  // Assignee
+  taskFor?: { 
+    id: number
+    name: string 
+    email?: string
+    avatar?: string | null
+    role?: string
+  }
+  createdBy?: { name: string }
+  estimatedTime?: string
+  logs?: TaskLog[]
+}
+
+type TaskLog = {
+  id: string | number
+  taskId: string | number
+  userId?: string | number
+  userName?: string
+  action: string
+  timestamp: string
+  details?: string
+  message?: string
+  time?: string
+  user?: { name: string }
+}
 import {
   ChevronDown,
   Calendar,
@@ -38,10 +83,39 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
       setLoading(true)
       setError(null)
       try {
-        const resp = await getProjectTaskById(taskId)
-        setTask(resp.data)
-        setLogs(resp.data.logs || [])
-      } catch {
+        // Convert taskId to string since the API expects a string
+        const taskObj = await getTaskById(String(taskId))
+        console.log("Task data:", taskObj);
+        setTask(taskObj)
+        // Create synthetic logs from task data since API doesn't provide logs
+        const syntheticLogs: TaskLog[] = [];
+        // Add creation log
+        if (taskObj.createdAt) {
+          syntheticLogs.push({
+            id: `${taskObj.id}-created`,
+            taskId: taskObj.id,
+            action: "created",
+            timestamp: taskObj.createdAt,
+            message: "Task was created",
+            time: taskObj.createdAt,
+            user: { name: taskObj.taskFor?.name || "System" }
+          });
+        }
+        // Add status log if updated
+        if (taskObj.updatedAt && taskObj.updatedAt !== taskObj.createdAt) {
+          syntheticLogs.push({
+            id: `${taskObj.id}-updated`,
+            taskId: taskObj.id,
+            action: "updated",
+            timestamp: taskObj.updatedAt,
+            message: `Task status updated to ${taskObj.status}`,
+            time: taskObj.updatedAt,
+            user: { name: taskObj.taskFor?.name || "System" }
+          });
+        }
+        setLogs(syntheticLogs);
+      } catch (err) {
+        console.error("Error fetching task:", err);
         setError("Failed to load task details.")
       } finally {
         setLoading(false)
@@ -85,7 +159,7 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
         {/* Top: Breadcrumb + Edit */}
         <div className="flex items-center justify-between mb-2">
           <div className="text-xs text-white/60">
-            {task.projectName ? `${task.projectName} / ` : ""}
+            {task.taskOf ? `${task.taskOf.name} / ` : ""}
             {task.title}
           </div>
           <div className="flex items-center gap-2">
@@ -114,8 +188,8 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
         {/* Meta fields */}
         <div className="space-y-2 text-sm text-white/80">
           <div className="flex items-center gap-2">
-            <Circle className={`w-3 h-3 ${statusColor}`} />
-            <span>{task.statusLabel ?? "New Task"}</span>
+            <Circle className="w-3 h-3 text-blue-400" />
+            <span className="capitalize">{task.status ?? "New Task"}</span>
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4" />
@@ -131,13 +205,15 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
           </div>
           <div className="flex items-center gap-2">
             <User className="w-4 h-4" />
-            <span>Reporter</span>
-            <span className="ml-auto font-semibold">{task.createdBy?.name ?? "—"}</span>
+            <span>Project</span>
+            <span className="ml-auto font-semibold">{task.taskOf?.name ?? "—"}</span>
           </div>
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4" />
-            <span>Estimated time</span>
-            <span className="ml-auto font-semibold">{task.estimatedTime ?? "—"}</span>
+            <span>Created at</span>
+            <span className="ml-auto font-semibold">
+              {task.createdAt ? new Date(task.createdAt).toLocaleString() : "—"}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4" />
