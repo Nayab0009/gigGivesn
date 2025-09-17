@@ -592,7 +592,7 @@ export default function TeamListPage() {
         {userRole === "manager" && (
           <td className="px-6 py-5 rounded-r-xl" style={{ background: "transparent", border: "none" }}>
             <div className="flex items-center justify-end gap-2">
-              <button
+              {/* <button
                 onClick={() => handleEditStart(member)}
                 className="inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 hover:bg-white/10 backdrop-blur-xl"
                 style={{
@@ -601,7 +601,7 @@ export default function TeamListPage() {
                 }}
               >
                 <Edit className="w-4 h-4 text-white/70" />
-              </button>
+              </button> */}
               <button
                 onClick={() => handleEmployeeDelete(String(member.id))}
                 className="inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 hover:bg-red-500/20 backdrop-blur-xl"

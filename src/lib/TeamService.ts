@@ -51,3 +51,12 @@ export const updateTeamMember = async (teamId:string,data:any) => {
         console.log("Error fetching users", error)
     }
 }
+export const getEmployeeById = async (id: string) => {
+    try {
+        const response = await axiosInstance.get(`/user/${id}`);
+        return response.data;
+    } catch (error) {
+        console.log("Error fetching user by ID", error);
+        throw error;
+    }
+}

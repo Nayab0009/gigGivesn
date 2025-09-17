@@ -116,7 +116,7 @@ export default function UserDropdown() {
           <button
             onClick={() => {
               setIsOpen(false);
-              router.push("/profile");
+               router.push("/dashboard/userprofile");
             }}
             className="flex items-center gap-3 w-full text-left px-3 py-2 rounded-lg text-sm text-white hover:bg-white/10 transition"
           >

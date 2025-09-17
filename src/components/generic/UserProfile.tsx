@@ -1,30 +1,55 @@
-// components/UserProfile.tsx
 "use client"
-import { useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { User, Mail, Phone, MapPin, Sparkles, Loader2, Trash2, Save } from "lucide-react"
+import { useState, useEffect } from "react"
+import { Sparkles, Loader2, Trash2, Save } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { colors } from "@/colors"
+import { getEmployeeById,updateTeamMember } from "@/lib/TeamService"
+
 
 interface UserProfileProps {
   onClose: () => void
 }
 
 export default function UserProfile({ onClose }: UserProfileProps) {
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
   const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
+    email: "",
     phone: "",
-    country: "",
+    address: "",
   })
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [success, setSuccess] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [imagePreview, setImagePreview] = useState(user?.image || "/images/profile.svg")
 
-  if (!user) return null
+  useEffect(() => {
+    const fetchEmployee = async () => {
+      if (!user?.id) return
+      try {
+        const res = await getEmployeeById(user.id)
+        if (res) {
+          setForm({
+            name: res.name || "",
+            email: res.email || "",
+            phone: res.phone || "",
+            address: res.address || "",
+          })
+          if (res.avatar) {
+            setImagePreview(res.avatar)
+          } else if (res.name) {
+            setImagePreview(null)
+          }
+        }
+      } catch (err) {
+        console.log("Error loading employee profile", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchEmployee()
+  }, [user?.id])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -32,162 +57,181 @@ export default function UserProfile({ onClose }: UserProfileProps) {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    setError(null)
-    setSuccess(null)
-    try {
-      // simulate save API
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-      setSuccess("Profile updated successfully!")
-    } catch (err) {
-      setError("Failed to update profile")
-    } finally {
-      setIsSubmitting(false)
-    }
+  e.preventDefault()
+  if (!user?.id) return
+
+  setIsSubmitting(true)
+  setError(null)
+  setSuccess(null)
+
+  try {
+    // Call your update API
+    await updateTeamMember(user.id, {
+      name: form.name,
+      phone: form.phone,
+      address: form.address,
+      // Email usually doesn't change, but you can include it if your backend accepts
+      email: form.email,
+    })
+
+    setSuccess("Profile updated successfully!")
+  } catch (err) {
+    console.error("Update error:", err)
+    setError("Failed to update profile")
+  } finally {
+    setIsSubmitting(false)
+  }
+}
+
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-lg">
+        <Loader2 className="w-10 h-10 text-white animate-spin" />
+      </div>
+    )
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-lg p-4">
-      <div className="relative w-full max-w-4xl bg-black/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-10">
+    <div className="m-5 inset-0 z-50 flex items-center justify-center  backdrop-blur-lg p-4">
+      <div className="relative w-full max-w-3xl bg-black/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
         {/* Close */}
-        <button
-          onClick={onClose}
-          className="absolute top-5 right-5 text-gray-400 hover:text-white"
-        >
-          ✕
-        </button>
+    
 
-        {/* Header */}
-        <div className="text-center mb-10">
-          <h1 className="text-2xl font-bold mb-2" style={{ color: colors.white.hex }}>
-            Profile Settings
-          </h1>
-          <p className="text-lg font-medium text-gray-300">
-            Manage your account details and preferences
-          </p>
-        </div>
-
-        {/* Avatar Upload */}
-        <div className="flex justify-center mb-8">
-          <label
-            htmlFor="avatar-upload"
-            className="w-full max-w-sm border-2 border-dashed border-gray-400 rounded-xl p-6 text-center cursor-pointer hover:border-blue-400 transition bg-black/30"
-          >
-            <img
-              src={imagePreview}
-              alt="Preview"
-              className="mx-auto h-32 w-32 rounded-full object-cover shadow-lg"
-            />
-            <input
-              id="avatar-upload"
-              type="file"
-              accept="image/*"
-              className="hidden"
-            />
-            <p className="mt-3 text-sm text-gray-400">Click to upload new photo</p>
-          </label>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Name */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="group">
-              <label className="block mb-2 text-gray-300">First Name</label>
-              <input
-                name="firstName"
-                type="text"
-                value={form.firstName}
-                onChange={handleChange}
-                placeholder="Enter first name"
-                className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
-              />
-            </div>
-            <div className="group">
-              <label className="block mb-2 text-gray-300">Last Name</label>
-              <input
-                name="lastName"
-                type="text"
-                value={form.lastName}
-                onChange={handleChange}
-                placeholder="Enter last name"
-                className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
-              />
-            </div>
+        {/* Content Container with proper spacing */}
+        <div className="px-10 py-8">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold mb-2" style={{ color: colors.white.hex }}>
+              Profile Settings
+            </h1>
+            <p className="text-lg font-medium text-gray-300">
+              Manage your account details and preferences
+            </p>
           </div>
 
-          {/* Phone + Country */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="group">
-              <label className="block mb-2 text-gray-300">Phone</label>
-              <input
-                name="phone"
-                type="text"
-                value={form.phone}
-                onChange={handleChange}
-                placeholder="+92 300 1234567"
-                className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
-              />
-            </div>
-            <div className="group">
-              <label className="block mb-2 text-gray-300">Country</label>
-              <input
-                name="country"
-                type="text"
-                value={form.country}
-                onChange={handleChange}
-                placeholder="Enter country"
-                className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
-              />
-            </div>
-          </div>
-
-          {/* Messages */}
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
-              <p className="text-red-600 font-medium">{error}</p>
-            </div>
-          )}
-          {success && (
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
-              <p className="text-green-600 font-medium flex items-center justify-center gap-2">
-                <Sparkles className="w-5 h-5" />
-                {success}
-              </p>
-            </div>
-          )}
-
-          {/* Buttons */}
-          <div className="flex justify-between items-center pt-6">
-            <button
-              type="button"
-              className="flex items-center gap-2 text-red-500 hover:text-red-600 font-medium"
-            >
-              <Trash2 className="w-5 h-5" />
-              Delete Account
-            </button>
-
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="flex items-center gap-2 px-8 py-3 rounded-full font-bold text-white transition transform hover:scale-105 active:scale-95 disabled:opacity-50"
-              style={{
-                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-              }}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" /> Saving...
-                </>
+          {/* Avatar */}
+          <div className="flex justify-center mb-8">
+            <div className="h-32 w-32 rounded-full flex items-center justify-center bg-gray-700 text-white text-3xl font-bold overflow-hidden shadow-lg">
+              {imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt="Profile"
+                  className="h-full w-full object-cover"
+                />
               ) : (
-                <>
-                  <Save className="w-5 h-5" /> Save Changes
-                </>
+                form.name.charAt(0) || "?"
               )}
-            </button>
+            </div>
           </div>
-        </form>
+
+          {/* Form with proper spacing */}
+          <div className="max-w-2xl mx-auto">
+            {/* Action Buttons - Top */}
+            <div className="flex justify-center gap-4 mb-6">
+             
+             
+            </div>
+
+            <form id="profile-form" onSubmit={handleSubmit} className="space-y-6">
+              {/* Name */}
+              <div className="group">
+                <label className="block mb-2 text-sm font-medium text-gray-300">
+                  Name
+                </label>
+                <input
+                  name="name"
+                  type="text"
+                  value={form.name}
+                  onChange={handleChange}
+                  placeholder="Enter full name"
+                  className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
+                />
+              </div>
+
+              {/* Email */}
+              <div className="group">
+                <label className="block mb-2 text-sm font-medium text-gray-300">
+                  Email
+                </label>
+                <input
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  readOnly
+                  className="w-full rounded-lg border border-white/20 bg-black/40 px-4 py-3 text-gray-400 cursor-not-allowed"
+                />
+              </div>
+
+              {/* Phone */}
+              <div className="group">
+                <label className="block mb-2 text-sm font-medium text-gray-300">
+                  Phone
+                </label>
+                <input
+                  name="phone"
+                  type="text"
+                  value={form.phone}
+                  onChange={handleChange}
+                  placeholder="0999888888"
+                  className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
+                />
+              </div>
+
+              {/* Address */}
+              <div className="group">
+                <label className="block mb-2 text-sm font-medium text-gray-300">
+                  Address
+                </label>
+                <input
+                  name="address"
+                  type="text"
+                  value={form.address}
+                  onChange={handleChange}
+                  placeholder="Enter address"
+                  className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
+                />
+              </div>
+
+              {/* Success/Error Messages */}
+              {success && (
+                <div className="text-green-400 text-center">{success}</div>
+              )}
+              {error && (
+                <div className="text-red-400 text-center">{error}</div>
+                          )}
+                          
+                           <button
+                type="submit"
+                form="profile-form"
+                disabled={isSubmitting}
+                className="px-8 py-2 rounded-lg bg-sky-500 text-white hover:bg-sky-600 disabled:opacity-50 transition-colors flex items-center gap-2"
+              >
+                {isSubmitting ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Save className="w-4 h-4" />
+                )}
+                Save
+              </button>
+            </form>
+
+            {/* Delete Account Section */}
+            <div className="mt-12 pt-8 border-t border-white/20">
+              <h2 className="text-xl font-bold text-white mb-4">Delete Account</h2>
+              <p className="text-gray-300 mb-6 leading-relaxed">
+                After deleting your account you will lose all related information including tasks, projects, notes etc. You will not be able to recover it later, so think twice before doing this.
+              </p>
+              <button
+                type="button"
+                className="px-6 py-2 rounded-lg border border-red-500/50 bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors flex items-center gap-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete account
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )
