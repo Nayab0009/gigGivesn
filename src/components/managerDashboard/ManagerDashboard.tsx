@@ -146,7 +146,29 @@ export default function ManagerDashboard() {
       setTasksLoading(true)
       try {
         const data = await getAllTasks()
-        setTodayTasks(Array.isArray(data) ? data.slice(0, 3) : [])
+        const priorityBuckets: Record<string, any[]> = { high: [], medium: [], low: [], other: [] }
+        if (Array.isArray(data)) {
+          data.forEach(task => {
+            const p = String(task.priority || '').toLowerCase()
+            if (p === 'high') priorityBuckets.high.push(task)
+            else if (p === 'medium') priorityBuckets.medium.push(task)
+            else if (p === 'low') priorityBuckets.low.push(task)
+            else priorityBuckets.other.push(task)
+          })
+        }
+        // Pick one from each bucket in order: high, medium, low, then fill with others if needed
+        const result: any[] = []
+        if (priorityBuckets.high.length) result.push(priorityBuckets.high[0])
+        if (priorityBuckets.medium.length) result.push(priorityBuckets.medium[0])
+        if (priorityBuckets.low.length) result.push(priorityBuckets.low[0])
+        // Fill up to 3 with remaining tasks (from any bucket, skipping already picked)
+        const usedIds = new Set(result.map(t => t.id))
+        const allRemaining = [...priorityBuckets.high.slice(1), ...priorityBuckets.medium.slice(1), ...priorityBuckets.low.slice(1), ...priorityBuckets.other]
+        for (const t of allRemaining) {
+          if (result.length >= 3) break
+          if (!usedIds.has(t.id)) result.push(t)
+        }
+        setTodayTasks(result)
       } catch {
         setTodayTasks([])
       } finally {
@@ -336,6 +358,15 @@ export default function ManagerDashboard() {
     p.status?.toLowerCase() === 'active' || p.status?.toLowerCase() === 'in-progress'
   )
 
+  // Sort todayTasks by priority: High > Medium > Low > others
+  const priorityOrder: Record<string, number> = { high: 1, medium: 2, low: 3 };
+  const sortedTodayTasks = [...todayTasks].sort((a, b) => {
+    const pa = priorityOrder[String(a.priority).toLowerCase()] || 99;
+    const pb = priorityOrder[String(b.priority).toLowerCase()] || 99;
+    if (pa !== pb) return pa - pb;
+    return 0;
+  });
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black/40 backdrop-blur-md rounded-2xl">
@@ -409,7 +440,7 @@ export default function ManagerDashboard() {
           ) : todayTasks.length === 0 ? (
             <div className="col-span-3 text-center text-blue-200 py-8">No tasks found.</div>
           ) : (
-            todayTasks.map((task, idx) => (
+            sortedTodayTasks.map((task, idx) => (
               <div key={task.id || idx} className="rounded-xl border border-blue-200/30 p-6 bg-black/30 flex flex-col justify-between min-h-[160px]">
                 <span className="text-xs font-semibold text-blue-400 mb-2">{task.priority || 'Task'}</span>
                 <div className="font-bold text-lg mb-3">{task.title || task.name || 'Untitled Task'}</div>
