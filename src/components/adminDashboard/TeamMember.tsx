@@ -9,7 +9,7 @@ import { colors } from "@/colors"
 import Pagination from "../pagination"
 import { useAuth } from "@/context/AuthContext"
 import Image from "next/image"
-import UserDetail from "@/components/generic/UserDetail"
+import TeamMemberModal from "@/components/common/TeamMemberModal"
 
 
 interface TeamMember {
@@ -122,6 +122,7 @@ export default function TeamListPage() {
     )
   }
   const handleOpenDetails = (member: TeamMember) => {
+    console.log('Selected Member Data:', member);
     setSelectedMember(member)
     setIsDetailsOpen(true)
   }
@@ -678,11 +679,20 @@ export default function TeamListPage() {
 
         )}
       </div>
-     <UserDetail
-  isOpen={isDetailsOpen}
-  onClose={handleCloseDetails}
-  user={selectedMember}
-/>
+     {isDetailsOpen && selectedMember && (
+        <TeamMemberModal
+          teamMember={{
+            ...selectedMember,  // Spread all properties from the selected member
+            id: selectedMember.id?.toString(),
+            team: [{
+              name: selectedMember.name,
+              avatar: generateAvatar(selectedMember.name, 0)
+            }]
+          }}
+          onClose={handleCloseDetails}
+          generateAvatar={generateAvatar}
+        />
+      )}
     </div>
     
   )

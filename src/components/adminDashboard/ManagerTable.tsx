@@ -1,6 +1,7 @@
 "use client"
 import { useState, useEffect, useMemo } from "react"
-import { Search, Plus, RefreshCw, Edit, Trash2, Eye, AlertCircle, MapPin, Phone, Clock, MoreHorizontal, X } from "lucide-react"
+import { Search, Plus, RefreshCw, Edit, Trash2, Eye, AlertCircle } from "lucide-react"
+import CustomModal from "../common/CustomModal"
 import { useRouter } from "next/navigation"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
@@ -440,7 +441,14 @@ export default function EnhancedManagersTable() {
           </div>
         )}
 
-    
+        {/* Details Modal */}
+        {showDetailsModal && detailManager && (
+          <CustomModal
+            manager={detailManager}
+            onClose={() => setShowDetailsModal(false)}
+            generateAvatar={generateAvatar}
+          />
+        )}
 
         {showEditModal && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
