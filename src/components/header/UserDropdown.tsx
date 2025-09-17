@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import { colors } from "@/colors";
 import Image from "next/image";
 import UserProfile from "../generic/UserProfile";
+import SupportModal from "@/components/generic/SupportModal";
 
 export default function UserDropdown() {
   const { user, signout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isSupportOpen, setIsSupportOpen] = useState(false);
   const router = useRouter();
 
   const handleSignOut = async () => {
@@ -138,12 +140,11 @@ export default function UserDropdown() {
             <Image src="/images/theme.svg" alt="Theme" width={22} height={22} />
             Theme
           </button>
-
-          {/* Support Option */}
+      {/* Support Option - opens in-place modal instead of navigating */}
           <button
             onClick={() => {
               setIsOpen(false);
-              router.push("/support");
+        setIsSupportOpen(true);
             }}
             className="flex items-center gap-3 w-full text-left px-3 py-2 rounded-lg text-sm text-white hover:bg-white/10 transition"
           >
@@ -178,6 +179,16 @@ export default function UserDropdown() {
           </button>
         </div>
       )}
+      {/* Modal lives outside the dropdown so it can open independently */}
+      <SupportModal
+        isOpen={isSupportOpen}
+        onClose={() => setIsSupportOpen(false)}
+        user={{ name: user.name, email: user.email, image: (user as any).image }}
+        onSubmit={async (data) => {
+          // TODO: wire to backend/email service
+          console.log("Support request:", data);
+        }}
+      />
     </div>
   );
 }
