@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { colors } from "@/colors";
+import Image from "next/image";
+import UserProfile from "../generic/UserProfile";
 
 export default function UserDropdown() {
   const { user, signout } = useAuth();
@@ -20,6 +22,7 @@ export default function UserDropdown() {
   if (!user) return null;
 
   const displayName = user.name ? user.name : user.email.split("@")[0];
+  const role = user.role ? user.role : "User"; // fallback role
 
   const getInitials = (name: string) =>
     name
@@ -76,25 +79,103 @@ export default function UserDropdown() {
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl bg-black/40 backdrop-blur-md p-4 shadow-lg">
-          {/* Only Email */}
-          <span className="block text-sm text-white">{user.email}</span>
+        <div
+          className="absolute right-0 mt-[17px] flex w-[280px] flex-col rounded-2xl p-4 shadow-lg backdrop-blur-md"
+          style={{
+            backgroundColor: "rgba(0,0,0,0.55)", // darker glass
+            border: "1px solid rgba(164, 167, 174, 1)", // subtle border
+          }}
+        >
+          {/* User Info */}
+          <div className="mb-3">
+            <span className="block text-base font-semibold text-white">
+              {displayName}
+            </span>
+            <span className="block text-sm text-gray-300">{user.email}</span>
+          </div>
 
-          {/* Sign out button */}
-          {/* Sign out button */}
-<button
-  onClick={handleSignOut}
-  className="mt-4 flex items-center justify-center gap-2 px-3 py-2 font-medium text-white rounded-lg text-sm transition-colors"
-  style={{
-    backgroundColor: colors.primary.hex,
-  }}
-  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = colors.accent.hex)}
-  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = colors.primary.hex)}
-  disabled={isLoggingOut}
->
-  {isLoggingOut ? "Signing out..." : "Sign out"}
-</button>
+          {/* Role + Active Badge Row */}
+          <div className="flex items-center justify-between mb-4">
+            <span className="px-3 py-1 text-xs font-medium rounded-md bg-white/10 text-white">
+              {role}
+            </span>
+            <span
+              className="px-3 py-1 text-xs font-medium rounded-md"
+              style={{
+                backgroundColor: "rgba(50, 213, 131, 0.4)",
+                color: "#fff",
+              }}
+            >
+              Active
+            </span>
+          </div>
 
+          {/* Profile Option */}
+          <button
+            onClick={() => {
+              setIsOpen(false);
+              router.push("/profile");
+            }}
+            className="flex items-center gap-3 w-full text-left px-3 py-2 rounded-lg text-sm text-white hover:bg-white/10 transition"
+          >
+            <Image
+              src="/images/profile.svg"
+              alt="Profile"
+              width={22}
+              height={22}
+            />
+            Profile
+          </button>
+
+          {/* Theme Option */}
+          <button
+            onClick={() => {
+              setIsOpen(false);
+              console.log("Theme toggle clicked");
+            }}
+            className="flex items-center gap-3 w-full text-left px-3 py-2 rounded-lg text-sm text-white hover:bg-white/10 transition"
+          >
+            <Image src="/images/theme.svg" alt="Theme" width={22} height={22} />
+            Theme
+          </button>
+
+          {/* Support Option */}
+          <button
+            onClick={() => {
+              setIsOpen(false);
+              router.push("/support");
+            }}
+            className="flex items-center gap-3 w-full text-left px-3 py-2 rounded-lg text-sm text-white hover:bg-white/10 transition"
+          >
+            <Image
+              src="/images/support.svg"
+              alt="Support"
+              width={22}
+              height={22}
+            />
+            Support
+          </button>
+
+          {/* Divider */}
+          <hr className="my-3 border-white/20" />
+
+          {/* Logout Option */}
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-3 w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition"
+            style={{
+              color: "rgba(240, 68, 56, 0.9)", // darker red text
+            }}
+            disabled={isLoggingOut}
+          >
+            <Image
+              src="/images/logout.svg"
+              alt="Logout"
+              width={22}
+              height={22}
+            />
+            {isLoggingOut ? "Signing out..." : "Logout"}
+          </button>
         </div>
       )}
     </div>

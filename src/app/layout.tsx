@@ -21,16 +21,19 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         {/* Background Image */}
-        <div className="fixed inset-0 min-h-full min-w-full -z-10">
+        <div className="fixed inset-0 -z-20">
           <Image
             src="/images/Rectangle 105.png"
             alt="Background"
             fill
             priority
             className="object-cover"
-            style={{ zIndex: -10 }}
           />
         </div>
+
+        {/* Blur Overlay (Glass Effect Layer) */}
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-3xl -z-10" />
+
         <Providers>
           <ProtectedRoute>{children}</ProtectedRoute>
         </Providers>

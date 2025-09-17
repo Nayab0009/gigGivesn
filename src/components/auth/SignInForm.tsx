@@ -23,7 +23,8 @@ interface CustomToastStyle extends Omit<ToastOptions, "icon"> {
 
 export default function SignInForm() {
   const router = useRouter()
-  const { signin, error: authError, isAuthenticated, getRedirectPath } = useAuth()
+  const { signin, error: authError, isAuthenticated, getRedirectPath, isLoading } = useAuth()
+  
   const [showPassword, setShowPassword] = useState(false)
   const [isChecked, setIsChecked] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -67,7 +68,18 @@ export default function SignInForm() {
       return () => clearTimeout(redirectTimeout)
     }
   }, [isAuthenticated, signInAttempted, getRedirectPath, router, isSubmitting])
+if (isLoading) {
+  return (
+    <div className="flex h-screen items-center justify-center">
+      <div className="w-10 h-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  )
+}
 
+if (isAuthenticated) {
+  router.push(getRedirectPath() || "/dashboard")
+  return null
+}
   const handleGoogleSignup = async () => {
     try {
       console.log("Signing up with Google")
