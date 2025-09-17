@@ -1,3 +1,7 @@
+
+
+
+
 "use client"
 import type React from "react"
 import { useState } from "react"
@@ -20,6 +24,8 @@ const AddManager: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [imageFile, setImageFile] = useState<File | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -30,31 +36,51 @@ const AddManager: React.FC = () => {
   }
 
   // --- API POST handler ---
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     setError(null)
     setSuccess(null)
 
-    // Always pass role as "manager"
-    const payload = {
-      name: form.name,
-      email: form.email,
-      password: form.password,
-      phone: form.phone,
-      address: form.address,
-      role: "manager",
-    }
-
     try {
-      await axiosInstance.post("/user", payload)
+      const formData = new FormData();
+      formData.append("name", form.name);
+      formData.append("email", form.email);
+      formData.append("password", form.password);
+      formData.append("phone", form.phone);
+      formData.append("address", form.address);
+      formData.append("role", "manager");
+      if (imageFile) {
+        formData.append("avatar", imageFile);
+      }
+
+      await axiosInstance.post("/user", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       setForm({
         name: "",
         email: "",
         password: "",
         phone: "",
         address: "",
-      })
+      });
+      setImageFile(null);
+      setImagePreview(null);
       setSuccess("Manager added successfully!")
       setTimeout(() => {
         router.push("/dashboard/admin/managers")
@@ -95,11 +121,38 @@ const AddManager: React.FC = () => {
         </div>
 
         <form onSubmit={handleSubmit}>
+          <div className="flex justify-center mb-8">
+            <label
+              htmlFor="avatar-upload"
+              className="w-full max-w-sm border-2 border-dashed border-gray-400 rounded-xl p-6 text-center cursor-pointer hover:border-blue-400 transition bg-black/30"
+            >
+              {imagePreview ? (
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  className="mx-auto h-32 w-32 rounded-full object-cover shadow-lg"
+                />
+              ) : (
+                <div className="flex flex-col items-center space-y-2">
+                  <User className="w-10 h-10 text-gray-400" />
+                  <span className="text-gray-400 text-sm">Click or drag file to upload</span>
+                </div>
+              )}
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+            </label>
+          </div>
+
           <div className="space-y-8">
             {/* Name & Email */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="group">
-                <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
+                <label className="text-gray-800 font-semibold mb-3 flex items-center space-x-3">
                   <span className="text-md" style={{ color: colors.white.hex }}>Full Name</span>
                 </label>
                 <div className="relative">
@@ -117,7 +170,7 @@ const AddManager: React.FC = () => {
               </div>
 
               <div className="group">
-                <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
+                <label className="text-gray-800 font-semibold mb-3 flex items-center space-x-3">
                   <span className="text-md"style={{ color: colors.white.hex }}>Email Address</span>
                 </label>
                 <div className="relative">
@@ -138,7 +191,7 @@ const AddManager: React.FC = () => {
             {/* Password & Phone */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="group">
-                <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
+                <label className="text-gray-800 font-semibold mb-3 flex items-center space-x-3">
                   <span className="text-md" style={{ color: colors.white.hex }}>Password</span>
                 </label>
                 <div className="relative">
@@ -156,7 +209,7 @@ const AddManager: React.FC = () => {
               </div>
 
               <div className="group">
-                <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
+                <label className="text-gray-800 font-semibold mb-3 flex items-center space-x-3">
                   <span className="text-md" style={{ color: colors.white.hex }}>Phone Number</span>
                 </label>
                 <div className="relative">
@@ -177,7 +230,7 @@ const AddManager: React.FC = () => {
             {/* Address */}
 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
   <div className="group lg:col-span-2">
-    <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
+    <label className="text-gray-800 font-semibold mb-3 flex items-center space-x-3">
       <span className="text-md" style={{ color: colors.white.hex }}>Address</span>
     </label>
     <div className="relative">
