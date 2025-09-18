@@ -13,7 +13,7 @@ import { useAuth } from "@/context/AuthContext"
 import { colors } from "@/colors"
 
 import TimeTable from "./TimeTable"
-import { getAllTasks } from "@/lib/TaskService"
+import { getManagerTasks } from "@/lib/TaskService"
 
 interface Project {
   id: number | string
@@ -62,7 +62,7 @@ export default function ManagerDashboard() {
     const fetchTasks = async () => {
       setTasksLoading(true)
       try {
-        const data = await getAllTasks()
+        const data = await getManagerTasks()
         const priorityBuckets: Record<string, any[]> = { high: [], medium: [], low: [], other: [] }
         if (Array.isArray(data)) {
           data.forEach(task => {
@@ -282,15 +282,13 @@ export default function ManagerDashboard() {
                 <span className="text-xs font-semibold text-blue-400 mb-2">{task.priority || 'Task'}</span>
                 <div className="font-bold text-lg mb-3">{task.title || task.name || 'Untitled Task'}</div>
                 <div className="flex items-center mb-4">
-                  {Array.isArray(task.assignees) && task.assignees.length > 0 ? (
-                     task.assignees.slice(0, 3).map((assignee: any, i: number) => (
-                      <img
-                        key={assignee.id || i}
-                        src={assignee.avatar || '/avatars/u1.png'}
-                        className={`w-7 h-7 rounded-full border-2 border-white ${i > 0 ? '-ml-2' : '-ml-1'}`}
-                        alt={assignee.name || ''}
-                      />
-                    ))
+                  {task.taskFor ? (
+                    <img
+                      src={task.taskFor.avatar || '/avatars/u1.png'}
+                      className="w-7 h-7 rounded-full border-2 border-white -ml-1"
+                      alt={task.taskFor.name || ''}
+                      title={task.taskFor.name || ''}
+                    />
                   ) : (
                     <img src="/avatars/u1.png" className="w-7 h-7 rounded-full border-2 border-white -ml-1" alt="" />
                   )}

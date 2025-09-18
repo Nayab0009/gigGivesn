@@ -150,11 +150,21 @@ const TimeTable = () => {
                           </div>
                           <div className="flex items-center justify-between mt-2 text-xs text-gray-300">
                             <div className="flex -space-x-2">
-                              {/* User avatars - using initials instead of images */}
-                              <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] border border-black" 
-                                   title={task.taskFor?.name || 'Assignee'}>
-                                {task.taskFor?.name?.charAt(0) || 'U'}
-                              </div>
+                              {/* User avatar - show image if available, else initial */}
+                              {task.taskFor?.avatar ? (
+                                <img
+                                  src={task.taskFor.avatar}
+                                  className="w-6 h-6 rounded-full border border-black object-cover"
+                                  alt={task.taskFor.name || 'Assignee'}
+                                  title={task.taskFor.name || 'Assignee'}
+                                />
+                              ) : (
+                                <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] border border-black" 
+                                  title={task.taskFor?.name || 'Assignee'}>
+                                  {task.taskFor?.name?.charAt(0) || 'U'}
+                                </div>
+                              )}
+                              {/* Created by avatar/initial (optional, keep as initial for now) */}
                               <div className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] border border-black"
                                    title={task.createdBy?.name || 'Creator'}>
                                 {task.createdBy?.name?.charAt(0) || 'M'}
