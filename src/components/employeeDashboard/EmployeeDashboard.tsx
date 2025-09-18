@@ -1,332 +1,465 @@
-import Image from "next/image"
-import { BarChart3, CheckCircle, Clock, FolderKanban, User, ListTodo, TrendingUp, Plus, FileText, Star, Calendar, MessageSquare, Target, Timer } from 'lucide-react'
+"use client"
+import { use, useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
+import { ShowEmployee } from "@/lib/TeamService"
+import { sendMessage as fetchChatHistoryAPI } from "@/lib/chatService"
+import {
+  
+  RefreshCw,
+  AlertCircle,
+} from "lucide-react"
+import axiosInstance from "@/lib/axios"
+import { useAuth } from "@/context/AuthContext" 
+import { colors } from "@/colors"
 
-const analytics = [
-  {
-    label: "Tasks Completed",
-    value: 27,
-    icon: <CheckCircle className="h-6 w-6 text-emerald-600" />,
-    color: "bg-emerald-50 text-emerald-800",
-    cardBg: "bg-gradient-to-br from-emerald-50 to-emerald-100",
-  },
-  {
-    label: "Active Projects",
-    value: 3,
-    icon: <FolderKanban className="h-6 w-6 text-teal-600" />,
-    color: "bg-teal-50 text-teal-800",
-    cardBg: "bg-gradient-to-br from-teal-50 to-teal-100",
-  },
-  {
-    label: "Hours This Week",
-    value: 32,
-    icon: <Timer className="h-6 w-6 text-blue-600" />,
-    color: "bg-blue-50 text-blue-800",
-    cardBg: "bg-gradient-to-br from-blue-50 to-blue-100",
-  },
-  {
-    label: "Team Rating",
-    value: "4.8",
-    icon: <Star className="h-6 w-6 text-amber-600" />,
-    color: "bg-amber-50 text-amber-800",
-    cardBg: "bg-gradient-to-br from-amber-50 to-amber-100",
-  },
-]
+import TimeTable from "./EmployeeTimeTable"
+import NotesCard from "./NotesCard"
+import { getTasksByEmployeeId } from "@/lib/TaskService"
 
-const tasks = [
-  {
-    id: 1,
-    title: "Review UI Components",
-    status: "Completed",
-    due: "2025-06-12",
-    project: "Website Redesign",
-    priority: "High",
-    cardBg: "bg-gradient-to-r from-emerald-50 to-green-50",
-  },
-  {
-    id: 2,
-    title: "Implement Authentication",
-    status: "In Progress",
-    due: "2025-06-15",
-    project: "Internal Portal",
-    priority: "Medium",
-    cardBg: "bg-gradient-to-r from-blue-50 to-cyan-50",
-  },
-  {
-    id: 3,
-    title: "Database Migration Script",
-    status: "Pending",
-    due: "2025-06-20",
-    project: "Analytics Dashboard",
-    priority: "Low",
-    cardBg: "bg-gradient-to-r from-slate-50 to-gray-50",
-  },
-  {
-    id: 4,
-    title: "Team Standup Meeting",
-    status: "Scheduled",
-    due: "2025-06-16",
-    project: "General",
-    priority: "Medium",
-    cardBg: "bg-gradient-to-r from-purple-50 to-indigo-50",
-  },
-]
 
-const projects = [
-  {
-    id: 1,
-    name: "Website Redesign",
-    progress: 85,
-    status: "Active",
-    team: 5,
-    color: "bg-emerald-500",
-    role: "Frontend Developer",
-  },
-  {
-    id: 2,
-    name: "Analytics Dashboard",
-    progress: 62,
-    status: "Active",
-    team: 3,
-    color: "bg-teal-500",
-    role: "Full Stack Developer",
-  },
-  {
-    id: 3,
-    name: "HR Platform",
-    progress: 38,
-    status: "Active",
-    team: 4,
-    color: "bg-emerald-600",
-    role: "Backend Developer",
-  },
-]
 
-const upcomingEvents = [
-  {
-    id: 1,
-    title: "Sprint Planning",
-    time: "10:00 AM",
-    date: "Today",
-    type: "meeting",
-  },
-  {
-    id: 2,
-    title: "Code Review Session",
-    time: "2:00 PM",
-    date: "Tomorrow",
-    type: "review",
-  },
-  {
-    id: 3,
-    title: "Project Deadline",
-    time: "EOD",
-    date: "Jun 20",
-    type: "deadline",
-  },
-]
+interface Project {
+  id: number | string
+  name?: string
+  title?: string
+  status: string
+  description?: string
+  startDate?: string
+  endDate?: string
+  progress?: number
+  completion?: number
+  priority?: string
+  teamSize?: number
+  cardBg?: string
+  manager?: any
+  budget?: number
+}
+
+interface TeamMember {
+  id: number | string
+  name: string
+  email: string
+  phone: string
+  role?: string
+  avatar?: string
+  status?: string
+  tasksCompleted?: number
+  currentProject?: string
+}
+
+interface AnalyticsData {
+  totalProjects: number
+  activeProjects: number
+  completedProjects: number
+  teamMembers: number
+  totalTasks: number
+  avgTeamRating: string
+}
 
 export default function Dashboard() {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-blue-50 to-blue-100 pb-12">
-      {/* Header Hero */}
-      <header className="bg-gradient-to-r from-blue-700 to-blue-900 text-white px-6 py-10 rounded-b-3xl shadow-xl ml-6 mr-6">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="rounded-full shadow-lg border-4 border-white overflow-hidden w-16 h-16 flex-shrink-0">
-              <Image
-                src="https://randomuser.me/api/portraits/men/32.jpg"
-                alt="User Avatar"
-                width={64}
-                height={64}
-                className="w-full h-full object-cover"
-                unoptimized
-              />
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Welcome back, Saad!</h1>
-              <p className="text-blue-200 text-sm md:text-base mt-1">Ready to tackle today's challenges?</p>
-            </div>
+
+  // Today Task State
+   const [todayTasks, setTodayTasks] = useState<any[]>([]) // Removed duplicate declaration
+  const [tasksLoading, setTasksLoading] = useState(false)
+  // Fetch first 3 tasks for Today Task section
+  useEffect(() => {
+    const fetchTasks = async () => {
+      setTasksLoading(true)
+      try {
+        const data = user?.id ? await getTasksByEmployeeId(user.id.toString()) : []
+        const priorityBuckets: Record<string, any[]> = { high: [], medium: [], low: [], other: [] }
+        if (Array.isArray(data)) {
+          data.forEach(task => {
+            const p = String(task.priority || '').toLowerCase()
+            if (p === 'high') priorityBuckets.high.push(task)
+            else if (p === 'medium') priorityBuckets.medium.push(task)
+            else if (p === 'low') priorityBuckets.low.push(task)
+            else priorityBuckets.other.push(task)
+          })
+        }
+        // Pick one from each bucket in order: high, medium, low, then fill with others if needed
+        const result: any[] = []
+        if (priorityBuckets.high.length) result.push(priorityBuckets.high[0])
+        if (priorityBuckets.medium.length) result.push(priorityBuckets.medium[0])
+        if (priorityBuckets.low.length) result.push(priorityBuckets.low[0])
+        // Fill up to 3 with remaining tasks (from any bucket, skipping already picked)
+        const usedIds = new Set(result.map(t => t.id))
+        const allRemaining = [...priorityBuckets.high.slice(1), ...priorityBuckets.medium.slice(1), ...priorityBuckets.low.slice(1), ...priorityBuckets.other]
+        for (const t of allRemaining) {
+          if (result.length >= 2) break
+          if (!usedIds.has(t.id)) result.push(t)
+        }
+        setTodayTasks(result)
+      } catch {
+        setTodayTasks([])
+      } finally {
+        setTasksLoading(false)
+      }
+    }
+    fetchTasks()
+  }, [])
+  const { user } = useAuth() // Get logged-in manager info
+  const [projects, setProjects] = useState<Project[]>([])
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [analytics, setAnalytics] = useState<AnalyticsData>({
+    totalProjects: 0,
+    activeProjects: 0,
+    completedProjects: 0,
+    teamMembers: 0,
+    totalTasks: 0,
+    avgTeamRating: "0.0",
+  })
+
+  // Communication Logs State
+  const [commLogs, setCommLogs] = useState<any[]>([])
+  const [commLoading, setCommLoading] = useState(false)
+  const router = useRouter()
+  // Fetch first 4 chat contacts/messages for Communication Logs
+  useEffect(() => {
+    const fetchCommLogs = async () => {
+      if (!user?.id || !user?.role) return
+      setCommLoading(true)
+      try {
+        // Get opposite role for chat contacts
+        const contactRole = user.role === "manager" ? "employee" : "manager"
+        const response = await ShowEmployee(contactRole)
+        const contacts = (response?.data || []).slice(0, 4)
+        // For each contact, fetch last message
+        const logs = await Promise.all(
+          contacts.map(async (contact: any) => {
+            let lastMsg = null
+            try {
+              const data = await fetchChatHistoryAPI(user.id.toString(), contact.id.toString())
+              const arr = Array.isArray(data) ? data : data.messages || []
+              if (arr.length > 0) {
+                const msg = arr[arr.length - 1]
+                lastMsg = typeof msg.messageBody === "string" && msg.messageBody.startsWith("http")
+                  ? "File"
+                  : msg.messageBody || "Voice Message"
+              }
+            } catch {}
+            return {
+              id: contact.id,
+              name: contact.name,
+              avatar: contact.avatar || undefined,
+              lastMessage: lastMsg || "Voice Message",
+            }
+          })
+        )
+        setCommLogs(logs)
+      } catch (e) {
+        setCommLogs([])
+      } finally {
+        setCommLoading(false)
+      }
+    }
+    fetchCommLogs()
+  }, [user?.id, user?.role])
+
+  // Fetch projects assigned to the manager
+  useEffect(() => {
+    const fetchManagerProjects = async () => {
+      if (!user?.id) return
+
+      setIsLoading(true)
+      setError(null)
+
+      try {
+        console.log('Fetching projects for manager:', user.id)
+        const response = await axiosInstance.get('/projects/manager/all')
+        console.log('API Response:', response.data)
+
+        const projectsData = Array.isArray(response.data) ? response.data : []
+        setProjects(projectsData)
+
+        // Calculate analytics from fetched projects
+        const totalProjects = projectsData.length
+        const activeProjects = projectsData.filter((p: Project) =>
+          p.status?.toLowerCase() === 'active' || p.status?.toLowerCase() === 'inprogress'
+        ).length
+        const completedProjects = projectsData.filter((p: Project) =>
+          p.status?.toLowerCase() === 'completed'
+        ).length
+
+        setAnalytics(prev => ({
+          ...prev,
+          totalProjects,
+          activeProjects,
+          completedProjects,
+        }))
+
+      } catch (error) {
+        console.error("Error fetching manager projects:", error)
+        setError("Failed to load projects. Please try again.")
+        setProjects([])
+
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchManagerProjects()
+  }, [user?.id])
+
+  
+
+  // Sort todayTasks by priority: High > Medium > Low > others
+  const priorityOrder: Record<string, number> = { high: 1, medium: 2, low: 3 };
+  const sortedTodayTasks = [...todayTasks].sort((a, b) => {
+    const pa = priorityOrder[String(a.priority).toLowerCase()] || 99;
+    const pb = priorityOrder[String(b.priority).toLowerCase()] || 99;
+    if (pa !== pb) return pa - pb;
+    return 0;
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-black/40 backdrop-blur-md rounded-2xl">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style={{ background: colors.accent.hex }}>
+            <RefreshCw className="w-8 h-8" style={{ color: colors.primary.hex }} />
           </div>
-          <div className="flex gap-4">
-            <button className="flex items-center gap-2 px-5 py-2 bg-white text-blue-700 rounded-xl font-semibold shadow hover:bg-blue-50 transition">
-              <Plus className="h-5 w-5" /> New Task
-            </button>
-            <button className="flex items-center gap-2 px-5 py-2 bg-blue-600 rounded-xl font-semibold shadow hover:bg-blue-700 transition">
-              <Calendar className="h-5 w-5" /> View Calendar
-            </button>
+          <p className="text-gray-600 text-lg">Loading your dashboard...</p>
+        </div>
+      </div>
+    )
+  }
+
+
+
+
+  return (
+    <div className="min-h-screen pb-12 bg-black/40 backdrop-blur-md text-white rounded-2xl">
+      {/* Header */}
+       <header className="px-6 py-10 rounded-b-3xl  mb-8 ml-6 mr-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Employee Dashboard</h1>
+            <p className="text-sm md:text-base mt-1">
+              Welcome back, {user?.name || 'Employee'}! Ready to tackle today's challenges?
+            </p>
           </div>
         </div>
       </header>
 
-      {/* Analytics Overview */}
-      <section className="max-w-7xl mx-auto px-10 mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {analytics.map((a) => (
-          <div
-            key={a.label}
-            className={`bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl shadow-lg flex flex-col items-center py-6 px-4 hover:shadow-xl transition group border border-white/50`}
-          >
-            <div className={`bg-blue-100 text-blue-800 rounded-full p-3 mb-2`}>{a.icon}</div>
-            <div className="text-3xl font-bold group-hover:text-blue-700 transition text-blue-800">{a.value}</div>
-            <div className="text-blue-600 text-sm mt-1 font-medium">{a.label}</div>
+      <div className="max-w-7xl mx-auto px-10">
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-red-500" />
+              <p className="text-red-700">{error}</p>
+            </div>
           </div>
-        ))}
-      </section>
+        )}
+      </div>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-10 mt-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
-        {/* Tasks */}
-        <section className="lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-blue-900">My Tasks</h2>
-            <a href="#" className="text-blue-600 hover:underline text-sm font-medium">
-              View all tasks
-            </a>
-          </div>
-          <div className="space-y-4">
-            {tasks.map((task) => (
-              <div
-                key={task.id}
-                className={`bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl shadow-lg flex items-center justify-between p-5 hover:shadow-xl transition border border-white/50`}
-              >
-                <div className="flex-1">
-                  <div className="font-semibold text-blue-900 mb-1">{task.title}</div>
-                  <div className="flex gap-4 text-xs text-blue-600">
-                    <span className="flex items-center gap-1">
-                      <FileText className="h-3 w-3 text-blue-500" />
-                      {task.project}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3 w-3 text-blue-400" />
-                      Due: {task.due}
-                    </span>
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                        task.priority === "High"
-                          ? "bg-red-100 text-red-700"
-                          : task.priority === "Medium"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : "bg-blue-100 text-blue-600"
-                      }`}
-                    >
-                      {task.priority}
+      {/* Today Task Section - new modern cards */}
+   
+<div className="max-w-7xl mx-auto px-6 mb-10">
+  <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    
+
+    {/* Today Task Section and Timetable - take 3 columns */}
+    <div className="lg:col-span-3 flex flex-col gap-6">
+      <div className="rounded-2xl p-4"
+        style={{
+          background: 'linear-gradient(120deg, rgba(255,255,255,0.10) 0%, rgba(60,120,180,0.10) 100%)',
+          border: '1.5px solid rgba(255,255,255,0.13)',
+          boxShadow: '0 4px 24px 0 rgba(31, 38, 135, 0.10)'
+        }}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h4 className="text-lg md:text-xl font-bold tracking-tight">Today Task</h4>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {tasksLoading ? (
+            <div className="col-span-3 text-center text-blue-200 py-8">Loading...</div>
+          ) : todayTasks.length === 0 ? (
+            <div className="col-span-3 text-center text-blue-200 py-8">No tasks found.</div>
+          ) : (
+            sortedTodayTasks.map((task, idx) => {
+              // Always use low priority (blue) color for all cards
+              const priorityLabel = task.priority ? `${task.priority} Priority` : 'Task';
+              const priorityColorClass = 'text-blue-400';
+              // Get assigned users (from task.taskFor or fallback)
+              const assignedUsers = [task.taskFor].filter(Boolean);
+              if (task.createdBy && !assignedUsers.find(u => u.id === task.createdBy.id)) {
+                assignedUsers.push(task.createdBy);
+              }
+              // Progress info (randomized for demo, should come from API)
+              const completed = Math.floor(Math.random() * 10) + 1;
+              const total = Math.floor(Math.random() * 5) + 10;
+              const progressColor = 'text-blue-400';
+              return (
+                <div 
+                  key={task.id || idx} 
+                  className="rounded-xl p-6 bg-black/30 flex flex-col justify-between min-h-[160px]"
+                  style={{
+                    backgroundImage: 'linear-gradient(to bottom right, rgba(24, 50, 59, 0.9), rgba(26, 42, 58, 0.9))',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                  }}
+                >
+                  {/* Priority Label */}
+                  <div className={`text-xs font-medium mb-2 ${priorityColorClass}`}>
+                    {priorityLabel}
+                  </div>
+                  {/* Task Title */}
+                  <div className="font-bold text-lg text-white mb-4">
+                    {task.title || task.name || 'Untitled Task'}
+                  </div>
+                  {/* User Avatars */}
+                  <div className="flex -space-x-2 mb-4">
+                    {assignedUsers.map((user, i) => (
+                      <div key={user?.id || i} className="relative">
+                        {user?.avatar ? (
+                          <img
+                            src={user.avatar}
+                            className="w-8 h-8 rounded-full border-2 border-black object-cover"
+                            alt={user.name || ''}
+                            title={user.name || ''}
+                          />
+                        ) : (
+                          <div 
+                            className="w-8 h-8 rounded-full border-2 border-black bg-blue-600 text-white flex items-center justify-center text-xs"
+                            title={user?.name || ''}
+                          >
+                            {user?.name?.charAt(0) || 'U'}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  {/* Progress Bar & Completion */}
+                  <div className="flex items-center justify-between">
+                    <div className="w-24 h-1 bg-gray-700 rounded-full">
+                      <div 
+                        className="h-1 rounded-full bg-blue-400" 
+                        style={{ width: `${(completed/total)*100}%` }}
+                      ></div>
+                    </div>
+                    <span className={`text-xs font-medium ${progressColor}`}>
+                      {String(completed).padStart(2, '0')}/{String(total).padStart(2, '0')}
                     </span>
                   </div>
                 </div>
+              );
+            })
+          )}
+        </div>
+      </div>
+      {/* Timetable directly below Today Task */}
+      <div
+        className="rounded-2xl border border-blue-200/30 bg-black/30 overflow-auto scrollbar-none"
+        style={{ minHeight: '300px', maxHeight: '420px',scrollbarWidth: 'none' }}
+      >
+        <TimeTable employeeId={user?.id} />
+      </div>
+    </div>
+
+    {/* Right column: Project Status + Communication Logs stacked */}
+    <div className="flex flex-col gap-6 w-full">
+      {/* Project Status Card */}
+      <div
+        className="rounded-xl p-5 flex flex-col justify-between border border-blue-200/30 
+                   bg-gradient-to-br from-[#18323b] to-[#1a2a3a] shadow-md w-full min-w-[280px] max-w-[340px] mx-auto"
+        style={{
+          minHeight: '130px',
+          boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)',
+        }}
+      >
+        <div className="flex items-center justify-between mb-2"> 
+          <span className="text-lg font-semibold text-white">Project Completed</span>
+          <span className="text-xs font-medium text-blue-300">
+            Total projects {analytics.totalProjects}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 justify-between">
+          <div className="flex flex-col gap-2 ml-2">
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full" style={{ background: '#8b5cf6' }}></span>
+              <span className="text-xs text-white">Project Done <span className="font-bold">{analytics.completedProjects}</span></span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full" style={{ background: '#fbbf24' }}></span>
+              <span className="text-xs text-white">In Progress <span className="font-bold">{analytics.activeProjects}</span></span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full" style={{ background: '#38bdf8' }}></span>
+              <span className="text-xs text-white">Backlog <span className="font-bold">{analytics.totalProjects - analytics.completedProjects - analytics.activeProjects}</span></span>
+            </div>
+          </div>
+          <svg width="170" height="170" viewBox="0 0 36 36" className="mr-2">
+            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="white" strokeWidth="3.5" />
+            {/* Completed */}
+            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#8b5cf6" strokeWidth="3.5" strokeDasharray={`${analytics.completedProjects / (analytics.totalProjects || 1) * 100},100`} strokeDashoffset="25" />
+            {/* Active */}
+            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#fbbf24" strokeWidth="3.5" strokeDasharray={`${analytics.activeProjects / (analytics.totalProjects || 1) * 100},100`} strokeDashoffset="75" />
+            {/* Backlog */}
+            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#38bdf8" strokeWidth="3.5" strokeDasharray={`${(analytics.totalProjects - analytics.completedProjects - analytics.activeProjects) / (analytics.totalProjects || 1) * 100},100`} strokeDashoffset="100" />
+          </svg>
+        </div>
+      </div>
+      {/* Communication Logs Card */}
+      <div
+        className="rounded-xl p-5 flex flex-col justify-between border border-blue-200/30 
+                  bg-gradient-to-br from-[#18323b] to-[#1a2a3a] shadow-md w-full min-w-[280px] max-w-[340px] mx-auto"
+        style={{
+          minHeight: '300px',
+          boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)',
+          transition: 'box-shadow 0.2s',
+        }}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-lg font-semibold text-white">Communication Logs</span>
+          <button
+            className="text-xs font-medium text-blue-300 hover:underline focus:outline-none"
+            onClick={() => router.push('/dashboard/manager/chat')}
+          >
+            See All
+          </button>
+        </div>
+        <div className="flex flex-col gap-4">
+          {commLoading ? (
+            <div className="text-center text-blue-200 py-8">Loading...</div>
+          ) : commLogs.length === 0 ? (
+            <div className="text-center text-blue-200 py-8">No communication logs found.</div>
+          ) : (
+            commLogs.map((log, idx) => (
+              <div key={log.id || idx} className="flex items-center justify-between bg-black/20 rounded-lg px-3 py-2">
                 <div className="flex items-center gap-3">
-                  <span
-                    className={`text-xs font-bold px-3 py-1 rounded-full ${
-                      task.status === "Completed"
-                        ? "bg-blue-100 text-blue-700"
-                        : task.status === "In Progress"
-                          ? "bg-blue-200 text-blue-800"
-                          : task.status === "Scheduled"
-                            ? "bg-blue-100 text-blue-700"
-                            : "bg-blue-50 text-blue-500"
-                    }`}
-                  >
-                    {task.status}
-                  </span>
-                  {task.status === "Completed" ? (
-                    <CheckCircle className="h-5 w-5 text-blue-500" />
-                  ) : task.status === "In Progress" ? (
-                    <TrendingUp className="h-5 w-5 text-blue-700" />
-                  ) : task.status === "Scheduled" ? (
-                    <Calendar className="h-5 w-5 text-blue-400" />
-                  ) : (
-                    <ListTodo className="h-5 w-5 text-blue-300" />
-                  )}
+                  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-blue-900 text-white font-bold text-lg">
+                    {log.name?.[0]?.toUpperCase() || "?"}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-white">{log.name}</span>
+                    <span className="text-xs text-blue-300 truncate max-w-[120px]" title={log.lastMessage}>
+                      {log.lastMessage && log.lastMessage.length > 10
+                        ? log.lastMessage.slice(0, 10) + '...'
+                        : log.lastMessage}
+                </span>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <button className="p-2 rounded-full bg-black/30 hover:bg-black/50">📞</button>
+                  <button className="p-2 rounded-full bg-black/30 hover:bg-black/50">🎥</button>
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Right Sidebar */}
-        <aside className="space-y-6">
-          {/* My Projects */}
-          <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl shadow-lg px-6 py-8 border border-white/50">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-blue-900">My Projects</h2>
-              <a href="#" className="text-blue-600 text-xs font-medium hover:underline">
-                View all
-              </a>
-            </div>
-            <div className="space-y-5">
-              {projects.map((project) => (
-                <div key={project.id}>
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-semibold text-blue-800 flex items-center gap-2">
-                      <span className={`inline-block w-2 h-2 rounded-full ${project.color}`} />
-                      {project.name}
-                    </span>
-                    <span className="text-xs text-blue-400">{project.team} members</span>
-                  </div>
-                  <div className="text-xs text-blue-600 font-medium mb-2">{project.role}</div>
-                  <div className="w-full h-2 bg-white/60 rounded-full">
-                    <div
-                      className={`bg-blue-600 h-2 rounded-full transition-all`}
-                      style={{ width: `${project.progress}%` }}
-                    />
-                  </div>
-                  <div className="flex justify-between text-xs text-blue-600 mt-1">
-                    <span>{project.progress}% complete</span>
-                    <span>{project.status}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Upcoming Events */}
-          <div className="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl shadow-lg px-6 py-8 border border-white/50">
-            <h3 className="font-bold text-lg mb-4 text-blue-900">Upcoming</h3>
-            <div className="space-y-3">
-              {upcomingEvents.map((event) => (
-                <div key={event.id} className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/40 transition">
-                  <div
-                    className={`w-2 h-2 rounded-full ${
-                      event.type === "meeting"
-                        ? "bg-blue-500"
-                        : event.type === "review"
-                          ? "bg-blue-400"
-                          : "bg-blue-700"
-                    }`}
-                  />
-                  <div className="flex-1">
-                    <div className="font-medium text-sm text-blue-900">{event.title}</div>
-                    <div className="text-xs text-blue-600">
-                      {event.date} at {event.time}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="bg-gradient-to-r from-blue-700 to-blue-900 rounded-2xl shadow-lg px-6 py-7 text-white">
-            <h3 className="font-semibold text-lg mb-4">Quick Actions</h3>
-            <div className="space-y-3">
-              <button className="w-full text-left hover:bg-white/10 rounded-lg p-2 transition flex items-center gap-2">
-                <MessageSquare className="h-4 w-4" />
-                <span className="text-sm">Team Chat</span>
-              </button>
-              <button className="w-full text-left hover:bg-white/10 rounded-lg p-2 transition flex items-center gap-2">
-                <Target className="h-4 w-4" />
-                <span className="text-sm">Set Goals</span>
-              </button>
-              <button className="w-full text-left hover:bg-white/10 rounded-lg p-2 transition flex items-center gap-2">
-                <BarChart3 className="h-4 w-4" />
-                <span className="text-sm">Time Tracking</span>
-              </button>
-              <button className="w-full text-left hover:bg-white/10 rounded-lg p-2 transition flex items-center gap-2">
-                <User className="h-4 w-4" />
-                <span className="text-sm">Profile Settings</span>
-              </button>
-            </div>
-          </div>
-        </aside>
-      </main>
+            ))
+          )}
+        </div>
+      </div>
+      
+      {/* Notes Card */}
+      <div className="mt-6 w-full min-w-[280px] max-w-[340px] mx-auto">
+        <NotesCard />
+      </div>
     </div>
+
+  </div>
+</div>
+</div>
+  
   )
 }

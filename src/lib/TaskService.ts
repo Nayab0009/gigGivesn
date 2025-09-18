@@ -59,16 +59,7 @@ export const createTask = async (taskData: any): Promise<any> => {
 }   
 
 
-//task created by manager 
-export const createManagerTask = async (taskData: any): Promise<any> => {
-    try {
-        const response = await axiosInstance.post('/tasks/created/manager', taskData);
-        return response.data;
-    } catch (error) {
-        console.log("Error creating task", error);
-        throw error;
-    }
-}   
+ 
 
 //get tasks created by manager
 export const getManagerTasks = async (): Promise<any> => {
@@ -99,6 +90,19 @@ export const getManagerTasks = async (): Promise<any> => {
         throw error;
     }
 }
+
+
+//get task by employee id
+export const getTasksByEmployeeId = async (employeeId: string): Promise<any> => {
+    try {   
+        const response = await axiosInstance.get(`/tasks/employee/${employeeId}`);
+        return response.data;
+    } catch (error) {
+        console.log("Error fetching tasks by employee", error);
+        throw error;
+    }
+};
+
 
 //update a task
 export const updateTask = async (taskId: string, taskData: any): Promise<any> => {
