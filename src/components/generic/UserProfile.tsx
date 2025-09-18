@@ -188,6 +188,7 @@ export default function UserProfile({ onClose }: UserProfileProps) {
           
             
 
+            
             <form id="profile-form" onSubmit={handleSubmit} className="space-y-6">
               {/* Name */}
               <div className="group">

@@ -139,14 +139,61 @@ export default function ChatPage() {
     return Date.now().toString(36) + Math.random().toString(36).substring(2, 15)
   }
   // Generate a unique room ID and link for the call
-  const generateRoom = async () => {
-    const roomId = generateUniqueId() // Using custom ID generation
-    const link = `${window.location.origin}/call?roomId=${roomId}` // Use current origin
-    setGeneratedLink(link)
-    setMessage(`Join the meeting: ${link}`)
-    await sendMessage()
-    return link
+ const generateRoom = async () => {
+  const roomId = generateUniqueId()
+  const link = `${window.location.origin}/call?roomId=${roomId}`
+  setGeneratedLink(link)
+  
+  // Create the message data
+  const meetingMessage = `Join the meeting: ${link}`
+  
+  // Send the message automatically
+  const socket = getSocket()
+  if (socket && selectedUserId) {
+    const msgData = {
+      message: meetingMessage,
+      timestamp: Date.now(),
+      userId: currentUser?.id?.toString(),
+      username: currentUser?.name,
+      senderId: currentUser?.id?.toString(),
+      receiverId: selectedUserId?.toString(),
+      isFile: false,
+      isPending: false,
+    }
+    
+    // Emit to socket
+    socket.emit("message", msgData)
+    
+    // Update local state
+    setMessages((prev) => [...prev, msgData])
+    setTimeout(scrollToBottom, 0)
+    
+    // Save read status and update contacts
+    saveReadStatus(selectedUserId)
+    setContactMessages((prev) => {
+      const existing = prev[selectedUserId.toString()] || []
+      return {
+        ...prev,
+        [selectedUserId.toString()]: [...existing, msgData],
+      }
+    })
+    
+    setContacts((prev) =>
+      prev.map((contact) =>
+        contact.id.toString() === selectedUserId.toString()
+          ? {
+              ...contact,
+              lastMessage: msgData.message,
+              lastMessageTimestamp: msgData.timestamp,
+              lastMessageSenderId: currentUser?.id?.toString(),
+            }
+          : contact,
+      ),
+    )
   }
+  
+  return link
+}
   // Sort contacts by most recent message first, then filter by search
   const filteredContacts = contacts
     .sort((a, b) => {
@@ -808,7 +855,7 @@ export default function ChatPage() {
         <main className="flex flex-col flex-1">
           {/* Chat 
            */}
-          <header className="p-4 bg-white/5  rounded-xl backdrop-blur-sm " >
+         <header className="p-4 bg-white/5 rounded-t-xl backdrop-blur-sm border-b border-white/20">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="relative">
@@ -849,36 +896,61 @@ export default function ChatPage() {
               </div>
    
               {/* Meeting Dialog */}
-              {typeof window !== "undefined" && (
-                <>
-                  {showMeetingDialog && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-                      <div className="bg-white rounded-xl shadow-lg p-6 w-80">
-                        <h3 className="text-lg font-semibold mb-4">Start the meeting</h3>
-                        <button
-                          className="w-full py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
-                          onClick={async () => {
-                            const link = await generateRoom()
-                            console.log("Generated meeting link:", link)
-                            if (link) {
-                              window.open(link, "_blank")
-                            }
-                            setShowMeetingDialog(false)
-                          }}
-                        >
-                          Start
-                        </button>
-                        <button
-                          className="mt-3 w-full py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
-                          onClick={() => setShowMeetingDialog(false)}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
+             {typeof window !== "undefined" && (
+  <>
+    {showMeetingDialog && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center">
+        {/* Blurred backdrop overlay */}
+        <div 
+          className="absolute inset-0 bg-black/50 backdrop-blur-md"
+          onClick={() => setShowMeetingDialog(false)}
+        ></div>
+        
+        {/* Modal content */}
+        <div className="relative bg-black/30 backdrop-blur-xl rounded-2xl shadow-2xl p-8 w-96 border border-white/20">
+          <div className="text-center">
+            {/* Video call icon */}
+            <div className="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center"
+              style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
+              <Video className="w-8 h-8 text-white" />
+            </div>
+            
+            <h3 className="text-xl font-semibold mb-2 text-white">Start Video Call</h3>
+            <p className="text-white/70 text-sm mb-8">Ready to start a meeting with {selectedUser}?</p>
+            
+            {/* Action buttons */}
+            <div className="space-y-3">
+              <button
+                className="w-full py-3 rounded-xl font-medium text-white transition-all duration-200 hover:scale-105"
+                style={{
+                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                }}
+                onClick={async () => {
+                  const link = await generateRoom()
+                  console.log("Generated meeting link:", link)
+                  if (link) {
+                    window.open(link, "_blank")
+                  }
+                  setShowMeetingDialog(false)
+                }}
+              >
+                Start Meeting
+              </button>
+              
+              <button
+                className="w-full py-3 bg-white/10 backdrop-blur-sm text-white rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20"
+                onClick={() => setShowMeetingDialog(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+  </>
+)}
+          
             </div>
           </header>
           {/* Messages Area */}

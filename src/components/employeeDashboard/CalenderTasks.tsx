@@ -193,20 +193,17 @@ export default function CalendarPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen ">
       {/* Enhanced Header */}
-      <header className="bg-white/80 backdrop-blur-xl shadow-lg border-b border-white/20">
+      <header>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <div className="flex items-center space-x-4">
-              <div className="bg-gradient-to-br from-blue-600 to-purple-600 p-3 rounded-xl shadow-lg">
-                <Calendar className="w-8 h-8 text-white" />
-              </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-                  Project Task Calendar
+                <h1 className="text-3xl font-bold  bg-clip-text text-white">
+                  My  Calendar
                 </h1>
-                <p className="text-sm text-gray-500 mt-1">Manage your tasks across all projects</p>
+                <p className="text-sm text-white mt-1">Manage your tasks across all projects</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -220,7 +217,7 @@ export default function CalendarPage() {
         </div>
       </header>
 
-      {/* Enhanced Filters */}
+  
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl border border-white/20 p-6">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0 lg:space-x-6">

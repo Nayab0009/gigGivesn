@@ -776,13 +776,8 @@ export default function ProjectDashboard() {
                       <tr key={project.id.toString()} className="hover:bg-white/10 transition-all duration-300">
                         {/* Project Name */}
                         <td className="px-6 py-6">
-                          <Link
-                            href={`/dashboard/manager/projects/${project.id}`}
-                            className="text-lg font-semibold text-white leading-tight hover:underline decoration-white/60"
-                            title="Open project details"
-                          >
-                            {project.name}
-                          </Link>
+                          <span  className="text-lg font-semibold text-white leading-tight hover:underline decoration-white/60">{project.name}</span>
+                  
                         </td>
 
                         {/* Description */}
@@ -898,22 +893,18 @@ export default function ProjectDashboard() {
 
 
     {/* Delete */}
- {/* <button
-  className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed border"
+<button
+  className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 border"
   style={{ borderColor: "rgba(255, 255, 255, 0.4)", borderWidth: "1px" }}
-  onClick={() => handleDeleteProject(project.id)}
-  disabled={isDeleting === project.id}
+  onClick={() => window.location.href = `/dashboard/manager/projects/${project.id}`}
+  title="View project details"
 >
-  {isDeleting === project.id ? (
-    <Loader2 className="animate-spin" style={{ width: "14.58px", height: "14px" }} />
-  ) : (
-    <img
-      src="/images/Icon-173.svg"
-      alt="Delete"
-      style={{ width: "14.58px", height: "14px" }}
-    />
-  )}
-</button> */}
+  <img
+    src="/images/Eye.svg"
+    alt="View Details"
+    style={{ width: "14.58px", height: "14px" }}
+  />
+</button>
 
   </div>
 </td>

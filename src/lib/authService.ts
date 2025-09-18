@@ -48,7 +48,8 @@ export const authenticateUser = async (email: string, password: string): Promise
         email: email,
         phone: '',
         address: '',
-        role: response.data.role || 'user' // Default to 'user' if not provided
+        role: response.data.role || 'user',
+        avatar: response.data.avatar ?? "",// Default to 'user' if not provided
       };
     } else {
       console.log('Login response is missing access_token:', response.data);

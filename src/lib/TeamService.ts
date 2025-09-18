@@ -42,15 +42,20 @@ export const fetchEmployeeAllTasks=async()=>{
         console.log("Error fetching users",error)
     }
 }
-export const updateTeamMember = async (teamId:string,data:any) => {
-    try {
-        const response = await axiosInstance.patch(`/user/${teamId}`, data);
-        return response.data;
-    }
-    catch (error) {
-        console.log("Error fetching users", error)
-    }
+export const updateTeamMember = async (teamId: string, data: FormData) => {
+  try {
+    const response = await axiosInstance.patch(`/user/${teamId}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error("Error updating user", error)
+    throw error
+  }
 }
+
 export const getEmployeeById = async (id: string) => {
     try {
         const response = await axiosInstance.get(`/user/${id}`);
