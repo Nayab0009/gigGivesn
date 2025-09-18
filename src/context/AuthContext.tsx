@@ -10,6 +10,7 @@ interface User {
   role: string
   phone?: string
   address?: string
+    avatar?: string 
 }
 
 interface AuthContextType {
@@ -133,6 +134,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             role: userWithoutPassword.role.toLowerCase(),
             phone: userWithoutPassword.phone,
             address: userWithoutPassword.address,
+             avatar: userWithoutPassword.avatar,
           }
           localStorage.setItem("user", JSON.stringify(userObj))
           setUser(userObj)

@@ -12,6 +12,7 @@ export interface UserData {
   phone: string;
   address: string;
   role: string;
+  avatar?: string;
 }
 
 /**

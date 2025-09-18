@@ -1,10 +1,9 @@
 "use client"
-import { useState, useEffect } from "react"
-import { Sparkles, Loader2, Trash2, Save } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { Sparkles, Loader2, Trash2, Save, Camera, Upload } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { colors } from "@/colors"
-import { getEmployeeById,updateTeamMember } from "@/lib/TeamService"
-
+import { getEmployeeById, updateTeamMember } from "@/lib/TeamService"
 
 interface UserProfileProps {
   onClose: () => void
@@ -19,10 +18,12 @@ export default function UserProfile({ onClose }: UserProfileProps) {
     address: "",
   })
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [success, setSuccess] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const fetchEmployee = async () => {
@@ -56,33 +57,70 @@ export default function UserProfile({ onClose }: UserProfileProps) {
     setForm((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault()
-  if (!user?.id) return
-
-  setIsSubmitting(true)
-  setError(null)
-  setSuccess(null)
-
-  try {
-    // Call your update API
-    await updateTeamMember(user.id, {
-      name: form.name,
-      phone: form.phone,
-      address: form.address,
-      // Email usually doesn't change, but you can include it if your backend accepts
-      email: form.email,
-    })
-
-    setSuccess("Profile updated successfully!")
-  } catch (err) {
-    console.error("Update error:", err)
-    setError("Failed to update profile")
-  } finally {
-    setIsSubmitting(false)
+  const handleImageSelect = () => {
+    fileInputRef.current?.click()
   }
-}
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please select a valid image file')
+        return
+      }
+      
+      // Validate file size (e.g., 5MB limit)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('Image size should be less than 5MB')
+        return
+      }
+
+      setSelectedFile(file)
+      
+      // Create preview
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string)
+      }
+      reader.readAsDataURL(file)
+      setError(null)
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!user?.id) return
+
+    setIsSubmitting(true)
+    setError(null)
+    setSuccess(null)
+
+    try {
+      // Create FormData for multipart form data
+      const formData = new FormData()
+      formData.append('name', form.name)
+      formData.append('phone', form.phone)
+      formData.append('address', form.address)
+      formData.append('email', form.email)
+      
+      // Add avatar if selected
+      if (selectedFile) {
+        formData.append('avatar', selectedFile)
+      }
+
+      // Call your update API with FormData
+      await updateTeamMember(user.id, formData)
+
+      setSuccess("Profile updated successfully!")
+      setSelectedFile(null) // Clear selected file after successful upload
+    } catch (err) {
+      console.error("Update error:", err)
+      setError("Failed to update profile")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -93,11 +131,8 @@ export default function UserProfile({ onClose }: UserProfileProps) {
   }
 
   return (
-    <div className="m-5 inset-0 z-50 flex items-center justify-center  backdrop-blur-lg p-4">
+    <div className="m-5 inset-0 z-50 flex items-center justify-center backdrop-blur-lg p-4">
       <div className="relative w-full max-w-3xl bg-black/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
-        {/* Close */}
-    
-
         {/* Content Container with proper spacing */}
         <div className="px-10 py-8">
           {/* Header */}
@@ -110,28 +145,48 @@ export default function UserProfile({ onClose }: UserProfileProps) {
             </p>
           </div>
 
-          {/* Avatar */}
+          {/* Avatar with upload functionality */}
           <div className="flex justify-center mb-8">
-            <div className="h-32 w-32 rounded-full flex items-center justify-center bg-gray-700 text-white text-3xl font-bold overflow-hidden shadow-lg">
-              {imagePreview ? (
-                <img
-                  src={imagePreview}
-                  alt="Profile"
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                form.name.charAt(0) || "?"
-              )}
+            <div className="relative">
+              <div className="h-32 w-32 rounded-full flex items-center justify-center bg-gray-700 text-white text-3xl font-bold overflow-hidden shadow-lg">
+                {imagePreview ? (
+                  <img
+                    src={imagePreview}
+                    alt="Profile"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  form.name.charAt(0) || "?"
+                )}
+              </div>
+              
+              {/* Upload button overlay */}
+              <button
+                type="button"
+                onClick={handleImageSelect}
+                className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-200 group"
+              >
+                <div className="flex flex-col items-center text-white">
+                  <Camera className="w-6 h-6 mb-1" />
+                  <span className="text-xs">Change</span>
+                </div>
+              </button>
+              
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
             </div>
           </div>
 
           {/* Form with proper spacing */}
           <div className="max-w-2xl mx-auto">
-            {/* Action Buttons - Top */}
-            <div className="flex justify-center gap-4 mb-6">
-             
-             
-            </div>
+          
+            
 
             <form id="profile-form" onSubmit={handleSubmit} className="space-y-6">
               {/* Name */}
@@ -199,9 +254,9 @@ export default function UserProfile({ onClose }: UserProfileProps) {
               )}
               {error && (
                 <div className="text-red-400 text-center">{error}</div>
-                          )}
+              )}
                           
-                           <button
+              <button
                 type="submit"
                 form="profile-form"
                 disabled={isSubmitting}

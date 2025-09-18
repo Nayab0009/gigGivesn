@@ -41,43 +41,52 @@ export default function UserDropdown() {
     <div className="relative">
       {/* Toggle button with avatar + name */}
       <button
-        onClick={(e) => {
-          e.stopPropagation();
-          setIsOpen((prev) => !prev);
-        }}
-        className="flex items-center text-white"
-      >
-        <span className="mr-3 overflow-hidden rounded-full h-11 w-11 flex items-center justify-center text-white font-semibold text-lg">
-          <div
-            className="w-full h-full rounded-full flex items-center justify-center"
-            style={getAvatarColor()}
-          >
-            {getInitials(displayName)}
-          </div>
-        </span>
-        <span className="block mr-1 font-medium text-theme-sm text-white">
-          {displayName}
-        </span>
+  onClick={(e) => {
+    e.stopPropagation();
+    setIsOpen((prev) => !prev);
+  }}
+  className="flex items-center text-white"
+>
+  {/* Avatar */}
+  {user.avatar ? (
+    <Image
+      src={user.avatar}
+      alt={displayName}
+      width={44}
+      height={44}
+      className="rounded-full object-cover mr-3"
+    />
+  ) : (
+    <div
+      className="mr-3 h-11 w-11 flex items-center justify-center rounded-full text-white font-semibold text-lg"
+      style={getAvatarColor()}
+    >
+      {getInitials(displayName)}
+    </div>
+  )}
 
-        <svg
-          className={`stroke-white transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
-          width="18"
-          height="20"
-          viewBox="0 0 18 20"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M4.3125 8.65625L9 13.3437L13.6875 8.65625"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
+  {/* Name */}
+  <span className="mr-2 text-base font-medium text-white">{displayName}</span>
+
+  {/* Dropdown Arrow */}
+  <svg
+    className={`stroke-white transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+    width="18"
+    height="20"
+    viewBox="0 0 18 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M4.3125 8.65625L9 13.3437L13.6875 8.65625"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+</button>
+
 
       {/* Dropdown */}
       {isOpen && (
