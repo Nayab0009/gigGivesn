@@ -92,16 +92,6 @@ export const getManagerTasks = async (): Promise<any> => {
 }
 
 
-//get task by employee id
-export const getTasksByEmployeeId = async (employeeId: string): Promise<any> => {
-    try {   
-        const response = await axiosInstance.get(`/tasks/employee/${employeeId}`);
-        return response.data;
-    } catch (error) {
-        console.log("Error fetching tasks by employee", error);
-        throw error;
-    }
-};
 
 
 //update a task
