@@ -15,6 +15,7 @@ import { colors } from "@/colors"
 import TimeTable from "./TimeTable"
 import { getManagerTasks } from "@/lib/TaskService"
 
+
 interface Project {
   id: number | string
   name?: string
@@ -269,6 +270,7 @@ export default function ManagerDashboard() {
       >
         <div className="flex items-center justify-between mb-4">
           <h4 className="text-lg md:text-xl font-bold tracking-tight">Today Task</h4>
+          <a href="#" className="text-sm text-blue-400 hover:text-blue-300">See All</a>
         </div>
         {/* Task Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -277,35 +279,89 @@ export default function ManagerDashboard() {
           ) : todayTasks.length === 0 ? (
             <div className="col-span-3 text-center text-blue-200 py-8">No tasks found.</div>
           ) : (
-            sortedTodayTasks.map((task, idx) => (
-              <div key={task.id || idx} className="rounded-xl border border-blue-200/30 p-6 bg-black/30 flex flex-col justify-between min-h-[160px]">
-                <span className="text-xs font-semibold text-blue-400 mb-2">{task.priority || 'Task'}</span>
-                <div className="font-bold text-lg mb-3">{task.title || task.name || 'Untitled Task'}</div>
-                <div className="flex items-center mb-4">
-                  {task.taskFor ? (
-                    <img
-                      src={task.taskFor.avatar || '/avatars/u1.png'}
-                      className="w-7 h-7 rounded-full border-2 border-white -ml-1"
-                      alt={task.taskFor.name || ''}
-                      title={task.taskFor.name || ''}
-                    />
-                  ) : (
-                    <img src="/avatars/u1.png" className="w-7 h-7 rounded-full border-2 border-white -ml-1" alt="" />
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="w-24 h-2 bg-blue-400 rounded-full overflow-hidden">
-                    <div className="h-2 bg-blue-400 rounded-full" style={{ width: `${task.progress || 0}%` }}></div>
+            sortedTodayTasks.map((task, idx) => {
+              // Always use low priority (blue) color for all cards
+              const priorityLabel = task.priority ? `${task.priority} Priority` : 'Task';
+              const priorityColorClass = 'text-blue-400';
+              
+              // Get assigned users (from task.taskFor or fallback)
+              const assignedUsers = [task.taskFor].filter(Boolean);
+              if (task.createdBy && !assignedUsers.find(u => u.id === task.createdBy.id)) {
+                assignedUsers.push(task.createdBy);
+              }
+              
+              // Progress info (randomized for demo, should come from API)
+              const completed = Math.floor(Math.random() * 10) + 1;
+              const total = Math.floor(Math.random() * 5) + 10;
+              const progressColor = 'text-blue-400';
+              
+              return (
+                <div 
+                  key={task.id || idx} 
+                  className="rounded-xl p-6 bg-black/30 flex flex-col justify-between min-h-[160px]"
+                  style={{
+                    backgroundImage: 'linear-gradient(to bottom right, rgba(24, 50, 59, 0.9), rgba(26, 42, 58, 0.9))',
+                    border: '1px solid rgba(255, 255, 255, 0.1)'
+                  }}
+                >
+                  {/* Priority Label */}
+                  <div className={`text-xs font-medium mb-2 ${priorityColorClass}`}>
+                    {priorityLabel}
                   </div>
-                  <span className="text-xs text-blue-300 font-semibold ml-2">{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : ''}</span>
+                  
+                  {/* Task Title */}
+                  <div className="font-bold text-lg text-white mb-4">
+                    {task.title || task.name || 'Untitled Task'}
+                  </div>
+                  
+                  {/* User Avatars */}
+                  <div className="flex -space-x-2 mb-4">
+                    {assignedUsers.map((user, i) => (
+                      <div key={user?.id || i} className="relative">
+                        {user?.avatar ? (
+                          <img
+                            src={user.avatar}
+                            className="w-8 h-8 rounded-full border-2 border-black object-cover"
+                            alt={user.name || ''}
+                            title={user.name || ''}
+                          />
+                        ) : (
+                          <div 
+                            className="w-8 h-8 rounded-full border-2 border-black bg-blue-600 text-white flex items-center justify-center text-xs"
+                            title={user?.name || ''}
+                          >
+                            {user?.name?.charAt(0) || 'U'}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Progress Bar & Completion */}
+                  <div className="flex items-center justify-between">
+                    <div className="w-24 h-1 bg-gray-700 rounded-full">
+                      <div 
+                        className="h-1 rounded-full bg-blue-400" 
+                        style={{ width: `${(completed/total)*100}%` }}
+                      ></div>
+                    </div>
+                    <span className={`text-xs font-medium ${progressColor}`}>
+                      {String(completed).padStart(2, '0')}/{String(total).padStart(2, '0')}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </div>
       {/* Timetable directly below Today Task */}
-      <TimeTable />
+      <div
+        className="rounded-2xl border border-blue-200/30 bg-black/30 overflow-auto scrollbar-none"
+        style={{ minHeight: '300px', maxHeight: '420px',scrollbarWidth: 'none' }}
+      >
+        <TimeTable />
+      </div>
     </div>
 
     {/* Right column: Project Status + Communication Logs stacked */}
@@ -315,7 +371,7 @@ export default function ManagerDashboard() {
         className="rounded-xl p-5 flex flex-col justify-between border border-blue-200/30 
                    bg-gradient-to-br from-[#18323b] to-[#1a2a3a] shadow-md w-full min-w-[280px] max-w-[340px] mx-auto"
         style={{
-          minHeight: '150px',
+          minHeight: '130px',
           boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)',
         }}
       >
@@ -340,7 +396,7 @@ export default function ManagerDashboard() {
               <span className="text-xs text-white">Backlog <span className="font-bold">{analytics.totalProjects - analytics.completedProjects - analytics.activeProjects}</span></span>
             </div>
           </div>
-          <svg width="180" height="180" viewBox="0 0 36 36" className="mr-2">
+          <svg width="170" height="170" viewBox="0 0 36 36" className="mr-2">
             <circle cx="18" cy="18" r="15.9155" fill="none" stroke="white" strokeWidth="3.5" />
             {/* Completed */}
             <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#8b5cf6" strokeWidth="3.5" strokeDasharray={`${analytics.completedProjects / (analytics.totalProjects || 1) * 100},100`} strokeDashoffset="25" />
@@ -384,7 +440,11 @@ export default function ManagerDashboard() {
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm font-medium text-white">{log.name}</span>
-                    <span className="text-xs text-blue-300">{log.lastMessage}</span>
+                      <span className="text-xs text-blue-300 truncate max-w-[120px]" title={log.lastMessage}>
+                      {log.lastMessage && log.lastMessage.length > 10
+                        ? log.lastMessage.slice(0, 10) + '...'
+                        : log.lastMessage}
+                </span>
                   </div>
                 </div>
                 <div className="flex gap-3">
