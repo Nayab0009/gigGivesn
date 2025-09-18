@@ -1,0 +1,5 @@
+export { default as SummaryTab } from './SummaryTab'
+export { default as TasksTab } from './TasksTab'
+export { default as CalendarTab } from './CalendarTab'
+export { default as MembersTab } from './MembersTab'
+export { default as SettingsTab } from './SettingsTab'
