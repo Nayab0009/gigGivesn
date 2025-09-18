@@ -56,7 +56,6 @@ export const getEmployeeById = async (id: string) => {
         const response = await axiosInstance.get(`/user/${id}`);
         return response.data;
     } catch (error) {
-        console.log("Error fetching user by ID", error);
         throw error;
     }
 }
