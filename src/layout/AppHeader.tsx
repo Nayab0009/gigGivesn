@@ -77,10 +77,10 @@ const managerNavItems: NavItem[] = [
     name: "Team Members",
     path: "/dashboard/admin/team/list",
   },
-  {
-    name: "Sprints",
-    path: "/dashboard/manager/showsprints",
-  },
+  // {
+  //   name: "Sprints",
+  //   path: "/dashboard/manager/showsprints",
+  // },
   {
     name: "Communication",
     path: "/dashboard/manager/chat",

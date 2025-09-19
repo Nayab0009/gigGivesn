@@ -33,7 +33,8 @@ import {
   TasksTab, 
   CalendarTab, 
   MembersTab, 
-  SettingsTab 
+  SettingsTab,
+  SprintsTab
 } from "./tabs"
 
 type TeamMember = {
@@ -91,7 +92,7 @@ export default function ProjectDetailsPage() {
   const [members, setMembers] = useState<TeamMember[]>([])
 
   const [activeTab, setActiveTab] = useState<
-    "summary" | "tasks" | "calendar" | "notes" | "members" | "settings"
+    "summary" | "tasks" | "sprints" | "calendar" | "notes" | "members" | "settings"
   >("summary")
   const [taskView, setTaskView] = useState<"table" | "kanban">("table")
 
@@ -286,8 +287,8 @@ export default function ProjectDetailsPage() {
               {[
                 { key: "summary", label: "Summary" },
                 { key: "tasks", label: "Tasks" },
+                 { key: "sprints", label: "Sprints" },
                 { key: "calendar", label: "Calendar" },
-                // { key: "notes", label: "Notes" },
                 { key: "members", label: "Members" },
                 { key: "settings", label: "Settings" },
               ].map((t) => (
@@ -374,7 +375,8 @@ export default function ProjectDetailsPage() {
 
             {activeTab === "calendar" ? (
               <CalendarTab projectId={project.id} />
-
+            ) : activeTab === "sprints" ? (
+              <SprintsTab projectId={project.id} projectName={project.name} />
             ) : activeTab === "tasks" ? (
               taskView === "table" ? (
                 <div className="space-y-6">
