@@ -4,16 +4,40 @@ import { useEffect, useState } from "react";
 import { getTasksByProjectId } from "@/lib/TaskService";
 import { MoreHorizontal } from "lucide-react";
 
-// Helper to get day name from date string
 function getDayName(dateString: string) {
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const date = new Date(dateString);
   return days[date.getDay()];
 }
 
-const colors: Record<string, string> = {
-  High: "bg-red-500",
-  Critical: "bg-orange-500",
+// Short day names for the header
+const dayNames: Record<string, string> = {
+  "Monday": "MON",
+  "Tuesday": "TUE",
+  "Wednesday": "WED",
+  "Thursday": "THU",
+  "Friday": "FRI",
+  "Saturday": "SAT",
+  "Sunday": "SUN"
+};
+
+// Day numbers for demo - would be dynamic in real app
+const dayNumbers: Record<string, string> = {
+  "Monday": "19",
+  "Tuesday": "20",
+  "Wednesday": "21",
+  "Thursday": "22",
+  "Friday": "23",
+  "Saturday": "24",
+  "Sunday": "25"
+};
+
+// Colors for different priority levels
+const priorityColors: Record<string, string> = {
+  "Critical": "bg-orange-500",
+  "High": "bg-red-500",
+  "Medium": "bg-amber-500",
+  "Low": "bg-blue-500",
 };
 
 interface TimeTableProps {
@@ -44,120 +68,164 @@ const TimeTable = ({ projectId }: TimeTableProps) => {
     
 
     // Map tasks to days
-    const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const schedule: Record<string, any[]> = {};
     days.forEach(day => (schedule[day] = []));
+    
+    // Process tasks from API and organize by day
     tasks.forEach(task => {
       if (task.taskDate) {
         const dayName = getDayName(task.taskDate);
-        if (schedule[dayName]) {
-          schedule[dayName].push(task);
+        
+        // Only add if it's in our display days
+        if (days.includes(dayName)) {
+          // Extract ticket code if available (e.g. "FAZ-002" or "SO-003")
+          const taskCode = task.ticketNumber || `TASK-${task.id}`;
+          
+          // Create a standardized task object
+          const formattedTask = {
+            id: task.id,
+            taskCode: taskCode,
+            title: task.title || "Untitled Task",
+            description: task.description || "No description provided",
+            priority: task.priority || "Medium",
+            attendees: [
+              task.taskFor?.name || "Assignee", 
+              task.createdBy?.name || "Creator"
+            ],
+            duration: "0h 52m", // Default duration
+            taskDate: task.taskDate,
+            taskFor: task.taskFor,
+            createdBy: task.createdBy
+          };
+          
+          schedule[dayName].push(formattedTask);
+        } else {
+          // For weekend or other days not in our display list
+          console.log(`Task on day not displayed (${dayName}):`, task.title);
         }
       }
     });
-
-    // Helper: get time string from taskDate
-    function getTimeString(dateString: string) {
-      const date = new Date(dateString);
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
+    
+    // Get the current date to generate day numbers
+    const today = new Date();
+    const currentDay = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    const mondayDate = new Date(today);
+    
+    // Adjust to get Monday's date
+    const daysFromMonday = currentDay === 0 ? 7 : currentDay - 1;
+    mondayDate.setDate(today.getDate() - daysFromMonday);
+    
+    // Generate day numbers for the week starting from Monday
+    const dayNumbers: Record<string, string> = {};
+    days.forEach((day, index) => {
+      const date = new Date(mondayDate);
+      date.setDate(mondayDate.getDate() + index);
+      dayNumbers[day] = date.getDate().toString();
+    });
 
     return (
-          <div className="w-full overflow-x-auto">
-            
-            <div
-              className="grid border border-white/10 rounded-xl min-w-[900px]"
-              style={{ gridTemplateColumns: '3.5rem repeat(5, 1fr)' }}
-            >
-              {/* Time Column */}
-              <div className="flex flex-col border-r border-white/10 w-14 min-w-[3.5rem]">
-                {[
-                  "08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"
-                ].map(
-                  (time) => (
-                    <div
-                      key={time}
-                      className="h-20 flex items-start justify-end pr-2 text-xs text-gray-400 border-b border-white/5"
-                    >
-                      {time}
+      <div className="w-full overflow-x-auto bg-gradient-to-br from-teal-900/20 to-blue-900/30 p-4 rounded-xl"
+          style={
+        {
+          scrollbarWidth: 'none',    
+      } 
+    }>
+        <div className="flex flex-row gap-2 min-w-[900px]">
+          {/* Days headers and task columns */}
+          {days.map((day) => {
+            const tasks = schedule[day];
+            return (
+              <div key={day} className="flex flex-col gap-2 min-w-[120px]">
+                <div className="bg-black/30 p-2 text-white text-center rounded-md">
+                  <div className="text-sm">{dayNames[day as keyof typeof dayNames]} {dayNumbers[day]}</div>
+                </div>
+
+                {tasks.map((task, idx) => {
+                  // Determine priority color class
+                  const priorityColorMap: Record<string, string> = {
+                    "High": "bg-red-500",
+                    "Medium": "bg-amber-500",
+                    "Low": "bg-blue-500",
+                    "Critical": "bg-orange-500"
+                  };
+                  // Determine task code color
+                  const taskCodeColor =
+                    task.taskCode?.startsWith("FAZ") ? "text-orange-500" :
+                    task.taskCode?.startsWith("SO") ? "text-blue-500" : "text-gray-300";
+                  return (
+                    <div key={`${day}-${task.id || idx}`} className="rounded-xl p-4 bg-black/20 border border-white/10 text-white relative overflow-hidden">
+                      <>
+                        <div className="flex justify-between items-center mb-1">
+                          <div className="flex items-center gap-1">
+                            <span className={`text-xs ${taskCodeColor}`}>{task.taskCode}</span>
+                          </div>
+                          <span className={`text-xs ${priorityColorMap[task.priority] || "bg-gray-500"} px-2 py-0.5 rounded-sm`}>
+                            {task.priority}
+                          </span>
+                        </div>
+                        <div className="text-sm font-medium">{task.title}</div>
+                        <div className="text-xs text-gray-300 mt-1">{task.description}</div>
+                        <div className="mt-4 flex justify-between items-center">
+                          <div className="flex -space-x-2">
+                            {/* Task assignee avatar */}
+                            {task.taskFor?.avatar ? (
+                              <img
+                                src={task.taskFor.avatar}
+                                className="w-6 h-6 rounded-full border border-black object-cover"
+                                alt={task.taskFor.name || 'Assignee'}
+                                title={task.taskFor.name || 'Assignee'}
+                              />
+                            ) : (
+                              <div
+                                className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] border border-black"
+                                title={task.taskFor?.name || 'Assignee'}
+                              >
+                                {task.taskFor?.name?.charAt(0) || 'A'}
+                              </div>
+                            )}
+                            {/* Task creator avatar */}
+                            {task.createdBy?.avatar ? (
+                              <img
+                                src={task.createdBy.avatar}
+                                className="w-6 h-6 rounded-full border border-black object-cover"
+                                alt={task.createdBy.name || 'Creator'}
+                                title={task.createdBy.name || 'Creator'}
+                              />
+                            ) : (
+                              <div
+                                className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] border border-black"
+                                title={task.createdBy?.name || 'Creator'}
+                              >
+                                {task.createdBy?.name?.charAt(0) || 'C'}
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span className="text-xs">0h 52m</span>
+                            <span className="w-6 h-6 flex items-center justify-center">
+                              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 16C14.2091 16 16 14.2091 16 12C16 9.79086 14.2091 8 12 8C9.79086 8 8 9.79086 8 12C8 14.2091 9.79086 16 12 16Z" fill="currentColor" fillOpacity="0.5" />
+                              </svg>
+                            </span>
+                          </div>
+                        </div>
+                      </>
                     </div>
-                  )
+                  );
+                })}
+                {tasks.length === 0 && (
+                  <div className="h-32 rounded-xl border border-white/5 flex items-center justify-center text-white/30 text-sm">
+                    No tasks
+                  </div>
                 )}
               </div>
-    
-              {/* Days Columns */}
-              {days.map((day) => {
-                // Sort tasks by due date (taskDate) for this day
-                const sortedTasks = [...schedule[day]].sort((a, b) => new Date(a.taskDate).getTime() - new Date(b.taskDate).getTime());
-                return (
-                  <div key={day} className="flex flex-col border-r border-white/10">
-                    <div className="h-10 flex items-center justify-center font-medium text-white bg-black/30">
-                      {day}
-                    </div>
-                    <div className="flex flex-col gap-4 min-h-[880px] p-2"> {/* Use flex column, gap for spacing */}
-                      {loading ? (
-                        <div className="text-center text-blue-200 py-8">Loading...</div>
-                      ) : sortedTasks.length === 0 ? (
-                        <div className="text-center text-white/30 py-20">No tasks</div>
-                      ) : (
-                        sortedTasks.map((task, idx) => {
-                          // Determine gradient color based on status or priority
-                          const gradientClass = 
-                            task.status === 'completed' ? 'from-emerald-900/90 to-emerald-950' :
-                            task.status === 'in-progress' ? 'from-blue-900/90 to-blue-950' :
-                            task.priority === 'High' ? 'from-amber-900/90 to-amber-950' :
-                            'from-[#18323b] to-[#1a2a3a]';
-                          return (
-                            <div
-                              key={task.id || idx}
-                              className={`rounded-lg p-3 text-white shadow-md border border-white/10 bg-gradient-to-br ${gradientClass} hover:shadow-lg hover:scale-[1.01] transition-transform z-10`}
-                              style={{ minHeight: '70px' }}
-                            >
-                              <div className="flex items-center justify-between text-xs mb-1">
-                                <span className="px-2 py-0.5 rounded bg-blue-500/30">#{task.ticketNumber || task.id}</span>
-                                <span className={`px-2 py-0.5 rounded text-white text-[10px] ${colors[task.priority] ?? "bg-gray-500"}`}>
-                                  {task.priority || 'Normal'}
-                                </span>
-                              </div>
-                              <div className="font-semibold text-sm">{task.title}</div>
-                              <div className="text-xs text-gray-300 line-clamp-2">
-                                {task.description || 'No description provided'}
-                              </div>
-                              <div className="flex items-center justify-between mt-2 text-xs text-gray-300">
-                                <div className="flex -space-x-2">
-                                  {/* User avatars - using initials instead of images */}
-                                  {task.taskFor?.avatar ? (
-                                <img
-                                  src={task.taskFor.avatar}
-                                  className="w-6 h-6 rounded-full border border-black object-cover"
-                                  alt={task.taskFor.name || 'Assignee'}
-                                  title={task.taskFor.name || 'Assignee'}
-                                />
-                              ) : (
-                                <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] border border-black" 
-                                  title={task.taskFor?.name || 'Assignee'}>
-                                  {task.taskFor?.name?.charAt(0) || 'U'}
-                                </div>
-                              )}
-                                  <div className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] border border-black"
-                                       title={task.createdBy?.name || 'Creator'}>
-                                    {task.createdBy?.name?.charAt(0) || 'M'}
-                                  </div>
-                                </div>
-                                <span className="bg-black/30 px-2 py-0.5 rounded">{task.taskDate ? getTimeString(task.taskDate) : ''}</span>
-                                <MoreHorizontal size={16} className="text-gray-400" />
-                              </div>
-                            </div>
-                          );
-                        })
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      };
-    
-    export default TimeTable;
+            );
+          })}
+        </div>
+      </div>
+    );
+
+  };
+
+export default TimeTable;
