@@ -771,12 +771,20 @@ export default function ChatPage() {
             }`}
           >
             <div className="relative">
-              <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold"
-                style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
-                {contact.name?.[0]?.toUpperCase() || "?"}
-              </div>
-              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white/20"></div>
-            </div>
+  {contact.avatar ? (
+    <img 
+      src={contact.avatar} 
+      alt={contact.name}
+      className="w-9 h-9 rounded-full object-cover"
+    />
+  ) : (
+    <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold"
+      style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
+      {contact.name?.[0]?.toUpperCase() || "?"}
+    </div>
+  )}
+  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-gray-400 rounded-full border-2 border-white/20"></div>
+</div>
             <div className="flex-1 min-w-0">
               <p className="text-white text-sm font-medium truncate">{contact.name}</p>
               <p className="text-white/60 text-xs truncate">
@@ -857,21 +865,29 @@ export default function ChatPage() {
            */}
          <header className="p-4 bg-white/5 rounded-t-xl backdrop-blur-sm border-b border-white/20">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
-                    style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}
-                  >
-                    {selectedUser[0]}
-                  </div>
-                </div>
-                <div>
-                  <h2 className="font-semibold text-white" >
-                    {selectedUser}
-                  </h2>
-                </div>
-              </div>
+             <div className="flex items-center gap-3">
+  <div className="relative">
+    {contacts.find(c => c.id === selectedUserId)?.avatar ? (
+      <img 
+        src={contacts.find(c => c.id === selectedUserId)?.avatar} 
+        alt={selectedUser}
+        className="w-10 h-10 rounded-full object-cover"
+      />
+    ) : (
+      <div
+        className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
+        style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}
+      >
+        {selectedUser[0]}
+      </div>
+    )}
+  </div>
+  <div>
+    <h2 className="font-semibold text-white">
+      {selectedUser}
+    </h2>
+  </div>
+</div>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setShowMeetingDialog(true)}
@@ -882,18 +898,26 @@ export default function ChatPage() {
                   <Video className="w-6 h-6" style={{ color: "#ffffff" }} />
                 </button>
                 {/* <Video className="w-6 h-6" style={{ color: "#006699" }}/> */}
-                         <button
+      <button
   onClick={() => setShowUserProfile(!showUserProfile)}
   className="p-2 rounded-full hover:bg-white/10 transition"
   aria-label="Toggle user profile"
   type="button"
 >
-                  <div className="w-6 h-6 rounded-full  flex items-center justify-center text-white text-xs font-semibold"
-                  style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
-    {selectedUser[0]?.toUpperCase()}
-  </div>
+  {contacts.find(c => c.id === selectedUserId)?.avatar ? (
+    <img 
+      src={contacts.find(c => c.id === selectedUserId)?.avatar} 
+      alt={selectedUser}
+      className="w-6 h-6 rounded-full object-cover"
+    />
+  ) : (
+    <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
+      style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
+      {selectedUser[0]?.toUpperCase()}
+    </div>
+  )}
 </button>
-              </div>
+  </div>
    
               {/* Meeting Dialog */}
              {typeof window !== "undefined" && (
@@ -973,21 +997,32 @@ export default function ChatPage() {
                   <div key={i} className={`flex ${isSentByMe ? "justify-end" : "justify-start"}`}>
                     <div className={`max-w-xs lg:max-w-md ${!isSentByMe ? "order-2" : ""}`}>
                       {/* Show sender name and ID for received messages */}
-                      {!isSentByMe && (
-                        <div className="flex items-center gap-2 mb-1">
-                          <div
-                            className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
-                            style={{
-                              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                            }}
-                          >
-                            {senderName[0] || "?"}
-                          </div>
-                          <span className="text-xs" style={{ color: colors.secondary.hex }}>
-                            {senderName}
-                          </span>
-                        </div>
-                      )}
+                     {!isSentByMe && (
+  <div className="flex items-center gap-2 mb-1">
+    {(() => {
+      const contact = contacts.find((c) => c.id.toString() === msg.senderId);
+      return contact?.avatar ? (
+        <img 
+          src={contact.avatar} 
+          alt={senderName}
+          className="w-6 h-6 rounded-full object-cover"
+        />
+      ) : (
+        <div
+          className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
+          style={{
+            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+          }}
+        >
+          {senderName[0] || "?"}
+        </div>
+      );
+    })()}
+    <span className="text-xs" style={{ color: colors.secondary.hex }}>
+      {senderName}
+    </span>
+  </div>
+)}
                      <div
   className={`px-4 py-3 rounded-2xl shadow-sm ${
     isSentByMe 
@@ -1159,23 +1194,31 @@ export default function ChatPage() {
   <aside className="w-80 bg-white/5  backdrop-blur-xl rounded-xl border border-white/10 flex flex-col">
     {/* Profile Header */}
     <div className="p-6 border-b border-white/10">
-      <div className="flex items-center gap-4 mb-4">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-bold"
-                style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
-          {selectedUser[0]?.toUpperCase()}
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold text-white">{selectedUser}</h3>
-          <p className="text-white/60 text-sm">Online</p>
-        </div>
+  <div className="flex items-center gap-4 mb-4">
+    {contacts.find(c => c.id === selectedUserId)?.avatar ? (
+      <img 
+        src={contacts.find(c => c.id === selectedUserId)?.avatar} 
+        alt={selectedUser}
+        className="w-16 h-16 rounded-full object-cover"
+      />
+    ) : (
+      <div className="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-bold"
+        style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
+        {selectedUser[0]?.toUpperCase()}
       </div>
-      <button 
-        className="w-full px-4 py-2 rounded-lg text-white text-sm border border-white/20 hover:bg-white/10 transition"
-        onClick={() => setShowMeetingDialog(true)}
-      >
-        Call
-      </button>
+    )}
+    <div>
+      <h3 className="text-lg font-semibold text-white">{selectedUser}</h3>
+      <p className="text-white/60 text-sm">Online</p>
     </div>
+  </div>
+  <button 
+    className="w-full px-4 py-2 rounded-lg text-white text-sm border border-white/20 hover:bg-white/10 transition"
+    onClick={() => setShowMeetingDialog(true)}
+  >
+    Call
+  </button>
+</div>
 
     {/* Profile Content */}
     <div className="flex-1 p-4 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
