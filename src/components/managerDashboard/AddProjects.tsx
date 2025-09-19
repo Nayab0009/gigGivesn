@@ -139,7 +139,7 @@ function EditStatusModal({
   if (!open || !project) return null
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/30  flex items-center justify-center z-50 p-4">
       <div className="bg-black/20 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-white/10">
         {/* Header */}
         <div className="p-6 text-white bg-black/30 backdrop-blur-sm border-b border-white/10">
@@ -155,7 +155,8 @@ function EditStatusModal({
         </div>
 
         {/* Content */}
-        <div className="p-6">
+       {/* Content */}
+<div className="p-6 overflow-y-auto max-h-[calc(85vh-120px)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-black/30 backdrop-blur-xl rounded-lg">
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-200 mb-3">Select New Status</label>
@@ -247,8 +248,8 @@ function ViewTeamModal({
   if (!open || !projectId) return null
 
   return (
-    <div className="fixed inset-0 bg-transparent backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div className=" backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden border border-white/10">
+    <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50 p-4">
+      <div className="  rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden border border-white/10">
         {/* Header */}
         <div className="p-6 text-whitebackdrop-blur-sm border-white/10">
           <div className="flex items-center justify-between">
@@ -305,7 +306,7 @@ function ViewTeamModal({
     {project.teamMembers.map((member, index) => (
       <div
         key={member.id}
-        className="flex items-center space-x-4 p-4 bg-black rounded-xl border border-white/20 hover:bg-black/90 hover:shadow-md transition-all duration-200"
+       className="flex items-center space-x-4 p-4 bg-black/30 rounded-xl border border-white/20 hover:bg-black/40 hover:shadow-md transition-all duration-200"
       >
         <div className="relative flex-shrink-0">
           <img
@@ -580,8 +581,8 @@ export default function ProjectDashboard() {
         <div
           className="
             mb-8 
-            bg-black/40
-            backdrop-blur-xl 
+           bg-black/30
+    
             rounded-2xl 
             shadow-lg 
             border border-white/10 
@@ -658,7 +659,7 @@ export default function ProjectDashboard() {
 
         {/* Table Container */}
         <div
-          className="bg-black/30 
+          className="
             backdrop-blur-xl 
             rounded-2xl 
             shadow-lg 
@@ -676,14 +677,13 @@ export default function ProjectDashboard() {
           ) : (
             <div className="overflow-x-auto ">
               <table className="min-w-full divide-y divide-emerald-200 ">
-  <thead
+ <thead
   className="
+    bg-black/40
     rounded-t-2xl 
     shadow-lg 
     border-b border-white/20 
     overflow-hidden 
-
-   
   "
 >
   <tr className="h-[73px]">
@@ -717,9 +717,9 @@ export default function ProjectDashboard() {
 
 <tbody
   className="
+    bg-black/30
     rounded-b-2xl 
     shadow-lg 
-     border border-[rgba(255,255,255,0.1)] 
     overflow-hidden 
     divide-y divide-white/10
     backdrop-blur-xl
@@ -745,7 +745,7 @@ export default function ProjectDashboard() {
                     </tr>
                   ) : (
                     paginatedProjects.map((project) => (
-                      <tr key={project.id.toString()} className="hover:bg-white/10 transition-all duration-300">
+                      <tr key={project.id.toString()} className="transition-all duration-300">
                         {/* Project Name */}
                     <td className="px-6 py-6">
       <div className="flex items-center gap-3">

@@ -724,12 +724,12 @@ export default function ChatPage() {
   }
 
   return (
-<div className="flex h-screen  backdrop-blur-xl rounded-3xl border border-white/20 p-4 gap-10">
+<div className="flex h-screen  rounded-3xl p-4 gap-10">
 
 
       {/* Sidebar */}
      {/* Sidebar - Replace from line 473 */}
-<aside className="w-80 bg-white/5  rounded-xl backdrop-blur-sm border-r border-white/10 flex flex-col">
+<aside className="w-80 bg-black/20  rounded-xl backdrop-blur-sm border-r border-white/10 flex flex-col">
   {/* Header */}
   <div className="p-4 border-b border-white/10">
     <div className="flex items-center justify-between mb-4">
@@ -863,7 +863,7 @@ export default function ChatPage() {
         <main className="flex flex-col flex-1">
           {/* Chat 
            */}
-         <header className="p-4 bg-white/5 rounded-t-xl backdrop-blur-sm border-b border-white/20">
+         <header className="p-4 bg-black/30 rounded-t-xl  border-b border-white/20">
             <div className="flex items-center justify-between">
              <div className="flex items-center gap-3">
   <div className="relative">
@@ -931,7 +931,7 @@ export default function ChatPage() {
         ></div>
         
         {/* Modal content */}
-        <div className="relative bg-black/30 backdrop-blur-xl rounded-2xl shadow-2xl p-8 w-96 border border-white/20">
+        <div className="relative bg-black/30 rounded-2xl shadow-2xl p-8 w-96 border border-white/20">
           <div className="text-center">
             {/* Video call icon */}
             <div className="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center"
@@ -978,10 +978,10 @@ export default function ChatPage() {
             </div>
           </header>
           {/* Messages Area */}
-          <div
-            className="px-4 py-2 space-y-4 flex flex-col-reverse flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]" // Adjusted padding here
-            style={{ background: colors.accent.hex + "11" }}
-          >
+         {/* Messages Area */}
+<div
+  className="px-4 py-2 space-y-4 flex flex-col-reverse flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-black/30  " 
+>
             <div ref={messagesEndRef} />
             {messages
               .slice()
@@ -1086,7 +1086,7 @@ export default function ChatPage() {
           </div>
           {/* Chat Input */}
         
-<div className="p-4 bg-black/4 backdrop-blur-xl border-t border-white/10">
+<div className="p-4 bg-black/30  border-t border-white/10 rounded-b-xl"> 
             <div className="flex items-center justify-between gap-3">
               {/* File input button */}
               <input
@@ -1157,7 +1157,7 @@ export default function ChatPage() {
           </div>
         </main>
     ) : (
-        <div className="flex flex-col flex-1 items-center justify-center h-full bg-white/5 backdrop-blur-xl rounded-xl text-white">
+        <div className="flex flex-col flex-1 items-center justify-center h-full bg-black/30   rounded-xl text-white">
           <MessageCircle className="w-24 h-24 mb-4" />
           <h2 className="text-2xl font-semibold mb-2">Welcome to Chat!</h2>
           <p className="text-lg">Select a conversation from the sidebar to start messaging.</p>
@@ -1191,7 +1191,7 @@ export default function ChatPage() {
       {/* User Profile Panel */}
 {/* User Profile Panel */}
 {showUserProfile && selectedUserId && (
-  <aside className="w-80 bg-white/5  backdrop-blur-xl rounded-xl border border-white/10 flex flex-col">
+  <aside className="w-80 bg-black/30   rounded-xl border border-white/10 flex flex-col">
     {/* Profile Header */}
     <div className="p-6 border-b border-white/10">
   <div className="flex items-center gap-4 mb-4">
@@ -1250,7 +1250,7 @@ export default function ChatPage() {
               }
 
               return (
-                <div key={index} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg hover:bg-white/10 transition cursor-pointer">
+                <div key={index} className="flex items-center gap-3 p-3 bg-black/30 rounded-lg hover:bg-white/10 transition cursor-pointer">
                   {isImage ? (
                     <img 
                       src={fileMsg.fileUrl} 

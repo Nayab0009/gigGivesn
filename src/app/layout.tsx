@@ -23,15 +23,15 @@ export default function RootLayout({
         {/* Background Image */}
         <div className="fixed inset-0 -z-20">
           <Image
-            src="/images/Rectangle.png"
+            src="/images/Image (2).jpg"
             alt="Background"
             fill
             priority
             className="object-cover"
           />
         </div>
-
-  
+       
+  <div className="fixed inset-0 -z-10 bg-black/20 backdrop-blur-lg"></div>
         <Providers>
           <ProtectedRoute>{children}</ProtectedRoute>
         </Providers>

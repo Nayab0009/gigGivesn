@@ -449,14 +449,8 @@ export default function TeamListPage() {
 
 {/* Table Container */}
 <div
-  className="rounded-2xl border border-gray-400   shadow-2xl overflow-hidden backdrop-blur-xl"
-  style={{
-    background: "rgba(255, 255, 255, 0.05)",
-    borderColor: "rgba(255, 255, 255, 0.1)",
-    backdropFilter: "blur(20px)",
-    WebkitBackdropFilter: "blur(20px)",
-    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1)"
-  }}
+  className="rounded-2xl  shadow-2xl overflow-hidden backdrop-blur-xl"
+ 
 >
   {isLoading ? (
     <div className="p-12 text-center">
@@ -476,7 +470,7 @@ export default function TeamListPage() {
     </div>
   ) : (
     <div className="overflow-x-auto">
-      <table className="min-w-full border-separate border-spacing-y-4 backdrop-blur-md bg-black/40 px-5">
+      <table className="min-w-full border-separate border-spacing-y-4 bg-black/30 px-5">
         <thead className="text-white rounded-t-2xl h-[32px]">
           <tr className="h-[60px]">
             <th className="px-6 text-left text-sm font-medium text-white/90 w-[35%]">
@@ -517,9 +511,9 @@ export default function TeamListPage() {
       
       <tr
         key={member.id || index}
-        className="transition-all duration-300 hover:bg-white/5"
+        className="transition-all duration-30"
         style={{ 
-          background: "rgba(0, 0, 0, 0.2)",
+      
           borderRadius: "12px",
           overflow: "hidden",
           boxShadow: "0 0 0 1px rgba(255,255,255,0.1)",

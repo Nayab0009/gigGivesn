@@ -11,7 +11,7 @@ export default function DashboardLayout({
   const headerHeight = 72 // adjust based on your AppHeader height
 
   return (
-    <div className="min-h-screen w-full dark:bg-gray-900 flex flex-col relative">
+    <div className="min-h-screen w-full flex flex-col relative">
       {/* Header */}
       <div className="relative z-40">
         <Header />
@@ -19,7 +19,7 @@ export default function DashboardLayout({
 
       {/* Page content */}
       <main
-        className="flex-1 p-4 md:p-6  transition-all duration-500 ease-in-out"
+        className="flex-1 p-4 md:p-6 transition-all duration-500 ease-in-out"
         style={{
           marginTop: `${headerHeight}px`,
           minHeight: `calc(100vh - ${headerHeight}px)`,
