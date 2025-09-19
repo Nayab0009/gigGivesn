@@ -37,142 +37,185 @@ const SummaryTab = ({
 }: SummaryTabProps) => {
   return (
     <div className="space-y-6">
-      {/* Top stats row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {statCards.map((stat, i) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {statCards.map((c) => (
           <div
-            key={i}
-            className="rounded-2xl border border-white/10 p-6 shadow-md backdrop-blur-xl"
+            key={c.label}
+            className="rounded-2xl border border-white/10 p-4 text-white/90 backdrop-blur-xl flex flex-col gap-2"
             style={{ background: "#0000004D" }}
           >
-            <div className="flex items-center justify-between">
-              <div className="flex flex-col">
-                <span className="text-white/70 text-sm">{stat.label}</span>
-                <span className="text-3xl font-bold text-white mt-1">
-                  {stat.value}
-                </span>
-              </div>
-              <div className="bg-white/10 p-3 rounded-xl">{stat.icon}</div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="inline-flex items-center justify-center w-6 h-6 rounded-md">{c.icon}</span>
+              <span className="text-2xl font-semibold text-white mx-1">{c.value}</span>
+              <span className="text-sm capitalize font-medium text-white/80">{c.label}</span>
             </div>
-            <div className="mt-6 flex items-center gap-2">
-              <Clock className="w-4 h-4 text-white/70" />
-              <span className="text-white/70 text-xs">{stat.subText}</span>
+            <div className="text-xs text-white/60 mt-1">
+              {c.label === "due soon" ? "in the next 7 days" : "in the last 7 days"}
             </div>
           </div>
         ))}
       </div>
-
-      {/* Second row - two columns */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div
-          className="rounded-2xl border border-white/10 p-6 backdrop-blur-xl"
+          className="rounded-2xl border border-white/10 p-6 text-white/90 backdrop-blur-xl min-h-[320px]"
           style={{ background: "#0000004D" }}
         >
-          <div className="text-lg font-semibold text-white mb-6">Task Priority</div>
-          {/* Bar chart */}
-          {(() => {
-            // Chart setup
-            const maxVal = Math.max(
-              taskPriorities.highTask,
-              taskPriorities.mediumTask,
-              taskPriorities.lowTask,
-              1
-            )
-            const topTick = Math.ceil(maxVal / 5) * 5 // Round to nearest 5
-            const yTicks = Array.from({ length: 6 }, (_, i) => Math.round((i * topTick) / 5))
-            const chartHeight = 200
-            const scale = (value: number) => (value / topTick) * chartHeight
+          <div className="text-lg font-semibold mb-2">Status overview</div>
+          <div className="text-white/70 text-sm mb-6">
+            {taskCounts.totalTask > 0 ? (
+              "Current status overview of all work items in this project"
+            ) : (
+              <>
+                The status overview for this project will display here after you{" "}
+                <span style={{ color: "#0CA9F6" }}>create some work items</span>
+              </>
+            )}
+          </div>
+          <div className="text-center mt-18 text-4xl">{taskCounts.totalTask}</div>
+          <div className="text-center text-white/60 text-sm">Total work items</div>
+        </div>
+        <div
+          className="rounded-2xl border border-white/10 p-6 text-white/90 backdrop-blur-xl min-h-[320px]"
+          style={{ background: "#0000004D" }}
+        >
+          <div className="text-lg font-semibold mb-2">Description</div>
+          {project?.description ? (
+            <div className="mt-4 text-white/80">{project.description}</div>
+          ) : (
+            <div className="flex flex-col mt-12 items-center justify-center h-[150px]">
+              <div className="font-medium text-white/60">No description available</div>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div
+          className="rounded-2xl border border-white/10 p-6 text-white/90 backdrop-blur-xl min-h-[320px]"
+          style={{ background: "#0000004D" }}
+        >
+          <div className="text-lg font-semibold mb-2">Priority breakdown</div>
+          <div className="text-white/70 text-sm mb-6">
+            Get a holistic view of how work is being prioritized.{" "}
+            <a
+              href="#"
+              className="text-[#0CA9F6] hover:underline"
+              style={{ color: "#0CA9F6" }}
+            >
+              How to manage priorities for projects
+            </a>
+          </div>
+          <div className="w-full flex justify-center items-center" style={{ minHeight: 300 }}>
+            {/* Unified grid-based chart for clean axis/bar alignment */}
+            <div className="relative w-full max-w-xl" style={{ height: 260 }}>
+              {(() => {
+                // Compute nice tick values and scaling
+                const rawMax = Math.max(
+                  taskPriorities.highTask,
+                  taskPriorities.mediumTask,
+                  taskPriorities.lowTask,
+                  0
+                )
+                const paddedMax = Math.max(1, Math.ceil(rawMax * 1.1))
+                const tickCount = 4 // plus 0 at bottom => 5 labels
+                const step = Math.max(1, Math.ceil(paddedMax / tickCount))
+                const topTick = step * tickCount
+                const yTicks = Array.from({ length: tickCount + 1 }, (_, i) => i * step)
 
-            return (
-              <div className="grid grid-cols-[auto,1fr] grid-rows-[1fr,auto] gap-x-2 h-72">
-                {/* Y-axis */}
-                <div className="relative col-start-1 row-start-1 mr-4" style={{ height: chartHeight }}>
-                  {/* Y-axis line */}
-                  <div
-                    className="absolute top-0 bottom-0 right-0"
-                    style={{ width: 2, background: "#ffffff20", borderRadius: 2 }}
-                  />
+                const chartHeight = 180 // px
 
-                  {/* Y-axis ticks and labels */}
-                  {yTicks.map((t, i) => {
-                    const pos = (t / topTick) * 100 // percentage from bottom
-                    return (
+                const scale = (v: number) => (v / topTick) * chartHeight
+
+                return (
+                  <div className="grid grid-cols-[64px_1fr] grid-rows-[180px_auto] gap-x-0 px-4 py-4">
+                    {/* Y-axis column */}
+                    <div className="relative col-start-1 row-start-1" style={{ height: chartHeight }}>
+                      {/* Vertical axis line */}
                       <div
-                        key={`tick-${i}`}
-                        className="absolute text-white/90 text-xs"
-                        style={{
-                          bottom: `${pos}%`,
-                          right: 8,
-                          transform: "translateY(50%)",
-                        }}
-                      >
-                        {t}
-                      </div>
-                    )
-                  })}
-                </div>
-
-                {/* Bars area */}
-                <div
-                  className="relative col-start-2 row-start-1 flex items-end justify-around"
-                  style={{ height: chartHeight }}
-                >
-                  {/* X-axis line (only here) */}
-                  <div
-                    className="absolute left-0 right-0 bottom-0"
-                    style={{ height: 2, background: "#ffffff", borderRadius: 2 }}
-                  />
-
-                  {[
-                    { priority: "High Task", value: taskPriorities.highTask, color: "#34D399" },
-                    { priority: "Medium Task", value: taskPriorities.mediumTask, color: "#0CA9F6" },
-                    { priority: "Low Task", value: taskPriorities.lowTask, color: "#F472B6" },
-                  ].map((bar) => {
-                    const h = Math.max(2, scale(bar.value))
-                    return (
-                      <div key={bar.priority} className="relative group flex flex-col items-center" style={{ width: 64 }}>
-                        {/* Value label */}
-                        <div className="text-white text-sm font-medium mb-1">{bar.value}</div>
-                        <div
-                          className="w-full transition-all duration-300 rounded-t-lg"
-                          style={{ height: h, backgroundColor: bar.color, position: "relative" }}
-                        >
-                          {/* Bar gloss */}
-                          <div className="absolute inset-0">
-                            <div className="w-full h-full bg-gradient-to-t from-white/10 to-transparent rounded-t-lg" />
-                          </div>
-                          {/* Hover tooltip */}
+                        className="absolute top-0 bottom-0 right-0"
+                        style={{ width: 2, background: "#ffffff", borderRadius: 2 }}
+                      />
+                      {/* Tick labels */}
+                      {yTicks.map((t, i) => {
+                        const pos = (t / topTick) * 100 // percentage from bottom
+                        return (
                           <div
-                            className="absolute opacity-0 group-hover:opacity-100 left-full top-1/2 -translate-y-1/2 ml-2 bg-black/80 text-white text-xs px-3 py-2 rounded-lg shadow-lg transition-opacity z-10"
-                            style={{ whiteSpace: "nowrap" }}
+                            key={`tick-${i}`}
+                            className="absolute text-white/90 text-xs"
+                            style={{
+                              bottom: `${pos}%`,
+                              right: 8,
+                              transform: "translateY(50%)",
+                            }}
                           >
-                            {bar.priority}
-                            <br />
-                            <span className="font-semibold">{bar.value} tasks</span>
+                            {t}
                           </div>
+                        )
+                      })}
+                    </div>
+
+                    {/* Bars area */}
+                    <div
+                      className="relative col-start-2 row-start-1 flex items-end justify-around"
+                      style={{ height: chartHeight }}
+                    >
+                      {/* X-axis line (only here) */}
+                      <div
+                        className="absolute left-0 right-0 bottom-0"
+                        style={{ height: 2, background: "#ffffff", borderRadius: 2 }}
+                      />
+
+                      {[
+                        { priority: "High Task", value: taskPriorities.highTask, color: "#34D399" },
+                        { priority: "Medium Task", value: taskPriorities.mediumTask, color: "#0CA9F6" },
+                        { priority: "Low Task", value: taskPriorities.lowTask, color: "#F472B6" },
+                      ].map((bar) => {
+                        const h = Math.max(2, scale(bar.value))
+                        return (
+                          <div key={bar.priority} className="relative group flex flex-col items-center" style={{ width: 64 }}>
+                            {/* Value label */}
+                            <div className="text-white text-sm font-medium mb-1">{bar.value}</div>
+                            <div
+                              className="w-full transition-all duration-300 rounded-t-lg"
+                              style={{ height: h, backgroundColor: bar.color, position: "relative" }}
+                            >
+                              {/* Bar gloss */}
+                              <div className="absolute inset-0">
+                                <div className="w-full h-full bg-gradient-to-t from-white/10 to-transparent rounded-t-lg" />
+                              </div>
+                              {/* Hover tooltip */}
+                              <div
+                                className="absolute opacity-0 group-hover:opacity-100 left-full top-1/2 -translate-y-1/2 ml-2 bg-black/80 text-white text-xs px-3 py-2 rounded-lg shadow-lg transition-opacity z-10"
+                                style={{ whiteSpace: "nowrap" }}
+                              >
+                                {bar.priority}
+                                <br />
+                                <span className="font-semibold">{bar.value} tasks</span>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+
+                    {/* X-axis labels row aligned with bars */}
+                    <div className="col-start-2 row-start-2 mt-2">
+                      <div className="flex justify-around text-[13px] font-medium">
+                        <div className="text-center" style={{ color: "#34D399", width: 64 }}>
+                          High Task
+                        </div>
+                        <div className="text-center" style={{ color: "#0CA9F6", width: 64 }}>
+                          Medium Task
+                        </div>
+                        <div className="text-center" style={{ color: "#F472B6", width: 64 }}>
+                          Low Task
                         </div>
                       </div>
-                    )
-                  })}
-                </div>
-
-                {/* X-axis labels row aligned with bars */}
-                <div className="col-start-2 row-start-2 mt-2">
-                  <div className="flex justify-around text-[13px] font-medium">
-                    <div className="text-center" style={{ color: "#34D399", width: 64 }}>
-                      High Task
-                    </div>
-                    <div className="text-center" style={{ color: "#0CA9F6", width: 64 }}>
-                      Medium Task
-                    </div>
-                    <div className="text-center" style={{ color: "#F472B6", width: 64 }}>
-                      Low Task
                     </div>
                   </div>
-                </div>
-              </div>
-            )
-          })()}
+                )
+              })()}
+            </div>
+          </div>
         </div>
         <div
           className="rounded-2xl border border-white/10 p-6 text-white/90 backdrop-blur-xl min-h-[320px] flex flex-col justify-center"
