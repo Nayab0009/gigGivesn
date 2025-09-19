@@ -13,7 +13,9 @@ import { useAuth } from "@/context/AuthContext"
 import { colors } from "@/colors"
 
 import TimeTable from "./TimeTable"
-import { getManagerTasks } from "@/lib/TaskService"
+import { getManagerTasksToday } from "@/lib/TaskService"
+import Link from "next/link"
+import TodayTask from "./TodayTask"
 
 
 interface Project {
@@ -56,14 +58,21 @@ interface AnalyticsData {
 
 export default function ManagerDashboard() {
   // Today Task State
-   const [todayTasks, setTodayTasks] = useState<any[]>([]) // Removed duplicate declaration
+  const [todayTasks, setTodayTasks] = useState<any[]>([]) // Removed duplicate declaration
   const [tasksLoading, setTasksLoading] = useState(false)
+
+
+
+  //for popup opening
+  const [isPopupOpen, setIsPopupOpen] = useState(false)
+  const [selectedTask, setSelectedTask] = useState<any>(null)
+
   // Fetch first 3 tasks for Today Task section
   useEffect(() => {
     const fetchTasks = async () => {
       setTasksLoading(true)
       try {
-        const data = await getManagerTasks()
+        const data = await getManagerTasksToday()
         const priorityBuckets: Record<string, any[]> = { high: [], medium: [], low: [], other: [] }
         if (Array.isArray(data)) {
           data.forEach(task => {
@@ -95,9 +104,11 @@ export default function ManagerDashboard() {
     }
     fetchTasks()
   }, [])
+
+
   const { user } = useAuth() // Get logged-in manager info
   const [projects, setProjects] = useState<Project[]>([])
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
+  // const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [analytics, setAnalytics] = useState<AnalyticsData>({
@@ -211,6 +222,20 @@ export default function ManagerDashboard() {
     return 0;
   });
 
+
+
+  const highCount = todayTasks.filter(t => t.priority?.toLowerCase() === "high").length
+  const mediumCount = todayTasks.filter(t => t.priority?.toLowerCase() === "medium").length
+  const lowCount = todayTasks.filter(t => t.priority?.toLowerCase() === "low").length
+  const totalCount = todayTasks.length || 1
+
+
+  //handle view all click
+  const handleViewAllClick = () => {
+    setIsPopupOpen(true);
+    
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black/40 backdrop-blur-md rounded-2xl">
@@ -228,10 +253,10 @@ export default function ManagerDashboard() {
 
 
   return (
-    <div className="min-h-screen pb-12 bg-black/40 backdrop-blur-md text-white rounded-2xl">
+    <div className="min-h-screen pb-12  text-white rounded-2xl">
       {/* Header */}
       <header className="px-6 py-10 rounded-b-3xl  mb-8 ml-6 mr-6">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Manager Dashboard</h1>
             <p className="text-sm md:text-base mt-1">
@@ -253,108 +278,123 @@ export default function ManagerDashboard() {
         )}
       </div>
 
-      {/* Today Task Section - new modern cards */}
-   
-<div className="max-w-7xl mx-auto px-6 mb-10">
-  <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
     
+{/* Today Task Section */}
+      <div className="mx-auto px-6 mb-10">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-stretch">
+          {/* Today Task + Timetable */}
+          <div className="lg:col-span-3 flex flex-col gap-6">
+            <div
+              className="rounded-2xl p-4 bg-black/30"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-lg md:text-xl font-bold tracking-tight">Today Task</h4>
+                <button className="text-sm text-blue-400 hover:text-blue-300"
+                  onClick={handleViewAllClick}>
+                  See All
+                </button>
+              </div>
+              {/* Task Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {tasksLoading ? (
+                  <div className="col-span-3 text-center text-blue-200 py-8">Loading...</div>
+                ) : todayTasks.length === 0 ? (
+                  <div className="col-span-3 text-center text-blue-200 py-8">
+                    No tasks found.
+                  </div>
+                ) : (
+                  sortedTodayTasks.map((task, idx) => {
+                    const priorityLabel = task.priority
+                      ? `${task.priority} Priority`
+                      : "Task"
+                    const priorityColorClass = "text-blue-400"
 
-    {/* Today Task Section and Timetable - take 3 columns */}
-    <div className="lg:col-span-3 flex flex-col gap-6">
-      <div className="rounded-2xl p-4"
-        style={{
-          background: 'linear-gradient(120deg, rgba(255,255,255,0.10) 0%, rgba(60,120,180,0.10) 100%)',
-          border: '1.5px solid rgba(255,255,255,0.13)',
-          boxShadow: '0 4px 24px 0 rgba(31, 38, 135, 0.10)'
-        }}
-      >
-        <div className="flex items-center justify-between mb-4">
-          <h4 className="text-lg md:text-xl font-bold tracking-tight">Today Task</h4>
-          <a href="#" className="text-sm text-blue-400 hover:text-blue-300">See All</a>
-        </div>
-        {/* Task Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tasksLoading ? (
-            <div className="col-span-3 text-center text-blue-200 py-8">Loading...</div>
-          ) : todayTasks.length === 0 ? (
-            <div className="col-span-3 text-center text-blue-200 py-8">No tasks found.</div>
-          ) : (
-            sortedTodayTasks.map((task, idx) => {
-              // Always use low priority (blue) color for all cards
-              const priorityLabel = task.priority ? `${task.priority} Priority` : 'Task';
-              const priorityColorClass = 'text-blue-400';
-              
-              // Get assigned users (from task.taskFor or fallback)
-              const assignedUsers = [task.taskFor].filter(Boolean);
-              if (task.createdBy && !assignedUsers.find(u => u.id === task.createdBy.id)) {
-                assignedUsers.push(task.createdBy);
-              }
-              
-              // Progress info (randomized for demo, should come from API)
-              const completed = Math.floor(Math.random() * 10) + 1;
-              const total = Math.floor(Math.random() * 5) + 10;
-              const progressColor = 'text-blue-400';
-              
-              return (
-                <div 
-                  key={task.id || idx} 
-                  className="rounded-xl p-6 bg-black/30 flex flex-col justify-between min-h-[160px]"
-                  style={{
-                    backgroundImage: 'linear-gradient(to bottom right, rgba(24, 50, 59, 0.9), rgba(26, 42, 58, 0.9))',
-                    border: '1px solid rgba(255, 255, 255, 0.1)'
-                  }}
-                >
-                  {/* Priority Label */}
-                  <div className={`text-xs font-medium mb-2 ${priorityColorClass}`}>
-                    {priorityLabel}
-                  </div>
-                  
-                  {/* Task Title */}
-                  <div className="font-bold text-lg text-white mb-4">
-                    {task.title || task.name || 'Untitled Task'}
-                  </div>
-                  
-                  {/* User Avatars */}
-                  <div className="flex -space-x-2 mb-4">
-                    {assignedUsers.map((user, i) => (
-                      <div key={user?.id || i} className="relative">
-                        {user?.avatar ? (
-                          <img
-                            src={user.avatar}
-                            className="w-8 h-8 rounded-full border-2 border-black object-cover"
-                            alt={user.name || ''}
-                            title={user.name || ''}
-                          />
-                        ) : (
-                          <div 
-                            className="w-8 h-8 rounded-full border-2 border-black bg-blue-600 text-white flex items-center justify-center text-xs"
-                            title={user?.name || ''}
-                          >
-                            {user?.name?.charAt(0) || 'U'}
+                    const assignedUsers = [task.taskFor].filter(Boolean)
+                    if (
+                      task.createdBy &&
+                      !assignedUsers.find(u => u.id === task.createdBy.id)
+                    ) {
+                      assignedUsers.push(task.createdBy)
+                    }
+
+                    let completed = 0
+                    if (task.priority?.toLowerCase() === "high") {
+                      completed = highCount
+                    } else if (task.priority?.toLowerCase() === "medium") {
+                      completed = mediumCount
+                    } else if (task.priority?.toLowerCase() === "low") {
+                      completed = lowCount
+                    }
+
+                    return (
+                      <div
+                        key={task.id || idx}
+                        className="rounded-xl p-6 bg-black/30 flex flex-col justify-between min-h-[160px]"
+                        style={{
+                          backgroundImage:
+                            "linear-gradient(to bottom right, rgba(24, 50, 59, 0.9), rgba(26, 42, 58, 0.9))",
+                          border: "1px solid rgba(255, 255, 255, 0.1)",
+                        }}
+
+                      >
+                        {/* Priority Label */}
+                        <div className={`text-xs font-medium mb-2 ${priorityColorClass}`}>
+                          {priorityLabel}
+                        </div>
+
+                        {/* Task Title */}
+                        <div className="font-bold text-lg text-white mb-4">
+                          {task.title || task.name || "Untitled Task"}
+                        </div>
+
+                        {/* User Avatars */}
+                        <div className="flex -space-x-2 mb-4">
+                          {assignedUsers.map((user, i) => (
+                            <div key={user?.id || i} className="relative">
+                              {user?.avatar ? (
+                                <img
+                                  src={user.avatar}
+                                  className="w-8 h-8 rounded-full border-2 border-black object-cover"
+                                  alt={user.name || ""}
+                                  title={user.name || ""}
+                                />
+                              ) : (
+                                <div
+                                  className="w-8 h-8 rounded-full border-2 border-black bg-blue-600 text-white flex items-center justify-center text-xs"
+                                  title={user?.name || ""}
+                                >
+                                  {user?.name?.charAt(0) || "U"}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Progress Bar */}
+                        <div className="flex items-center justify-between">
+                          <div className="w-24 h-1 bg-gray-700 rounded-full">
+                            <div
+                              className="h-1 rounded-full bg-blue-400"
+                              style={{
+                                width:
+                                  totalCount > 0
+                                    ? `${(completed / totalCount) * 100}%`
+                                    : "0%",
+                              }}
+                            />
                           </div>
-                        )}
+                          <span className="text-xs font-medium text-blue-400">
+                            {completed}/{totalCount}
+                          </span>
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                  
-                  {/* Progress Bar & Completion */}
-                  <div className="flex items-center justify-between">
-                    <div className="w-24 h-1 bg-gray-700 rounded-full">
-                      <div 
-                        className="h-1 rounded-full bg-blue-400" 
-                        style={{ width: `${(completed/total)*100}%` }}
-                      ></div>
-                    </div>
-                    <span className={`text-xs font-medium ${progressColor}`}>
-                      {String(completed).padStart(2, '0')}/{String(total).padStart(2, '0')}
-                    </span>
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
-      </div>
+                    )
+                  })
+                )}
+              </div>
+            </div>
+
+                          
       {/* Timetable directly below Today Task */}
       <div
         className="rounded-2xl border border-blue-200/30 bg-black/30 overflow-auto scrollbar-none"
@@ -396,7 +436,7 @@ export default function ManagerDashboard() {
               <span className="text-xs text-white">Backlog <span className="font-bold">{analytics.totalProjects - analytics.completedProjects - analytics.activeProjects}</span></span>
             </div>
           </div>
-          <svg width="170" height="170" viewBox="0 0 36 36" className="mr-2">
+          <svg width="180" height="180" viewBox="0 0 36 36" className="mr-2">
             <circle cx="18" cy="18" r="15.9155" fill="none" stroke="white" strokeWidth="3.5" />
             {/* Completed */}
             <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#8b5cf6" strokeWidth="3.5" strokeDasharray={`${analytics.completedProjects / (analytics.totalProjects || 1) * 100},100`} strokeDashoffset="25" />
@@ -448,8 +488,8 @@ export default function ManagerDashboard() {
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <button className="p-2 rounded-full bg-black/30 hover:bg-black/50">📞</button>
-                  <button className="p-2 rounded-full bg-black/30 hover:bg-black/50">🎥</button>
+                  <button className="p-2 rounded-full bg-black/30 hover:bg-black/50 text-white">📞</button>
+                  <button className="p-2 rounded-full bg-black/30 hover:bg-black/50 text-white">🎥</button>
                 </div>
               </div>
             ))
@@ -461,9 +501,21 @@ export default function ManagerDashboard() {
   </div>
 </div>
   
-  
-
-      {/* Main Content Grid - removed duplicate Communication Logs sidebar */}
+  {isPopupOpen && (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      onClick={() => setIsPopupOpen(false)}
+    >
+      <div
+        className="rounded-2xl p-6 max-w-5xl w-full mx-4 relative"
+        onClick={e => e.stopPropagation()}
+      >
+        <TodayTask />
+      </div>
     </div>
+  )}
+  </div>
+
+                
   )
 }

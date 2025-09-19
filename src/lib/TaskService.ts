@@ -113,3 +113,17 @@ export const getTasksByProjectId = async (projectId: string): Promise<any> => {
         throw error;
     }
 }
+
+
+//get tasks created by manager today 
+export const getManagerTasksToday = async (): Promise<any> => {
+    try {
+        const response = await axiosInstance.get('/tasks/manager/today');
+        return response.data;
+    } catch (error) {
+        console.log("Error fetching today's tasks", error);
+        throw error;
+    }
+}   
+
+  

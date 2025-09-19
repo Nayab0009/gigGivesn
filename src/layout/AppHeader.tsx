@@ -8,6 +8,7 @@ import Link from "next/link"
 import { useEffect, useState, useCallback } from "react"
 import type React from "react"
 import { colors } from "@/colors"
+import NotificationDropdown from "@/components/header/NotificationDropdown"
 
 // Define the type for navigation items (same as sidebar)
 type NavItem = {
@@ -364,7 +365,12 @@ const AppHeader: React.FC = () => {
   </button>
 
   {/* Rectangle 105 instead of notification icon */}
-  <div className="w-10 h-10 relative">
+  <div
+    className="w-10 h-10 relative"
+    onClick={(e) => e.stopPropagation()}
+  >
+    {/* Notification Dropdown Component */}
+    <NotificationDropdown />
     <Image
       src="/images/notification.png"
       alt="Notifications"
