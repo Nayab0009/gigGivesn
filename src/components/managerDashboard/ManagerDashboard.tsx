@@ -295,7 +295,7 @@ export default function ManagerDashboard() {
                 </button>
               </div>
               {/* Task Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
                 {tasksLoading ? (
                   <div className="col-span-3 text-center text-blue-200 py-8">Loading...</div>
                 ) : todayTasks.length === 0 ? (
@@ -330,11 +330,6 @@ export default function ManagerDashboard() {
                       <div
                         key={task.id || idx}
                         className="rounded-xl p-6 bg-black/30 flex flex-col justify-between min-h-[160px]"
-                        style={{
-                          backgroundImage:
-                            "linear-gradient(to bottom right, rgba(24, 50, 59, 0.9), rgba(26, 42, 58, 0.9))",
-                          border: "1px solid rgba(255, 255, 255, 0.1)",
-                        }}
 
                       >
                         {/* Priority Label */}
@@ -409,11 +404,8 @@ export default function ManagerDashboard() {
       {/* Project Status Card */}
       <div
         className="rounded-xl p-5 flex flex-col justify-between border border-blue-200/30 
-                   bg-gradient-to-br from-[#18323b] to-[#1a2a3a] shadow-md w-full min-w-[280px] max-w-[340px] mx-auto"
-        style={{
-          minHeight: '130px',
-          boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)',
-        }}
+                   bg-black/30 shadow-md w-full min-w-[280px] max-w-[340px] mx-auto"
+
       >
         <div className="flex items-center justify-between mb-2"> 
           <span className="text-lg font-semibold text-white">Project Completed</span>
@@ -450,12 +442,7 @@ export default function ManagerDashboard() {
       {/* Communication Logs Card */}
       <div
         className="rounded-xl p-5 flex flex-col justify-between border border-blue-200/30 
-                  bg-gradient-to-br from-[#18323b] to-[#1a2a3a] shadow-md w-full min-w-[280px] max-w-[340px] mx-auto"
-        style={{
-          minHeight: '300px',
-          boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)',
-          transition: 'box-shadow 0.2s',
-        }}
+                  bg-black/30 shadow-md w-full min-w-[280px] max-w-[340px] mx-auto"
       >
         <div className="flex items-center justify-between mb-4">
           <span className="text-lg font-semibold text-white">Communication Logs</span>

@@ -23,7 +23,7 @@ export default function RootLayout({
         {/* Background Image */}
         <div className="fixed inset-0 -z-20">
           <Image
-            src="/images/Rectangle 105.png"
+            src="/images/Rectangle.png"
             alt="Background"
             fill
             priority
@@ -31,9 +31,7 @@ export default function RootLayout({
           />
         </div>
 
-        {/* Blur Overlay (Glass Effect Layer) */}
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-3xl -z-10" />
-
+  
         <Providers>
           <ProtectedRoute>{children}</ProtectedRoute>
         </Providers>
