@@ -20,6 +20,7 @@ const AddSprint: React.FC = () => {
     project: '',
   });
   const [submitting, setSubmitting] = useState(false);
+const today = new Date().toISOString().split("T")[0];
 
   useEffect(() => {
     if (user?.id) {
@@ -45,7 +46,7 @@ const AddSprint: React.FC = () => {
       setForm({ title: '', description: '', startDate: '', endDate: '', project: '' });
       
       // Navigate to showsprints page after successful creation
-      router.push('/dashboard/manager/showsprints');
+router.push(`/dashboard/manager/projects/${createdSprint.project.id}`)
     } catch (error) {
       console.log('Error to create Sprint', error);       
     } finally {
@@ -153,6 +154,7 @@ const AddSprint: React.FC = () => {
                     </label>
                     <input
                       type="date"
+                        min={today}
                       required
                       value={form.startDate}
                       onChange={e => setForm(prev => ({ ...prev, startDate: e.target.value }))}
@@ -171,9 +173,10 @@ const AddSprint: React.FC = () => {
                     </label>
                     <input
                       type="date"
+                        min={form.startDate || today} 
                       required
                       value={form.endDate}
-                      onChange={e => setForm(prev => ({ ...prev, endDate: e.target.value }))}
+                    onChange={e => setForm(prev => ({ ...prev, endDate: e.target.value }))}
                      className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none 
                                  bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
                                   focus:border-white/40"

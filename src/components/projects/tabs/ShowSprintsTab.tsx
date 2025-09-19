@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar, Clock, Plus, Users, CheckCircle, Circle } from 'lucide-react';
+import { Calendar, Clock, Plus, Users, CheckCircle, Circle, Eye } from 'lucide-react';
 import { AssignTaskModal } from '../../adminDashboard/AssignProjectTicket';
 import type { Task } from '@/types';
 import { colors } from "@/colors";
@@ -244,23 +244,30 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
                   </div>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-3">
+                  {/* Add Task Button with clear label */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleAddTask(sprint);
                     }}
-                    className="p-2 rounded-lg hover:opacity-80 transition"
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:opacity-80 transition text-sm font-medium"
                     style={{ backgroundColor: `${colors.primary.rgb.replace(", 1)", ", 0.2)")}`, color: colors.primary.hex }}
+                    title="Add new task to this sprint"
                   >
                     <Plus className="w-4 h-4" />
+                    <span>Add Task</span>
                   </button>
+                  
+                  {/* Show Tasks Button with clear label */}
                   <button
                     onClick={() => handleSprintClick(sprint)}
-                    className="p-2 rounded-lg hover:opacity-80 transition"
-                    style={{ backgroundColor: `${colors.primary.rgb.replace(", 1)", ", 0.2)")}`, color: colors.primary.hex }}
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:opacity-80 transition text-sm font-medium"
+                    style={{ backgroundColor: `${colors.secondary.rgb?.replace(", 1)", ", 0.2)") || `${colors.primary.rgb.replace(", 1)", ", 0.15)")}`}`, color: colors.secondary.hex || colors.primary.hex }}
+                    title="View all tasks in this sprint"
                   >
-                    <Users className="w-4 h-4" />
+                    <Eye className="w-4 h-4" />
+                    <span>Show Tasks</span>
                   </button>
                 </div>
               </div>
