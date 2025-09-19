@@ -31,6 +31,7 @@ interface BackendProject {
   startDate: string
   endDate: string
   status?: string
+   logo?: string 
 }
 
 // Interface for project team members
@@ -775,10 +776,34 @@ export default function ProjectDashboard() {
                     paginatedProjects.map((project) => (
                       <tr key={project.id.toString()} className="hover:bg-white/10 transition-all duration-300">
                         {/* Project Name */}
-                        <td className="px-6 py-6">
-                          <span  className="text-lg font-semibold text-white leading-tight hover:underline decoration-white/60">{project.name}</span>
-                  
-                        </td>
+                    <td className="px-6 py-6">
+      <div className="flex items-center gap-3">
+        {/* Project Logo */}
+        {project.logo ? (
+          <img 
+            src={project.logo} 
+            alt={`${project.name} logo`}
+            className="w-12 h-12 rounded-lg object-cover"
+            onError={(e) => {
+
+              e.currentTarget.src = `https://api.dicebear.com/7.x/initials/svg?seed=${project.name}&backgroundColor=3b82f6,8b5cf6,10b981,f59e0b,ef4444`
+            }}
+          />
+        ) : (
+          // Default avatar if no logo
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center border border-white/20 shadow-sm">
+            <span className="text-white font-semibold text-sm">
+              {project.name.charAt(0).toUpperCase()}
+            </span>
+          </div>
+        )}
+        
+        {/* Project Name */}
+        <span className="text-lg font-semibold text-white leading-tight hover:underline decoration-white/60">
+          {project.name}
+        </span>
+      </div>
+    </td>
 
                         {/* Description */}
                        <td className="px-6 py-6">
