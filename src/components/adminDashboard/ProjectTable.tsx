@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState, useEffect, useMemo, useRef } from "react"
-import { Search, Trash2, RefreshCw, AlertCircle, Plus, X, ChevronDown } from "lucide-react"
+import { Search, Trash2, RefreshCw, AlertCircle, Plus, X, ChevronDown, Eye } from "lucide-react"
 import { useRouter } from "next/navigation"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
@@ -995,6 +995,18 @@ export default function ProjectDashboard() {
                         </td>
                         <td className="px-6 py-6">
                           <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => router.push(`/dashboard/manager/projects/${project.id}`)}
+                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1 border"
+                              style={{
+                                background: "#0000004D",
+                                borderColor: "#FFFFFF4D",
+                                color: "#BDBDBD",
+                              }}
+                              title="View Details"
+                            >
+                              <Eye className="w-4 h-4 text-white" />
+                            </button>
                             <button
                               onClick={() => setEditProjectId(project.id)}
                               className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1 border"
