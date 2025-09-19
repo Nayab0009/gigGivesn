@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { X, UserCheck, Users, Crown, ChevronRight, Loader2, AlertCircle, Check } from "lucide-react";
+import { Users, Loader2, AlertCircle, Check, Lock } from "lucide-react";
 import axiosInstance from "@/lib/axios";
 import type { Team, Project } from "@/types";
 import { colors } from "@/colors";
+import {getProjectTeam} from "@/lib/ProjectService";
+
 
 interface AssignTeamModalProps {
   open: boolean;
@@ -37,6 +39,23 @@ export function AssignTeamModal({
   const [isAssigning, setIsAssigning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+  const [assignedMemberIds, setAssignedMemberIds] = useState<string[]>([]);
+
+  // Fetch existing project team members
+  const fetchExistingTeamMembers = async () => {
+    if (!project) return;
+
+    try {
+      const existingTeam = await getProjectTeam(project.id);
+      // Extract member IDs from the existing team
+      const memberIds = existingTeam?.members?.map((member: any) => member.id) || [];
+      setAssignedMemberIds(memberIds);
+    } catch (error) {
+      console.error('Error fetching existing team members:', error);
+      // Continue without error - maybe the project doesn't have a team yet
+      setAssignedMemberIds([]);
+    }
+  };
 
   // Fetch employees from backend and organize them into teams
   const fetchTeams = async () => {
@@ -120,8 +139,13 @@ export function AssignTeamModal({
     }
   };
 
-  // Toggle member selection
+  // Toggle member selection (only if not already assigned)
   const toggleMemberSelection = (memberId: string) => {
+    // Don't allow selection if member is already assigned to the project
+    if (assignedMemberIds.includes(memberId)) {
+      return;
+    }
+
     setSelectedMembers(prev =>
       prev.includes(memberId)
         ? prev.filter(id => id !== memberId)
@@ -129,9 +153,20 @@ export function AssignTeamModal({
     );
   };
 
-  // Fetch teams when modal opens
+  // Check if a member is already assigned to the project
+  const isMemberAssigned = (memberId: string) => {
+    return assignedMemberIds.includes(memberId);
+  };
+
+  // Get available (unassigned) members count for a team
+  const getAvailableMembersCount = (team: Team) => {
+    return team.members.filter(member => !isMemberAssigned(member.id)).length;
+  };
+
+  // Fetch teams and existing team members when modal opens
   useEffect(() => {
     if (open) {
+      fetchExistingTeamMembers();
       fetchTeams();
       setSelectedMembers([]); // Reset selection when modal opens
     }
@@ -151,6 +186,11 @@ export function AssignTeamModal({
           {selectedMembers.length > 0 && (
             <p className="text-gray-400 text-sm mt-1">
               {selectedMembers.length} member{selectedMembers.length !== 1 ? 's' : ''} selected
+            </p>
+          )}
+          {assignedMemberIds.length > 0 && (
+            <p className="text-blue-400 text-sm mt-1">
+              {assignedMemberIds.length} member{assignedMemberIds.length !== 1 ? 's' : ''} already assigned
             </p>
           )}
         </div>
@@ -185,79 +225,109 @@ export function AssignTeamModal({
           )}
 
           {/* Teams List */}
-          {!isLoading && !error && teams.map((team, index) => (
-            <div
-              key={team.id}
-              className="border border-white/20 rounded-xl p-6 bg-white/10 backdrop-blur-sm transition-all duration-300 relative overflow-hidden mb-6"
-            >
-              {/* Team Header */}
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center space-x-4">
-                  <div className="p-3 rounded-xl  backdrop-blur-sm border border-white/10">
-                    <Users className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-xl text-white">
-                      {team.name}
-                    </h3>
-                    <p className="text-sm text-gray-300 font-medium">
-                      {team.department} Department
-                    </p>
-                  </div>
-                </div>
-                <span className="text-sm px-4 py-2 rounded-full font-semibold border border-white/20 bg-white/10 backdrop-blur-sm text-white">
-                  {team.members.length} member{team.members.length !== 1 ? 's' : ''}
-                </span>
-              </div>
-
-              {/* Team Members */}
-              <div>
-                <div className="flex items-center space-x-2 mb-4">
-                  <Users className="w-4 h-4 text-white" />
-                  <span className="font-semibold text-sm text-gray-200">Select Team Members</span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {team.members.map((member: any) => (
-                    <div
-                      key={member.id}
-                      className={`relative flex items-center space-x-3 p-3 rounded-xl border cursor-pointer backdrop-blur-sm transition-all duration-200 ${
-                        selectedMembers.includes(member.id)
-                          ? 'bg-white/10 border-white/30 shadow-md'
-                          : 'bg-black/30 border-white/20 hover:bg-white/15'
-                      }`}
-                      onClick={() => toggleMemberSelection(member.id)}
-                    >
-                      {/* Selection indicator */}
-                      {selectedMembers.includes(member.id) && (
-                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center bg-white/30 backdrop-blur-sm border border-white/20">
-                          <Check className="w-3 h-3 text-white" />
-                        </div>
-                      )}
-
-                      <div className="relative flex-shrink-0">
-                        <img
-                          src={member.avatar}
-                          alt={member.name}
-                          className="w-10 h-10 rounded-full border-2 border-white/20 shadow-sm"
-                        />
-                        <div className="absolute -bottom-0.5 -right-0.5 p-0.5 bg-black/50 rounded-full shadow-sm backdrop-blur-sm">
-                          {getUserStatusIcon(member.status)}
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="font-medium text-white truncate">
-                          {member.name}
-                        </div>
-                        <div className="text-sm text-gray-300 truncate">
-                          {member.role}
-                        </div>
-                      </div>
+          {!isLoading && !error && teams.map((team, index) => {
+            const availableCount = getAvailableMembersCount(team);
+            return (
+              <div
+                key={team.id}
+                className="border border-white/20 rounded-xl p-6 bg-white/10 backdrop-blur-sm transition-all duration-300 relative overflow-hidden mb-6"
+              >
+                {/* Team Header */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="p-3 rounded-xl backdrop-blur-sm border border-white/10">
+                      <Users className="w-6 h-6 text-white" />
                     </div>
-                  ))}
+                    <div>
+                      <h3 className="font-bold text-xl text-white">
+                        {team.name}
+                      </h3>
+                      <p className="text-sm text-gray-300 font-medium">
+                        {team.department} Department
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end space-y-1">
+                    <span className="text-sm px-4 py-2 rounded-full font-semibold border border-white/20 bg-white/10 backdrop-blur-sm text-white">
+                      {team.members.length} total member{team.members.length !== 1 ? 's' : ''}
+                    </span>
+                    {availableCount < team.members.length && (
+                      <span className="text-xs px-3 py-1 rounded-full font-medium border border-green-400/20 bg-green-400/10 text-green-400">
+                        {availableCount} available
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Team Members */}
+                <div>
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Users className="w-4 h-4 text-white" />
+                    <span className="font-semibold text-sm text-gray-200">Select Team Members</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {team.members.map((member: any) => {
+                      const isAssigned = isMemberAssigned(member.id);
+                      const isSelected = selectedMembers.includes(member.id);
+                      
+                      return (
+                        <div
+                          key={member.id}
+                          className={`relative flex items-center space-x-3 p-3 rounded-xl border transition-all duration-200 ${
+                            isAssigned
+                              ? 'bg-gray-600/30 border-gray-500/40 cursor-not-allowed opacity-60'
+                              : isSelected
+                              ? 'bg-white/10 border-white/30 shadow-md cursor-pointer'
+                              : 'bg-black/30 border-white/20 hover:bg-white/15 cursor-pointer'
+                          }`}
+                          onClick={() => toggleMemberSelection(member.id)}
+                        >
+                          {/* Selection/Assignment indicator */}
+                          <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center backdrop-blur-sm border">
+                            {isAssigned ? (
+                              <div className="bg-gray-500/50 border-gray-400/40 w-5 h-5 rounded-full flex items-center justify-center">
+                                <Lock className="w-3 h-3 text-gray-300" />
+                              </div>
+                            ) : isSelected ? (
+                              <div className="bg-white/30 border-white/20 w-5 h-5 rounded-full flex items-center justify-center">
+                                <Check className="w-3 h-3 text-white" />
+                              </div>
+                            ) : (
+                              <div className="bg-transparent border-white/20 w-5 h-5 rounded-full" />
+                            )}
+                          </div>
+
+                          <div className="relative flex-shrink-0">
+                            <img
+                              src={member.avatar}
+                              alt={member.name}
+                              className={`w-10 h-10 rounded-full border-2 shadow-sm ${
+                                isAssigned ? 'border-gray-400/40 grayscale' : 'border-white/20'
+                              }`}
+                            />
+                            <div className="absolute -bottom-0.5 -right-0.5 p-0.5 bg-black/50 rounded-full shadow-sm backdrop-blur-sm">
+                              {getUserStatusIcon(member.status)}
+                            </div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className={`font-medium truncate ${isAssigned ? 'text-gray-400' : 'text-white'}`}>
+                              {member.name}
+                              {isAssigned && (
+                                <span className="ml-2 text-xs text-gray-500">(Already assigned)</span>
+                              )}
+                            </div>
+                            <div className={`text-sm truncate ${isAssigned ? 'text-gray-500' : 'text-gray-300'}`}>
+                              {member.role}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {/* No Teams State */}
           {!isLoading && !error && teams.length === 0 && (

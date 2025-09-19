@@ -139,7 +139,7 @@ function EditStatusModal({
   if (!open || !project) return null
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-50 p-4">
       <div className="bg-black/20 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-white/10">
         {/* Header */}
         <div className="p-6 text-white bg-black/30 backdrop-blur-sm border-b border-white/10">
@@ -247,8 +247,8 @@ function ViewTeamModal({
   if (!open || !projectId) return null
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-50 p-4">
-      <div className="bg-black/20 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden border border-white/10">
+    <div className="fixed inset-0 bg-transparent backdrop-blur-md flex items-center justify-center z-50 p-4">
+      <div className=" backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden border border-white/10">
         {/* Header */}
         <div className="p-6 text-whitebackdrop-blur-sm border-white/10">
           <div className="flex items-center justify-between">
@@ -622,36 +622,7 @@ export default function ProjectDashboard() {
     onChange={(e) => setSearchTerm(e.target.value)}
   />
 </div>
-                {/* <div className="flex items-center gap-2 bg-black/30 backdrop-blur-md rounded-2xl p-1 border border-white/20">
-                  <button
-                    onClick={() => handleViewChange("table")}
-                    className={`
-                      flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300
-                      ${
-                        currentView === "table"
-                          ? "bg-white/20 text-white shadow-md"
-                          : "text-white/70 hover:text-white hover:bg-white/10"
-                      }
-                    `}
-                  >
-                    <Table className="w-4 h-4" />
-                    Table View
-                  </button>
-                  <button
-                    onClick={() => handleViewChange("kanban")}
-                    className={`
-                      flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300
-                      ${
-                        currentView === "kanban"
-                          ? "bg-white/20 text-white shadow-md"
-                          : "text-white/70 hover:text-white hover:bg-white/10"
-                      }
-                    `}
-                  >
-                    <LayoutGrid className="w-4 h-4" />
-                    Kanban View
-                  </button>
-                </div> */}
+            
             </div>
 
             {/* Refresh Button */}

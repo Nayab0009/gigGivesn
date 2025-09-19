@@ -32,7 +32,7 @@ export default function RootLayout({
         </div>
 
         {/* Blur Overlay (Glass Effect Layer) */}
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-3xl -z-10" />
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-3xl -z-10" />
 
         <Providers>
           <ProtectedRoute>{children}</ProtectedRoute>

@@ -19,7 +19,7 @@ export const getAllProjects=async () => {
 export const getProjectTeam = async (projectId: string) => {
     const data = axiosInstance.get(`/projects/${projectId}`);
     return data;
-}
+}   
 export const updateProjectStatus = async (projectId: number|string, status: string) => {
     const { data } = await axiosInstance.patch(`/projects/${projectId}`, { status });
     return data;
