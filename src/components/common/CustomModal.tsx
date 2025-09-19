@@ -82,10 +82,15 @@ const CustomModal = ({ manager, onClose, generateAvatar }: CustomModalProps) => 
   
   useEffect(() => {
     const fetchTasks = async () => {
+      if (!manager.id) return;
+      
       try {
         setTasksLoading(true)
-        // Fetch completed tasks
-        const completedTasks = await getTasksByStatus('completed')
+        // Fetch all tasks for this manager
+        const managerTasks = await getTasksByStatus(manager.id)
+        
+        // Filter completed tasks
+        const completedTasks = managerTasks.filter((task: Task) => task.status === 'completed')
         // Get the latest completed task (sorted by updatedAt)
         const sortedCompletedTasks = completedTasks.sort((a: Task, b: Task) => 
           new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
@@ -94,8 +99,8 @@ const CustomModal = ({ manager, onClose, generateAvatar }: CustomModalProps) => 
           setCompletedTask(sortedCompletedTasks[0])
         }
         
-        // Fetch in-progress tasks
-        const inProgressTasksData = await getTasksByStatus('inprogress')
+        // Filter in-progress tasks
+        const inProgressTasksData = managerTasks.filter((task: Task) => task.status === 'inprogress')
         setInProgressTasks(inProgressTasksData)
       } catch (error) {
         console.error("Error fetching tasks:", error)
@@ -105,7 +110,7 @@ const CustomModal = ({ manager, onClose, generateAvatar }: CustomModalProps) => 
     }
     
     fetchTasks()
-  }, [])
+  }, [manager.id])
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 bg-black/60 backdrop-blur-sm">
       <div
