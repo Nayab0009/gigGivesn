@@ -286,7 +286,7 @@ export default function ProjectDetailsPage() {
             >
               {[
                 { key: "summary", label: "Summary" },
-                { key: "tasks", label: "Tasks" },
+                // { key: "tasks", label: "Tasks" },
                  { key: "sprints", label: "Sprints" },
                 { key: "calendar", label: "Calendar" },
                 { key: "members", label: "Members" },

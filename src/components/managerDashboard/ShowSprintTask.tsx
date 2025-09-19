@@ -19,12 +19,14 @@ import {
   Send,
   X,
   MessageSquare,
-  Users
+  Users,
+  Table,
+  LayoutGrid,
+  ChevronDown
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { colors } from "@/colors";
 
-// Interface for task response from backend
 interface TaskResponse {
   id: number;
   title: string;
@@ -86,13 +88,13 @@ const ShowSprintTask: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [taskView, setTaskView] = useState<'table' | 'kanban'>('table');
   
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
   const [modalLoading, setModalLoading] = useState(false);
   
-  // Fetch tasks for the specific sprint
   const fetchSprintTasks = async () => {
     if (!sprintId) {
       setError('Sprint ID is required');
@@ -104,21 +106,14 @@ const ShowSprintTask: React.FC = () => {
     setError(null);
 
     try {
-      console.log('Fetching tasks for sprint:', sprintId);
-      
       const response = await axiosInstance.get(`/tasks/sprint/${sprintId}`);
-      console.log('Sprint Tasks API Response:', response.data);
-      
       const tasksData = Array.isArray(response.data) ? response.data : [];
       setTasks(tasksData);
 
-      // Extract sprint info from first task if available
       if (tasksData.length > 0 && tasksData[0].sprint) {
         setSprint(tasksData[0].sprint);
       }
-
     } catch (error: any) {
-      console.error('Error fetching sprint tasks:', error);
       setError(
         error.response?.data?.message || 
         'Failed to load sprint tasks. Please try again.'
@@ -129,16 +124,12 @@ const ShowSprintTask: React.FC = () => {
     }
   };
 
-  // Fetch individual task details for modal
   const fetchTaskDetails = async (taskId: number) => {
     setModalLoading(true);
     try {
       const response = await axiosInstance.get(`/tasks/${taskId}`);
-      console.log('Task Details API Response:', response.data);
       setSelectedTask(response.data);
     } catch (error: any) {
-      console.error('Error fetching task details:', error);
-      // If API call fails, use the task from the list
       const taskFromList = tasks.find(task => task.id === taskId);
       setSelectedTask(taskFromList || null);
     } finally {
@@ -146,119 +137,22 @@ const ShowSprintTask: React.FC = () => {
     }
   };
 
-  // Handle View Report button click
   const handleViewReport = async (task: TaskResponse) => {
     setIsModalOpen(true);
     await fetchTaskDetails(task.id);
   };
 
-  // Close modal
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedTask(null);
   };
 
-  // Refresh data
   const refreshData = async () => {
     setRefreshing(true);
     await fetchSprintTasks();
     setRefreshing(false);
   };
 
-  // Get status info for columns
-  const getColumnInfo = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'completed':
-        return {
-          title: 'Done',
-          icon: <CheckCircle className="w-5 h-5 text-green-500" />,
-          bgColor: 'bg-green-50',
-          headerColor: 'bg-green-500',
-          count: tasks.filter(task => task.status?.toLowerCase() === 'completed').length
-        };
-      case 'inprogress':
-        return {
-          title: 'In Progress',
-          icon: <Clock className="w-5 h-5 text-blue-500" />,
-          bgColor: 'bg-blue-50',
-          headerColor: 'bg-blue-500',
-          count: tasks.filter(task => task.status?.toLowerCase() === 'inprogress').length
-        };
-      case 'cancelled':
-        return {
-          title: 'Cancelled',
-          icon: <X className="w-5 h-5 text-red-500" />,
-          bgColor: 'bg-red-50',
-          headerColor: 'bg-red-500',
-          count: tasks.filter(task => task.status?.toLowerCase() === 'cancelled').length
-        };
-      default:
-        return {
-          title: 'To Do',
-          icon: <ClipboardList className="w-5 h-5 text-gray-500" />,
-          bgColor: 'bg-gray-50',
-          headerColor: 'bg-gray-500',
-          count: tasks.filter(task => !task.status || task.status.toLowerCase() === 'todo').length
-        };
-    }
-  };
-
-  // Get priority badge
-  const getPriorityBadge = (priority: string | undefined | null) => {
-    if (!priority) return null;
-    
-    const priorityConfig = {
-      high: { bg: 'bg-red-100', text: 'text-red-700', label: 'High' },
-      medium: { bg: 'bg-yellow-100', text: 'text-yellow-700', label: 'Medium' },
-      low: { bg: 'bg-green-100', text: 'text-green-700', label: 'Low' }
-    };
-    
-    const config = priorityConfig[priority.toLowerCase() as keyof typeof priorityConfig];
-    if (!config) return null;
-    
-    return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
-        {config.label}
-      </span>
-    );
-  };
-
-  // Format date
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-
-  // Get unique task statuses
-  const getTasksByStatus = () => {
-    const statusGroups: { [key: string]: TaskResponse[] } = {};
-    const statuses = ['inprogress', 'completed'];
-    
-    // Initialize groups
-    statuses.forEach(status => {
-      statusGroups[status] = [];
-    });
-    
-    // Group tasks by status
-    tasks.forEach(task => {
-      const status = task.status?.toLowerCase() || 'todo';
-      if (statusGroups[status]) {
-        statusGroups[status].push(task);
-      } else if (status === 'cancelled' || status === 'todo') {
-        // Handle other statuses
-        if (!statusGroups[status]) {
-          statusGroups[status] = [];
-        }
-        statusGroups[status].push(task);
-      }
-    });
-    
-    return statusGroups;
-  };
-
-  // Get assignee avatar
   const getAssigneeAvatar = (task: TaskResponse) => {
     const assignee = task.taskFor || task.user;
     if (!assignee) return null;
@@ -270,55 +164,39 @@ const ShowSprintTask: React.FC = () => {
     );
   };
 
-  // Get task statistics
-  const getTaskStats = () => {
-    const total = tasks.length;
-    const completed = tasks.filter(task => task.status?.toLowerCase() === 'completed').length;
-    const inProgress = tasks.filter(task => task.status?.toLowerCase() === 'inprogress').length;
-    const cancelled = tasks.filter(task => task.status?.toLowerCase() === 'cancelled').length;
-    
-    return { total, completed, inProgress, cancelled };
-  };
-
-  // Initial data fetch
   useEffect(() => {
     if (sprintId) {
       fetchSprintTasks();
     }
   }, [sprintId]);
 
-  const taskStats = getTaskStats();
-  const tasksByStatus = getTasksByStatus();
-
   return (
     <div className="min-h-screen relative p-4 sm:p-6 lg:p-8">
-      
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
-    <button
-  onClick={() => router.back()}
-  className="inline-flex items-center gap-2 px-8 py-3 rounded-full font-medium text-white transition-all duration-300 shadow-lg hover:opacity-90"
-  style={{ backgroundColor: colors.primary.hex }}
->
-  <ArrowLeft className="w-4 h-4" />
-  Back
-</button>
-  
+              <button
+                onClick={() => router.back()}
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-full font-medium text-white transition-all duration-300 shadow-lg hover:opacity-90"
+                style={{ backgroundColor: colors.primary.hex }}
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back
+              </button>
             </div>
-           <button
-  onClick={refreshData}
-  disabled={refreshing || isLoading}
-  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-white transition-all duration-300 shadow-lg disabled:opacity-50 hover:opacity-90"
-  style={{ backgroundColor: colors.primary.hex }}
->
-  <RefreshCw
-    className={`w-4 h-4 transition-transform duration-300 ${refreshing ? 'animate-spin' : ''}`}
-  />
-  Refresh
-</button>
+            <button
+              onClick={refreshData}
+              disabled={refreshing || isLoading}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-white transition-all duration-300 shadow-lg disabled:opacity-50 hover:opacity-90"
+              style={{ backgroundColor: colors.primary.hex }}
+            >
+              <RefreshCw
+                className={`w-4 h-4 transition-transform duration-300 ${refreshing ? 'animate-spin' : ''}`}
+              />
+              Refresh
+            </button>
           </div>
           
           <div className="text-center mb-6">
@@ -353,82 +231,312 @@ const ShowSprintTask: React.FC = () => {
             <p className="text-gray-400">Loading sprint tasks...</p>
           </div>
         ) : (
-          /* Kanban Board */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {Object.entries(tasksByStatus).map(([status, statusTasks]) => {
-              const columnInfo = getColumnInfo(status);
-              
-              // Skip empty columns that aren't in our main statuses
-              if (statusTasks.length === 0 && !['inprogress', 'completed'].includes(status)) {
-                return null;
-              }
-              
-              return (
-                <div key={status} className="flex flex-col bg-black/40 backdrop-blur-md rounded-2xl p-4 shadow-lg">
-                  {/* Column Header */}
-                  <div className="flex items-center justify-between p-4 mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-3 h-3 rounded-full ${columnInfo.headerColor}`}></div>
-                      <span className="text-white font-medium">{columnInfo.title}</span>
-                      <span className="bg-white/10 text-white text-sm px-2 py-1 rounded-full">
-                        ({statusTasks.length})
-                      </span>
-                    </div>
+          <div className="space-y-6">
+            {/* View toggle buttons */}
+            <div className="flex justify-end">
+              <div
+                className="flex border border-white/20 rounded-full p-1 gap-1 shadow-inner"
+                style={{ background: "#0000004D" }}
+              >
+                <button
+                  onClick={() => setTaskView("table")}
+                  className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
+                    taskView === "table"
+                      ? "bg-white/10 text-white border border-white/20"
+                      : "text-white/90 hover:text-white hover:bg-white/10 border border-transparent"
+                  }`}
+                >
+                  <Table className="w-4 h-4" /> Table View
+                </button>
+                <button
+                  onClick={() => setTaskView("kanban")}
+                  className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
+                    taskView === "kanban"
+                      ? "bg-white/10 text-white border border-white/20"
+                      : "text-white/90 hover:text-white hover:bg-white/10 border border-transparent"
+                  }`}
+                >
+                  <LayoutGrid className="w-4 h-4" /> Kanban Board
+                </button>
+              </div>
+            </div>
+
+            {taskView === "table" ? (
+              <div className="space-y-6">
+                {/* Active Tasks Table */}
+                <div className="rounded-2xl border border-white/10 backdrop-blur-xl" style={{ background: "#0000004D" }}>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full">
+                      <thead>
+                        <tr className="text-white/70 text-sm border-b border-white/10">
+                          <th className="px-6 py-3 text-left font-medium">
+                            <div className="flex items-center gap-2 text-white">
+                              <ChevronDown className="w-4 h-4 text-white/80" />
+                              <span className="font-semibold">Active tasks</span>
+                              <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/10 text-white/80">
+                                {tasks.filter(task => task.status?.toLowerCase() === 'inprogress').length}
+                              </span>
+                            </div>
+                          </th>
+                          <th className="px-6 py-3 text-white text-left font-medium">Status</th>
+                          <th className="px-6 py-3 text-left font-medium">Type</th>
+                          <th className="px-6 py-3 text-left font-medium">Due Date</th>
+                          <th className="px-6 py-3 text-left font-medium">Priority</th>
+                          <th className="px-6 py-3 text-left font-medium">Assignee</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-transparent">
+                        {tasks
+                          .filter((task) => task.status?.toLowerCase() === 'inprogress')
+                          .map((task) => (
+                            <tr
+                              key={task.id}
+                              className="text-white text-sm border-b border-white/10 last:border-b-0 cursor-pointer hover:bg-white/5"
+                              onClick={() => handleViewReport(task)}
+                            >
+                              <td className="px-6 py-4 whitespace-nowrap font-medium">
+                                {task.title}
+                                <span className="ml-2 text-white/50 text-xs">#{task.id}</span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                <span className="inline-flex items-center gap-2">
+                                  <span className="w-2 h-2 rounded-full bg-white"></span>
+                                  In Progress
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                <span className="inline-flex items-center gap-2">
+                                  <span className="w-2 h-2 rounded-full bg-sky-400"></span>
+                                  <span>{task.description ? "Task" : "—"}</span>
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "—"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                <span className="inline-flex items-center gap-2">
+                                  <ChevronDown
+                                    className={`w-4 h-4 ${
+                                      task.priority?.toLowerCase() === "high"
+                                        ? "text-red-400"
+                                        : task.priority?.toLowerCase() === "medium"
+                                        ? "text-yellow-300"
+                                        : "text-emerald-400"
+                                    }`}
+                                  />
+                                  <span className="capitalize">{task.priority || "Low"}</span>
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                <span className="inline-flex items-center gap-2">
+                                  <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
+                                    {getAssigneeAvatar(task)}
+                                  </span>
+                                  <span className="text-white/80 text-sm font-medium">
+                                    {task.taskFor?.name || task.user?.name || "Unassigned"}
+                                  </span>
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        {tasks.filter((task) => task.status?.toLowerCase() === 'inprogress').length === 0 && (
+                          <tr>
+                            <td className="px-6 py-4 text-white/60 text-sm" colSpan={6}>
+                              No active tasks
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
                   </div>
+                  <div className="px-6 py-3 text-white/70 text-sm">+ Create task</div>
+                </div>
 
-                  {/* Tasks */}
-                  <div className="space-y-4 flex-1">
-                    {statusTasks.map((task) => (
-                      <div
-                        key={task.id}
-                        className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/10 hover:bg-white/20 transition-all duration-300 cursor-pointer group"
-                        onClick={() => handleViewReport(task)}
-                      >
-                        {/* Task ID */}
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-gray-400 text-sm font-medium">
-                            MBA-{task.id}
-                          </span>
-                          {getAssigneeAvatar(task)}
-                        </div>
-
-                        {/* Task Title */}
-                        <h3 className="text-white font-medium mb-3 line-clamp-2 group-hover:text-blue-300 transition-colors">
-                          {task.title}
-                        </h3>
-
-                        {/* Priority */}
-                        {task.priority && (
-                          <div className="flex flex-wrap items-center gap-2 mb-4">
-                            {getPriorityBadge(task.priority)}
-                          </div>
+                {/* Completed Tasks Table */}
+                <div className="rounded-2xl border border-white/10 backdrop-blur-xl" style={{ background: "#0000004D" }}>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full">
+                      <thead>
+                        <tr className="text-white/70 text-sm border-b border-white/10">
+                          <th className="px-6 py-3 text-left font-medium">
+                            <div className="flex items-center gap-2 text-white">
+                              <ChevronDown className="w-4 h-4 text-white/80" />
+                              <span className="font-semibold">Completed Task</span>
+                              <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/10 text-white/80">
+                                {tasks.filter(task => task.status?.toLowerCase() === 'completed').length}
+                              </span>
+                            </div>
+                          </th>
+                          <th className="px-6 py-3 text-white text-left font-medium">Status</th>
+                          <th className="px-6 py-3 text-left font-medium">Type</th>
+                          <th className="px-6 py-3 text-left font-medium">Due Date</th>
+                          <th className="px-6 py-3 text-left font-medium">Priority</th>
+                          <th className="px-6 py-3 text-left font-medium">Assignee</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-transparent">
+                        {tasks
+                          .filter((task) => task.status?.toLowerCase() === 'completed')
+                          .map((task) => (
+                            <tr
+                              key={task.id}
+                              className="text-white text-sm border-b border-white/10 last:border-b-0 cursor-pointer hover:bg-white/5"
+                              onClick={() => handleViewReport(task)}
+                            >
+                              <td className="px-6 py-4 whitespace-nowrap font-medium">
+                                {task.title}
+                                <span className="ml-2 text-white/50 text-xs">#{task.id}</span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                <span className="inline-flex items-center gap-2">
+                                  <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                  Completed
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                <span className="inline-flex items-center gap-2">
+                                  <span className="w-2 h-2 rounded-full bg-sky-400"></span>
+                                  <span>{task.description ? "Task" : "—"}</span>
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "—"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                <span className="inline-flex items-center gap-2">
+                                  <ChevronDown
+                                    className={`w-4 h-4 ${
+                                      task.priority?.toLowerCase() === "high"
+                                        ? "text-red-400"
+                                        : task.priority?.toLowerCase() === "medium"
+                                        ? "text-yellow-300"
+                                        : "text-emerald-400"
+                                    }`}
+                                  />
+                                  <span className="capitalize">{task.priority || "Low"}</span>
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                <span className="inline-flex items-center gap-2">
+                                  <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
+                                    {getAssigneeAvatar(task)}
+                                  </span>
+                                  <span className="text-white/80 text-sm font-medium">
+                                    {task.taskFor?.name || task.user?.name || "Unassigned"}
+                                  </span>
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        {tasks.filter((task) => task.status?.toLowerCase() === 'completed').length === 0 && (
+                          <tr>
+                            <td className="px-6 py-4 text-white/60 text-sm" colSpan={6}>
+                              No completed tasks
+                            </td>
+                          </tr>
                         )}
-
-                        {/* Assignee Info */}
-                        {(task.taskFor || task.user) && (
-                          <div className="flex items-center gap-2 text-gray-400 text-sm">
-                            <User className="w-3 h-3" />
-                            <span>{(task.taskFor || task.user)?.name}</span>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-
-                    {/* Empty State */}
-                    {statusTasks.length === 0 && (
-                      <div className="text-center py-8 text-gray-500">
-                        <ClipboardList className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                        <p className="text-sm">No tasks</p>
-                      </div>
-                    )}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ) : (
+              /* Kanban board view */
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                {[
+                  { key: "todo", title: "To Do", color: "gray-400" },
+                  { key: "inprogress", title: "In Progress", color: "blue-400" },
+                  { key: "completed", title: "Completed", color: "emerald-400" },
+                  { key: "cancelled", title: "Cancelled", color: "red-400" }
+                ].map(column => {
+                  const columnTasks = tasks.filter(task => 
+                    task.status?.toLowerCase() === column.key.toLowerCase()
+                  );
+                  return (
+                    <div key={column.key} className="flex flex-col bg-black/40 backdrop-blur-md rounded-2xl p-4 shadow-lg border border-white/10">
+                      {/* Column Header */}
+                      <div className="flex items-center justify-between p-4 mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-3 h-3 rounded-full bg-${column.color}`}></div>
+                          <span className="text-white font-medium">{column.title}</span>
+                          <span className="bg-white/10 text-white text-sm px-2 py-1 rounded-full">
+                            ({columnTasks.length})
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Tasks */}
+                      <div className="space-y-4 flex-1">
+                        {columnTasks.map((task) => (
+                          <div
+                            key={task.id}
+                            className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/10 hover:bg-white/20 transition-all duration-300 cursor-pointer group"
+                            onClick={() => handleViewReport(task)}
+                          >
+                            {/* Task ID */}
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="text-gray-400 text-sm font-medium">
+                                #{task.id}
+                              </span>
+                              <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
+                                {getAssigneeAvatar(task)}
+                              </span>
+                            </div>
+
+                            {/* Task Title */}
+                            <h3 className="text-white font-medium mb-3 line-clamp-2 group-hover:text-blue-300 transition-colors">
+                              {task.title}
+                            </h3>
+
+                            {/* Priority */}
+                            <div className="flex flex-wrap items-center gap-2 mb-4">
+                              <span className="inline-flex items-center gap-2">
+                                <ChevronDown
+                                  className={`w-4 h-4 ${
+                                    task.priority?.toLowerCase() === "high"
+                                      ? "text-red-400"
+                                      : task.priority?.toLowerCase() === "medium"
+                                      ? "text-yellow-300"
+                                      : "text-emerald-400"
+                                  }`}
+                                />
+                                <span className="capitalize text-white/70 text-sm">{task.priority || "Low"}</span>
+                              </span>
+                            </div>
+
+                            {/* Assignee & Due Date */}
+                            <div className="flex items-center justify-between text-gray-400 text-sm">
+                              <span className="flex items-center gap-2">
+                                <User className="w-3 h-3" />
+                                <span>{task.taskFor?.name || task.user?.name || "Unassigned"}</span>
+                              </span>
+                              {task.dueDate && (
+                                <span className="flex items-center gap-2">
+                                  <Calendar className="w-3 h-3" />
+                                  <span>{new Date(task.dueDate).toLocaleDateString()}</span>
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+
+                        {/* Empty State */}
+                        {columnTasks.length === 0 && (
+                          <div className="text-center py-8 text-gray-500">
+                            <ClipboardList className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                            <p className="text-sm">No tasks</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
-        {/* Modal */}
+        {/* Task Details Modal */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
@@ -495,7 +603,7 @@ const ShowSprintTask: React.FC = () => {
                           <div>
                             <p className="text-sm text-gray-600 mb-1">Created</p>
                             <p className="font-medium text-gray-900">
-                              {formatDate(selectedTask.createdAt)}
+                              {new Date(selectedTask.createdAt).toLocaleDateString()}
                             </p>
                           </div>
                           <div>
