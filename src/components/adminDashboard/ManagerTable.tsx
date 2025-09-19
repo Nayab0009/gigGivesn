@@ -50,7 +50,7 @@ export default function EnhancedManagersTable() {
   });
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 6;
   const router = useRouter()
 
   useEffect(() => {

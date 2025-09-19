@@ -12,15 +12,13 @@ export const getAllTasks = async (): Promise<any> => {
     }
 };
 
-// Get tasks by status - can filter by 'completed' or 'inprogress'
-export const getTasksByStatus = async (status: string): Promise<any> => {
+// Get tasks by status for a specific manager
+export const getTasksByStatus = async (managerId: string): Promise<any> => {
     try {
-        const response = await axiosInstance.get('/tasks/created/manager');
-        // Filter tasks by status
-        const filteredTasks = response.data.filter((task: any) => task.status === status);
-        return filteredTasks;
+        const response = await axiosInstance.get(`/tasks/manager/only/${managerId}`);
+        return response.data;
     } catch (error) {
-        console.log(`Error fetching ${status} tasks`, error);
+        console.log(`Error fetching manager tasks`, error);
         throw error;
     }
 };
