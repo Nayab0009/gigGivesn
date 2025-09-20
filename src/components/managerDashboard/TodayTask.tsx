@@ -36,7 +36,7 @@ const TodayTask = () => {
   }, [])
 
   const renderColumn = (title: string, taskList: any[]) => (
-    <div className="flex-1 bg-black/90 rounded-2xl p-4 flex flex-col">
+    <div className="flex-1 bg-[#0000004D]/30 backdrop-blur-md rounded-2xl p-4 flex flex-col">
       {/* Only show column header if data is loaded */}
       {!loading && (
         <div>
@@ -58,7 +58,7 @@ const TodayTask = () => {
           {taskList.map((task, idx) => (
             <div
               key={idx}
-              className="p-4 rounded-xl bg-[#181c24] border border-white/10 shadow-md flex flex-col space-y-2"
+              className="p-4 rounded-xl bg-[#0000004D]/30 border border-white/10 shadow-md flex flex-col space-y-2"
             >
               {/* Top Row */}
               <div className="flex items-center justify-between">

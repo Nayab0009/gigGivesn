@@ -267,7 +267,7 @@ export default function ManagerDashboard() {
       </header>
 
       {/* Error Message */}
-      <div className="max-w-7xl mx-auto px-10">
+      <div className="mx-auto px-10">
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <div className="flex items-center gap-2">

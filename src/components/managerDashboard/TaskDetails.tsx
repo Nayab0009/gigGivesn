@@ -43,7 +43,7 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
       onClick={onClose}
     >
       <div
-        className="relative bg-gradient-to-b from-[#0e1117] to-[#1a1f29] rounded-2xl p-6 w-[420px] shadow-2xl border border-white/10"
+        className="relative bg-[#0000004D]/100 backdrop-blur-md rounded-2xl p-6 w-[420px] shadow-2xl border border-white/10"
         onClick={e => e.stopPropagation()}
       >
 
