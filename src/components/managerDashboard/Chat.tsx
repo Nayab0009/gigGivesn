@@ -1212,12 +1212,12 @@ export default function ChatPage() {
       <p className="text-white/60 text-sm">Online</p>
     </div>
   </div>
-  <button 
-    className="w-full px-4 py-2 rounded-lg text-white text-sm border border-white/20 hover:bg-white/10 transition"
-    onClick={() => setShowMeetingDialog(true)}
-  >
-    Call
-  </button>
+ <button
+  onClick={() => setShowMeetingDialog(true)}
+  className="w-full p-3 bg-black/30 rounded-full  text-white text-sm border border-white/20 transition flex items-center justify-center gap-2"
+>
+  <img src="/images/phone.svg" alt="Call" className="w-6 h-6" />
+</button>
 </div>
 
     {/* Profile Content */}
