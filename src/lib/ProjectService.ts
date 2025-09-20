@@ -13,7 +13,7 @@ export const createProject = async (project: FormData) => {
   return data
 }
 export const getAllProjects=async () => {
-    const { data } = await axiosInstance.get('/projects');
+    const { data } = await axiosInstance.get('/projects/all/dashboard');
     return data;
 }
 export const getProjectTeam = async (projectId: string) => {
