@@ -137,7 +137,7 @@ const TimeTable = () => {
     });
 
     return (
-      <div className="w-full overflow-x-auto bg-gradient-to-br from-teal-900/20 to-blue-900/30 p-4 rounded-xl"
+      <div className="w-full overflow-x-auto bg-black/30 p-4 rounded-xl"
       style={
         {
           scrollbarWidth: 'none',      

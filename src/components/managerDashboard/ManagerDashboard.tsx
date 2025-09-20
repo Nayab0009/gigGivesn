@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { ShowEmployee } from "@/lib/TeamService"
 import { sendMessage as fetchChatHistoryAPI } from "@/lib/chatService"
 import {
-  
+  Loader2,
   RefreshCw,
   AlertCircle,
 } from "lucide-react"
@@ -236,18 +236,18 @@ export default function ManagerDashboard() {
     
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black/40 backdrop-blur-md rounded-2xl">
-        <div className="text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full mb-4" style={{ background: colors.accent.hex }}>
-            <RefreshCw className="w-8 h-8" style={{ color: colors.primary.hex }} />
-          </div>
-          <p className="text-gray-600 text-lg">Loading your dashboard...</p>
-        </div>
-      </div>
-    )
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center bg-black/40 backdrop-blur-md rounded-2xl">
+  //       <div className="text-center">
+  //         <div className="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6" style={{ background: colors.accent.hex }}>
+  //           <Loader2 className="w-10 h-10 animate-spin" style={{ color: colors.primary.hex }} />
+  //         </div>
+  //         <p className="text-white font-medium text-lg">Loading your dashboard...</p>
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
 
 
@@ -285,7 +285,7 @@ export default function ManagerDashboard() {
           {/* Today Task + Timetable */}
           <div className="lg:col-span-3 flex flex-col gap-6">
             <div
-              className="rounded-2xl p-4 bg-black/30"
+              className="rounded-2xl p-4 bg-black/30 backdrop-blur-md border border-white/30 shadow-md"
             >
               <div className="flex items-center justify-between mb-4">
                 <h4 className="text-lg md:text-xl font-bold tracking-tight">Today Task</h4>
@@ -297,7 +297,10 @@ export default function ManagerDashboard() {
               {/* Task Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
                 {tasksLoading ? (
-                  <div className="col-span-3 text-center text-blue-200 py-8">Loading...</div>
+                  <div className="col-span-3 flex flex-col items-center justify-center text-center py-8">
+                    <Loader2 className="w-8 h-8 animate-spin mb-2" style={{ color: colors.primary.hex }} />
+                    <span className="text-blue-200">Loading tasks...</span>
+                  </div>
                 ) : todayTasks.length === 0 ? (
                   <div className="col-span-3 text-center text-blue-200 py-8">
                     No tasks found.
@@ -455,7 +458,10 @@ export default function ManagerDashboard() {
         </div>
         <div className="flex flex-col gap-4">
           {commLoading ? (
-            <div className="text-center text-blue-200 py-8">Loading...</div>
+            <div className="flex flex-col items-center justify-center text-center py-8">
+              <Loader2 className="w-8 h-8 animate-spin mb-2" style={{ color: colors.primary.hex }} />
+              <span className="text-blue-200">Loading communications...</span>
+            </div>
           ) : commLogs.length === 0 ? (
             <div className="text-center text-blue-200 py-8">No communication logs found.</div>
           ) : (
