@@ -1,5 +1,8 @@
+
 "use client"
+import {getAllProjects} from "../../lib/ProjectService"
 import { useEffect, useState } from "react"
+import ProgressBar from "../ui/progressBar/ProgressBar"
 import {
   Users,
   ClipboardList,
@@ -12,6 +15,8 @@ import {
   PieChart,
   Globe,
   Activity,
+  Plus,
+  Clock,
 } from "lucide-react"
 import {
   Line,
@@ -28,6 +33,11 @@ import {
   ComposedChart,
   BarChart
 } from "recharts"
+
+
+import BarChartComp from "../ui/barchart/barchart"
+
+import Image from "next/image"
 
 // --- Types aligned to project management context ---
 interface DashboardData {
@@ -82,6 +92,41 @@ const cardGradients = [
 
 export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true)
+  const [projects, setProjects] = useState<any[]>([]);
+
+
+// The formatting function
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); 
+  const year = String(date.getFullYear()).slice(-2);
+  return `${day}/${month}/${year}`;
+};
+
+
+
+useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const data = await getAllProjects(); // Call the async function
+        setProjects(data);
+      } catch (error) {
+        console.error('Failed to fetch projects:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []); // Empty dependency array ensures this runs only once
+
+  // if (isLoading) {
+  //   return <div>Loading projects...</div>;
+  // }
+
+
+
   const [dashboardData, setDashboardData] = useState<DashboardData>({
     adminStats: {
       totalProjects: 0,
@@ -214,11 +259,11 @@ export default function AdminDashboard() {
     }
   }
 
-  const pieData = [
-    { name: "Completed", value: dashboardData.adminStats.tasksCompleted },
-    { name: "Open", value: dashboardData.adminStats.totalTasks - dashboardData.adminStats.tasksCompleted },
-    { name: "Bugs", value: dashboardData.adminStats.openBugs },
-  ]
+  // const pieData = [
+  //   { name: "Completed", value: dashboardData.adminStats.tasksCompleted },
+  //   { name: "Open", value: dashboardData.adminStats.totalTasks - dashboardData.adminStats.tasksCompleted },
+  //   { name: "Bugs", value: dashboardData.adminStats.openBugs },
+  // ]
 
   if (isLoading) {
     return (
@@ -237,26 +282,61 @@ export default function AdminDashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-2 pb-2">
         <div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-1 tracking-tight">Admin Dashboard</h1>
-          <p className="text-slate-600 text-lg">Welcome back! See your latest project insights below.</p>
+          <p className="text-gray-200">Welcome back! See your latest project insights below.</p>
         </div>
         <div className="mt-4 sm:mt-0 flex items-center space-x-3">
-          <button className="px-4 py-2 bg-white text-[#2563eb] border border-[#2563eb] rounded-lg hover:bg-[#2563eb] hover:text-white shadow transition-all font-semibold text-sm">
-            Export Report
+          <button className="px-5 py-2 text-white rounded-full  hover:text-gray-200 shadow transition-all font-semibold text-sm inline-flex gap-x-1 md:gap-x-3 bg-black-600 bg-gray-500/30">
+           <Plus className="w-5 h-4 text-white font-light" /> <p className="text-white font-light">Add Manager</p>
           </button>
-          <button className="px-4 py-2 bg-gradient-to-br from-[#2563eb] to-[#16a34a] text-white rounded-lg hover:opacity-90 transition-all shadow font-semibold text-sm">
-            New Project
+          <button className="px-5 py-2 text-white rounded-full transition-all shadow font-semibold text-sm inline-flex bg-blur-green bg-sky-400 gap-x-1 md:gap-x-3">
+          <Plus className="w-4 h-4 text-white" /> <p className="text-white font-light">New Project</p>
           </button>
         </div>
       </div>
 
+
+
+<div className="flex space-x-7">
+  <div className="flex-1">
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
+      <div className="grid space-y-2 py-0">
         {/* Total Projects */}
-        <div className={`bg-gradient-to-br ${cardGradients[0]} rounded-2xl p-7 shadow-md group border border-blue-100`}>
-          <div className="flex items-center justify-between mb-3">
-            <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-              <Briefcase className="w-7 h-7 text-white" />
+        <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-0 rounded-2xl  shadow-md group border border-white/30 justify-between">
+          <div>
+             <div className={` p-6`}>
+            <p className="text-gray-200 font-light text-sm tracking-wider">Total Projects</p>
+         
+          <div>
+            <p className="text-3xl font-bold text-white">
+              {formatNumber(dashboardData.adminStats.totalProjects)}
+            </p>
+            <div className="flex items-center">
+              <div>
+                <p className="text-gray-200 font-light text-sm">Active projects</p>
+              </div>
+              <div>
+                  <div className="flex space-x-1">
+              <span className="text-white text-sm ml-3 bg-[rgba(194,65,12,0.3)]  px-4 py-1 rounded-full font-light border-2 border-[#615041]">+12</span>
             </div>
+              </div>
+            </div>
+            
+          
+          </div>
+        </div>
+
+
+        
+          </div>
+          <div>
+             <div className="w-16 h-16 bg-[rgba(0,0,0,0.3)] items-center justify-center justify-items-center rounded-2xl flex mr-7">
+              <Image src="/images/bag.svg" alt="bag" width={30} height={30} className="text-white p-1" />
+            </div>
+            </div>
+        </div>
+        {/* <div className={`bg-[rgba(0,0,0,0.3)] rounded-2xl p-7 shadow-md group border border-blue-100`}>
+          <div className="flex items-center justify-between mb-3">
+           
             <div className="flex items-center space-x-1">
               <ArrowUpRight className="w-4 h-4 text-green-200" />
               <span className="text-green-100 text-sm font-bold">+2</span>
@@ -269,356 +349,260 @@ export default function AdminDashboard() {
             </p>
             <p className="text-blue-50 text-xs">Active projects</p>
           </div>
-        </div>
+        </div> */}
         {/* Total Tasks */}
-        <div className={`bg-gradient-to-br ${cardGradients[1]} rounded-2xl p-7 shadow-md group border border-amber-100`}>
-          <div className="flex items-center justify-between mb-3">
-            <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-              <ClipboardList className="w-7 h-7 text-white" />
-            </div>
-            <div className="flex items-center space-x-1">
-              <ArrowUpRight className="w-4 h-4 text-green-200" />
-              <span className="text-green-100 text-sm font-bold">+36</span>
+        <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-0 rounded-2xl shadow-md group border border-white/30 justify-between">
+          <div>
+            <div className="p-6">
+              <p className="text-gray-200 font-light text-sm tracking-wider">Completed projects</p>
+              <div>
+                <p className="text-3xl font-bold text-white">
+                  {formatNumber(dashboardData.adminStats.totalTasks)}
+                </p>
+                <div className="flex items-center">
+                  <div>
+                    <p className="text-gray-200 font-light text-sm">All time</p>
+                  </div>
+                  <div>
+                    <div className="flex space-x-1">
+                      <span className="text-white text-sm ml-3 bg-[#696032] px-4 py-1 rounded-full border-[#716c4e] font-light border-2">+36</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div>
-            <p className="text-amber-100 text-xs font-medium uppercase tracking-wider mb-1">Total Tasks</p>
-            <p className="text-3xl font-bold text-white mb-1">
-              {formatNumber(dashboardData.adminStats.totalTasks)}
-            </p>
-            <p className="text-amber-50 text-xs">All time</p>
+            <div className="w-16 h-16 bg-[rgba(0,0,0,0.3)] items-center justify-center justify-items-center rounded-2xl flex mr-7">
+              <Image src="/images/tick.svg" alt="bag" width={30} height={30} className="text-white p-1" />
+            </div>
           </div>
         </div>
         {/* Users */}
-        <div className={`bg-gradient-to-br ${cardGradients[4]} rounded-2xl p-7 shadow-md group border border-purple-100`}>
-          <div className="flex items-center justify-between mb-3">
-            <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-              <Users className="w-7 h-7 text-white" />
-            </div>
-            <div className="flex items-center space-x-1">
-              <ArrowUpRight className="w-4 h-4 text-green-200" />
-              <span className="text-green-100 text-sm font-bold">+4</span>
+        <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-0 rounded-2xl shadow-md group border border-white/30 justify-between">
+          <div>
+            <div className="p-6">
+              <p className="text-gray-200 font-light text-sm tracking-wider">Users</p>
+              <div>
+                <p className="text-3xl font-bold text-white">
+                  {formatNumber(dashboardData.adminStats.totalUsers)}
+                </p>
+                <div className="flex items-center">
+                  <div>
+                    <p className="text-gray-200 font-light text-sm">Active members</p>
+                  </div>
+                  <div>
+                    <div className="flex space-x-1">
+                      <span className="text-white text-sm font-light ml-3 bg-[#26652D] px-4 py-1 rounded-full border-2 border-[#3D7543]">+4</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div>
-            <p className="text-purple-100 text-xs font-medium uppercase tracking-wider mb-1">Users</p>
-            <p className="text-3xl font-bold text-white mb-1">
-              {formatNumber(dashboardData.adminStats.totalUsers)}
-            </p>
-            <p className="text-purple-50 text-xs">Active members</p>
+            <div className="w-16 h-16 bg-[rgba(0,0,0,0.3)] items-center justify-center justify-items-center rounded-2xl flex mr-7">
+              <Image src="/images/user.svg" alt="users" width={30} height={30} className="text-white p-1" />
+            </div>
           </div>
         </div>
-        {/* Tasks Completed */}
-        <div className={`bg-gradient-to-br ${cardGradients[2]} rounded-2xl p-7 shadow-md group border border-green-100`}>
-          <div className="flex items-center justify-between mb-3">
-            <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-              <CheckSquare className="w-7 h-7 text-white" />
-            </div>
-            <div className="flex items-center space-x-1">
-              <ArrowUpRight className="w-4 h-4 text-green-200" />
-              <span className="text-green-100 text-sm font-bold">+17</span>
-            </div>
-          </div>
+        
+      </div>
+  </div>
+
+
+
+  <div className="flex-1">
+{/* Team Activity Section */}
+      <div className="bg-[rgba(0,0,0,0.3)] rounded-2xl p-6 shadow border border-white/30">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
           <div>
-            <p className="text-green-100 text-xs font-medium uppercase tracking-wider mb-1">Tasks Completed</p>
-            <p className="text-3xl font-bold text-white mb-1">
-              {formatNumber(dashboardData.adminStats.tasksCompleted)}
-            </p>
-            <p className="text-green-50 text-xs">Total done</p>
+            <h3 className="text-xl font-extrabold text-white mb-2">Team Activity</h3>
+            <p className="text-gray-300 text-sm">Task distribution and efficiency by team</p>
+          </div>
+          <div className="mt-4 sm:mt-0">
+            <div className="w-10 h-10 bg-[rgba(0,0,0,0.3)] rounded-full flex items-center justify-center">
+              <Image src="/images/users.svg" alt="Users" width={20} height={20} className=" text-white" />
+            </div>
           </div>
         </div>
-        {/* Open Bugs */}
-        <div className={`bg-gradient-to-br ${cardGradients[3]} rounded-2xl p-7 shadow-md group border border-rose-100`}>
-          <div className="flex items-center justify-between mb-3">
-            <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
-              <Activity className="w-7 h-7 text-white" />
-            </div>
-            <div className="flex items-center space-x-1">
-              <ArrowUpRight className="w-4 h-4 text-green-200" />
-              <span className="text-green-100 text-sm font-bold">-3</span>
-            </div>
-          </div>
-          <div>
-            <p className="text-rose-100 text-xs font-medium uppercase tracking-wider mb-1">Open Bugs</p>
-            <p className="text-3xl font-bold text-white mb-1">
-              {formatNumber(dashboardData.adminStats.openBugs)}
-            </p>
-            <p className="text-rose-50 text-xs">Unresolved</p>
-          </div>
+        <div>
+          {/* BarChart for Team Activity */}
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart 
+              data={dashboardData.teamActivity}
+              layout="vertical"
+              barCategoryGap={16}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="rgba(255,255,255,0.1)" />
+              <XAxis type="number" axisLine={false} tickLine={false} />
+              <YAxis 
+                dataKey="team" 
+                type="category" 
+                axisLine={false} 
+                tickLine={false} 
+                width={80} 
+                tick={{ fill: 'white' }}
+                className="font-light"
+              />
+              <Tooltip 
+                contentStyle={{
+                  backgroundColor: "rgba(0,0,0,0.8)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  borderRadius: "8px",
+                  color: "white"
+                }}
+              />
+              <Legend 
+                verticalAlign="top" 
+                align="right"
+                iconType="circle"
+                wrapperStyle={{ paddingBottom: 20 }}
+              />
+              <Bar 
+                dataKey="tasks" 
+                fill="#FF9F24" 
+                name="Tasks Assigned" 
+                radius={[0, 6, 6, 0]} 
+                barSize={20}
+              />
+              <Bar 
+                dataKey="completed" 
+                fill="#3B82F6" 
+                name="Tasks Completed" 
+                radius={[0, 6, 6, 0]} 
+                barSize={20}
+              />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
+        
+      {/* </div> */} 
+    </div>
+
+  <div className="flex-1">
+    {/* Task Status Breakdown */}
+        <div className="bg-[rgba(0,0,0,0.3)] rounded-2xl p-6 shadow border border-white/30">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+            {/* <Clock className="w-5 h-5 text-white" /> */}
+            <div>
+              <div className="flex gap-x-3 items-start">
+                 <div className="w-10 h-10 bg-[rgba(0,0,0,0.3)] rounded-full flex items-center justify-center">
+              <Image src="/images/clock.svg" alt="clock" width={20} height={20} className=" text-white" />
+            </div>
+            <div>
+<h3 className="text-xl font-extrabold text-white mb-1 flex items-center">Project Breakdown</h3>
+              <p className="text-gray-300 text-sm ">Open vs completed vs bugs</p>
+            </div>
+              </div>
+              
+            </div>
+         
+          </div>
+              {/* Donut chart labels */}
+              <BarChartComp />
+            <div className="absolute inset-0 pointer-events-none">     
+            </div>
+        </div>
+  </div>
+
+
+</div>
+
 
       {/* Analytics Section */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        {/* Project Progress Analytics */}
-        <div className="bg-white rounded-2xl p-6 shadow border border-blue-100">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-            <div>
-              <h3 className="text-xl font-extrabold text-[#2563eb] mb-2">Project Progress</h3>
-              <p className="text-slate-600 text-sm">Monthly created vs completed tasks</p>
-            </div>
-            <div className="mt-4 sm:mt-0">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#2563eb] to-[#16a34a] rounded-lg flex items-center justify-center">
-                <BarChart3 className="w-5 h-5 text-white" />
-              </div>
-            </div>
-          </div>
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <ComposedChart data={dashboardData.projectProgress}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e0e7ef" />
-                <XAxis dataKey="month" stroke="#2563eb" fontSize={13} />
-                <YAxis yAxisId="left" stroke="#f59e42" fontSize={12} />
-                <YAxis yAxisId="right" orientation="right" stroke="#16a34a" fontSize={12} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "white",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "8px",
-                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.08)",
-                  }}
-                />
-                <Legend />
-                <Bar yAxisId="left" dataKey="createdTasks" fill="#f59e42" name="Created Tasks" radius={[6, 6, 0, 0]} />
-                <Line
-                  yAxisId="right"
-                  type="monotone"
-                  dataKey="completedTasks"
-                  stroke="#16a34a"
-                  strokeWidth={4}
-                  name="Completed Tasks"
-                  dot={{ fill: "#16a34a", strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6 }}
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Task Status Breakdown */}
-        <div className="bg-white rounded-2xl p-6 shadow border border-green-100">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-            <div>
-              <h3 className="text-xl font-extrabold text-[#16a34a] mb-2">Task Status Breakdown</h3>
-              <p className="text-slate-600 text-sm">Open vs completed vs bugs</p>
-            </div>
-            <div className="mt-4 sm:mt-0">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#16a34a] to-[#f59e42] rounded-lg flex items-center justify-center">
-                <PieChart className="w-5 h-5 text-white" />
-              </div>
-            </div>
-          </div>
-          <div className="h-72 flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
-              <RechartsPieChart>
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "white",
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "8px",
-                    boxShadow: "0 4px 6px -1px rgba(0,0,0,0.08)",
-                  }}
-                />
-                <Legend />
-                <Pie
-                  data={pieData}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  label
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-              </RechartsPieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
       </div>
+   
+   
 
-      {/* Team Activity Section */}
-      <div className="bg-white rounded-2xl p-6 shadow border border-purple-100">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-          <div>
-            <h3 className="text-xl font-extrabold text-[#a21caf] mb-2">Team Activity</h3>
-            <p className="text-slate-600 text-sm">Task distribution and efficiency by team</p>
-          </div>
-          <div className="mt-4 sm:mt-0">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#a21caf] to-[#2563eb] rounded-lg flex items-center justify-center">
-              <Globe className="w-5 h-5 text-white" />
-            </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            {/* BarChart for Team Activity */}
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={dashboardData.teamActivity}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="team" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="tasks" fill="#a21caf" name="Tasks Assigned" radius={[6,6,0,0]} />
-                <Bar dataKey="completed" fill="#2563eb" name="Tasks Completed" radius={[6,6,0,0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="space-y-3">
-            <h4 className="text-lg font-bold text-[#a21caf] mb-4">Efficiency by Team</h4>
-            {dashboardData.teamActivity.map((team, index) => (
-              <div
-                key={team.team}
-                className="flex items-center justify-between p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
-              >
-                <div className="flex items-center space-x-3">
-                  <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold ${
-                      index === 0
-                        ? "bg-amber-500"
-                        : index === 1
-                        ? "bg-blue-400"
-                        : index === 2
-                        ? "bg-green-600"
-                        : "bg-purple-600"
-                    }`}
-                  >
-                    {index + 1}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-gray-900 text-sm">{team.team}</p>
-                    <p className="text-xs text-gray-600">{team.tasks} tasks</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="font-bold text-gray-900 text-sm">{team.efficiency}%</p>
-                  <p className="text-xs text-gray-600">Efficiency</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Activities */}
-      <div className="bg-white rounded-2xl shadow border border-slate-100 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-blue-50 to-green-50">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h3 className="text-xl font-extrabold text-[#2563eb] mb-2">Recent Activities</h3>
-              <p className="text-slate-600 text-sm">Latest actions across your projects</p>
-            </div>
-            <div className="mt-4 sm:mt-0 flex items-center space-x-3">
-              <button className="px-4 py-2 bg-gradient-to-br from-[#2563eb] to-[#16a34a] text-white rounded-lg hover:opacity-90 transition font-semibold text-sm shadow">
-                View All
-              </button>
-              <button className="p-2 bg-white border border-blue-100 rounded-lg hover:bg-blue-50 transition-colors shadow">
-                <Download className="w-4 h-4 text-[#2563eb]" />
-              </button>
-            </div>
-          </div>
-        </div>
-        {/* Mobile layout */}
-        <div className="block lg:hidden">
-          <div className="divide-y divide-slate-100">
-            {dashboardData.recentActivities.map((activity) => (
-              <div key={activity.id} className="p-4 hover:bg-blue-50 transition-colors">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-mono text-[#2563eb] font-semibold mb-1">{activity.id}</p>
-                    <p className="text-sm font-semibold text-gray-900 truncate">{activity.project}</p>
-                  </div>
-                  <div className="flex items-center space-x-2 ml-4">
-                    <button className="p-1.5 text-gray-400 hover:text-[#2563eb] transition-colors">
-                      <MoreHorizontal className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-3 mb-3">
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">User</p>
-                    <p className="text-sm font-medium text-gray-900 truncate">{activity.user}</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Type</p>
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border capitalize ${getTypeColor(activity.type)}`}>{activity.type}</span>
-                  </div>
-                </div>
-                <div className="mb-3">
-                  <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Action</p>
-                  <p className="text-sm text-gray-900">{activity.action}</p>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span
-                    className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusColor(activity.status)}`}
-                  >
-                    {activity.status}
-                  </span>
-                  <span className="text-xs text-gray-600">{new Date(activity.date).toLocaleDateString()}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+      {/* Projects Table */}
+      <div className="space-y-4">
+      
         {/* Desktop Table Layout */}
-        <div className="hidden lg:block">
+        <div className="lg:block border-y border-white/30 rounded-lg overflow-hidden p-4 text-center bg-black/30">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-blue-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-bold text-blue-900 uppercase tracking-wide">ID</th>
-                  <th className="px-6 py-3 text-left text-xs font-bold text-blue-900 uppercase tracking-wide">Project</th>
-                  <th className="px-6 py-3 text-left text-xs font-bold text-blue-900 uppercase tracking-wide">User</th>
-                  <th className="px-6 py-3 text-left text-xs font-bold text-blue-900 uppercase tracking-wide">Action</th>
-                  <th className="px-6 py-3 text-left text-xs font-bold text-blue-900 uppercase tracking-wide">Type</th>
-                  <th className="px-6 py-3 text-left text-xs font-bold text-blue-900 uppercase tracking-wide">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-bold text-blue-900 uppercase tracking-wide">Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-bold text-blue-900 uppercase tracking-wide">Actions</th>
+              <thead>
+                <tr className="bg-[rgba(47,79,79,0.5) text-center">
+                  {[
+                    { title: "Projects" },
+                    { title: "Project Manager" },
+                    { title: "Start" },
+                    { title: "Finish" },
+                    { title: "Progress"},
+                    { title: "Total Task"},
+                    { title: "Remaining Task"},
+                    { title: "Completed Task"}
+                  ].map((header, index) => (
+                    <th 
+                      key={index} 
+                      className="px-4 py-3 text-center text-xs font-semibold text-white border-r border-white/30"
+                    >
+                      <span className="bg-black/30 p-2 rounded-md">{header.title}</span>
+                    </th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
-                {dashboardData.recentActivities.map((activity) => (
-                  <tr key={activity.id} className="hover:bg-blue-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm font-mono text-[#2563eb] font-semibold">{activity.id}</span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="max-w-xs">
-                        <p className="text-sm font-semibold text-gray-900 truncate">{activity.project}</p>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <p className="text-sm font-medium text-gray-900">{activity.user}</p>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <p className="text-sm text-gray-900">{activity.action}</p>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border capitalize ${getTypeColor(activity.type)}`}>{activity.type}</span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${getStatusColor(activity.status)}`}>{activity.status}</span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-xs text-gray-600">{new Date(activity.date).toLocaleDateString()}</span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center space-x-2">
-                        <button className="p-1.5 text-gray-400 hover:text-[#2563eb] transition-colors">
-                          <MoreHorizontal className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+              <tbody className="">
+                {projects.map((project, idx) => {
+                  // Calculate random progress for demo purposes (replace with actual data)
+                  const totalTasks = project.totalTasks;
+                  const completedTask = project.completedTask;
+                  const pendingTask = totalTasks - completedTask;
+                  const progress = Math.floor(completedTask / totalTasks * 100) || 0;
+                  
+                  return (
+                    <tr key={project.id} className="hover:bg-gray-800/20 transition-colors">
+                      <td className="px-4 py-3 whitespace-nowrap border-r border-white/30 w-2/12">
+                        <span className="text-sm text-white"><span></span>
+                        {project.name}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap border-r border-white/30 w-2/12">
+                        <span className="text-sm text-white">
+                          {project.managername}
+                          </span>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap border-r border-white/30 w-1/12">
+                        <span className="text-sm text-white">
+                          {formatDate(project.startDate)}
+                          </span>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap border-r border-white/30 w-1/12">
+                        <span className="text-sm text-white">
+                          {formatDate(project.endDate)}
+                          </span>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap border-r border-white/30 w-1/12">
+                        <div className="flex items-center">
+                          <div className="w-24 mr-2">
+                            <ProgressBar percentage={progress} />
+                          </div>
+                          <span className="text-xs text-white">{progress}%</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-center border-r border-white/30 w-1/12">
+                        <span className="text-sm text-white">
+                          {totalTasks}
+                          </span>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-center border-r border-white/30 w-2/12">
+                        <span className="text-sm text-white">{pendingTask}</span>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-center w-4/12">
+                        <span className="text-sm text-white">{completedTask}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
