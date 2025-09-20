@@ -31,7 +31,7 @@ export default function RootLayout({
           />
         </div>
        
-  <div className="fixed inset-0 -z-10 bg-black/20 backdrop-blur-lg"></div>
+  <div className="fixed inset-0 -z-10 bg-black/30 backdrop-blur-lg"></div>
         <Providers>
           <ProtectedRoute>{children}</ProtectedRoute>
         </Providers>

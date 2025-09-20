@@ -49,7 +49,7 @@ export function AssignTaskModal({
   const [error, setError] = useState<string | null>(null);
   const [allMembers, setAllMembers] = useState<User[]>([]);
   const [isCreating, setIsCreating] = useState(false);
-
+const today = new Date().toISOString().split("T")[0];
   // Check if user is authorized to assign tasks
   const isAuthorizedToAssignTasks = () => {
     if (!isAuthenticated || !user) {
@@ -319,7 +319,8 @@ export function AssignTaskModal({
       <div>
   <label className="block text-sm font-medium text-white mb-2">Task Due Date*</label>
   <input
-    type="date"
+              type="date"
+    min={today}
     value={task.dueDate ? task.dueDate.substring(0, 10) : ""}
     onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
     disabled={isCreating}
