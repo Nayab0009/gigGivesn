@@ -648,7 +648,7 @@ export default function ProjectDashboard() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-8xl mx-auto">
         {/* Header & Action Bar - match Manager header styling */}
         <div className="mb-8 flex items-center justify-between gap-4">
           {/* Left: Heading */}
@@ -787,84 +787,42 @@ export default function ProjectDashboard() {
           ) : (
             <div className="overflow-x-hidden">
               <table className="min-w-full table-fixed divide-y divide-white/10">
-                <thead className="backdrop-blur-md bg-white/5">
-                  <tr>
-                    <th className="px-4 sm:px-6 py-4 text-left w-[180px]">
-                      <div
-                        className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white"
-                      >
-                        <span
-                          className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]"
-                        >
-                          Name
-                        </span>
-                      </div>
+                <thead className="backdrop-blur-md bg-white/5" style={{height: '73px', borderBottom: '5px solid #FFFFFF1A'}}>
+                  <tr className="h-[56px]">
+                    <th className="px-4 sm:px-6 py-4 text-left w-[180px] border-b-2 border-[#4A6A65]">
+                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                        NAME
+                      </span>
                     </th>
-                    <th className="px-4 sm:px-6 py-4 text-left w-[260px]">
-                      <div
-                        className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white"
-                      >
-                        <span
-                          className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]"
-                        >
-                          Description
-                        </span>
-                      </div>
+                    <th className="px-4 sm:px-6 py-4 text-left w-[260px] border-b-2 border-[#4A6A65]">
+                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                        DESCRIPTION
+                      </span>
                     </th>
-                    <th className="px-4 sm:px-6 py-4 text-left w-[110px]">
-                      <div
-                        className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white"
-                      >
-                        <span
-                          className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px] whitespace-nowrap"
-                        >
-                          Start Date
-                        </span>
-                      </div>
+                    <th className="px-4 sm:px-6 py-4 text-left w-[110px] border-b-2 border-[#4A6A65]">
+                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left whitespace-nowrap uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                        START DATE
+                      </span>
                     </th>
-                    <th className="px-4 sm:px-6 py-4 text-left w-[110px]">
-                      <div
-                        className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white"
-                      >
-                        <span
-                          className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px] whitespace-nowrap"
-                        >
-                          End Date
-                        </span>
-                      </div>
+                    <th className="px-4 sm:px-6 py-4 text-left w-[110px] border-b-2 border-[#4A6A65]">
+                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left whitespace-nowrap uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                        END DATE
+                      </span>
                     </th>
-                    <th className="px-4 sm:px-6 py-4 text-left w-[140px]">
-                      <div
-                        className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white"
-                      >
-                        <span
-                          className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]"
-                        >
-                          Status
-                        </span>
-                      </div>
+                    <th className="px-4 sm:px-6 py-4 text-left w-[140px] border-b-2 border-[#4A6A65]">
+                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                        STATUS
+                      </span>
                     </th>
-                    <th className="px-4 sm:px-6 py-4 text-left w-[160px]">
-                      <div
-                        className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white"
-                      >
-                        <span
-                          className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]"
-                        >
-                          Manager
-                        </span>
-                      </div>
+                    <th className="px-4 sm:px-6 py-4 text-left w-[160px] border-b-2 border-[#4A6A65]">
+                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                        MANAGERS
+                      </span>
                     </th>
-                    <th className="px-4 sm:px-6 py-4 text-left w-[120px]">
-                      <div
-                        className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white"
-                      >
-                        <span
-                          className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]"
-                        >
-                          Actions
-                        </span>
-                      </div>
+                    <th className="px-4 sm:px-6 py-4 text-left w-[120px] border-b-2 border-[#4A6A65]">
+                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                        VIEW TEAM
+                      </span>
                     </th>
                   </tr>
                 </thead>
@@ -888,33 +846,53 @@ export default function ProjectDashboard() {
                         className="transition-colors duration-300 bg-transparent hover:bg-white/5"
                       >
                         <td className="px-6 py-6">
-                          <div className="space-y-2">
-                            <h3
-                              className="text-xs sm:text-sm  leading-tight break-words whitespace-normal"
-                              style={{ color: "#0CA9F6", fontWeight: 500, wordBreak: 'break-word', fontSize: '14px' }}
-                            >
-                              {(() => {
-                                // Split name into words, insert <br/> after every 30 words
-                                if (!project.name) return null;
-                                const words = project.name.split(' ');
-                                const lines = [];
-                                for (let i = 0; i < words.length; i += 30) {
-                                  lines.push(words.slice(i, i + 30).join(' '));
-                                }
-                                return lines.map((line, idx) => (
-                                  <span key={idx}>
-                                    {line}
-                                    {idx !== lines.length - 1 && <br />}
-                                  </span>
-                                ));
-                              })()}
-                            </h3>
-                            <div className="flex items-center gap-2">
-                              {project.budget && (
-                                <span className="text-sm text-white/70">
-                                  ${project.budget.toLocaleString()}
-                                </span>
+                          <div className="space-y-2 flex items-center gap-3">
+                            {/* Circular Logo */}
+                            <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden border-2 border-white/30 bg-white/10 flex items-center justify-center">
+                              {project.logo ? (
+                                <img
+                                  src={project.logo}
+                                  alt={project.name + ' logo'}
+                                  className="w-full h-full object-cover rounded-full"
+                                  style={{ width: 40, height: 40 }}
+                                />
+                              ) : (
+                                <img
+                                  src={generateAvatar(project.name)}
+                                  alt={project.name + ' avatar'}
+                                  className="w-full h-full object-cover rounded-full"
+                                  style={{ width: 40, height: 40 }}
+                                />
                               )}
+                            </div>
+                            <div>
+                              <h3
+                                className="text-xs sm:text-sm  leading-tight break-words whitespace-normal"
+                                style={{ color: "#FFFFFF", fontWeight: 500, wordBreak: 'break-word', fontSize: '16px' }}
+                              >
+                                {(() => {
+                                  // Split name into words, insert <br/> after every 30 words
+                                  if (!project.name) return null;
+                                  const words = project.name.split(' ');
+                                  const lines = [];
+                                  for (let i = 0; i < words.length; i += 30) {
+                                    lines.push(words.slice(i, i + 30).join(' '));
+                                  }
+                                  return lines.map((line, idx) => (
+                                    <span key={idx}>
+                                      {line}
+                                      {idx !== lines.length - 1 && <br />}
+                                    </span>
+                                  ));
+                                })()}
+                              </h3>
+                              <div className="flex items-center gap-2">
+                                {project.budget && (
+                                  <span className="text-sm text-white/70">
+                                    ${project.budget.toLocaleString()}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </td>
