@@ -205,7 +205,7 @@ const AppHeader: React.FC = () => {
     fixed top-4 left-1/2 transform -translate-x-1/2 
     w-[95%] z-[99999] 
     shadow-md transition-all duration-500 ease-in-out
-    backdrop-blur-[100%] bg-[rgba(0,0,0,0.3)] text-white
+    backdrop-blur-[100px] bg-[rgba(0,0,0,0.3)] text-white
     flex items-center justify-between px-4 py-3
     rounded-2xl
   `}
@@ -225,7 +225,6 @@ const AppHeader: React.FC = () => {
         />
       </div>
 
-      {/* Middle - Dynamic Nav Items based on User Role - Show ALL items */}
       <nav className="hidden lg:block flex-1 mx-8">
         <ul className="flex items-center justify-center gap-14 text-sm font-medium flex-wrap">
           {navItems.map((item, index) => (
