@@ -124,12 +124,9 @@ export default function ForumPage() {
   const selectedThread = threads.find((t) => t.id === selectedThreadId)
 
   return (
-  <div className="min-h-screen mx-4">
+    <div className="min-h-screen mx-4 bg-black/20 rounded-2xl p-6">
       {/* Header Section */}
-      <div
-        className="mb-12 flex items-center justify-between  mt-6 opacity-100 mx-auto"
-       
-      >
+      <div className="mb-12 flex items-center justify-between mt-6 opacity-100 mx-auto">
         <div className="flex flex-col justify-leftye sp">
           <h1 className="font-inter font-semibold text-[20px] leading-[28px] text-white align-middle mb-1">Discussion Forum</h1>
           <p className="font-inter font-normal text-[14px] leading-[20px] text-white align-middle">Connect, collaborate & share ideas with your team</p>
@@ -142,7 +139,7 @@ export default function ForumPage() {
             <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="avatar3" className="w-8 h-8 rounded-full border-2 border-white" />
             <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs font-bold text-gray-700">+10</div>
           </div>
-          {/* Start New Discussion Button (moved and fully functional) */}
+          {/* Start New Discussion Button */}
           {isAuthenticated && (
             <button
               className="group relative inline-flex items-center gap-3 font-bold text-white text-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 active:scale-95 overflow-hidden rounded-lg opacity-100 px-4 py-2"
@@ -159,7 +156,8 @@ export default function ForumPage() {
           )}
         </div>
       </div>
-  <div   className="relative  rounded-[20px] border border-white/30 p-[30px] gap-[20px] bg-black/30 opacity-100 mx-auto">
+
+      <div className="relative rounded-[20px] border border-white/30 p-[30px] gap-[20px] bg-black/30 opacity-100 mx-auto">
         {/* Authentication Check */}
         {!isAuthenticated ? (
           <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-2xl p-8 mb-10 shadow-lg">
@@ -175,15 +173,11 @@ export default function ForumPage() {
           </div>
         ) : (
           <>
-            {/* New Thread Button moved to header, removed from here */}
-
             {/* New Thread Form */}
             {showNewThreadForm && (
               <div
                 className="rounded-[15px] border border-white/30 p-10 mb-10 relative overflow-hidden shadow-2xl bg-black/30"
                 style={{
-                  background: '#0000004D',
-                  backgroundBlendMode: 'luminosity',
                   border: '1px solid #FFFFFF4D',
                   color: '#fff',
                 }}
@@ -205,7 +199,7 @@ export default function ForumPage() {
                     placeholder="Enter discussion title..."
                     value={newThreadTitle}
                     onChange={(e) => setNewThreadTitle(e.target.value)}
-                    className="w-full px-6 py-4 rounded-xl border-2 border-white/20 focus:border-transparent focus:ring-4 focus:ring-opacity-30 transition-all duration-300 text-lg font-medium bg-black/40 text-white placeholder-gray-300 shadow-sm"
+                    className="w-full px-6 py-4 rounded-xl border-2 border-white/20 focus:border-transparent focus:ring-4 focus:ring-opacity-30 transition-all duration-300 text-lg font-medium bg-black/30 text-white placeholder-gray-300 shadow-sm"
                     style={{ focusRingColor: colors.primary.hex + '30' }}
                     disabled={isLoading}
                   />
@@ -219,7 +213,7 @@ export default function ForumPage() {
                     value={newThreadContent}
                     onChange={(e) => setNewThreadContent(e.target.value)}
                     rows={6}
-                    className="w-full px-6 py-4 rounded-xl border-2 border-white/20 focus:border-transparent focus:ring-4 focus:ring-opacity-30 transition-all duration-300 resize-none text-lg leading-relaxed bg-black/40 text-white placeholder-gray-300 shadow-sm"
+                    className="w-full px-6 py-4 rounded-xl border-2 border-white/20 focus:border-transparent focus:ring-4 focus:ring-opacity-30 transition-all duration-300 resize-none text-lg leading-relaxed bg-black/30 text-white placeholder-gray-300 shadow-sm"
                     style={{ focusRingColor: colors.primary.hex + '30' }}
                     disabled={isLoading}
                   />
@@ -267,16 +261,7 @@ export default function ForumPage() {
               threads.map((thread) => (
                 <div
                   key={thread.id}
-                  className="group cursor-pointer overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] mb-6 w-full"
-                  style={{
-                    borderRadius: '15px',
-                    borderWidth: '1px',
-                    opacity: 1,
-                    background: '#0000004D',
-                    backgroundBlendMode: 'luminosity',
-                    border: '1px solid #FFFFFF4D',
-                    position: 'relative',
-                  }}
+                  className="group cursor-pointer overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] mb-6 w-full bg-black/30 rounded-[15px] border border-white/30"
                   onClick={() => setSelectedThreadId(thread.id)}
                 >
                   <div className="p-8 relative h-full flex flex-col justify-between min-h-[182px]">
@@ -291,15 +276,12 @@ export default function ForumPage() {
                       </span>
                     </div>
 
-                   
-                    {/* Updated Tailwind styling for thread title */}
+                    {/* Thread title */}
                     <h3
                       className="font-inter font-bold text-[14px] leading-[1] tracking-[0.05em] align-middle mb-4 text-[#0CA9F6] transition-all duration-300"
                     >
                       {thread.title}
                     </h3>
-
-                    
 
                     {/* Content Preview */}
                     <p className="font-inter font-light text-[14px] leading-[25px] tracking-[0.05em] text-gray-200 mb-6 line-clamp-2">{thread.description}</p>
@@ -332,18 +314,15 @@ export default function ForumPage() {
           <div
             className="rounded-[15px] border border-white/30 shadow-2xl overflow-hidden bg-black/30"
             style={{
-              background: '#0000004D',
-              backgroundBlendMode: 'luminosity',
               border: '1px solid #FFFFFF4D',
               color: '#fff',
             }}
           >
             {/* Back Button */}
-            <div className="p-8 border-b border-white/20 bg-black/40">
+            <div className="p-8 border-b border-white/20 bg-black/30">
               <button
                 className="group text-white inline-flex items-center gap-3 px-6 py-3 rounded-2xl font-bold transition-all duration-300 hover:shadow-lg transform hover:-translate-y-0.5"
                 style={{
-                
                   backgroundColor: colors.primary.hex + '10',
                 }}
                 onClick={() => setSelectedThreadId(null)}
@@ -353,7 +332,7 @@ export default function ForumPage() {
               </button>
             </div>
 
-            {/* Thread Header - styled like thread list */}
+            {/* Thread Header */}
             <div className="p-10">
               {/* Author */}
               <div className="flex items-center gap-3 mb-5">
@@ -378,11 +357,10 @@ export default function ForumPage() {
                 <Clock size={16} />
                 <span className="font-medium">{new Date(selectedThread.createdAt).toLocaleString()}</span>
               </div>
-              
             </div>
 
             {/* Comments Section */}
-            <div className="border-t border-white/20 p-10 bg-black/20">
+            <div className="border-t border-white/20 p-10 bg-black/30">
               <div className="flex items-center gap-3 mb-8">
                 <div className="p-3 rounded-full bg-white/10">
                   <MessageCircle size={28} style={{ color: colors.primary.hex }} />
@@ -403,15 +381,14 @@ export default function ForumPage() {
                   comments.map((comment: any) => (
                     <div
                       key={comment.id}
-                      className="bg-black/40 rounded-2xl p-8 border border-white/20 shadow-sm hover:shadow-md transition-all duration-300"
+                      className="bg-black/30 rounded-2xl p-8 border border-white/20 shadow-sm hover:shadow-md transition-all duration-300"
                     >
                       <div className="flex items-center gap-3 mb-4">
                         <div className="p-2 rounded-full bg-white/10">
                           <User size={18} className="text-[#0CA9F6]" />
                         </div>
                         <span className="font-bold text-lg" style={{ color: '#fff' }}>
-                          {comment.commentedBy?.name ||
-                            "Unknown"}
+                          {comment.commentedBy?.name || "Unknown"}
                         </span>
                         {comment.createdAt && (
                           <span className="text-sm ml-auto px-3 py-1 rounded-full bg-white/10 font-medium" style={{ color: '#fff' }}>
@@ -436,14 +413,14 @@ export default function ForumPage() {
 
               {/* Add Comment Form - Only show if authenticated */}
               {isAuthenticated ? (
-                <div className="bg-black/40 rounded-2xl p-8 border-2 border-white/20 shadow-lg">
+                <div className="bg-black/30 rounded-2xl p-8 border-2 border-white/20 shadow-lg">
                   <h4 className="text-2xl font-bold mb-6 text-white" >Add a comment</h4>
                   <textarea
                     placeholder="Share your thoughts..."
                     value={newCommentContent}
                     onChange={(e) => setNewCommentContent(e.target.value)}
                     rows={5}
-                    className="w-full px-6 py-4 rounded-xl border-2 border-white/20 focus:border-transparent focus:ring-4 focus:ring-opacity-30 transition-all duration-300 resize-none mb-6 text-lg leading-relaxed bg-black/40 text-white placeholder-gray-300"
+                    className="w-full px-6 py-4 rounded-xl border-2 border-white/20 focus:border-transparent focus:ring-4 focus:ring-opacity-30 transition-all duration-300 resize-none mb-6 text-lg leading-relaxed bg-black/30 text-white placeholder-gray-300"
                     style={{ focusRingColor: colors.primary.hex + '30' }}
                   />
                   <div className="flex justify-end">
@@ -461,7 +438,7 @@ export default function ForumPage() {
                   </div>
                 </div>
               ) : (
-                <div className="bg-black/40 rounded-2xl p-10 border-2 border-white/20 text-center">
+                <div className="bg-black/30 rounded-2xl p-10 border-2 border-white/20 text-center">
                   <div className="p-4 rounded-full bg-white/10 inline-block mb-4 shadow-sm">
                     <User size={40} className="text-[#0CA9F6]" />
                   </div>
@@ -473,6 +450,5 @@ export default function ForumPage() {
         )}
       </div>
     </div>
-    
   )
 }

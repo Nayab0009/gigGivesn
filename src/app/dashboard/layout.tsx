@@ -8,7 +8,9 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  const headerHeight = 72 // adjust based on your AppHeader height
+  // The header has top-4 (16px) + its height + some padding
+  // Accounting for the header's actual position and spacing
+  const headerHeight = 88 // Increased to account for top-4 positioning + header height
 
   return (
     <div className="min-h-screen w-full flex flex-col relative">

@@ -509,7 +509,7 @@ export default function ProjectDashboard() {
   if (!user?.id) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 p-4 sm:p-6 lg:p-8">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-none mx-auto">
           <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-12 text-center">
             <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4 mx-auto">
               <AlertCircle className="w-8 h-8 text-amber-600" />
@@ -525,9 +525,9 @@ export default function ProjectDashboard() {
   // --- RENDER ---
   return (
     <div
-      className="min-h-screen p-4 sm:p-6 lg:p-8 rounded-2xl w-[95%] mx-auto"
+      className="min-h-screen p-4 sm:p-6 lg:p-8 rounded-2xl w-full "
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-full">
         {/* Header */}
         <div className="mb-8">
           <h1
