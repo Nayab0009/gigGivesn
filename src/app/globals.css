@@ -712,7 +712,11 @@ span.flatpickr-weekday,
 .stocks-slider-outer .swiper-button-prev.swiper-button-disabled {
   @apply bg-white opacity-50 dark:bg-gray-900;
 }
-
+/* Utility to force dark dropdown background */
+.dropdown-bg-dark {
+  background: rgba(0,0,0,0.3) !important;
+  backdrop-filter: blur(8px) !important;
+}
 .stocks-slider-outer .swiper-button-next svg,
 .stocks-slider-outer .swiper-button-prev svg {
   @apply h-auto! w-auto!;

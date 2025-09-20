@@ -306,19 +306,18 @@ const AppHeader: React.FC = () => {
   </button>
 
   {/* Rectangle 105 instead of notification icon */}
-  <div
-    className="w-10 h-10 relative"
-    onClick={(e) => e.stopPropagation()}
-  >
-    {/* Notification Dropdown Component */}
-    <NotificationDropdown />
-    <Image
-      src="/images/notification.png"
-      alt="Notifications"
-      fill
-      className="object-contain"
-    />
-  </div>
+  {/* Notification Dropdown with image trigger */}
+  <NotificationDropdown
+    trigger={
+      <Image
+        src="/images/notification.png"
+        alt="Notifications"
+        width={40}
+        height={40}
+        className="object-contain cursor-pointer"
+      />
+    }
+  />
 
   {/* User Dropdown with white username */}
   <div
