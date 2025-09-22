@@ -744,7 +744,7 @@ export default function ChatPage() {
       <input
         type="text"
         placeholder="Search"
-        className="w-full pl-10 pr-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30"
+        className="w-full pl-10 pr-4 py-2 rounded-xl bg-black/30 backdrop-blur-sm  text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
@@ -766,8 +766,8 @@ export default function ChatPage() {
               saveReadStatus(contact.id)
               setContacts((prevContacts) => prevContacts.map((c) => (c.id === contact.id ? { ...c, unread: 0 } : c)))
             }}
-            className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all hover:bg-white/10 ${
-              selectedUser === contact.name ? 'bg-white/15 border border-white/20' : ''
+            className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all hover:bg-black/30 ${
+              selectedUser === contact.name ? 'bg-black/30 ' : ''
             }`}
           >
             <div className="relative">
@@ -1029,18 +1029,29 @@ export default function ChatPage() {
     </span>
   </div>
 )}
-                     <div
-  className={`px-4 py-3 rounded-2xl shadow-sm ${
-    isSentByMe 
-      ? "text-white rounded-bl-sm border" 
-      : "bg-black/40 backdrop-blur-sm  text-white rounded-bl-sm border border-white/20"
-  } ${
-    fontSize === "small" ? "text-sm" : fontSize === "large" ? "text-lg" : "text-base"
-  }`}
-  style={isSentByMe ? { 
-    background: colors.primary.hex,
-    borderColor: colors.primary.hex 
-  } : {}}
+      <div
+  className={`
+    pt-[8px] pr-[16px] pb-[8px] pl-[16px]
+    rounded-tl-[12px] rounded-tr-[24px] rounded-br-[24px] rounded-bl-[24px]
+    shadow-sm
+    ${
+      isSentByMe
+        ? "text-white border"
+        : "bg-[#1F293799] backdrop-blur-sm text-white border border-[#FFFFFF33]"
+    }
+    ${
+      fontSize === "small"
+        ? "text-sm"
+        : fontSize === "large"
+        ? "text-lg"
+        : "text-base"
+    }
+  `}
+  style={
+    isSentByMe
+      ? { background: colors.primary.hex, borderColor: colors.primary.hex }
+      : {}
+  }
 >
                         {msg.fileUrl && msg.fileType?.startsWith("image/") ? (
                           // Render image
@@ -1197,7 +1208,14 @@ export default function ChatPage() {
       {/* User Profile Panel */}
 {/* User Profile Panel */}
 {showUserProfile && selectedUserId && (
-  <aside className="w-80 bg-black/30   rounded-xl border border-white/10 flex flex-col">
+  <aside  className={`
+    w-[365px] h-[475px]
+    rounded-[20px]
+    border border-[#FFFFFF33] border-b border-b-[#FFFFFF33]
+    bg-[#0000004D]
+    flex flex-col
+    pt-[24px] pr-[24px] pb-[25px] pl-[24px]
+  `}>
     {/* Profile Header */}
     <div className="p-6 border-b border-white/10">
   <div className="flex items-center gap-4 mb-4">
@@ -1215,7 +1233,6 @@ export default function ChatPage() {
     )}
     <div>
       <h3 className="text-lg font-semibold text-white">{selectedUser}</h3>
-      <p className="text-white/60 text-sm">Online</p>
     </div>
   </div>
  <button
