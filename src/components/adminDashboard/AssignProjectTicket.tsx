@@ -213,8 +213,10 @@ const today = new Date().toISOString().split("T")[0];
     const newAssigned = task.assignedTo.includes(userId)
       ? task.assignedTo.filter((id: string) => id !== userId)
       : [...task.assignedTo, userId];
-    
-    setTask({ ...task, assignedTo: newAssigned });
+    setTask({
+    ...task,
+    assignedTo: [userId], 
+  });
   };
 
   // Fetch teams when modal opens
@@ -350,13 +352,13 @@ const today = new Date().toISOString().split("T")[0];
               <p className="text-sm text-gray-300 mb-2">{team.department} Department</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {team.members.map((member: any) => (
-                  <div
-                    key={member.id}
-                    onClick={() => !isCreating && toggleAssignment(member.id)}
-                    className={`p-3 rounded-xl border flex items-center space-x-3 cursor-pointer ${
-                      task.assignedTo.includes(member.id) ? "bg-white/10" : "bg-black/30"
-                    }`}
-                  >
+                 <div
+  key={member.id}
+  onClick={() => !isCreating && toggleAssignment(member.id)}
+  className={`p-3 rounded-xl border flex items-center space-x-3 cursor-pointer ${
+    task.assignedTo[0] === member.id ? "bg-white/10" : "bg-black/30"
+  }`}
+>
                     <img src={member.avatar} alt={member.name} className="w-10 h-10 rounded-full border" />
                     <div>
                       <p className="text-white font-medium">{member.name}</p>

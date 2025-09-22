@@ -248,8 +248,8 @@ function ViewTeamModal({
   if (!open || !projectId) return null
 
   return (
-    <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50 p-4">
-      <div className="  rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden border border-white/10">
+    <div className="fixed inset-0  bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="  rounded-2xl  bg-black/30 backdrop-blur-sm shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden border border-white/10">
         {/* Header */}
         <div className="p-6 text-whitebackdrop-blur-sm border-white/10">
           <div className="flex items-center justify-between">
@@ -481,7 +481,18 @@ export default function ProjectDashboard() {
       window.location.href = "/dashboard/manager/projectkanbanview"
     }
   }
-
+const truncateByWords = (text: string, maxLength: number = 100) => {
+  if (!text || text.length <= maxLength) return text;
+  
+  const truncated = text.substring(0, maxLength);
+  const lastSpaceIndex = truncated.lastIndexOf(' ');
+  
+  if (lastSpaceIndex > 0) {
+    return truncated.substring(0, lastSpaceIndex) + '...';
+  }
+  
+  return truncated + '...';
+};
   // --- Assign Team Logic ---
   const assignTeam = (projectId: string, team: Team) => {
     setAssignTeamProjectId(null)
@@ -779,7 +790,7 @@ export default function ProjectDashboard() {
                         {/* Description */}
                        <td className="px-6 py-6">
   <p className="font-roboto font-normal text-[14px] leading-[20px] text-[rgba(164,167,174,1)] max-w-xs">
-    {project.description}
+    {truncateByWords(project.description, 30)}
   </p>
 </td>
 

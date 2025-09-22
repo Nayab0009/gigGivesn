@@ -620,7 +620,18 @@ export default function ProjectDashboard() {
 
   const currentProject = assignManagerProjectId ? projects.find((p) => p.id === assignManagerProjectId) : null
   const editProject = editProjectId ? projects.find((p) => p.id === editProjectId) : null
-
+const truncateByWords = (text: string, maxLength: number = 100) => {
+  if (!text || text.length <= maxLength) return text;
+  
+  const truncated = text.substring(0, maxLength);
+  const lastSpaceIndex = truncated.lastIndexOf(' ');
+  
+  if (lastSpaceIndex > 0) {
+    return truncated.substring(0, lastSpaceIndex) + '...';
+  }
+  
+  return truncated + '...';
+};
   // Refresh projects list (used by header Refresh button)
   const handleRefresh = async () => {
     setIsLoading(true)
@@ -898,7 +909,7 @@ export default function ProjectDashboard() {
                         </td>
                         <td className="px-6 py-6">
                           <p className="text-sm leading-relaxed break-words whitespace-normal max-w-2xl" style={{ color: "#A8A8A8" }}>
-                            {project.description}
+                           {truncateByWords(project.description, 30)}
                           </p>
                         </td>
                         <td className="px-6 py-6">
