@@ -93,7 +93,16 @@ export default function ProjectDetailsPage() {
 
   const [activeTab, setActiveTab] = useState<
     "summary" | "tasks" | "sprints" | "calendar" | "notes" | "members" | "settings"
-  >("summary")
+  >(() => {
+    if (typeof window === 'undefined') return "summary";
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    return (tab as any) === 'sprints' ? 'sprints' : 
+           (tab as any) === 'calendar' ? 'calendar' :
+           (tab as any) === 'members' ? 'members' :
+           (tab as any) === 'tasks' ? 'tasks' :
+           (tab as any) === 'settings' ? 'settings' : 'summary';
+  });
   const [taskView, setTaskView] = useState<"table" | "kanban">("table")
 
   // Settings state
@@ -189,7 +198,42 @@ export default function ProjectDetailsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab])
 
+  // Listen to URL changes for tab updates
+  useEffect(() => {
+    const handleRouteChange = () => {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab');
+      if (tabParam && (tabParam === "summary" || tabParam === "tasks" || tabParam === "sprints" || 
+          tabParam === "calendar" || tabParam === "notes" || tabParam === "members" || tabParam === "settings")) {
+        setActiveTab(tabParam);
+      }
+    };
+
+    // Listen to route changes
+    window.addEventListener('popstate', handleRouteChange);
+    return () => window.removeEventListener('popstate', handleRouteChange);
+  }, []);
+
   // When switching to settings, populate field with current name
+  // Update activeTab when URL changes
+  useEffect(() => {
+    const handleUrlChange = () => {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab');
+      if (tab === 'sprints' || tab === 'calendar' || tab === 'members' || 
+          tab === 'tasks' || tab === 'settings' || tab === 'summary') {
+        setActiveTab(tab as any);
+      }
+    };
+
+    handleUrlChange(); // Check on mount
+    window.addEventListener('popstate', handleUrlChange);
+    
+    return () => {
+      window.removeEventListener('popstate', handleUrlChange);
+    };
+  }, []);
+
   useEffect(() => {
     if (activeTab === "settings" && project) {
       setSettingsProjectName(project.name)
@@ -294,7 +338,12 @@ export default function ProjectDetailsPage() {
               ].map((t) => (
                 <button
                   key={t.key}
-                  onClick={() => setActiveTab(t.key as any)}
+                  onClick={() => {
+                    setActiveTab(t.key as any);
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('tab', t.key);
+                    router.replace(url.pathname + url.search);
+                  }}
                   className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
                     activeTab === t.key
                       ? "bg-[#0000004D] text-white shadow border border-white/20"

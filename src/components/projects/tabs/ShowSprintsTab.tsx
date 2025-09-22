@@ -6,6 +6,7 @@ import { AssignTaskModal } from '../../adminDashboard/AssignProjectTicket';
 import type { Task } from '@/types';
 import { colors } from "@/colors";
 import axiosInstance from '@/lib/axios';
+import { useAuth } from '@/context/AuthContext';
 
 type Sprint = {
   id: number;
@@ -23,6 +24,8 @@ type SprintsTabProps = {
 
 const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
   const router = useRouter();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
 
   const [sprints, setSprints] = useState<Sprint[]>([]);
   const [loading, setLoading] = useState(true);
@@ -120,6 +123,11 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
     setIsModalOpen(false);
     setSelectedSprintId(null);
     setSelectedSprintName('');
+    
+    // Update URL to sprints tab without full navigation
+    const url = new URL(window.location.href);
+    url.searchParams.set('tab', 'sprints');
+    router.replace(url.pathname + url.search, { scroll: false });
   };
 
   // Handle task creation success
@@ -159,16 +167,18 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
           <h2 className="text-2xl font-bold text-white">{projectName} Sprints</h2>
           <p className="text-white/70 mt-1">Manage and track sprints for this project</p>
         </div>
-        <button
-          onClick={() => router.push('/dashboard/manager/addsprints')}
-          className="inline-flex items-center gap-2 px-4 py-2 text-white font-medium rounded-full transition shadow-sm"
-          style={{
-            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-          }}
-        >
-          <Plus className="w-4 h-4" />
-          Add Sprint
-        </button>
+        {!isAdmin && (
+          <button
+            onClick={() => router.push('/dashboard/manager/addsprints')}
+            className="inline-flex items-center gap-2 px-4 py-2 text-white font-medium rounded-full transition shadow-sm"
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+            }}
+          >
+            <Plus className="w-4 h-4" />
+            Add Sprint
+          </button>
+        )}
       </div>
 
       {/* Sprints Grid */}
@@ -246,18 +256,20 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
 
                 <div className="flex gap-3">
                   {/* Add Task Button with clear label */}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAddTask(sprint);
-                    }}
-                    className="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:opacity-80 transition text-sm font-medium"
-                    style={{ backgroundColor: `${colors.primary.rgb.replace(", 1)", ", 0.2)")}`, color: colors.primary.hex }}
-                    title="Add new task to this sprint"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Add Task</span>
-                  </button>
+                  {!isAdmin && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddTask(sprint);
+                      }}
+                      className="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:opacity-80 transition text-sm font-medium"
+                      style={{ backgroundColor: `${colors.primary.rgb.replace(", 1)", ", 0.2)")}`, color: colors.primary.hex }}
+                      title="Add new task to this sprint"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Add Task</span>
+                    </button>
+                  )}
                   
                   {/* Show Tasks Button with clear label */}
                   <button
