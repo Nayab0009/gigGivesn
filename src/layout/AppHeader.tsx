@@ -205,7 +205,7 @@ const AppHeader: React.FC = () => {
     fixed top-4 left-1/2 transform -translate-x-1/2 
     w-[95%] z-[99999] 
     shadow-md transition-all duration-500 ease-in-out
-    backdrop-blur-[100px] bg-[rgba(0,0,0,0.3)] text-white
+     bg-[rgba(0,0,0,0.3)] text-white
     flex items-center justify-between px-4 py-3
     rounded-2xl
   `}

@@ -729,7 +729,7 @@ export default function ChatPage() {
 
       {/* Sidebar */}
      {/* Sidebar - Replace from line 473 */}
-<aside className="w-80 bg-black/20  rounded-xl backdrop-blur-sm border-r border-white/10 flex flex-col">
+<aside className="w-80 bg-black/30  rounded-xl  border-r border-white/10 flex flex-col">
   {/* Header */}
   <div className="p-4 border-b border-white/10">
     <div className="flex items-center justify-between mb-4">

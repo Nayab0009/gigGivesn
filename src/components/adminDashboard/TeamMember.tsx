@@ -527,7 +527,7 @@ export default function TeamListPage() {
           boxShadow: "0 0 0 1px rgba(255,255,255,0.1)",
           outline: "none",
         }}
-         onClick={() => handleOpenDetails(member)}
+         
       >
         
         {/* Employee Details Cell */}
@@ -604,6 +604,21 @@ export default function TeamListPage() {
               >
                 <Edit className="w-4 h-4 text-white/70" />
               </button> */}
+               <button
+    onClick={() => handleOpenDetails(member)}
+    className="inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 hover:bg-blue-500/20 backdrop-blur-xl"
+    style={{
+      border: "1px solid rgba(255, 255, 255, 0.2)",
+    }}
+  >
+    <Image
+      src="/images/Eye.svg"
+      alt="View"
+      width={16}
+      height={16}
+      className="text-white"
+    />
+  </button>
               <button
                 onClick={() => handleEmployeeDelete(String(member.id))}
                 className="inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 hover:bg-red-500/20 backdrop-blur-xl"

@@ -290,7 +290,7 @@ export default function ProjectDetailsPage() {
                  { key: "sprints", label: "Sprints" },
                 { key: "calendar", label: "Calendar" },
                 { key: "members", label: "Members" },
-                { key: "settings", label: "Settings" },
+                // { key: "settings", label: "Settings" },
               ].map((t) => (
                 <button
                   key={t.key}
