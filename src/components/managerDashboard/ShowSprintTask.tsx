@@ -349,7 +349,7 @@ const ShowSprintTask: React.FC = () => {
                       </tbody>
                     </table>
                   </div>
-                  <div className="px-6 py-3 text-white/70 text-sm">+ Create task</div>
+  
                 </div>
 
                 {/* Completed Tasks Table */}

@@ -57,7 +57,7 @@ router.push(`/dashboard/manager/projects/${createdSprint.project.id}`)
   return (
    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
   <div className="rounded-3xl shadow-2xl w-full max-w-3xl max-h-[95vh] overflow-y-auto border-2 border-white/40 scrollbar-hide">
-    <div className="p-6 sm:p-8">
+    <div className="p-6 sm:p-8 bg-black/30 backdrop-blur-md relative">
           {/* Header */}
           <div className="text-center mb-8">
       
@@ -195,28 +195,27 @@ router.push(`/dashboard/manager/projects/${createdSprint.project.id}`)
                   <CheckCircle2 className="w-4 h-4 text-white/80" />
                   All required fields marked with * must be completed
                 </div>
-                <button
-                  type="submit"
-                  disabled={submitting || !form.title || !form.startDate || !form.endDate || !form.project}
-                  className="inline-flex items-center gap-3 px-8 py-4 font-semibold rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none transform hover:scale-105 text-white"
-                  style={{ 
-                    background: submitting || !form.title || !form.startDate || !form.endDate || !form.project 
-                      ? 'rgba(255, 255, 255, 0.1)' 
-                      : `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                  }}
-                >
-                  {submitting ? (
-                    <>
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Creating Sprint...
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle2 className="w-5 h-5" style={{ color: colors.highlight.hex }} />
-                      Create Sprint
-                    </>
-                  )}
-                </button>
+   <button
+  type="submit"
+  disabled={
+    submitting || !form.title || !form.startDate || !form.endDate || !form.project
+  }
+  className="inline-flex items-center gap-3 px-8 py-4 font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 text-white bg-[#0CA9F6]"
+>
+  {submitting ? (
+    <>
+      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+      Creating Sprint...
+    </>
+  ) : (
+    <>
+      Create Sprint
+    </>
+  )}
+</button>
+
+
+
               </div>
             </form>
 

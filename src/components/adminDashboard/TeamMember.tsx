@@ -206,65 +206,71 @@ export default function TeamListPage() {
       <div className="mx-auto">
         {/* Header */}
      <div className="mb-8 md:flex flex-col  md:flex-row items-center justify-between gap-6">
-  {/* Heading Section */}
+          {/* Heading Section */}
+          
   <div className="flex flex-col">
-    <h1 className="text-2xl sm:text-2xl font-medium text-white">Team Members</h1>
-    <p className="text-white" style={{fontWeight: 100}}>Manage and track all team members</p>
+   <h1
+  className="font-inter font-semibold text-[20px] leading-[28px] tracking-[0px] text-white align-middle"
+>
+  Team Members
+</h1>
+
+    <p className="font-inter font-normal text-sm leading-5 tracking-[0px] text-white align-middle">
+  Manage and track all team members
+</p>
   </div>
 
   {/* Action Bar */}
   <div className="md:flex md:flex-1 items-center gap-6 w-full lg:w-auto justify-between mt-5 md:mt-0 md:ml-20 space-y-4">
     {/* Search Bar */}
-  <div className="relative block sm:flex flex-1 max-w-md w-full">
+  <div className="relative block sm:flex flex-1 w-full max-w-[396px]">
   <Search
-    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5"
-    style={{ color: colors.accent.hex }}
+    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/70"
   />
- <input
-  type="text"
-  placeholder="Search employees by name, email or ID..."
-  className="w-full pl-10 pr-4 py-3 rounded-full focus:ring-2 transition-all duration-300 shadow-lg focus:shadow-xl text-white focus:outline-none"
-  style={{
-    background: "rgba(0, 0, 0, 0.4)", 
-    backdropFilter: "blur(12px)",
-    WebkitBackdropFilter: "blur(12px)",
-    border: "1px solid rgba(255, 255, 255, 0.2)", 
-  }}
-  value={searchTerm}
-  onChange={(e) => setSearchTerm(e.target.value)}
-/>
-
-
+  <input
+    type="text"
+    placeholder="Search employees by name, email or ID..."
+    className="w-full h-[38px] rounded-[16px] border border-[#37415180] 
+               bg-[#0000004D] text-white placeholder-white/60 
+               pt-[9px] pr-[17px] pb-[9px] pl-[41px]
+               focus:ring-2 focus:ring-[#0CA9F6] 
+               transition-all duration-300 shadow-lg focus:shadow-xl 
+               focus:outline-none backdrop-blur-md"
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+  />
 </div>
 
 
 
     {/* Stats Badge */}
-    <div
-      className="text-sm px-4 py-2 rounded-full text-white border border-[#0CA9F6] inline mr-5"
-  
-    >
-      <span className="font-semibold" >
-        {filteredMembers.length}
-      </span>{" "}
-      of {teamMembers.length} employees
-    </div>
+   <div
+  className="inline-flex items-center justify-center w-[143px] h-[36px] 
+             rounded-[99px] border border-[#0CA9F6] 
+             px-[16px] py-[8px] text-sm text-white mr-5"
+>
+  <span className="font-semibold">{filteredMembers.length}</span>
+  &nbsp;of {teamMembers.length} employees
+</div>
 
     {/* Add Button (only for managers) */}
     {userRole === "manager" && (
-      <button
-        type="button"
-        className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5 mt-4 sm:mt-0"
-        style={{
-          background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-          color: "#fff",
-          border: `1px solid ${colors.primary.hex}`,
-        }}
-        onClick={() => router.push("/dashboard/admin/addemployee")}
-      >
-        <Plus className="w-4 h-4" />
-        Add Employee
-      </button>
+    <button
+  type="button"
+  onClick={() => router.push("/dashboard/admin/addemployee")}
+  className="inline-flex items-center justify-center gap-[10px] 
+             w-[155px] h-[44px] px-[12px] py-[12px] 
+             rounded-[99px] border border-[#0CA9F6] 
+             bg-[#0CA9F6] text-white text-sm font-medium 
+             transition-all duration-300 ease-in-out 
+             shadow-lg hover:shadow-xl 
+             transform hover:scale-105 hover:-translate-y-0.5 
+             mt-4 sm:mt-0"
+>
+  <Plus className="w-4 h-4" />
+  Add Employee
+</button>
+
     )}
   </div>
 </div>
@@ -470,7 +476,9 @@ export default function TeamListPage() {
     </div>
   ) : (
     <div className="overflow-x-auto">
-      <table className="min-w-full border-separate border-spacing-y-4 bg-black/30 px-5">
+      <table
+  className="min-w-full border-separate border-spacing-y-4 bg-black/30 px-5 backdrop-blur-[100px]"
+>
         <thead className="text-white rounded-t-2xl h-[32px]">
           <tr className="h-[60px]">
             <th className="px-6 text-left text-sm font-medium text-white/90 w-[35%]">
@@ -634,15 +642,8 @@ export default function TeamListPage() {
         {/* Summary Footer */}
         {!isLoading && (
           <div
-  className="mt-8 rounded-2xl shadow-lg border p-6 text-white backdrop-blur-xl"
-  style={{
-    background: "rgba(50, 50, 50, 0.35)", // glassy dark gray
-    backdropFilter: "blur(16px)",
-    WebkitBackdropFilter: "blur(16px)",
-    border: "1px solid rgba(255, 255, 255, 0.1)", // subtle border
-  }}
 >
-  <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+  {/* <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
     <div className="flex items-center gap-6">
       <div className="text-center">
         <div className="text-2xl font-bold">{teamMembers.length}</div>
@@ -668,7 +669,7 @@ export default function TeamListPage() {
       ></div>
       <span className="text-sm text-white/70">System Active</span>
     </div>
-  </div>
+  </div> */}
 </div>
 
         )}

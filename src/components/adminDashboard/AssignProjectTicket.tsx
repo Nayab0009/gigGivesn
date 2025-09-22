@@ -250,7 +250,7 @@ const today = new Date().toISOString().split("T")[0];
   }
 
   return (
- <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
+ <div className="fixed inset-0  backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
   <div className="bg-black/40 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[95vh] overflow-hidden border-2 border-white/40">
 
       {/* Header */}
