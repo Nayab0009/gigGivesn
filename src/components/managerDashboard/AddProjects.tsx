@@ -593,11 +593,10 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
           className="
             mb-8 
            bg-black/30
-    
-            rounded-2xl 
+          rounded-[24px]
             shadow-lg 
-            border border-white/10 
-            p-6
+             border border-[#FFFFFF4D]
+            p-[25px]
           "
         >
           <div className="flex flex-col sm:flex-row gap-4 items-center">
@@ -691,10 +690,11 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
  <thead
   className="
     bg-black/40
-    rounded-t-2xl 
+    rounded-tl-[20px] rounded-tr-[20px]
     shadow-lg 
-    border-b border-white/20 
+    border-b border-b-white/20
     overflow-hidden 
+      p-[1px]
   "
 >
   <tr className="h-[73px]">

@@ -477,7 +477,7 @@ export default function TeamListPage() {
   ) : (
     <div className="overflow-x-auto">
       <table
-  className="min-w-full border-separate border-spacing-y-4 bg-black/30 px-5 backdrop-blur-[100px]"
+  className="min-w-full  rounded-[20.33px] border-separate border-spacing-y-4 bg-black/30 px-5  border border-[#FFFFFF4D]"
 >
         <thead className="text-white rounded-t-2xl h-[32px]">
           <tr className="h-[60px]">
@@ -519,10 +519,8 @@ export default function TeamListPage() {
       
       <tr
         key={member.id || index}
-        className="transition-all duration-30"
+        className="transition-all duration-30 rounded-[15px]"
         style={{ 
-      
-          borderRadius: "12px",
           overflow: "hidden",
           boxShadow: "0 0 0 1px rgba(255,255,255,0.1)",
           outline: "none",

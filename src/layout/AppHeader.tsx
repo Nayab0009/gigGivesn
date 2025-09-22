@@ -203,11 +203,11 @@ const AppHeader: React.FC = () => {
    <header
   className={`
     fixed top-4 left-1/2 transform -translate-x-1/2 
-    w-[95%] z-[99999] 
+      w-[95%] h-[84px] 
     shadow-md transition-all duration-500 ease-in-out
      bg-[rgba(0,0,0,0.3)] text-white
     flex items-center justify-between px-4 py-3
-    rounded-2xl
+      rounded-[20px] border border-white/30
   `}
   style={{
     fontFamily:

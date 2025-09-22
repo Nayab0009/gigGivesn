@@ -51,8 +51,7 @@ const MembersTab = ({ project, membersLoading, members }: MembersTabProps) => {
 
   return (
     <div
-      className="rounded-2xl border border-white/10 backdrop-blur-xl overflow-hidden"
-      style={{ background: "#0000004D" }}
+      className="    border-t border-t-[#FFFFFF4D]  rounded-[22px] p-[22px] border border-white/10 backdrop-blur-xl overflow-hidden    bg-[#0000004D] "
     >
       <div className="overflow-x-auto">
         <table className="min-w-full">

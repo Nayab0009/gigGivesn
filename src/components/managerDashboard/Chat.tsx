@@ -729,7 +729,7 @@ export default function ChatPage() {
 
       {/* Sidebar */}
      {/* Sidebar - Replace from line 473 */}
-<aside className="w-80 bg-black/30  rounded-xl  border-r border-white/10 flex flex-col">
+<aside className=" top-[226px] left-[30px]  w-80 bg-black/30  rounded-xl     pr-[1px] border border-[#FFFFFF33] flex flex-col">
   {/* Header */}
   <div className="p-4 border-b border-white/10">
     <div className="flex items-center justify-between mb-4">
@@ -860,10 +860,16 @@ export default function ChatPage() {
 </aside>
       {/* Main Chat Area - Conditional Rendering */}
       {selectedUserId ? (
-        <main className="flex flex-col flex-1">
+        <main className="flex flex-col flex-1  rounded-[20px]
+    border border-[#FFFFFF33]">
           {/* Chat 
            */}
-         <header className="p-4 bg-black/30 rounded-t-xl  border-b border-white/20">
+         <header className={`
+    bg-black/30
+    rounded-t-[20px]
+    border-b border-b-[#FFFFFF33]
+    pt-[24px] pr-[24px] pb-[25px] pl-[24px]
+  `}>
             <div className="flex items-center justify-between">
              <div className="flex items-center gap-3">
   <div className="relative">
@@ -1086,7 +1092,7 @@ export default function ChatPage() {
           </div>
           {/* Chat Input */}
         
-<div className="p-4 bg-black/30  border-t border-white/10 rounded-b-xl"> 
+<div className="p-4 bg-black/30    border-t border-t-[#FFFFFF33]   rounded-b-[20px]     pt-[25px] pr-[24px] pb-[24px] pl-[24px]"> 
             <div className="flex items-center justify-between gap-3">
               {/* File input button */}
               <input
