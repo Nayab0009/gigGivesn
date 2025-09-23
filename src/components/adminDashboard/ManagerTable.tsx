@@ -60,7 +60,10 @@ export default function EnhancedManagersTable() {
         // Simulate fetching managers with teams (mock team data)
         const res = await axiosInstance.get("/user?role=manager")
         let managersData: Manager[] = []
-        if (Array.isArray(res.data)) {
+        // Handle double array wrapper in response
+        if (Array.isArray(res.data) && Array.isArray(res.data[0])) {
+          managersData = res.data[0]
+        } else if (Array.isArray(res.data)) {
           managersData = res.data
         } else {
           managersData = [res.data]
@@ -216,8 +219,8 @@ export default function EnhancedManagersTable() {
   }
 
   return (
-  <div className="p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
+  <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%] h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar">
+      <div className="mx-auto">
         {/* Header & Action Bar (improved layout) */}
         <div className="mb-8 flex items-center justify-between gap-4">
           {/* Left: Heading */}
@@ -623,42 +626,7 @@ export default function EnhancedManagersTable() {
           </div>
         )}
 
-        {/* Summary Footer */}
-        {!isLoading && (
-          <div
-            className="mt-8 rounded-2xl shadow-lg border p-6"
-            style={{
-              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-              color: '#fff',
-              borderColor: colors.primary.hex,
-            }}
-          >
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-6">
-                <div className="text-center">
-                  <div className="text-2xl font-bold">{managers.length}</div>
-                  <div className="text-sm">Total Managers</div>
-                </div>
-                <div className="w-px h-12" style={{ background: colors.accent.hex }}></div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">{filteredManagers.length}</div>
-                  <div className="text-sm">Filtered Results</div>
-                </div>
-                <div className="w-px h-12" style={{ background: colors.accent.hex }}></div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold">
-                    {managers.reduce((acc, manager) => acc + (manager.team?.length || 0), 0)}
-                  </div>
-                  <div className="text-sm">Team Members</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full animate-pulse" style={{ background: colors.highlight.hex }}></div>
-                <span className="text-sm">System Active</span>
-              </div>
-            </div>
-          </div>
-        )}
+      
       </div>
     </div>
   )
