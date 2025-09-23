@@ -658,8 +658,8 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
   }, [])
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
-      <div className="max-w-8xl mx-auto">
+   <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%] h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar">
+      <div className="mx-auto">
         {/* Header & Action Bar - match Manager header styling */}
         <div className="mb-8 flex items-center justify-between gap-4">
           {/* Left: Heading */}
