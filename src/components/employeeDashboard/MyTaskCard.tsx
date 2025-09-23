@@ -20,7 +20,8 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
   const pendingPercentage = Math.round((pending / totalProjects) * 100) || 0
   
   return (
-    <div className="rounded-3xl p-5 flex flex-col border border-white/30 bg-black/30 shadow-md w-full min-w-[280px] max-w-[340px] mx-auto h-full">
+    <div className="rounded-3xl p-5 flex flex-col border border-white/30 bg-black/30 shadow-md w-full min-w-[280px] max-w-[340px] mx-auto h-full"
+      style={{ boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)', transition: 'box-shadow 0.2s', height: '248px', minHeight: '248px', maxHeight: '248px' }}>
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-base font-semibold text-white">My Task</h3>
         <div className="text-xs font-medium text-blue-300">

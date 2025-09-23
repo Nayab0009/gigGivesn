@@ -10,9 +10,9 @@ interface HeaderSectionProps {
 const HeaderSection: FC<HeaderSectionProps> = ({ userName, error }) => {
   return (
     <>
-      <header className="px-6 py-10 rounded-b-3xl mb-8 ml-6 mr-6">
-        <div className="mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <div>
+      <header className="py-10 rounded-b-3xl mb-8">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="pl-2 md:pl-4">
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Employee Dashboard</h1>
             <p className="text-sm md:text-base mt-1">
               Welcome back, {userName || 'Employee'}! Ready to tackle today's challenges?

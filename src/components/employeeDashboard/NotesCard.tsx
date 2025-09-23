@@ -52,7 +52,7 @@ const NotesCard: React.FC = () => {
   return (
     <div
       className="rounded-3xl p-4 flex flex-col justify-between border border-white/30 bg-black/30 shadow-md w-full h-[230px] mx-auto backdrop-blur-[6px]"
-      style={{ boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)', transition: 'box-shadow 0.2s' }}
+      style={{ boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)', transition: 'box-shadow 0.2s' ,height: '248px', minHeight: '248px', maxHeight: '248px'}}
     >
       <div className="flex items-center justify-between">
         <span className="text-lg font-semibold text-white">Notes</span>
@@ -61,7 +61,7 @@ const NotesCard: React.FC = () => {
       
       {/* Single note card with fixed content */}
       <div className="flex-1 flex items-center justify-center">
-        <div className="bg-black/20 rounded-2xl p-4 w-full h-[140px] flex flex-col justify-between">
+        <div className="bg-black/20 rounded-2xl p-4 w-full h-[140px] flex flex-col justify-between border border-white/20">
           {loading ? (
             <div className="text-white/70 text-sm text-center py-6">Loading notes...</div>
           ) : notes.length === 0 ? (
