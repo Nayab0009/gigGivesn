@@ -126,7 +126,7 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
     });
 
     return (
-      <div className="w-full overflow-x-auto bg-gradient-to-br from-teal-900/20 to-blue-900/30 p-4 rounded-xl">
+      <div className="w-full overflow-x-auto bg-black/30 p-4 rounded-3xl h-full">
         <div className="grid grid-cols-6 gap-2 min-w-[900px]">
           {/* Days headers and task columns */}
           {days.map((day) => {
