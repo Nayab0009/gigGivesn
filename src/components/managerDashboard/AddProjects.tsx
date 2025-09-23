@@ -535,7 +535,8 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
 
   // --- RENDER ---
   return (
-    <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[95%]">
+     <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%]
+                h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar">
       <div className="max-w-full">
         {/* Header */}
         <div className="mb-8">
