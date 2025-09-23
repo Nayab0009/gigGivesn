@@ -208,6 +208,7 @@ const AppHeader: React.FC = () => {
      bg-[rgba(0,0,0,0.3)] text-white
     flex items-center justify-between px-4
       rounded-[16px] border border-white/30
+      backdrop-blur-[100px]
   `}
   style={{
     fontFamily:
@@ -237,13 +238,7 @@ const AppHeader: React.FC = () => {
     ? "bg-[#0CA9F6] text-white px-4 py-1.5 rounded-full shadow-lg"
     : "hover:text-[#0CA9F6] cursor-pointer"
 }`}
-                  style={
-                    isActive(item.path)
-                      ? {
-                          background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-                        }
-                      : {}
-                  }
+
                 >
                   {item.name}
                 </Link>

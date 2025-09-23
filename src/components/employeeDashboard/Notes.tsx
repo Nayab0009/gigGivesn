@@ -1,4 +1,4 @@
-"use client"
+  "use client"
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
 import {
@@ -200,8 +200,8 @@ const ProfessionalNotesEditor = () => {
   const mutedTextClass = isDarkMode ? "text-gray-400" : "text-gray-500"
 
   return (
-    <div className={`min-h-screen transition-all duration-300 ${themeClass} bg-transparent`}>
-      
+    <div className={`min-h-screen transition-all duration-300 ${themeClass} bg-transparent `}>
+
 
 {/* Header Searchbar */}
 <div className="bg-black/30 backdrop-blur-md py-6 px-9 rounded-4xl border-[1px] my-5 border-gray-500 text-white mx-4">
@@ -228,11 +228,11 @@ const ProfessionalNotesEditor = () => {
 
 
 
-      
+
       <div className="flex flex-col md:flex-row bg-black/30 backdrop-blur-md py-6 px-4 md:px-9 rounded-4xl border-[1px] my-5 border-gray-500 text-white mx-4">
         {/* Sidebar */}
         <aside className={`w-full md:w-80 flex flex-col transition-all duration-300 bg-none`}>
-          
+
           {/* Notes List */}
           <div className="flex-1">
             <div className="space-y-3 mr-0 md:mr-4 mb-4 md:mb-0">
@@ -254,7 +254,7 @@ const ProfessionalNotesEditor = () => {
                         {note.title}
                       </h3>
                       <div className="flex items-center gap-2 flex-shrink-0">
-                    
+
                       </div>
                     </div>
                     <div className={`mt-1.5 text-xs text-white/65 ${mutedTextClass} line-clamp-2 overflow-hidden`}>
@@ -270,7 +270,7 @@ const ProfessionalNotesEditor = () => {
         </aside>
         {/* Main Editor */}
         <main className="flex-1 flex flex-col border-[1px] border-grey-50/50 rounded-2xl dark:hover:bg-gray-700/20 bg-black/15 backdrop-blur-md border-gray-500">
-        
+
           {/* Enhanced Toolbar */}
           <div className={`border-gray-200 dark:border-gray-700 px-3 md:px-6 py-3 overflow-x-auto`}>
             <div className="flex flex-wrap md:flex-nowrap items-center gap-1 justify-between">
@@ -367,7 +367,7 @@ const ProfessionalNotesEditor = () => {
                   <Save className="w-4 h-4" />
                   Save
                 </button>
-                
+
                 <button
                   onClick={handleDeleteNote}
                   className="p-2 hover:bg-red-900 bg-red-700 text-white rounded-lg transition-colors"

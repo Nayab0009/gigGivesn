@@ -124,7 +124,8 @@ export default function ForumPage() {
   const selectedThread = threads.find((t) => t.id === selectedThreadId)
 
   return (
-    <div className="min-h-screen mx-4 bg-black/20 rounded-2xl p-6">
+  <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%]
+                h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar">
       {/* Header Section */}
       <div className="mb-12 flex items-center justify-between mt-6 opacity-100 mx-auto">
         <div className="flex flex-col justify-leftye sp">
@@ -132,13 +133,6 @@ export default function ForumPage() {
           <p className="font-inter font-normal text-[14px] leading-[20px] text-white align-middle">Connect, collaborate & share ideas with your team</p>
         </div>
         <div className="flex items-center gap-4">
-          {/* Example avatars, replace with real avatars if available */}
-          <div className="flex -space-x-3 mr-2">
-            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="avatar1" className="w-8 h-8 rounded-full border-2 border-white" />
-            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="avatar2" className="w-8 h-8 rounded-full border-2 border-white" />
-            <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="avatar3" className="w-8 h-8 rounded-full border-2 border-white" />
-            <div className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs font-bold text-gray-700">+10</div>
-          </div>
           {/* Start New Discussion Button */}
           {isAuthenticated && (
             <button
@@ -265,7 +259,7 @@ export default function ForumPage() {
                   onClick={() => setSelectedThreadId(thread.id)}
                 >
                   <div className="p-8 relative h-full flex flex-col justify-between min-h-[182px]">
-                    
+
                     {/* Author */}
                     <div className="flex items-center gap-3 mb-5">
                       <div className="p-2 rounded-full bg-gray-100 group-hover:bg-blue-100 transition-colors duration-300">

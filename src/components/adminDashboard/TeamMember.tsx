@@ -76,11 +76,11 @@ export default function TeamListPage() {
     try {
       const res = await ShowEmployee("employee")
       let membersData: TeamMember[] = []
-      if (Array.isArray(res.data)) {
-        membersData = res.data
-      } else {
-        membersData = [res.data]
-      }
+     if (Array.isArray(res.data)) {
+      membersData = res.data.flat()
+    } else {
+      membersData = [res.data]
+    }
       // Add mock roles for better visualization
       membersData = membersData.map((member, idx) => ({
         ...member,

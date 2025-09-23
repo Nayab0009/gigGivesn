@@ -724,7 +724,11 @@ export default function ChatPage() {
   }
 
   return (
-<div className="  flex h-screen  rounded-3xl p-1 gap-10">
+<div className="flex h-screen  rounded-3xl p-4 gap-10">
+
+
+      {/* Sidebar */}
+     {/* Sidebar - Replace from line 473 */}
 <aside className=" top-[226px] left-[30px]  w-80 bg-black/30  rounded-xl     pr-[1px] border border-[#FFFFFF33] flex flex-col">
   {/* Header */}
   <div className="p-4 border-b border-white/10">
