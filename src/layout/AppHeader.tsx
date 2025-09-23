@@ -202,12 +202,12 @@ const AppHeader: React.FC = () => {
   return (
    <header
   className={`
-    fixed top-4 left-1/2 transform -translate-x-1/2 
-      w-[95%] h-[84px] 
+    fixed top-4 left-1/2 transform -translate-x-1/2
+      w-[96%] h-[84px]
     shadow-md transition-all duration-500 ease-in-out
      bg-[rgba(0,0,0,0.3)] text-white
-    flex items-center justify-between px-4 py-3
-      rounded-[20px] border border-white/30
+    flex items-center justify-between px-4
+      rounded-[16px] border border-white/30
   `}
   style={{
     fontFamily:
@@ -215,7 +215,7 @@ const AppHeader: React.FC = () => {
   }}
 >
       {/* Left - Logo */}
-      <div className="flex items-center gap-4 flex-shrink-0">
+      <div className="flex items-center gap-2 flex-shrink-0">
         <Image
           src="/images/logo/gigjives1.svg"
           alt="Gig Jives"
@@ -226,17 +226,17 @@ const AppHeader: React.FC = () => {
       </div>
 
       <nav className="hidden lg:block flex-1 mx-8">
-        <ul className="flex items-center justify-center gap-14 text-sm font-medium flex-wrap">
+        <ul className="flex items-center justify-center gap-10 text-sm font-medium flex-wrap">
           {navItems.map((item, index) => (
             <li key={item.name}>
               {item.path ? (
                 <Link
                   href={item.path}
                   className={`transition-all duration-200 ease-in-out hover:scale-105 whitespace-nowrap ${
-                    isActive(item.path)
-                      ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-1.5 rounded-full shadow-lg"
-                      : "hover:text-blue-400 cursor-pointer"
-                  }`}
+  isActive(item.path)
+    ? "bg-[#0CA9F6] text-white px-4 py-1.5 rounded-full shadow-lg"
+    : "hover:text-[#0CA9F6] cursor-pointer"
+}`}
                   style={
                     isActive(item.path)
                       ? {
@@ -265,7 +265,7 @@ const AppHeader: React.FC = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          
+
           {/* Mobile Dropdown - Show ALL items */}
           <div className="absolute top-full right-0 mt-2 w-64 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
             <ul className="py-2">

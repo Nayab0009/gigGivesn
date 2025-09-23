@@ -31,7 +31,7 @@ interface BackendProject {
   startDate: string
   endDate: string
   status?: string
-   logo?: string 
+   logo?: string
 }
 
 // Interface for project team members
@@ -347,7 +347,7 @@ function ViewTeamModal({
         </div>
 
         {/* Footer */}
-        
+
       </div>
     </div>
   )
@@ -483,14 +483,14 @@ export default function ProjectDashboard() {
   }
 const truncateByWords = (text: string, maxLength: number = 100) => {
   if (!text || text.length <= maxLength) return text;
-  
+
   const truncated = text.substring(0, maxLength);
   const lastSpaceIndex = truncated.lastIndexOf(' ');
-  
+
   if (lastSpaceIndex > 0) {
     return truncated.substring(0, lastSpaceIndex) + '...';
   }
-  
+
   return truncated + '...';
 };
   // --- Assign Team Logic ---
@@ -535,21 +535,19 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
 
   // --- RENDER ---
   return (
-    <div
-      className="min-h-screen p-4 sm:p-6 lg:p-8 rounded-2xl w-full "
-    >
+    <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[95%]">
       <div className="max-w-full">
         {/* Header */}
         <div className="mb-8">
           <h1
   className="
-    font-roboto 
-    font-semibold 
-    text-[20px] 
-    leading-[28px] 
-    tracking-[0px] 
-    align-middle 
-    text-white 
+    font-roboto
+    font-semibold
+    text-[20px]
+    leading-[28px]
+    tracking-[0px]
+    align-middle
+    text-white
     mb-2
   "
 >
@@ -558,12 +556,12 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
 
           <p
   className="
-    font-roboto 
-    font-normal 
-    text-[14px] 
-    leading-[20px] 
-    tracking-[0px] 
-    align-middle 
+    font-roboto
+    font-normal
+    text-[14px]
+    leading-[20px]
+    tracking-[0px]
+    align-middle
     text-white
   "
 >
@@ -591,10 +589,10 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
         {/* Action Bar */}
         <div
           className="
-            mb-8 
+            mb-8
            bg-black/30
           rounded-[24px]
-            shadow-lg 
+            shadow-lg
              border border-[#FFFFFF4D]
             p-[25px]
           "
@@ -604,9 +602,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
             <div className="flex flex-col sm:flex-row gap-4 items-center flex-1 w-full">
               {/* Search Bar */}
   <div className="relative flex-1 w-full h-[44px]">
-  <Search
-    className="absolute left-[16px] top-1/2 transform -translate-y-1/2 text-gray-300 w-[16.66px] h-[16px]"
-  />
+  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 z-10" />
   <input
     type="text"
     placeholder="Search projects by name, ID, or description..."
@@ -633,7 +629,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
     onChange={(e) => setSearchTerm(e.target.value)}
   />
 </div>
-            
+
             </div>
 
             {/* Refresh Button */}
@@ -670,13 +666,13 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
         {/* Table Container */}
         <div
           className="
-            backdrop-blur-xl 
-            rounded-2xl 
-            shadow-lg 
-            border border-white/10 
+            backdrop-blur-xl
+            rounded-2xl
+            shadow-lg
+            border border-white/10
             overflow-hidden"
         >
-          
+
           {isLoading ? (
             <div className="p-12 text-center">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
@@ -691,9 +687,9 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
   className="
     bg-black/40
     rounded-tl-[20px] rounded-tr-[20px]
-    shadow-lg 
+    shadow-lg
     border-b border-b-white/20
-    overflow-hidden 
+    overflow-hidden
       p-[1px]
   "
 >
@@ -729,9 +725,9 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
 <tbody
   className="
     bg-black/30
-    rounded-b-2xl 
-    shadow-lg 
-    overflow-hidden 
+    rounded-b-2xl
+    shadow-lg
+    overflow-hidden
     divide-y divide-white/10
     backdrop-blur-xl
   "
@@ -762,8 +758,8 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
       <div className="flex items-center gap-3">
         {/* Project Logo */}
         {project.logo ? (
-          <img 
-            src={project.logo} 
+          <img
+            src={project.logo}
             alt={`${project.name} logo`}
             className="w-12 h-12 rounded-lg object-cover"
             onError={(e) => {
@@ -779,7 +775,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
             </span>
           </div>
         )}
-        
+
         {/* Project Name */}
         <span className="text-lg font-semibold text-white leading-tight hover:underline decoration-white/60">
           {project.name}
@@ -812,11 +808,11 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                      <td className="px-6 py-4">
   {project.status ? (
     <span
-      className={`inline-flex items-center justify-center 
-        min-w-[88px] h-[26px] 
-        px-[9px] py-[5px] 
-        rounded-full border border-white/20 
-        text-[12px] font-roboto font-semibold capitalize 
+      className={`inline-flex items-center justify-center
+        min-w-[88px] h-[26px]
+        px-[9px] py-[5px]
+        rounded-full border border-white/20
+        text-[12px] font-roboto font-semibold capitalize
         whitespace-nowrap ${getStatusColor(project.status)}`}
     >
       {project.status === "inprogress"
@@ -828,10 +824,10 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
     </span>
   ) : (
     <span
-      className={`inline-flex items-center justify-center 
-        min-w-[88px] h-[26px] 
-        px-[9px] py-[5px] 
-        rounded-full border border-white/20 
+      className={`inline-flex items-center justify-center
+        min-w-[88px] h-[26px]
+        px-[9px] py-[5px]
+        rounded-full border border-white/20
         text-[12px] font-roboto font-medium whitespace-nowrap ${
           project.isActive
             ? "bg-emerald-100 text-emerald-700"

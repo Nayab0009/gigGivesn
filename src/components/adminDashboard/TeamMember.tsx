@@ -201,13 +201,13 @@ export default function TeamListPage() {
   }
 
   return (
-    <div className="p-2 sm:p-6 lg:p-8">
+     <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%]">
 
       <div className="mx-auto">
         {/* Header */}
      <div className="mb-8 md:flex flex-col  md:flex-row items-center justify-between gap-6">
           {/* Heading Section */}
-          
+
   <div className="flex flex-col">
    <h1
   className="font-inter font-semibold text-[20px] leading-[28px] tracking-[0px] text-white align-middle"
@@ -224,17 +224,16 @@ export default function TeamListPage() {
   <div className="md:flex md:flex-1 items-center gap-6 w-full lg:w-auto justify-between mt-5 md:mt-0 md:ml-20 space-y-4">
     {/* Search Bar */}
   <div className="relative block sm:flex flex-1 w-full max-w-[396px]">
-  <Search
-    className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-white/70"
-  />
+<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 z-10" />
+
   <input
     type="text"
     placeholder="Search employees by name, email or ID..."
-    className="w-full h-[38px] rounded-[16px] border border-[#37415180] 
-               bg-[#0000004D] text-white placeholder-white/60 
+    className="w-full h-[38px] rounded-[16px] border border-[#37415180]
+               bg-[#0000004D] text-white placeholder-white/60
                pt-[9px] pr-[17px] pb-[9px] pl-[41px]
-               focus:ring-2 focus:ring-[#0CA9F6] 
-               transition-all duration-300 shadow-lg focus:shadow-xl 
+               focus:ring-2 focus:ring-[#0CA9F6]
+               transition-all duration-300 shadow-lg focus:shadow-xl
                focus:outline-none backdrop-blur-md"
     value={searchTerm}
     onChange={(e) => setSearchTerm(e.target.value)}
@@ -243,10 +242,11 @@ export default function TeamListPage() {
 
 
 
+
     {/* Stats Badge */}
    <div
-  className="inline-flex items-center justify-center w-[143px] h-[36px] 
-             rounded-[99px] border border-[#0CA9F6] 
+  className="inline-flex items-center justify-center w-[143px] h-[36px]
+             rounded-[99px] border border-[#0CA9F6]
              px-[16px] py-[8px] text-sm text-white mr-5"
 >
   <span className="font-semibold">{filteredMembers.length}</span>
@@ -258,13 +258,13 @@ export default function TeamListPage() {
     <button
   type="button"
   onClick={() => router.push("/dashboard/admin/addemployee")}
-  className="inline-flex items-center justify-center gap-[10px] 
-             w-[155px] h-[44px] px-[12px] py-[12px] 
-             rounded-[99px] border border-[#0CA9F6] 
-             bg-[#0CA9F6] text-white text-sm font-medium 
-             transition-all duration-300 ease-in-out 
-             shadow-lg hover:shadow-xl 
-             transform hover:scale-105 hover:-translate-y-0.5 
+  className="inline-flex items-center justify-center gap-[10px]
+             w-[155px] h-[44px] px-[12px] py-[12px]
+             rounded-[99px] border border-[#0CA9F6]
+             bg-[#0CA9F6] text-white text-sm font-medium
+             transition-all duration-300 ease-in-out
+             shadow-lg hover:shadow-xl
+             transform hover:scale-105 hover:-translate-y-0.5
              mt-4 sm:mt-0"
 >
   <Plus className="w-4 h-4" />
@@ -456,13 +456,13 @@ export default function TeamListPage() {
 {/* Table Container */}
 <div
   className="rounded-2xl  shadow-2xl overflow-hidden backdrop-blur-xl"
- 
+
 >
   {isLoading ? (
     <div className="p-12 text-center">
       <div
         className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 backdrop-blur-xl "
-        style={{ 
+        style={{
           background: "rgba(255, 255, 255, 0.1)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)"
@@ -516,20 +516,20 @@ export default function TeamListPage() {
     </tr>
   ) : (
     paginatedMembers.map((member, index) => (
-      
+
       <tr
         key={member.id || index}
         className="transition-all duration-30 rounded-[15px]"
-        style={{ 
+        style={{
           overflow: "hidden",
           boxShadow: "0 0 0 1px rgba(255,255,255,0.1)",
           outline: "none",
         }}
-         
+
       >
-        
+
         {/* Employee Details Cell */}
-        
+
 
  <td className="px-6 py-5 rounded-l-xl" style={{ background: "transparent", border: "none" }}>
   <div className="flex items-center gap-3">
@@ -628,7 +628,7 @@ export default function TeamListPage() {
               </button>
             </div>
           </td>
-          
+
         )}
       </tr>
     ))
@@ -702,6 +702,6 @@ export default function TeamListPage() {
         />
       )}
     </div>
-    
+
   )
 }
