@@ -143,10 +143,10 @@ export default function ChatPage() {
   const roomId = generateUniqueId()
   const link = `${window.location.origin}/call?roomId=${roomId}`
   setGeneratedLink(link)
-  
+
   // Create the message data
   const meetingMessage = `Join the meeting: ${link}`
-  
+
   // Send the message automatically
   const socket = getSocket()
   if (socket && selectedUserId) {
@@ -160,14 +160,14 @@ export default function ChatPage() {
       isFile: false,
       isPending: false,
     }
-    
+
     // Emit to socket
     socket.emit("message", msgData)
-    
+
     // Update local state
     setMessages((prev) => [...prev, msgData])
     setTimeout(scrollToBottom, 0)
-    
+
     // Save read status and update contacts
     saveReadStatus(selectedUserId)
     setContactMessages((prev) => {
@@ -177,7 +177,7 @@ export default function ChatPage() {
         [selectedUserId.toString()]: [...existing, msgData],
       }
     })
-    
+
     setContacts((prev) =>
       prev.map((contact) =>
         contact.id.toString() === selectedUserId.toString()
@@ -191,7 +191,7 @@ export default function ChatPage() {
       ),
     )
   }
-  
+
   return link
 }
   // Sort contacts by most recent message first, then filter by search
@@ -724,11 +724,7 @@ export default function ChatPage() {
   }
 
   return (
-<div className="flex h-screen  rounded-3xl p-4 gap-10">
-
-
-      {/* Sidebar */}
-     {/* Sidebar - Replace from line 473 */}
+<div className="  flex h-screen  rounded-3xl p-1 gap-10">
 <aside className=" top-[226px] left-[30px]  w-80 bg-black/30  rounded-xl     pr-[1px] border border-[#FFFFFF33] flex flex-col">
   {/* Header */}
   <div className="p-4 border-b border-white/10">
@@ -772,8 +768,8 @@ export default function ChatPage() {
           >
             <div className="relative">
   {contact.avatar ? (
-    <img 
-      src={contact.avatar} 
+    <img
+      src={contact.avatar}
       alt={contact.name}
       className="w-9 h-9 rounded-full object-cover"
     />
@@ -862,7 +858,7 @@ export default function ChatPage() {
       {selectedUserId ? (
         <main className="flex flex-col flex-1  rounded-[20px]
     border border-[#FFFFFF33]">
-          {/* Chat 
+          {/* Chat
            */}
          <header className={`
     bg-black/30
@@ -874,8 +870,8 @@ export default function ChatPage() {
              <div className="flex items-center gap-3">
   <div className="relative">
     {contacts.find(c => c.id === selectedUserId)?.avatar ? (
-      <img 
-        src={contacts.find(c => c.id === selectedUserId)?.avatar} 
+      <img
+        src={contacts.find(c => c.id === selectedUserId)?.avatar}
         alt={selectedUser}
         className="w-10 h-10 rounded-full object-cover"
       />
@@ -911,8 +907,8 @@ export default function ChatPage() {
   type="button"
 >
   {contacts.find(c => c.id === selectedUserId)?.avatar ? (
-    <img 
-      src={contacts.find(c => c.id === selectedUserId)?.avatar} 
+    <img
+      src={contacts.find(c => c.id === selectedUserId)?.avatar}
       alt={selectedUser}
       className="w-6 h-6 rounded-full object-cover"
     />
@@ -924,18 +920,18 @@ export default function ChatPage() {
   )}
 </button>
   </div>
-   
+
               {/* Meeting Dialog */}
              {typeof window !== "undefined" && (
   <>
     {showMeetingDialog && (
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         {/* Blurred backdrop overlay */}
-        <div 
+        <div
           className="absolute inset-0 bg-black/50 backdrop-blur-md"
           onClick={() => setShowMeetingDialog(false)}
         ></div>
-        
+
         {/* Modal content */}
         <div className="relative bg-black/30 rounded-2xl shadow-2xl p-8 w-96 border border-white/20">
           <div className="text-center">
@@ -944,10 +940,10 @@ export default function ChatPage() {
               style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
               <Video className="w-8 h-8 text-white" />
             </div>
-            
+
             <h3 className="text-xl font-semibold mb-2 text-white">Start Video Call</h3>
             <p className="text-white/70 text-sm mb-8">Ready to start a meeting with {selectedUser}?</p>
-            
+
             {/* Action buttons */}
             <div className="space-y-3">
               <button
@@ -966,7 +962,7 @@ export default function ChatPage() {
               >
                 Start Meeting
               </button>
-              
+
               <button
                 className="w-full py-3 bg-white/10 backdrop-blur-sm text-white rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20"
                 onClick={() => setShowMeetingDialog(false)}
@@ -980,13 +976,13 @@ export default function ChatPage() {
     )}
   </>
 )}
-          
+
             </div>
           </header>
           {/* Messages Area */}
          {/* Messages Area */}
 <div
-  className="px-4 py-2 space-y-4 flex flex-col-reverse flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-black/30  " 
+  className="px-4 py-2 space-y-4 flex flex-col-reverse flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-black/30  "
 >
             <div ref={messagesEndRef} />
             {messages
@@ -1008,8 +1004,8 @@ export default function ChatPage() {
     {(() => {
       const contact = contacts.find((c) => c.id.toString() === msg.senderId);
       return contact?.avatar ? (
-        <img 
-          src={contact.avatar} 
+        <img
+          src={contact.avatar}
           alt={senderName}
           className="w-6 h-6 rounded-full object-cover"
         />
@@ -1102,8 +1098,8 @@ export default function ChatPage() {
               })}
           </div>
           {/* Chat Input */}
-        
-<div className="p-4 bg-black/30    border-t border-t-[#FFFFFF33]   rounded-b-[20px]     pt-[25px] pr-[24px] pb-[24px] pl-[24px]"> 
+
+<div className="p-4 bg-black/30    border-t border-t-[#FFFFFF33]   rounded-b-[20px]     pt-[25px] pr-[24px] pb-[24px] pl-[24px]">
             <div className="flex items-center justify-between gap-3">
               {/* File input button */}
               <input
@@ -1159,7 +1155,7 @@ export default function ChatPage() {
               </div>
               <button
                 onClick={sendMessage}
-                disabled={(!message.trim() && !selectedFile) || isUploadingFile} 
+                disabled={(!message.trim() && !selectedFile) || isUploadingFile}
                 className="p-3 rounded-full transition-all duration-200 hover:scale-105"
                 style={{
                   background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
@@ -1220,8 +1216,8 @@ export default function ChatPage() {
     <div className="p-6 border-b border-white/10">
   <div className="flex items-center gap-4 mb-4">
     {contacts.find(c => c.id === selectedUserId)?.avatar ? (
-      <img 
-        src={contacts.find(c => c.id === selectedUserId)?.avatar} 
+      <img
+        src={contacts.find(c => c.id === selectedUserId)?.avatar}
         alt={selectedUser}
         className="w-16 h-16 rounded-full object-cover"
       />
@@ -1255,7 +1251,7 @@ export default function ChatPage() {
               const isImage = fileMsg.fileType?.startsWith('image/')
               const fileName = fileMsg.fileUrl?.split('/').pop() || 'Unknown file'
               const fileExtension = fileName.split('.').pop()?.toLowerCase()
-              
+
               const getFileIcon = (type) => {
                 if (type?.startsWith('image/')) return '🖼️'
                 if (type?.includes('pdf')) return '📄'
@@ -1263,7 +1259,7 @@ export default function ChatPage() {
                 if (type?.includes('excel') || type?.includes('sheet')) return '📊'
                 return '📎'
               }
-              
+
               const getFileColor = (type) => {
                 if (type?.startsWith('image/')) return 'bg-green-500'
                 if (type?.includes('pdf')) return 'bg-red-500'
@@ -1275,8 +1271,8 @@ export default function ChatPage() {
               return (
                 <div key={index} className="flex items-center gap-3 p-3 bg-black/30 rounded-lg hover:bg-white/10 transition cursor-pointer">
                   {isImage ? (
-                    <img 
-                      src={fileMsg.fileUrl} 
+                    <img
+                      src={fileMsg.fileUrl}
                       alt="Shared image"
                       className="w-8 h-8 rounded object-cover"
                       onClick={() => setFullScreenImageUrl(fileMsg.fileUrl)}
@@ -1294,7 +1290,7 @@ export default function ChatPage() {
                       {fileMsg.fileType || fileExtension} • {new Date(fileMsg.timestamp || 0).toLocaleDateString()}
                     </p>
                   </div>
-                  <a 
+                  <a
                     href={fileMsg.fileUrl}
                     download={fileName}
                     className="text-blue-400 hover:text-blue-300 text-xs"
@@ -1305,7 +1301,7 @@ export default function ChatPage() {
                 </div>
               )
             })}
-          
+
           {messages.filter(msg => msg.isFile && msg.fileUrl).length === 0 && (
             <div className="text-center py-8 text-white/60">
               <p>No files shared yet</p>

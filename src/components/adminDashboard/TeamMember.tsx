@@ -201,7 +201,8 @@ export default function TeamListPage() {
   }
 
   return (
-     <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%]">
+   <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%]
+                h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar">
 
       <div className="mx-auto">
         {/* Header */}
