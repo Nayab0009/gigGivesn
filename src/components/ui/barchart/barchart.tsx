@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 
 // This is the main App component that renders the donut chart.
 const App = () => {
   // Define the data for the chart based on the image provided.
   const data = [
-    { name: 'Bugs', value: 1, color: '#F38C6D' },
-    { name: 'Open', value: 20, color: '#F8B57D' },
     { name: 'Completed', value: 100, color: '#68B6E3' },
+    { name: 'Open', value: 20, color: '#F8B57D' },
+    { name: 'Bugs', value: 1, color: '#F38C6D' },
   ];
 
-  const chartTitle = 'Task Status';
+  const chartTitle = 'Project Breakdown';
 
   interface CustomTooltipProps {
     active?: boolean;
@@ -70,43 +70,49 @@ const App = () => {
   
 
   return (
-    <div>
-      <div className=" rounded-3xl shadow-2xl max-w-lg w-full text-center">
-        {/* <h1 className="text-3xl font-bold mb-6 text-gray-100">{chartTitle}</h1> */}
-        <div className="relative h-[255px]">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={data}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                innerRadius={80}
-                outerRadius={120}
-            
-                cornerRadius={10}
-                labelLine={false}
-                label={renderCustomizedLabel}
-              >
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-            </PieChart>
-          </ResponsiveContainer>
+    <div className="">
+      <div className="flex flex-col">
+        <div className="flex items-center mb-2">
+          <div>
+          </div>
         </div>
-        <div className="flex flex-wrap justify-center gap-4 mt-8">
-          {data.map((entry, index) => (
-            <div key={`legend-${index}`} className="flex items-center space-x-2">
-              <div
-                className="w-8 h-4"
-                style={{ backgroundColor: entry.color }}
-              ></div>
-              <span className="text-gray-300">{entry.name}</span>
-            </div>
-          ))}
+        
+        <div className="flex flex-row mt-4">
+          <div className="w-1/2 h-[200px]">
+            <ResponsiveContainer width="120%" height="100%">
+              <PieChart>
+                <Pie
+                  data={data}
+                  dataKey="value"
+                  nameKey="name"
+                  cx="60%"
+                  cy="50%"
+                  innerRadius={70}
+                  outerRadius={100}
+                  cornerRadius={5}
+                  startAngle={90}
+                  endAngle={-270}
+                >
+                  {data.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} strokeWidth={0} />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          
+          <div className="w-1/2 flex flex-col justify-center items-start pl-18">
+            {data.map((entry, index) => (
+              <div key={`legend-${index}`} className="flex items-center mb-3">
+                <div
+                  className="w-7 h-4 rounded-sm mr-4"
+                  style={{ backgroundColor: entry.color }}
+                ></div>
+                <span className="text-white text-sm font-medium">{entry.name}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 
 "use client"
-import {getAllProjects} from "../../lib/ProjectService"
+import {getAllProjectsDashboard} from "../../lib/ProjectService"
+import { getAllProjects } from "../../lib/ProjectService"
 import { useEffect, useState } from "react"
 import ProgressBar from "../ui/progressBar/ProgressBar"
 import {
@@ -36,6 +37,7 @@ import {
 
 
 import BarChartComp from "../ui/barchart/barchart"
+import TeamActivityBarChart from "../ui/teamActivityBarChart"
 
 import Image from "next/image"
 
@@ -43,7 +45,9 @@ import Image from "next/image"
 interface DashboardData {
   adminStats: {
     totalProjects: number
+    activeProjects: number
     totalTasks: number
+    allTime: number
     totalUsers: number
     tasksCompleted: number
     openBugs: number
@@ -56,9 +60,10 @@ interface DashboardData {
   }>
   teamActivity: Array<{
     team: string
-    tasks: number
-    completed: number
-    efficiency: number // percent
+    value?: number
+    tasks?: number
+    completed?: number
+    efficiency?: number // percent
   }>
   recentActivities: Array<{
     id: string
@@ -93,7 +98,7 @@ const cardGradients = [
 export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [projects, setProjects] = useState<any[]>([]);
-
+  const [allProjects, setAllProjects] = useState<any[]>([]);
 
 // The formatting function
 const formatDate = (dateString: string) => {
@@ -109,8 +114,13 @@ const formatDate = (dateString: string) => {
 useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const data = await getAllProjects(); // Call the async function
-        setProjects(data);
+        // Fetch dashboard projects
+        const dashboardData = await getAllProjectsDashboard();
+        setProjects(dashboardData);
+        
+        // Fetch all projects
+        const allProjectsData = await getAllProjects();
+        setAllProjects(allProjectsData);
       } catch (error) {
         console.error('Failed to fetch projects:', error);
       } finally {
@@ -130,7 +140,9 @@ useEffect(() => {
   const [dashboardData, setDashboardData] = useState<DashboardData>({
     adminStats: {
       totalProjects: 0,
+      activeProjects: 0,
       totalTasks: 0,
+      allTime: 0,
       totalUsers: 0,
       tasksCompleted: 0,
       openBugs: 0,
@@ -145,9 +157,11 @@ useEffect(() => {
       setTimeout(() => {
         setDashboardData({
           adminStats: {
-            totalProjects: 18,
-            totalTasks: 1250,
-            totalUsers: 47,
+            totalProjects: projects.length,
+            activeProjects: allProjects.filter(project => project.status === "inprogress").length,
+            totalTasks: allProjects.filter(project => project.status === "iscompleted").length,
+            allTime: projects.length,
+            totalUsers: projects.map(name => name.managername).length,
             tasksCompleted: 1075,
             openBugs: 16,
           },
@@ -166,11 +180,11 @@ useEffect(() => {
             { month: "Dec", completedTasks: 119, createdTasks: 130, year: 2024 },
           ],
           teamActivity: [
-            { team: "Frontend", tasks: 320, completed: 295, efficiency: 92 },
-            { team: "Backend", tasks: 260, completed: 238, efficiency: 91 },
-            { team: "QA", tasks: 180, completed: 173, efficiency: 96 },
-            { team: "Design", tasks: 120, completed: 115, efficiency: 96 },
-            { team: "DevOps", tasks: 100, completed: 87, efficiency: 87 },
+            { team: "Adil", value: 400 },
+            { team: "Asfand", value: 350 },
+            { team: "Huzaifa", value: 210 },
+            { team: "Visal", value: 260 },
+            { team: "Noman", value: 110 },
           ],
           recentActivities: [
             {
@@ -224,7 +238,7 @@ useEffect(() => {
       }, 1000)
     }
     fetchDashboardData()
-  }, [])
+  }, [projects, allProjects]) // Add allProjects as a dependency
 
   const formatNumber = (num: number) => new Intl.NumberFormat("en-US").format(num)
 
@@ -279,10 +293,10 @@ useEffect(() => {
   return (
     <div className="w-full space-y-8 pt-4 min-h-screen">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-2 pb-2">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between -mt-10">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-1 tracking-tight">Admin Dashboard</h1>
-          <p className="text-gray-200">Welcome back! See your latest project insights below.</p>
+          <h1 className="text-2xl font-extrabold text-white mb-1 tracking-tight">Admin Dashboard</h1>
+          <p className="text-md font-extralight text-gray-200">Welcome back! See your latest project insights below.</p>
         </div>
         <div className="mt-4 sm:mt-0 flex items-center space-x-3">
           <button className="px-5 py-2 text-white rounded-full  hover:text-gray-200 shadow transition-all font-semibold text-sm inline-flex gap-x-1 md:gap-x-3 bg-black-600 bg-gray-500/30">
@@ -296,27 +310,27 @@ useEffect(() => {
 
 
 
-<div className="flex space-x-7">
+<div className="block md:flex space-x-7 mb-0">
   <div className="flex-1">
       {/* Stats Cards */}
       <div className="grid space-y-2 py-0">
         {/* Total Projects */}
         <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-0 rounded-2xl  shadow-md group border border-white/30 justify-between">
           <div>
-             <div className={` p-6`}>
+             <div className="px-4 py-2">
             <p className="text-gray-200 font-light text-sm tracking-wider">Total Projects</p>
          
           <div>
-            <p className="text-3xl font-bold text-white">
+            <p className="text-2xl font-bold text-white">
               {formatNumber(dashboardData.adminStats.totalProjects)}
             </p>
             <div className="flex items-center">
               <div>
-                <p className="text-gray-200 font-light text-sm">Active projects</p>
+                <p className="text-gray-200 font-light text-sm tracking-wider">Active projects</p>
               </div>
               <div>
                   <div className="flex space-x-1">
-              <span className="text-white text-sm ml-3 bg-[rgba(194,65,12,0.3)]  px-4 py-1 rounded-full font-light border-2 border-[#615041]">+12</span>
+              <span className="text-white text-sm ml-3 bg-[rgba(194,65,12,0.3)]  px-4 py-1 rounded-full font-light border-2 border-[#615041]">{dashboardData.adminStats.activeProjects}</span>
             </div>
               </div>
             </div>
@@ -334,38 +348,23 @@ useEffect(() => {
             </div>
             </div>
         </div>
-        {/* <div className={`bg-[rgba(0,0,0,0.3)] rounded-2xl p-7 shadow-md group border border-blue-100`}>
-          <div className="flex items-center justify-between mb-3">
-           
-            <div className="flex items-center space-x-1">
-              <ArrowUpRight className="w-4 h-4 text-green-200" />
-              <span className="text-green-100 text-sm font-bold">+2</span>
-            </div>
-          </div>
-          <div>
-            <p className="text-blue-100 text-xs font-medium uppercase tracking-wider mb-1">Total Projects</p>
-            <p className="text-3xl font-bold text-white mb-1">
-              {formatNumber(dashboardData.adminStats.totalProjects)}
-            </p>
-            <p className="text-blue-50 text-xs">Active projects</p>
-          </div>
-        </div> */}
+        
         {/* Total Tasks */}
         <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-0 rounded-2xl shadow-md group border border-white/30 justify-between">
           <div>
-            <div className="p-6">
+            <div className="px-4 py-2">
               <p className="text-gray-200 font-light text-sm tracking-wider">Completed projects</p>
               <div>
-                <p className="text-3xl font-bold text-white">
+                <p className="text-2xl font-bold text-white">
                   {formatNumber(dashboardData.adminStats.totalTasks)}
                 </p>
                 <div className="flex items-center">
                   <div>
-                    <p className="text-gray-200 font-light text-sm">All time</p>
+                    <p className="text-gray-200 font-light text-sm tracking-wider">All time</p>
                   </div>
                   <div>
                     <div className="flex space-x-1">
-                      <span className="text-white text-sm ml-3 bg-[#696032] px-4 py-1 rounded-full border-[#716c4e] font-light border-2">+36</span>
+                      <span className="text-white text-sm ml-3 bg-[#696032] px-4 py-1 rounded-full border-[#716c4e] font-light border-2">{dashboardData.adminStats.allTime}</span>
                     </div>
                   </div>
                 </div>
@@ -381,15 +380,15 @@ useEffect(() => {
         {/* Users */}
         <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-0 rounded-2xl shadow-md group border border-white/30 justify-between">
           <div>
-            <div className="p-6">
+            <div className="px-4 py-2">
               <p className="text-gray-200 font-light text-sm tracking-wider">Users</p>
               <div>
-                <p className="text-3xl font-bold text-white">
+                <p className="text-2xl font-bold text-white">
                   {formatNumber(dashboardData.adminStats.totalUsers)}
                 </p>
                 <div className="flex items-center">
                   <div>
-                    <p className="text-gray-200 font-light text-sm">Active members</p>
+                    <p className="text-gray-200 font-light text-sm tracking-wider">Active members</p>
                   </div>
                   <div>
                     <div className="flex space-x-1">
@@ -413,69 +412,23 @@ useEffect(() => {
 
 
   <div className="flex-1">
-{/* Team Activity Section */}
-      <div className="bg-[rgba(0,0,0,0.3)] rounded-2xl p-6 shadow border border-white/30">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
-          <div>
-            <h3 className="text-xl font-extrabold text-white mb-2">Team Activity</h3>
-            <p className="text-gray-300 text-sm">Task distribution and efficiency by team</p>
-          </div>
-          <div className="mt-4 sm:mt-0">
-            <div className="w-10 h-10 bg-[rgba(0,0,0,0.3)] rounded-full flex items-center justify-center">
-              <Image src="/images/users.svg" alt="Users" width={20} height={20} className=" text-white" />
+{/* Team Activity Section - Updated to match screenshot */}
+      <div className="bg-[rgba(0,0,0,0.3)] rounded-2xl py-3 px-4 shadow border border-white/30">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+          <div className="flex items-center gap-4 w-full justify-between">
+           
+            <div>
+              <h3 className="text-xl font-bold text-white mb-1">Team Activity</h3>
+              <p className="text-gray-300 text-sm">Task distribution and efficiency by team</p>
+            </div>
+             <div className="w-10 h-10 bg-[rgba(0,0,0,0.3)] rounded-full flex items-center justify-center">
+              <Image src="/images/users.svg" alt="Users" width={20} height={20} className="text-white" />
             </div>
           </div>
         </div>
         <div>
-          {/* BarChart for Team Activity */}
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart 
-              data={dashboardData.teamActivity}
-              layout="vertical"
-              barCategoryGap={16}
-              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} stroke="rgba(255,255,255,0.1)" />
-              <XAxis type="number" axisLine={false} tickLine={false} />
-              <YAxis 
-                dataKey="team" 
-                type="category" 
-                axisLine={false} 
-                tickLine={false} 
-                width={80} 
-                tick={{ fill: 'white' }}
-                className="font-light"
-              />
-              <Tooltip 
-                contentStyle={{
-                  backgroundColor: "rgba(0,0,0,0.8)",
-                  border: "1px solid rgba(255,255,255,0.2)",
-                  borderRadius: "8px",
-                  color: "white"
-                }}
-              />
-              <Legend 
-                verticalAlign="top" 
-                align="right"
-                iconType="circle"
-                wrapperStyle={{ paddingBottom: 20 }}
-              />
-              <Bar 
-                dataKey="tasks" 
-                fill="#FF9F24" 
-                name="Tasks Assigned" 
-                radius={[0, 6, 6, 0]} 
-                barSize={20}
-              />
-              <Bar 
-                dataKey="completed" 
-                fill="#3B82F6" 
-                name="Tasks Completed" 
-                radius={[0, 6, 6, 0]} 
-                barSize={20}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          {/* Team Activity BarChart Component */}
+          <TeamActivityBarChart data={dashboardData.teamActivity} />
         </div>
       </div>
         
@@ -484,7 +437,7 @@ useEffect(() => {
 
   <div className="flex-1">
     {/* Task Status Breakdown */}
-        <div className="bg-[rgba(0,0,0,0.3)] rounded-2xl p-6 shadow border border-white/30">
+        <div className="bg-[rgba(0,0,0,0.3)] rounded-2xl py-3 px-4 shadow border border-white/30">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
             {/* <Clock className="w-5 h-5 text-white" /> */}
             <div>
