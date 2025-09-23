@@ -12,10 +12,17 @@ export const createProject = async (project: FormData) => {
   })
   return data
 }
-export const getAllProjects=async () => {
+export const getAllProjectsDashboard=async () => {
     const { data } = await axiosInstance.get('/projects/all/dashboard');
     return data;
 }
+
+export const getAllProjects=async () => {
+    const { data } = await axiosInstance.get('/projects');
+    return data;
+}
+
+
 export const getProjectTeam = async (projectId: string) => {
     const data = axiosInstance.get(`/projects/${projectId}`);
     return data;
