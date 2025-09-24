@@ -28,11 +28,11 @@ import {
   MoreHorizontal
 } from "lucide-react"
 import TimeTable from "./ProjectTimeTable"
-import { 
-  SummaryTab, 
-  TasksTab, 
-  CalendarTab, 
-  MembersTab, 
+import {
+  SummaryTab,
+  TasksTab,
+  CalendarTab,
+  MembersTab,
   SettingsTab,
   SprintsTab
 } from "./tabs"
@@ -97,7 +97,7 @@ export default function ProjectDetailsPage() {
     if (typeof window === 'undefined') return "summary";
     const params = new URLSearchParams(window.location.search);
     const tab = params.get('tab');
-    return (tab as any) === 'sprints' ? 'sprints' : 
+    return (tab as any) === 'sprints' ? 'sprints' :
            (tab as any) === 'calendar' ? 'calendar' :
            (tab as any) === 'members' ? 'members' :
            (tab as any) === 'tasks' ? 'tasks' :
@@ -203,7 +203,7 @@ export default function ProjectDetailsPage() {
     const handleRouteChange = () => {
       const params = new URLSearchParams(window.location.search);
       const tabParam = params.get('tab');
-      if (tabParam && (tabParam === "summary" || tabParam === "tasks" || tabParam === "sprints" || 
+      if (tabParam && (tabParam === "summary" || tabParam === "tasks" || tabParam === "sprints" ||
           tabParam === "calendar" || tabParam === "notes" || tabParam === "members" || tabParam === "settings")) {
         setActiveTab(tabParam);
       }
@@ -220,7 +220,7 @@ export default function ProjectDetailsPage() {
     const handleUrlChange = () => {
       const params = new URLSearchParams(window.location.search);
       const tab = params.get('tab');
-      if (tab === 'sprints' || tab === 'calendar' || tab === 'members' || 
+      if (tab === 'sprints' || tab === 'calendar' || tab === 'members' ||
           tab === 'tasks' || tab === 'settings' || tab === 'summary') {
         setActiveTab(tab as any);
       }
@@ -228,7 +228,7 @@ export default function ProjectDetailsPage() {
 
     handleUrlChange(); // Check on mount
     window.addEventListener('popstate', handleUrlChange);
-    
+
     return () => {
       window.removeEventListener('popstate', handleUrlChange);
     };
@@ -317,8 +317,8 @@ export default function ProjectDetailsPage() {
           </div>
         </div>
 
-        {/* Tabs + view toggles */}
-        <div className="flex items-center justify-between mt-2">
+  {/* Tabs + view toggles */}
+  <div className="flex items-center justify-between mt-2 mb-6">
           <div className="flex items-center gap-4">
             <button className="flex items-center gap-1 text-white/70 hover:text-white px-2 py-1 rounded-full transition-all focus:outline-none">
               <Filter className="w-4 h-4" />
@@ -356,7 +356,7 @@ export default function ProjectDetailsPage() {
               ))}
             </div>
           </div>
-          
+
           {activeTab === "tasks" && (
             <div
               className="flex border border-white/20 rounded-full p-1 gap-1 shadow-inner"
@@ -384,7 +384,7 @@ export default function ProjectDetailsPage() {
               </button>
             </div>
           )}
-        </div>
+  </div>
 
         {/* Content */}
       {isLoading && activeTab !== "members" && activeTab !== "settings" ? (
@@ -403,8 +403,8 @@ export default function ProjectDetailsPage() {
     <div className="text-white/80 text-sm">{error}</div>
   </div>
 ) : activeTab === "settings" ? (
-  <SettingsTab 
-    project={project} 
+  <SettingsTab
+    project={project}
     settingsProjectName={settingsProjectName}
     setSettingsProjectName={setSettingsProjectName}
     settingsSaving={settingsSaving}
@@ -413,10 +413,10 @@ export default function ProjectDetailsPage() {
     handleProjectNameSave={handleProjectNameSave}
   />
         ) : activeTab === "members" ? (
-  <MembersTab 
-    project={project} 
-    membersLoading={membersLoading} 
-    members={members} 
+  <MembersTab
+    project={project}
+    membersLoading={membersLoading}
+    members={members}
   />
         ) : project ? (
           <div className="space-y-6">
