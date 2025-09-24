@@ -22,7 +22,7 @@ interface TeamActivityBarChartProps {
 
 export default function TeamActivityBarChart({ data }: TeamActivityBarChartProps) {
   return (
-    <ResponsiveContainer width="100%" height={230}>
+    <ResponsiveContainer width="100%" height={190}>
       <BarChart 
         data={data}
         barGap={0}

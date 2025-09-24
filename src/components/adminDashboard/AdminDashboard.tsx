@@ -2,39 +2,12 @@
 "use client"
 import {getAllProjectsDashboard} from "../../lib/ProjectService"
 import { getAllProjects } from "../../lib/ProjectService"
+import {getAllUsers} from "../../lib/user"
 import { useEffect, useState } from "react"
 import ProgressBar from "../ui/progressBar/ProgressBar"
 import {
-  Users,
-  ClipboardList,
-  CheckSquare,
-  Briefcase,
-  ArrowUpRight,
-  MoreHorizontal,
-  Download,
-  BarChart3,
-  PieChart,
-  Globe,
-  Activity,
-  Plus,
-  Clock,
+  Plus
 } from "lucide-react"
-import {
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  Bar,
-  PieChart as RechartsPieChart,
-  Pie,
-  Cell,
-  ComposedChart,
-  BarChart
-} from "recharts"
-
 
 import BarChartComp from "../ui/barchart/barchart"
 import TeamActivityBarChart from "../ui/teamActivityBarChart"
@@ -98,6 +71,8 @@ const cardGradients = [
 export default function AdminDashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [projects, setProjects] = useState<any[]>([]);
+  const [allUsers, setUsers] = useState<any[]>([]);
+  console.log("All Users:", allUsers);
   const [allProjects, setAllProjects] = useState<any[]>([]);
 
 // The formatting function
@@ -121,6 +96,12 @@ useEffect(() => {
         // Fetch all projects
         const allProjectsData = await getAllProjects();
         setAllProjects(allProjectsData);
+
+        const usersData = await getAllUsers();
+        setUsers(usersData);
+
+
+        
       } catch (error) {
         console.error('Failed to fetch projects:', error);
       } finally {
@@ -138,6 +119,7 @@ useEffect(() => {
 
 
   const [dashboardData, setDashboardData] = useState<DashboardData>({
+    
     adminStats: {
       totalProjects: 0,
       activeProjects: 0,
@@ -154,14 +136,14 @@ useEffect(() => {
 
   useEffect(() => {
     const fetchDashboardData = async () => {
-      setTimeout(() => {
+      setTimeout(async () => {
         setDashboardData({
           adminStats: {
             totalProjects: projects.length,
             activeProjects: allProjects.filter(project => project.status === "inprogress").length,
             totalTasks: allProjects.filter(project => project.status === "iscompleted").length,
             allTime: projects.length,
-            totalUsers: projects.map(name => name.managername).length,
+            totalUsers: allUsers[1] || 0,
             tasksCompleted: 1075,
             openBugs: 16,
           },
@@ -238,7 +220,7 @@ useEffect(() => {
       }, 1000)
     }
     fetchDashboardData()
-  }, [projects, allProjects]) // Add allProjects as a dependency
+  }, [projects, allProjects, allUsers]) // Add allProjects as a dependency
 
   const formatNumber = (num: number) => new Intl.NumberFormat("en-US").format(num)
 
@@ -293,9 +275,9 @@ useEffect(() => {
   return (
     <div className="w-full space-y-8 pt-4 min-h-screen">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between -mt-10">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between -mt-12 mb-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-white mb-1 tracking-tight">Admin Dashboard</h1>
+          <h1 className="text-2xl font-extrabold text-white tracking-tight">Admin Dashboard</h1>
           <p className="text-md font-extralight text-gray-200">Welcome back! See your latest project insights below.</p>
         </div>
         <div className="mt-4 sm:mt-0 flex items-center space-x-3">
@@ -318,19 +300,19 @@ useEffect(() => {
         <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-0 rounded-2xl  shadow-md group border border-white/30 justify-between">
           <div>
              <div className="px-4 py-2">
-            <p className="text-gray-200 font-light text-sm tracking-wider">Total Projects</p>
+            <p className="text-gray-200 font-light text-xs tracking-wider">Total Projects</p>
          
           <div>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-lg font-bold text-white">
               {formatNumber(dashboardData.adminStats.totalProjects)}
             </p>
             <div className="flex items-center">
               <div>
-                <p className="text-gray-200 font-light text-sm tracking-wider">Active projects</p>
+                <p className="text-gray-200 font-light text-xs tracking-wider">Active projects</p>
               </div>
               <div>
                   <div className="flex space-x-1">
-              <span className="text-white text-sm ml-3 bg-[rgba(194,65,12,0.3)]  px-4 py-1 rounded-full font-light border-2 border-[#615041]">{dashboardData.adminStats.activeProjects}</span>
+              <span className="text-white text-xs ml-3 bg-[rgba(194,65,12,0.3)]  px-4 py-1 rounded-full font-light border-2 border-[#615041]">{dashboardData.adminStats.activeProjects}</span>
             </div>
               </div>
             </div>
@@ -353,18 +335,18 @@ useEffect(() => {
         <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-0 rounded-2xl shadow-md group border border-white/30 justify-between">
           <div>
             <div className="px-4 py-2">
-              <p className="text-gray-200 font-light text-sm tracking-wider">Completed projects</p>
+              <p className="text-gray-200 font-light text-xs tracking-wider">Completed projects</p>
               <div>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-lg font-bold text-white">
                   {formatNumber(dashboardData.adminStats.totalTasks)}
                 </p>
                 <div className="flex items-center">
                   <div>
-                    <p className="text-gray-200 font-light text-sm tracking-wider">All time</p>
+                    <p className="text-gray-200 font-light text-xs tracking-wider">All time</p>
                   </div>
                   <div>
                     <div className="flex space-x-1">
-                      <span className="text-white text-sm ml-3 bg-[#696032] px-4 py-1 rounded-full border-[#716c4e] font-light border-2">{dashboardData.adminStats.allTime}</span>
+                      <span className="text-white text-xs ml-3 bg-[#696032] px-4 py-1 rounded-full border-[#716c4e] font-light border-2">{dashboardData.adminStats.allTime}</span>
                     </div>
                   </div>
                 </div>
@@ -381,18 +363,18 @@ useEffect(() => {
         <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-0 rounded-2xl shadow-md group border border-white/30 justify-between">
           <div>
             <div className="px-4 py-2">
-              <p className="text-gray-200 font-light text-sm tracking-wider">Users</p>
+              <p className="text-gray-200 font-light text-xs tracking-wider">Users</p>
               <div>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-lg font-bold text-white">
                   {formatNumber(dashboardData.adminStats.totalUsers)}
                 </p>
                 <div className="flex items-center">
                   <div>
-                    <p className="text-gray-200 font-light text-sm tracking-wider">Active members</p>
+                    <p className="text-gray-200 font-light text-xs tracking-wider">Active members</p>
                   </div>
                   <div>
                     <div className="flex space-x-1">
-                      <span className="text-white text-sm font-light ml-3 bg-[#26652D] px-4 py-1 rounded-full border-2 border-[#3D7543]">+4</span>
+                      <span className="text-white text-xs font-light ml-3 bg-[#26652D] px-4 py-1 rounded-full border-2 border-[#3D7543]">+4</span>
                     </div>
                   </div>
                 </div>
@@ -466,7 +448,7 @@ useEffect(() => {
 
 
       {/* Analytics Section */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-4">
       </div>
    
    

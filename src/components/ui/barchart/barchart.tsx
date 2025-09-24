@@ -1,13 +1,42 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+
+// import {getAllProjectsDashboard} from "../"
+import { getAllProjects } from "../../../lib/ProjectService"
 
 // This is the main App component that renders the donut chart.
 const App = () => {
   // Define the data for the chart based on the image provided.
+
+const [projects, setProjects] = React.useState<any[]>([]);
+
+
+useEffect(() => {
+  const fetchProjects = async () => {
+    const allProjects = await getAllProjects();
+    setProjects(allProjects);
+  };
+
+  fetchProjects();
+}, []);
+
+
+  const statusCounts = projects.reduce(
+    (acc, project) => {
+      const status = project.status?.toLowerCase(); // normalize status
+      if (status === "iscompleted") acc.completed += 1;
+      else if (status === "inprogress") acc.open += 1;
+      else if (status === "bugs") acc.bugs += 1;
+      return acc;
+    },
+    { completed: 0, open: 0, bugs: 0 }
+  );
+
+
   const data = [
-    { name: 'Completed', value: 100, color: '#68B6E3' },
-    { name: 'Open', value: 20, color: '#F8B57D' },
-    { name: 'Bugs', value: 1, color: '#F38C6D' },
+    { name: 'Completed', value: statusCounts.completed, color: '#68B6E3' },
+    { name: 'Open', value: statusCounts.open, color: '#F8B57D' },
+    { name: 'Bugs', value: statusCounts.bugs, color: '#F38C6D' },
   ];
 
   const chartTitle = 'Project Breakdown';
@@ -78,17 +107,17 @@ const App = () => {
         </div>
         
         <div className="flex flex-row mt-4">
-          <div className="w-1/2 h-[200px]">
-            <ResponsiveContainer width="120%" height="100%">
+          <div className="w-10/12 h-[165px]">
+            <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={data}
                   dataKey="value"
                   nameKey="name"
-                  cx="60%"
+                  cx="50%"
                   cy="50%"
-                  innerRadius={70}
-                  outerRadius={100}
+                  innerRadius={50}
+                  outerRadius={80}
                   cornerRadius={5}
                   startAngle={90}
                   endAngle={-270}
@@ -102,7 +131,7 @@ const App = () => {
             </ResponsiveContainer>
           </div>
           
-          <div className="w-1/2 flex flex-col justify-center items-start pl-18">
+          <div className="w-1/2 flex flex-col justify-center items-start">
             {data.map((entry, index) => (
               <div key={`legend-${index}`} className="flex items-center mb-3">
                 <div
