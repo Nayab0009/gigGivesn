@@ -634,18 +634,16 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
             </div>
 
             {/* Refresh Button */}
-          <button
+        <button
   onClick={refreshData}
   disabled={isLoading}
-  style={{
-    background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-  }}
   className="
     group inline-flex items-center justify-center gap-2
     w-[122.52px] h-[46px]
     px-[25px] py-[13px]
     rounded-[99px]
-    border border-[rgba(87,181,231,0.9)]
+    bg-[#0CA9F6]
+    border border-[#57B5E7E5]
     text-white text-sm font-medium
     transition-all duration-300 ease-in-out
     shadow-lg hover:shadow-xl
@@ -660,6 +658,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
   />
   Refresh
 </button>
+
 
           </div>
         </div>
@@ -684,39 +683,39 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
           ) : (
             <div className="overflow-x-auto ">
               <table className="min-w-full divide-y divide-emerald-200 ">
- <thead
+<thead
   className="
     bg-black/40
     rounded-tl-[20px] rounded-tr-[20px]
     shadow-lg
     border-b border-b-white/20
     overflow-hidden
-      p-[1px]
+    p-[1px]
   "
 >
   <tr className="h-[73px]">
-    <th className="px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px]">
+    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
       Name
     </th>
-    <th className="px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px]">
+    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
       Description
     </th>
-    <th className="px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px]">
+    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
       Start Date
     </th>
-    <th className="px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px]">
+    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
       End Date
     </th>
-    <th className="px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] min-w-[120px]">
+    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] min-w-[120px] uppercase">
       Status
     </th>
-    <th className="px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] min-w-[200px]">
+    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] min-w-[200px] uppercase">
       Actions
     </th>
-    <th className="px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px]">
+    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
       View Team
     </th>
-    <th className="px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px]">
+    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
       Settings
     </th>
   </tr>
@@ -844,17 +843,12 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                         {/* Actions - Assign Team */}
                         <td className="px-6 py-6">
                           <div className="flex flex-row gap-2">
-                            <button
-                              className="px-4 py-2 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105"
-                               style={{
-    background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-    borderColor: "rgba(87, 181, 231, 0.9)",
-    borderWidth: "1px",
-  }}
-                              onClick={() => setAssignTeamProjectId(String(project.id))}
-                            >
-                              Assign Team
-                            </button>
+                 <button
+  className="px-4 py-2 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105 bg-[#0CA9F6] border border-[#57B5E7E5]"
+  onClick={() => setAssignTeamProjectId(String(project.id))}
+>
+  Assign Team
+</button>
                           </div>
                         </td>
 
@@ -891,12 +885,12 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
   <img
     src="/images/I-169.svg"
     alt="Edit"
-    style={{ width: "14.58px", height: "14px" }}
+    style={{ width: "17.58px", height: "17px" }}
   />
 </button>
 
 
-    {/* Delete */}
+    {/*View */}
 <button
   className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 border"
   style={{ borderColor: "rgba(255, 255, 255, 0.4)", borderWidth: "1px" }}
@@ -906,7 +900,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
   <img
     src="/images/Eye.svg"
     alt="View Details"
-    style={{ width: "14.58px", height: "14px" }}
+    style={{ width: "17.58px", height: "17px" }}
   />
 </button>
 
