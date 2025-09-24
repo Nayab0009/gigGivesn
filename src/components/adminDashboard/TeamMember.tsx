@@ -201,15 +201,14 @@ export default function TeamListPage() {
   }
 
   return (
-   <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%]
-                h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar">
+   <div className="w-full relative top-[30px] max-w-full">
 
       <div className="mx-auto">
         {/* Header */}
      <div className="mb-8 md:flex flex-col  md:flex-row items-center justify-between gap-6">
           {/* Heading Section */}
 
-  <div className="flex flex-col">
+  <div className="flex flex-col ml-2">
    <h1
   className="font-inter font-semibold text-[20px] leading-[28px] tracking-[0px] text-white align-middle"
 >
@@ -482,17 +481,43 @@ export default function TeamListPage() {
 >
         <thead className="text-white rounded-t-2xl h-[32px]">
           <tr className="h-[60px]">
-            <th className="px-6 text-left text-sm font-medium text-white/90 w-[35%]">
-              Employee Details
-            </th>
-            <th className="px-6 text-left text-sm font-medium text-white/90 w-[25%]">
+          <th
+  className="
+    px-6 text-left
+    font-inter font-semibold
+    text-[18.3px] leading-[28.47px] tracking-[0px]
+    align-middle text-white
+    w-[35%]
+  "
+>
+  Employee Details
+</th>
+            <th className="
+    px-6 text-left
+    font-inter font-semibold
+    text-[18.3px] leading-[28.47px] tracking-[0px]
+    align-middle text-white
+    w-[35%]
+  ">
               Role
             </th>
-            <th className="px-6 text-left text-sm font-medium text-white/90 w-[25%]">
+            <th  className="
+    px-6 text-left
+    font-inter font-semibold
+    text-[18.3px] leading-[28.47px] tracking-[0px]
+    align-middle text-white
+    w-[35%]
+  ">
               Contact Info
             </th>
             {userRole === "manager" && (
-              <th className="px-6 text-right text-sm font-medium text-white/90 w-[15%] pr-[50px]">
+              <th className="
+    px-6 text-left
+    font-inter font-semibold
+    text-[18.3px] leading-[28.47px] tracking-[0px]
+    align-middle text-white
+    w-[35%]
+  ">
                 Actions
               </th>
             )}
@@ -554,8 +579,8 @@ export default function TeamListPage() {
       )}
     </div>
     <div>
-      <h3 className="text-base font-semibold text-white">{member.name}</h3>
-      <p className="text-sm text-blue-400">Team Member</p>
+      <h3 className=" text-[20px]  text-base font-semibold text-white">{member.name}</h3>
+      <p className="text-[20px] text-[#0CA9F6]">Team Member</p>
     </div>
   </div>
 </td>
@@ -565,7 +590,7 @@ export default function TeamListPage() {
         {/* Role Cell */}
 
         <td className="px-6 py-5" style={{ background: "transparent", border: "none" }}>
-          <span className="text-sm text-white/80 capitalize font-medium">
+          <span className="text-[20px] text-[#A4A7AE] capitalize font-medium">
             {member.role || "Employee"}
           </span>
         </td>
@@ -574,18 +599,8 @@ export default function TeamListPage() {
 
         <td className={`px-6 py-5 ${userRole !== 'manager' ? 'rounded-r-xl' : ''}`} style={{ background: "transparent", border: "none" }}>
           <div className="space-y-1">
-            <div className="text-sm text-white/90 font-medium">{member.email}</div>
-            {member.phone && (
-              <div className="text-xs text-white/70">{member.phone}</div>
-            )}
-            {member.address && (
-              <div
-                className="text-xs text-white/70 truncate max-w-xs"
-                title={member.address}
-              >
-                {member.address}
-              </div>
-            )}
+            <div className="text-[20px] text-[#A4A7AE] font-medium">{member.email}</div>
+
           </div>
         </td>
 

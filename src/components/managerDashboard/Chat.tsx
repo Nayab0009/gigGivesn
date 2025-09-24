@@ -295,77 +295,95 @@ export default function ChatPage() {
     }
   }
   useEffect(() => {
-    const fetchContactsAndLastMessages = async () => {
-      try {
-        let response
-        if (currentRole === "manager") {
-          response = await ShowEmployee("employee")
-        } else if (currentRole === "employee") {
-          response = await ShowEmployee("manager")
-        }
-        const basicContacts = (response?.data || []).map((contact: any) => ({
-          ...contact,
-          lastMessage: "",
-          lastMessageTimestamp: undefined,
-          lastMessageSenderId: undefined, // Initialize new field
-          unread: 0,
-        }))
-        setContacts(basicContacts)
-        if (currentUser?.id) {
-          const userId = currentUser.id.toString()
-          const updatedContacts = [...basicContacts]
-          const readStatus = loadReadStatus()
-          const lastSelectedIdFromStorage = localStorage.getItem("lastSelectedUserId")
-          const messagePromises = basicContacts.map(async (contact: EnhancedContact, index: number) => {
-            const latestMessage = await fetchLatestMessage(userId, contact.id.toString())
-            if (latestMessage) {
-              const isRead = readStatus[contact.id.toString()] === true
-              const messageContent =
-                latestMessage.message ||
-                (latestMessage.isFile
-                  ? latestMessage.senderId === userId
-                    ? `You: Sent a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
-                    : `Received a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
-                  : "New message")
-              updatedContacts[index] = {
-                ...updatedContacts[index],
-                lastMessage: messageContent,
-                lastMessageTimestamp: latestMessage.timestamp,
-                lastMessageSenderId: latestMessage.senderId, // Store sender ID
-                unread: latestMessage.senderId !== userId && !isRead ? 1 : 0,
-              }
+  const fetchContactsAndLastMessages = async () => {
+    try {
+      let response
+      if (currentRole === "manager") {
+        response = await ShowEmployee("employee")
+      } else if (currentRole === "employee") {
+        response = await ShowEmployee("manager")
+      }
+
+      // Fix: Handle the nested array structure
+      let contactsData = []
+      if (Array.isArray(response)) {
+        // If response is the nested array directly [[...], 1]
+        contactsData = Array.isArray(response[0]) ? response[0] : response
+      } else if (response?.data) {
+        // If response has a data property
+        contactsData = Array.isArray(response.data[0]) ? response.data[0] : response.data
+      } else {
+        contactsData = []
+      }
+
+      const basicContacts = contactsData.map((contact: any) => ({
+        ...contact,
+        lastMessage: "",
+        lastMessageTimestamp: undefined,
+        lastMessageSenderId: undefined,
+        unread: 0,
+      }))
+
+      setContacts(basicContacts)
+
+      if (currentUser?.id) {
+        const userId = currentUser.id.toString()
+        const updatedContacts = [...basicContacts]
+        const readStatus = loadReadStatus()
+        const lastSelectedIdFromStorage = localStorage.getItem("lastSelectedUserId")
+
+        const messagePromises = basicContacts.map(async (contact: EnhancedContact, index: number) => {
+          const latestMessage = await fetchLatestMessage(userId, contact.id.toString())
+          if (latestMessage) {
+            const isRead = readStatus[contact.id.toString()] === true
+            const messageContent =
+              latestMessage.message ||
+              (latestMessage.isFile
+                ? latestMessage.senderId === userId
+                  ? `You: Sent a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
+                  : `Received a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
+                : "New message")
+
+            updatedContacts[index] = {
+              ...updatedContacts[index],
+              lastMessage: messageContent,
+              lastMessageTimestamp: latestMessage.timestamp,
+              lastMessageSenderId: latestMessage.senderId,
+              unread: latestMessage.senderId !== userId && !isRead ? 1 : 0,
             }
-            return null
-          })
-          await Promise.all(messagePromises)
-          setContacts(updatedContacts)
-          // Initialize selectedUser and selectedUserId
-          if (lastSelectedIdFromStorage) {
-            const foundContact = updatedContacts.find((c) => c.id.toString() === lastSelectedIdFromStorage)
-            if (foundContact) {
-              setSelectedUser(foundContact.name)
-              setSelectedUserId(foundContact.id)
-              saveReadStatus(foundContact.id) // Mark as read if re-selected
-            } else if (updatedContacts.length > 0) {
-              // If last selected not found, but contacts exist, select the first one
-              setSelectedUser(updatedContacts[0].name)
-              setSelectedUserId(updatedContacts[0].id)
-              saveReadStatus(updatedContacts[0].id)
-            }
+          }
+          return null
+        })
+
+        await Promise.all(messagePromises)
+        setContacts(updatedContacts)
+
+        // Initialize selectedUser and selectedUserId
+        if (lastSelectedIdFromStorage) {
+          const foundContact = updatedContacts.find((c) => c.id.toString() === lastSelectedIdFromStorage)
+          if (foundContact) {
+            setSelectedUser(foundContact.name)
+            setSelectedUserId(foundContact.id)
+            saveReadStatus(foundContact.id)
           } else if (updatedContacts.length > 0) {
-            // If no last selected, select the first one
             setSelectedUser(updatedContacts[0].name)
             setSelectedUserId(updatedContacts[0].id)
             saveReadStatus(updatedContacts[0].id)
           }
+        } else if (updatedContacts.length > 0) {
+          setSelectedUser(updatedContacts[0].name)
+          setSelectedUserId(updatedContacts[0].id)
+          saveReadStatus(updatedContacts[0].id)
         }
-      } catch (error) {
-        console.error("Error fetching contacts:", error)
-        setContacts([])
       }
+    } catch (error) {
+      console.error("Error fetching contacts:", error)
+      setContacts([])
     }
-    if (currentRole && currentUser?.id) fetchContactsAndLastMessages()
-  }, [currentRole, currentUser?.id])
+  }
+
+  if (currentRole && currentUser?.id) fetchContactsAndLastMessages()
+}, [currentRole, currentUser?.id])
   useEffect(() => {
     if (selectedUserId) {
       localStorage.setItem("lastSelectedUserId", selectedUserId.toString())

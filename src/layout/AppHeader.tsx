@@ -202,14 +202,15 @@ const AppHeader: React.FC = () => {
   return (
    <header
   className={`
-    fixed top-4 left-1/2 transform -translate-x-1/2
-      w-[96%] h-[74px]
-    shadow-md transition-all duration-500 ease-in-out
-     bg-[rgba(0,0,0,0.3)] text-white
-    flex items-center justify-between px-4
-      rounded-[16px] border border-white/30
-      backdrop-blur-[100px]
-  `}
+  relative top-4 left-1/2 transform -translate-x-1/2
+  w-[96%] h-[74px]
+  shadow-md transition-all duration-500 ease-in-out
+  bg-[rgba(0,0,0,0.3)] text-white
+  flex items-center justify-between px-4
+  rounded-[16px] border border-white/30
+  backdrop-blur-[100px]
+  mb-2
+`}
   style={{
     fontFamily:
       "'Inter', 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",

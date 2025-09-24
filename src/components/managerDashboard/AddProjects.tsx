@@ -535,11 +535,11 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
 
   // --- RENDER ---
   return (
-     <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%]
-                h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar">
+    <div className="w-full relative top-[30px] max-w-full">
+
       <div className="max-w-full">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8 ml-2">
           <h1
   className="
     font-roboto
@@ -805,15 +805,18 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
 </td>
 
                         {/* Status */}
-                     <td className="px-6 py-4">
+<td className="px-6 py-4 align-middle">
   {project.status ? (
     <span
       className={`inline-flex items-center justify-center
         min-w-[88px] h-[26px]
         px-[9px] py-[5px]
         rounded-full border border-white/20
-        text-[12px] font-roboto font-semibold capitalize
-        whitespace-nowrap ${getStatusColor(project.status)}`}
+        bg-white backdrop-blur-[5px]
+        text-[12px] leading-4 tracking-[0px]
+        font-montserrat font-semibold
+        whitespace-nowrap align-middle
+        text-[#15803D]`}
     >
       {project.status === "inprogress"
         ? "In Progress"
@@ -828,11 +831,11 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
         min-w-[88px] h-[26px]
         px-[9px] py-[5px]
         rounded-full border border-white/20
-        text-[12px] font-roboto font-medium whitespace-nowrap ${
-          project.isActive
-            ? "bg-emerald-100 text-emerald-700"
-            : "bg-gray-100 text-gray-700"
-        }`}
+        bg-[#15803D] backdrop-blur-[5px]
+        text-[12px] leading-4 tracking-[0px]
+        font-montserrat font-semibold
+        whitespace-nowrap align-middle
+        text-white`}
     >
       {project.isActive ? "Active" : "Inactive"}
     </span>

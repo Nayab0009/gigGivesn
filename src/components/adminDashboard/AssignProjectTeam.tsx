@@ -175,10 +175,10 @@ export function AssignTeamModal({
   if (!open || !project) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
-      <div className="bg-black/40 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[95vh] overflow-hidden border-2 border-white/40 flex flex-col">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-[9999] p-4">
+      <div className="bg-black/40 backdrop-blur-xl rounded-3xl shadow-2xl w-full max-w-2xl max-h-[95vh] overflow-hidden border-2 border-white/40 flex flex-col">
         {/* Header */}
-        <div className="p-6 text-center">
+        <div className="p-6 text-center bg-black/20 backdrop-blur-sm border-b border-white/20">
           <h2 className="text-2xl font-bold text-white mb-1">Assign Team Members</h2>
           <p className="text-gray-300 text-sm">
             Select team members for <span className="font-semibold">{project.title}</span>
@@ -197,7 +197,7 @@ export function AssignTeamModal({
 
         {/* Content */}
         <div
-          className="p-6 border border-white/30 rounded-2xl space-y-6 overflow-y-auto scrollbar-hide m-4"
+          className="p-6 bg-black/20 backdrop-blur-sm border border-white/30 rounded-2xl space-y-6 overflow-y-auto scrollbar-hide m-4"
           style={{ maxHeight: "calc(95vh - 220px)" }}
         >
           {/* Loading State */}
@@ -269,7 +269,7 @@ export function AssignTeamModal({
                     {team.members.map((member: any) => {
                       const isAssigned = isMemberAssigned(member.id);
                       const isSelected = selectedMembers.includes(member.id);
-                      
+
                       return (
                         <div
                           key={member.id}
@@ -340,7 +340,7 @@ export function AssignTeamModal({
         </div>
 
         {/* Footer */}
-        <div className="border-white/20 p-6 flex justify-end space-x-3 bg-transparent">
+        <div className="bg-black/20 backdrop-blur-sm border-t border-white/20 p-6 flex justify-end space-x-3">
           <button
             onClick={onClose}
             className="px-6 py-2 rounded-xl border border-gray-400 text-gray-200 hover:bg-white/10"
