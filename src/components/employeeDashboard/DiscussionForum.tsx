@@ -1,4 +1,6 @@
 "use client"
+import Image from "next/image"
+import { formatDistanceToNow } from "date-fns";
 
 import { useState, useEffect } from "react"
 import { MessageCircle, Plus, ArrowLeft, User, Clock } from "lucide-react"
@@ -19,6 +21,7 @@ type Discussion = {
   discussionBy: {
     id: number
     name:string
+    avatar: string
   }
   isActive: boolean
   createdAt: string
@@ -125,9 +128,9 @@ export default function ForumPage() {
 
   return (
   <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%]
-                h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar">
+                h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar -mt-3">
       {/* Header Section */}
-      <div className="mb-12 flex items-center justify-between mt-6 opacity-100 mx-auto">
+      <div className="mb-6 flex items-center justify-between opacity-100 mx-auto">
         <div className="flex flex-col justify-leftye sp">
           <h1 className="font-inter font-semibold text-[20px] leading-[28px] text-white align-middle mb-1">Discussion Forum</h1>
           <p className="font-inter font-normal text-[14px] leading-[20px] text-white align-middle">Connect, collaborate & share ideas with your team</p>
@@ -144,8 +147,8 @@ export default function ForumPage() {
               disabled={isLoading}
             >
               <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-              <Plus size={24} className="relative z-10" />
               <span className="relative z-10 font-inter font-medium text-[14px] leading-[20px] text-center align-middle">{showNewThreadForm ? "Cancel" : "Start New"}</span>
+              <Plus size={24} className="relative z-10" />
             </button>
           )}
         </div>
@@ -261,40 +264,47 @@ export default function ForumPage() {
                   <div className="p-8 relative h-full flex flex-col justify-between min-h-[182px]">
 
                     {/* Author */}
-                    <div className="flex items-center gap-3 mb-5">
-                      <div className="p-2 rounded-full bg-gray-100 group-hover:bg-blue-100 transition-colors duration-300">
-                        <User size={28} className="text-gray-500 group-hover:text-blue-600" />
+                    <div className="flex items-start gap-5 mb-5">
+                      <div className="h-12 w-14 rounded-full bg-gray-100 group-hover:bg-blue-100 transition-colors duration-300">
+                        <Image className="rounded-full object-cover w-full h-full" src={thread.discussionBy?.avatar || "/images/user.svg"} alt="User" width={30} height={30} />
                       </div>
-                      <span className="font-inter font-normal text-[13px] leading-[1] tracking-[0.05em] align-middle text-gray-200 group-hover:text-gray-100 transition-colors duration-300">
-                        Started by {thread.discussionBy?.name || "Unknown"}
-                      </span>
+                      <div className="flex flex-col gap-y-2">
+                      <div className=" font-inter font-normal text-[13px] leading-[1] tracking-[0.05em] text-gray-200 group-hover:text-gray-100 transition-colors duration-300 ">
+                       {thread.discussionBy?.name || "Unknown"}
+                        
+                      </div>
+                      <div><p className="text-[#808080] font-light text-xs">
+                        {/* {new Date(thread.createdAt).toLocaleString()} */}
+                        {formatDistanceToNow(new Date(thread.createdAt), { addSuffix: true })}
+                        </p></div>
+                      </div>
                     </div>
 
                     {/* Thread title */}
                     <h3
-                      className="font-inter font-bold text-[14px] leading-[1] tracking-[0.05em] align-middle mb-4 text-[#0CA9F6] transition-all duration-300"
+                      className="font-inter font-bold text-[14px] leading-[1] tracking-[0.05em] align-middle text-[#0CA9F6] transition-all duration-300"
                     >
                       {thread.title}
                     </h3>
 
                     {/* Content Preview */}
-                    <p className="font-inter font-light text-[14px] leading-[25px] tracking-[0.05em] text-gray-200 mb-6 line-clamp-2">{thread.description}</p>
+                    <p className="text-sm my-2 text-gray-200 mb-1 font-light">{thread.description}</p>
 
                     {/* Comments Count */}
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-gray-50/20 group-hover:bg-blue-50/30 transition-colors duration-300">
-                          <MessageCircle size={18} style={{ color: colors.accent.hex }} />
-                          <span style={{ color: colors.accent.hex }} className="font-bold text-sm">
+                      <div className="flex items-center gap-3 mt-2">
+                        <div className="flex items-center gap-2 px-6 py-1 rounded-full bg-gray-200/15 group-hover:bg-blue-50/30 transition-colors  ">
+                          <Image src="/images/msgIcon.svg" alt="Comments" width={18} height={18} style={{ color: colors.accent.hex }} />
+                          <span className="font-light text-sm text-white">
                             {(thread as any).comments?.length || 0} {" "}
-                            {(thread as any).comments?.length === 1 ? "comment" : "comments"}
+                            {(thread as any).comments?.length === 1}
                           </span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-200 px-3 py-2 rounded-full bg-gray-50/10">
+                      {/* <div className="flex items-center gap-2 text-sm text-gray-200 px-3 py-2 rounded-full bg-gray-50/10">
                         <Clock size={16} />
                         <span className="font-medium">{new Date(thread.createdAt).toLocaleString()}</span>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>

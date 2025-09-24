@@ -139,3 +139,12 @@ export const getManagerTasksToday = async (): Promise<any> => {
 }   
 
   
+export const getManagerTasksGraphData = async (): Promise<any> => {
+    try {
+        const response = await axiosInstance.get('/tasks/manager/graphs');
+        return response.data;
+    } catch (error) {
+        console.log("Error fetching tasks graph data", error);
+        throw error;
+    }
+}
