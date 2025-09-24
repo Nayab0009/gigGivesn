@@ -1242,7 +1242,7 @@ export default function ChatPage() {
 {/* User Profile Panel */}
 {showUserProfile && selectedUserId && (
   <aside  className={`
-    w-[365px] h-[475px]
+    w-[300px] h-[475px]
     rounded-[20px]
     border border-[#FFFFFF33] border-b border-b-[#FFFFFF33]
     bg-[#0000004D]
