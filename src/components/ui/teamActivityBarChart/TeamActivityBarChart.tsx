@@ -33,12 +33,11 @@ export default function TeamActivityBarChart({ data }: TeamActivityBarChartProps
         <YAxis
           axisLine={false}
           tickLine={false}
-          domain={[0, 400]}
-          ticks={[0, 50, 100, 150, 200, 250, 300, 350, 400]}
+          domain={[0, 'dataMax']}
           tick={{ fill: 'white', fontSize: 12 }}
           className="text-white"
           allowDecimals={false}
-    width={30}
+          width={30}
         />
         
         {/* X-axis with team names */}
