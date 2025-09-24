@@ -4,6 +4,7 @@
 export const colors = {
   primary: {
     hex: "#0CA9F6",
+    hexdark:"#006496",
     rgb: "rgba(12, 169, 246, 1)",
   },
   secondary: {

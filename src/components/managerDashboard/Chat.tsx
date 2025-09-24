@@ -56,7 +56,8 @@ export default function ChatPage() {
   const [showMeetingDialog, setShowMeetingDialog] = useState(false)
   const [isUploadingFile, setIsUploadingFile] = useState(false)
   const [showUserProfile, setShowUserProfile] = useState(false)
-  const [fullScreenImageUrl, setFullScreenImageUrl] = useState<string | null>(null) // New state for full screen image
+  const [fullScreenImageUrl, setFullScreenImageUrl] = useState<string | null>(null)
+   // New state for full screen image
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "auto" })
   }
@@ -758,11 +759,11 @@ export default function ChatPage() {
     </div>
     {/* Modern search bar */}
     <div className="relative">
-      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60" />
+     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 z-10" />
       <input
         type="text"
         placeholder="Search"
-        className="w-full pl-10 pr-4 py-2 rounded-xl bg-black/30 backdrop-blur-sm  text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30"
+        className="w-full pl-10 pr-4 py-2 rounded-2xl bg-black/30 backdrop-blur-sm  text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
@@ -912,36 +913,46 @@ export default function ChatPage() {
     </h2>
   </div>
 </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setShowMeetingDialog(true)}
-                  className="p-1 rounded-full"
-                  aria-label="Start meeting"
-                  type="button"
-                >
-                  <Video className="w-6 h-6" style={{ color: "#ffffff" }} />
-                </button>
-                {/* <Video className="w-6 h-6" style={{ color: "#006699" }}/> */}
-      <button
-  onClick={() => setShowUserProfile(!showUserProfile)}
-  className="p-2 rounded-full hover:bg-white/10 transition"
-  aria-label="Toggle user profile"
+  <div className="flex items-center gap-3 px-3 py-2 rounded-md">
+  {/* Search Icon */}
+  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] cursor-pointer">
+  <Search className="w-5 h-5 text-white" />
+</div>
+
+  {/* Video Button */}
+ <button
+  onClick={() => setShowMeetingDialog(true)}
+  className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] hover:bg-white/20 transition"
+  aria-label="Start meeting"
   type="button"
 >
-  {contacts.find(c => c.id === selectedUserId)?.avatar ? (
-    <img
-      src={contacts.find(c => c.id === selectedUserId)?.avatar}
-      alt={selectedUser}
-      className="w-6 h-6 rounded-full object-cover"
-    />
-  ) : (
-    <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
-      style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
-      {selectedUser[0]?.toUpperCase()}
-    </div>
-  )}
+  <Video className="w-6 h-6 text-white" />
 </button>
-  </div>
+  {/* User Button */}
+  <button
+    onClick={() => setShowUserProfile(!showUserProfile)}
+    className="p-2 rounded-full hover:bg-white/10 transition"
+    aria-label="Toggle user profile"
+    type="button"
+  >
+    {contacts.find((c) => c.id === selectedUserId)?.avatar ? (
+      <img
+        src={contacts.find((c) => c.id === selectedUserId)?.avatar}
+        alt={selectedUser}
+        className="w-6 h-6 rounded-full object-cover"
+      />
+    ) : (
+      <div
+        className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
+        style={{
+          background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+        }}
+      >
+        {selectedUser[0]?.toUpperCase()}
+      </div>
+    )}
+  </button>
+</div>
 
               {/* Meeting Dialog */}
              {typeof window !== "undefined" && (
@@ -1047,7 +1058,7 @@ export default function ChatPage() {
     </span>
   </div>
 )}
-      <div
+<div
   className={`
     pt-[8px] pr-[16px] pb-[8px] pl-[16px]
     rounded-tl-[12px] rounded-tr-[24px] rounded-br-[24px] rounded-bl-[24px]
@@ -1067,10 +1078,14 @@ export default function ChatPage() {
   `}
   style={
     isSentByMe
-      ? { background: colors.primary.hex, borderColor: colors.primary.hex }
+      ? {
+          background: `linear-gradient(135deg, ${colors.primary.hex}, #006496)`,
+          borderColor: colors.primary.hex,
+        }
       : {}
   }
 >
+
                         {msg.fileUrl && msg.fileType?.startsWith("image/") ? (
                           // Render image
                           <img
@@ -1253,12 +1268,19 @@ export default function ChatPage() {
       <h3 className="text-lg font-semibold text-white">{selectedUser}</h3>
     </div>
   </div>
+   <div className="flex items-center justify-center gap-3 px-3 py-2 rounded-md">
+   <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] cursor-pointer">
+  <Search className="w-5 h-5 text-white" />
+</div>
  <button
   onClick={() => setShowMeetingDialog(true)}
-  className="w-full p-3 bg-black/30 rounded-full  text-white text-sm border border-white/20 transition flex items-center justify-center gap-2"
+  className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] hover:bg-white/20 transition"
+  aria-label="Start meeting"
+  type="button"
 >
-  <img src="/images/phone.svg" alt="Call" className="w-6 h-6" />
+  <Video className="w-6 h-6 text-white" />
 </button>
+</div>
 </div>
 
     {/* Profile Content */}

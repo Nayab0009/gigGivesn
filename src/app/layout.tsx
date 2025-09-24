@@ -30,8 +30,9 @@ export default function RootLayout({
             className="object-cover"
           />
         </div>
-       
-  <div className="fixed inset-0 -z-10 bg-black/30 backdrop-blur-lg"></div>
+
+<div className="fixed inset-0 -z-10 bg-black/30 backdrop-blur-[35px]"></div>
+
         <Providers>
           <ProtectedRoute>{children}</ProtectedRoute>
         </Providers>
