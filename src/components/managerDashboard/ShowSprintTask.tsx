@@ -171,8 +171,9 @@ const ShowSprintTask: React.FC = () => {
   }, [sprintId]);
 
   return (
-    <div className="min-h-screen relative p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
+   <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%] h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar">
+      <div className="mx-auto">
+      
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
@@ -232,8 +233,14 @@ const ShowSprintTask: React.FC = () => {
           </div>
         ) : (
           <div className="space-y-6">
-            {/* View toggle buttons */}
-            <div className="flex justify-end">
+            {/* Sprint name and view toggle buttons in one row */}
+            <div className="flex items-center justify-between w-full mb-4">
+              {/* Sprint Name at left */}
+              {sprintName ? (
+                <span className="text-[20px] font-[600px] text-white  px-4 py-2 " style={{ minWidth: '180px' }}>
+                  {sprintName}
+                </span>
+              ) : <span />}
               <div
                 className="flex border border-white/20 rounded-full p-1 gap-1 shadow-inner"
                 style={{ background: "#0000004D" }}
@@ -263,7 +270,7 @@ const ShowSprintTask: React.FC = () => {
 
             {taskView === "table" ? (
               <div className="space-y-6">
-                {/* Active Tasks Table */}
+                {/* Sprint name moved to toggle row */}
                 <div className="rounded-2xl border border-white/10 backdrop-blur-xl" style={{ background: "#0000004D" }}>
                   <div className="overflow-x-auto">
                     <table className="min-w-full">
@@ -442,89 +449,65 @@ const ShowSprintTask: React.FC = () => {
               </div>
             ) : (
               /* Kanban board view */
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                {[
-                  { key: "todo", title: "To Do", color: "gray-400" },
-                  { key: "inprogress", title: "In Progress", color: "blue-400" },
-                  { key: "completed", title: "Completed", color: "emerald-400" },
-                  { key: "cancelled", title: "Cancelled", color: "red-400" }
-                ].map(column => {
-                  const columnTasks = tasks.filter(task => 
-                    task.status?.toLowerCase() === column.key.toLowerCase()
-                  );
+              <div className="flex gap-6 px-18 pb-6">
+                {[{ key: "inprogress", title: "In Progress", color: "white" },
+                  { key: "completed", title: "Completed", color: "white" },
+                  { key: "cancelled", title: "Cancelled", color: "white" }].map((column, idx) => {
+                  const columnTasks = tasks.filter(task => task.status?.toLowerCase() === column.key);
                   return (
-                    <div key={column.key} className="flex flex-col bg-black/40 backdrop-blur-md rounded-2xl p-4 shadow-lg border border-white/10">
-                      {/* Column Header */}
-                      <div className="flex items-center justify-between p-4 mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-3 h-3 rounded-full bg-${column.color}`}></div>
-                          <span className="text-white font-medium">{column.title}</span>
-                          <span className="bg-white/10 text-white text-sm px-2 py-1 rounded-full">
-                            ({columnTasks.length})
-                          </span>
-                        </div>
+                    <div key={column.key} className="flex-1 min-w-[260px] rounded-2xl border border-white/10 backdrop-blur-xl p-4 flex flex-col" style={{ background: '#0000004D', boxShadow: '0 2px 16px 0 rgba(0,0,0,0.10)' }}>
+                      {/* Header */}
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="w-3 h-3 rounded-full bg-white"></span>
+                        <span className="text-white/90 font-semibold text-base">{column.title}</span>
+                        <span className="ml-2 inline-flex items-center justify-center w-6 h-6 rounded-full text-xs bg-white/10 text-white/80 font-bold">{columnTasks.length}</span>
                       </div>
-
+                      <div className="border-b border-white/20 mb-4"></div>
                       {/* Tasks */}
-                      <div className="space-y-4 flex-1">
-                        {columnTasks.map((task) => (
-                          <div
-                            key={task.id}
-                            className="bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/10 hover:bg-white/20 transition-all duration-300 cursor-pointer group"
-                            onClick={() => handleViewReport(task)}
-                          >
-                            {/* Task ID */}
-                            <div className="flex items-center justify-between mb-3">
-                              <span className="text-gray-400 text-sm font-medium">
-                                #{task.id}
+                      <div className="flex-1 flex flex-col gap-4">
+                        {columnTasks.length > 0 ? columnTasks.map((task) => (
+                          <div key={task.id} className="rounded-xl border border-white/10 shadow-md p-4 text-white/90 transition-all duration-200 cursor-pointer min-h-[150px] flex flex-col justify-center gap-4" style={{ background: '#0000004D' }} onClick={() => handleViewReport(task)}>
+                            {/* Task Header */}
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-xs font-bold text-blue-300">{`${task.id}`}</span>
+                              <span className="text-[10px] px-2 py-1 rounded-full text-white font-bold"
+                                style={{
+                                  backgroundColor:
+                                    task.priority?.toLowerCase() === 'high' ? '#BD4242' :
+                                    task.priority?.toLowerCase() === 'medium' ? '#EAB308' :
+                                    task.priority?.toLowerCase() === 'low' ? '#34D399' : 'transparent'
+                                }}>
+                                {task.priority?.toLowerCase() === 'high'
+                                  ? 'High'
+                                  : task.priority?.toLowerCase() === 'medium'
+                                  ? 'Medium'
+                                  : task.priority?.toLowerCase() === 'low'
+                                  ? 'Low'
+                                  : ''}
                               </span>
+                            </div>
+                            {/* Title */}
+                            <div className="font-semibold text-base mb-1">{task.title}</div>
+                            {/* Description */}
+                            <div className="text-xs text-white/70 mb-2">{task.description || 'No description'}</div>
+                             
+                            {/* Assignee & Time */}
+                            <div className="flex items-center gap-2">
                               <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
                                 {getAssigneeAvatar(task)}
                               </span>
-                            </div>
-
-                            {/* Task Title */}
-                            <h3 className="text-white font-medium mb-3 line-clamp-2 group-hover:text-blue-300 transition-colors">
-                              {task.title}
-                            </h3>
-
-                            {/* Priority */}
-                            <div className="flex flex-wrap items-center gap-2 mb-4">
-                              <span className="inline-flex items-center gap-2">
-                                <ChevronDown
-                                  className={`w-4 h-4 ${
-                                    task.priority?.toLowerCase() === "high"
-                                      ? "text-red-400"
-                                      : task.priority?.toLowerCase() === "medium"
-                                      ? "text-yellow-300"
-                                      : "text-emerald-400"
-                                  }`}
-                                />
-                                <span className="capitalize text-white/70 text-sm">{task.priority || "Low"}</span>
+                              <span className="text-xs text-white/80 font-medium">{task.taskFor?.name || 'Unassigned'}</span>
+                              {/* Time (example static) */}
+                              <span className="flex items-center gap-1 text-xs text-white/60 ml-auto">
+                                <Clock className="w-4 h-4" />
+                                0h 52m
                               </span>
-                            </div>
-
-                            {/* Assignee & Due Date */}
-                            <div className="flex items-center justify-between text-gray-400 text-sm">
-                              <span className="flex items-center gap-2">
-                                <User className="w-3 h-3" />
-                                <span>{task.taskFor?.name || task.user?.name || "Unassigned"}</span>
-                              </span>
-                              {task.dueDate && (
-                                <span className="flex items-center gap-2">
-                                  <Calendar className="w-3 h-3" />
-                                  <span>{new Date(task.dueDate).toLocaleDateString()}</span>
-                                </span>
-                              )}
                             </div>
                           </div>
-                        ))}
-
-                        {/* Empty State */}
-                        {columnTasks.length === 0 && (
-                          <div className="text-center py-8 text-gray-500">
-                            <ClipboardList className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                            <p className="text-sm">No tasks</p>
+                        )) : (
+                          <div className="flex-1 flex flex-col items-center justify-center text-white/40 py-8">
+                            <ClipboardList className="w-8 h-8 mb-2 opacity-50" />
+                            <span className="text-sm">No tasks</span>
                           </div>
                         )}
                       </div>
