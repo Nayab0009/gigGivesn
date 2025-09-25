@@ -265,13 +265,13 @@ export default function ForumPage() {
 
                     {/* Author */}
                     <div className="flex items-start gap-5 mb-5">
-                      <div className="h-12 w-14 rounded-full bg-gray-100 group-hover:bg-blue-100 transition-colors duration-300">
+                      <div className="h-12 w-12 rounded-full bg-gray-100 group-hover:bg-blue-100 transition-colors duration-300">
                         <Image className="rounded-full object-cover w-full h-full" src={thread.discussionBy?.avatar || "/images/user.svg"} alt="User" width={30} height={30} />
                       </div>
                       <div className="flex flex-col gap-y-2">
                       <div className=" font-inter font-normal text-[13px] leading-[1] tracking-[0.05em] text-gray-200 group-hover:text-gray-100 transition-colors duration-300 ">
                        {thread.discussionBy?.name || "Unknown"}
-                        
+
                       </div>
                       <div><p className="text-[#808080] font-light text-xs">
                         {/* {new Date(thread.createdAt).toLocaleString()} */}
