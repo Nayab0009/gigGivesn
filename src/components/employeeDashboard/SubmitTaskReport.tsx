@@ -15,9 +15,11 @@ import {
   FileText,
   Building2,
   User,
-  X
+  X,
+  Upload
 } from 'lucide-react';
 import { colors } from '@/colors';
+import Image from 'next/image';
 
 // Interface for task response from backend
 interface TaskResponse {
@@ -61,6 +63,7 @@ const SubmitTaskReport = () => {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [comment, setComment] = useState('');
+  const containerRef = React.useRef<HTMLDivElement>(null);
 
   const taskId = searchParams.get('taskId');
   const projectId = searchParams.get('projectId');
@@ -144,19 +147,19 @@ const SubmitTaskReport = () => {
     switch (status.toLowerCase()) {
       case 'completed':
         return {
-          color: `bg-[${colors.accent.hex}22] text-[${colors.primary.hex}] border-[${colors.accent.hex}]`,
+          color: `bg-red-900 text-white border-[${colors.accent.hex}]`,
           icon: <CheckCircle className="w-5 h-5" style={{ color: colors.accent.hex }} />
         };
       case 'inprogress':
       case 'in-progress':
       case 'active':
         return {
-          color: `bg-[${colors.primary.hex}22] text-[${colors.primary.hex}] border-[${colors.primary.hex}]`,
+          color: `bg-[#15803D] text-white border-green-500`,
           icon: <Clock className="w-5 h-5" style={{ color: colors.primary.hex }} />
         };
       case 'pending':
         return {
-          color: `bg-[${colors.warning.hex}22] text-[${colors.warning.hex}] border-[${colors.warning.hex}]`,
+          color: `bg-[${colors.warning.hex}22] text-white border-[${colors.warning.hex}]`,
           icon: <AlertCircle className="w-5 h-5" style={{ color: colors.warning.hex }} />
         };
       case 'blocked':
@@ -166,7 +169,7 @@ const SubmitTaskReport = () => {
         };
       default:
         return {
-          color: `bg-[${colors.secondary.hex}22] text-[${colors.secondary.hex}] border-[${colors.secondary.hex}]`,
+          color: `bg-[${colors.secondary.hex}22] text-white border-[${colors.secondary.hex}]`,
           icon: <Clock className="w-5 h-5" style={{ color: colors.secondary.hex }} />
         };
     }
@@ -190,10 +193,28 @@ const SubmitTaskReport = () => {
     }
   }, [isAuthenticated, user?.id, taskId]);
 
+  // Handle clicks outside the main container
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        // Clicked outside the main container, redirect to tasks page
+        router.push(`/dashboard/teammember/mytasks?projectId=${projectId}`);
+      }
+    };
+    
+    // Add event listener
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    // Cleanup
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [router, projectId]);
+
   // Show authentication error if user is not logged in
   if (!isAuthenticated || !user?.id) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 p-4 sm:p-6 lg:p-8">
+      <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
         <div className="max-w-2xl mx-auto">
           <div className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/50 p-12 text-center">
             <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full flex items-center justify-center mb-6 mx-auto shadow-lg">
@@ -208,27 +229,26 @@ const SubmitTaskReport = () => {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 lg:p-8" style={{ background: `${colors.accent.hex}11` }}>
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen p-4 sm:p-6 bg-black/60 -p-30">
+      <div ref={containerRef} className="max-w-2xl mx-auto bg-black/30 border border-white/30 rounded-2xl">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-4 mb-6">
-            <button
+            {/* <button
               onClick={() => router.push(`/dashboard/teammember/mytasks?projectId=${projectId}`)}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-semibold transition-all duration-300 hover:shadow-lg transform hover:scale-105"
               style={{ background: '#fff', color: colors.primary.hex, border: `1px solid ${colors.primary.hex}` }}
             >
               <ArrowLeft className="w-5 h-5" style={{ color: colors.primary.hex }} />
               Back to Tasks
-            </button>
+            </button> */}
           </div>
           
           <div className="text-center mb-8">
-            <h1 className="text-3xl sm:text-4xl font-bold mb-4" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <h1 className="text-white text-3xl sm:text-4xl font-bold mb-4">
               Submit Task Report
             </h1>
-            <div className="w-24 h-1 mx-auto rounded-full mb-6" style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}></div>
-            <p className="text-slate-600 text-lg max-w-xl mx-auto">
+            <p className="text-white text-lg max-w-xl mx-auto">
               Add a comment about your task progress
             </p>
           </div>
@@ -254,7 +274,7 @@ const SubmitTaskReport = () => {
         )}
 
         {/* Content Container */}
-        <div className="bg-white/60 backdrop-blur-xl rounded-3xl shadow-2xl border overflow-hidden" style={{ borderColor: colors.primary.hex }}>
+        <div className="">
           {isLoading ? (
             <div className="p-16 text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-full mb-6">
@@ -273,62 +293,70 @@ const SubmitTaskReport = () => {
           ) : (
             <div className="p-8">
               {/* Task Information Card */}
-              <div className="mb-8 rounded-2xl border-2 p-6" style={{ background: `${colors.accent.hex}11`, borderColor: colors.accent.hex }}>
-                <h3 className="text-xl font-bold mb-4" style={{ color: colors.primary.hex }}>Task Information</h3>
+              <div className="mb-8 rounded-2xl border-1 p-6 border-white/30 bg-black/30 shadow-lg">
+                <div className="flex justify-between items-center">
+                  <div>
+                <h3 className="text-white text-xl font-extralight mb-4">Task Information</h3>
+                  </div>
+<div>
+  <div className={`inline-flex items-center gap-2 px-2 rounded-full text-sm font-extralight ${getStatusInfo(task.status).color} shadow-lg`}>
+                      {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                    </div>
+</div>
+                </div>
                 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-lg font-semibold mb-2" style={{ color: colors.primary.hex }}>{task.title}</h4>
-                    <p className="text-slate-600 mb-3">{task.description}</p>
+                    <h4 className="text-lg font-extralight mb-2 text-white">{task.title}</h4>
+                    <p className="text-white mb-3 font-extralight">{task.description}</p>
                   </div>
                   
-                  <div className="flex items-center justify-between">
-                    <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold ${getStatusInfo(task.status).color} shadow-lg`}>
-                      {getStatusInfo(task.status).icon}
-                      {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
-                    </div>
-                    <div className="text-sm" style={{ color: colors.secondary.hex }}>
+                  <div className="my-7">
+                    <div className="inline text-sm text-white py-2 px-4 border border-white/30 rounded-full font-extralight">
                       Task ID: #{task.id}
                     </div>
                   </div>
                   
-                  <div className="text-sm" style={{ color: colors.secondary.hex }}>
+                  <div className="text-sm font-extralight text-white">
                     Project: {task.taskOf.name}
                   </div>
                 </div>
               </div>
 
               {/* Comment Form */}
-              <div className="space-y-6">
-                <h3 className="text-xl font-bold text-slate-900 mb-4">Add Comment</h3>
+              <div className="space-y-6 border-1 border-white/30 rounded-2xl p-6">
+                <h3 className="text-xl text-white mb-4 font-extralight">Add Comment</h3>
                 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
-                    Comment *
+                  <label className="block text-sm text-white mb-2 font-extralight">
+                    Comment
                   </label>
                   <textarea
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    placeholder="Enter your comment about the task progress..."
-                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
+                    placeholder="Enter your comment ..."
+                    className="w-full px-4 py-3 border-none rounded-2xl text-white bg-black/30 font-extralight"
                     rows={6}
                   />
                 </div>
-
+{/* Upload File */}
+ <button className="px-9 py-3 font-extralight transition-all duration-300 text-white rounded-2xl border-1 border-dashed boder-white/30"
+                  >
+                   <Upload className="inline w-5 h-5 mr-3"/>
+                    Upload File
+                  </button>
                 {/* Action Buttons */}
-                <div className="flex space-x-4 pt-6">
+                <div className="flex space-x-4 pt-2">
                   <button
                     onClick={() => router.push(`/dashboard/teammember/mytasks?projectId=${projectId}`)}
-                    className="flex-1 px-6 py-3 rounded-xl font-semibold transition-all duration-300"
-                    style={{ background: `${colors.accent.hex}11`, color: colors.primary.hex, border: `1px solid ${colors.primary.hex}` }}
-                  >
-                    Cancel
+                    className="flex-1 px-6 py-3 font-extralight transition-all duration-300 text-white rounded-full"
+                  style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`, color: '#fff' }}>
+                    In Progress
                   </button>
                   <button
                     onClick={submitReport}
                     disabled={!comment.trim() || submitting}
-                    className="flex-1 px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
-                    style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`, color: '#fff' }}
+                    className="flex-1 px-6 py-3 font-extralight transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2 text-white border border-white/30 rounded-full"
                   >
                     {submitting ? (
                       <>
@@ -337,7 +365,6 @@ const SubmitTaskReport = () => {
                       </>
                     ) : (
                       <>
-                        <Send className="w-5 h-5" />
                         Submit Report
                       </>
                     )}
