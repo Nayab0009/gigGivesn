@@ -140,7 +140,18 @@ const EmployeeTasks = () => {
     setSelectedProject(null)
     setTasks([])
   }
-
+const truncateByWords = (text: string, maxLength: number = 100) => {
+  if (!text || text.length <= maxLength) return text;
+  
+  const truncated = text.substring(0, maxLength);
+  const lastSpaceIndex = truncated.lastIndexOf(' ');
+  
+  if (lastSpaceIndex > 0) {
+    return truncated.substring(0, lastSpaceIndex) + '...';
+  }
+  
+  return truncated + '...';
+};
   // Refresh data
   const refreshData = async () => {
     setRefreshing(true)
@@ -291,9 +302,15 @@ const EmployeeTasks = () => {
     )
   }
 
+
+  // --- Avatar generator (from ProjectTable) ---
+  const generateAvatar = (name: string) => {
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}&backgroundColor=a7f3d0,bbf7d0,d1fae5,ecfdf5,f0fdfa`
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br  p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%] h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar">
+      <div className="mx-auto">
         {/* Header & Action Bar - match ProjectTable styling */}
         <div className="mb-8 flex items-center justify-between gap-4">
           {/* Left: Heading */}
@@ -322,7 +339,7 @@ const EmployeeTasks = () => {
             </p>
           </div>
 
-          {/* Center: Search */}
+          {/* Center: Search (disabled, for UI match) */}
           <div className="flex-1 flex justify-center">
             <div className="relative w-full max-w-lg" style={{ marginLeft: '90px' }}>
               <svg className="absolute text-[#9CA3AF] left-3 top-1/2 -translate-y-1/2 w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
@@ -343,8 +360,6 @@ const EmployeeTasks = () => {
                   width: '396px',
                   opacity: 1,
                 }}
-                // value={searchTerm}
-                // onChange={(e) => setSearchTerm(e.target.value)}
                 disabled
               />
             </div>
@@ -468,100 +483,113 @@ const EmployeeTasks = () => {
                 </p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-hidden">
                 <table className="min-w-full table-fixed divide-y divide-white/10">
-                  <thead className="backdrop-blur-md bg-white/5">
-                    <tr>
-                      <th className="px-4 sm:px-6 py-4 text-left w-[180px]">
-                        <div className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white">
-                          <span className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]">Project Name</span>
-                        </div>
+                  <thead className="backdrop-blur-md bg-white/5" style={{height: '73px', borderBottom: '5px solid #FFFFFF1A'}}>
+                    <tr className="h-[56px]">
+                      <th className="px-4 sm:px-6 py-4 text-left w-[180px] border-b-2 border-[#4A6A65]">
+                        <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                          NAME
+                        </span>
                       </th>
-                      <th className="px-4 sm:px-6 py-4 text-left w-[260px]">
-                        <div className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white">
-                          <span className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]">Description</span>
-                        </div>
+                      <th className="px-4 sm:px-6 py-4 text-left w-[260px] border-b-2 border-[#4A6A65]">
+                        <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                          DESCRIPTION
+                        </span>
                       </th>
-                      <th className="px-4 sm:px-6 py-4 text-left w-[110px]">
-                        <div className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white">
-                          <span className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px] whitespace-nowrap">Status</span>
-                        </div>
+                      <th className="px-4 sm:px-6 py-4 text-left w-[110px] border-b-2 border-[#4A6A65]">
+                        <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left whitespace-nowrap uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                          STATUS
+                        </span>
                       </th>
-                      <th className="px-4 sm:px-6 py-4 text-left w-[200px]">
-                        <div className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white">
-                          <span className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px] whitespace-nowrap">Start Date</span>
-                        </div>
+                      <th className="px-4 sm:px-6 py-4 text-left w-[110px] border-b-2 border-[#4A6A65]">
+                        <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left whitespace-nowrap uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                          START DATE
+                        </span>
                       </th>
-                      <th className="px-4 sm:px-6 py-4 text-left w-[200px]">
-                        <div className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white">
-                          <span className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px] whitespace-nowrap">End Date</span>
-                        </div>
+                      <th className="px-4 sm:px-6 py-4 text-left w-[110px] border-b-2 border-[#4A6A65]">
+                        <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left whitespace-nowrap uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                          END DATE
+                        </span>
                       </th>
-                      <th className="px-4 sm:px-6 py-4 text-left w-[160px]">
-                        <div className="inline-flex items-start w-full px-4 py-3 rounded-[16px] border text-[14px] font-semibold tracking-[0.7px] text-left bg-[#0000004D] border-[#FFFFFF4D] text-white">
-                          <span className="font-[Montserrat] font-semibold align-middle text-[14px] leading-[20px] tracking-[0.7px]">Actions</span>
-                        </div>
+                      <th className="px-4 sm:px-6 py-4 text-left w-[160px] border-b-2 border-[#4A6A65]">
+                        <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                          ACTIONS
+                        </span>
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-transparent divide-y divide-white/10 text-white/90" style={{ borderColor: '#FFFFFF26' }}>
+                  <tbody className="bg-transparent divide-y divide-gray-400" style={{ borderColor: '#BDBDBD' }}>
                     {projects.map((project, index) => (
                       <tr
                         key={project.id}
-                        className="border-b transition-all duration-300 hover:shadow-lg hover:bg-white/5"
-                        style={{ borderColor: "#FFFFFF26" }}
+                        className="transition-colors duration-300 bg-transparent hover:bg-white/5"
                       >
-                        <td className="p-6">
-                          <div className="flex flex-col">
-                            <h3 className="text-lg font-semibold mb-1 text-[#0CA9F6]">
-                              {project.name}
-                            </h3>
-                            <div className="md:hidden text-sm text-white/70">
-                              {project.description || "No description provided"}
+                        <td className="px-6 py-6">
+                          <div className="space-y-2 flex items-center gap-3">
+                            {/* Circular Logo */}
+                            <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden border-2 border-white/30 bg-white/10 flex items-center justify-center">
+                              <img
+                                src={generateAvatar(project.name)}
+                                alt={project.name + ' avatar'}
+                                className="w-full h-full object-cover rounded-full"
+                                style={{ width: 40, height: 40 }}
+                              />
+                            </div>
+                            <div>
+                              <h3
+                                className="text-xs sm:text-sm  leading-tight break-words whitespace-normal"
+                                style={{ color: "#FFFFFF", fontWeight: 500, wordBreak: 'break-word', fontSize: '16px' }}
+                              >
+                                {(() => {
+                                  // Split name into words, insert <br/> after every 30 words
+                                  if (!project.name) return null;
+                                  const words = project.name.split(' ');
+                                  const lines = [];
+                                  for (let i = 0; i < words.length; i += 30) {
+                                    lines.push(words.slice(i, i + 30).join(' '));
+                                  }
+                                  return lines.map((line, idx) => (
+                                    <span key={idx}>
+                                      {line}
+                                      {idx !== lines.length - 1 && <br />}
+                                    </span>
+                                  ));
+                                })()}
+                              </h3>
                             </div>
                           </div>
                         </td>
-                        <td className="p-6 hidden md:table-cell">
-                          <p className="text-sm max-w-xs text-white/70">
-                            {project.description || "No description provided"}
+                        <td className="px-6 py-6">
+                          <p className="text-sm leading-relaxed break-words whitespace-normal max-w-2xl" style={{ color: "#A8A8A8" }}>
+                           {truncateByWords(project.description, 30)}
                           </p>
                         </td>
-                        <td className="p-6 text-center">
+                        <td className="px-6 py-6">
                           <span
-                            className="px-4 py-2 rounded-full text-sm font-medium border inline-flex items-center gap-2"
-                            style={{
-                              background: project.isActive ? "rgba(16,185,129,0.15)" : "rgba(255,255,255,0.08)",
-                              color: project.isActive ? "#a7f3d0" : "#E5E7EB",
-                              borderColor: "#FFFFFF33",
-                            }}
+                            className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize shadow-sm whitespace-nowrap"
+                            style={(() => {
+                              const status = project.isActive ? 'active' : 'inactive';
+                              if (status === "active") {
+                                return { background: "#D1FAE5", color: "#065F46", border: "1px solid #A7F3D0" };
+                              }
+                              return { background: "#E5E7EB", color: "#111827", border: "1px solid #D1D5DB" };
+                            })()}
                           >
-                            {project.isActive ? (
-                              <CheckCircle className="w-4 h-4" />
-                            ) : (
-                              <AlertCircle className="w-4 h-4" />
-                            )}
-                            {project.isActive ? "Active" : "Inactive"}
+                            {project.isActive ? 'Active' : 'Inactive'}
                           </span>
                         </td>
-            <td className="p-6 text-center hidden lg:table-cell">
-                          <div
-              className="flex items-center justify-center gap-2 text-sm"
-                            style={{ color: "#E5E7EB" }}
-                          >
-                            <Calendar className="w-4 h-4 text-white/80" />
-              <span className="whitespace-nowrap">{formatDate(project.startDate)}</span>
-                          </div>
+                        <td className="px-6 py-6">
+                          <span className="text-sm text-white/80 whitespace-nowrap">
+                            {project.startDate ? new Date(project.startDate).toLocaleDateString() : "—"}
+                          </span>
                         </td>
-            <td className="p-6 text-center hidden lg:table-cell">
-                          <div
-              className="flex items-center justify-center gap-2 text-sm"
-                            style={{ color: "#E5E7EB" }}
-                          >
-                            <Calendar className="w-4 h-4 text-white/80" />
-              <span className="whitespace-nowrap">{formatDate(project.endDate)}</span>
-                          </div>
+                        <td className="px-6 py-6">
+                          <span className="text-sm text-white/80">
+                            {project.endDate ? new Date(project.endDate).toLocaleDateString() : "—"}
+                          </span>
                         </td>
-                        <td className="p-6 text-center">
+                        <td className="px-6 py-6">
                           <button
                             onClick={() => handleProjectSelect(project)}
                             className="px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 shadow hover:shadow-lg transform hover:scale-105 inline-flex items-center gap-2 whitespace-nowrap"
