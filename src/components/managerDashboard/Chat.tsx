@@ -878,7 +878,7 @@ export default function ChatPage() {
                         {contact.name?.[0]?.toUpperCase() || "?"}
                       </div>
                     )}
-                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-gray-400 rounded-full border-2 border-white/20"></div>
+
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-white text-sm font-medium truncate">{contact.name}</p>
@@ -930,7 +930,7 @@ export default function ChatPage() {
                     >
                       {contact.name?.[0]?.toUpperCase() || "?"}
                     </div>
-                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-gray-400 rounded-full border-2 border-white/20"></div>
+
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-white text-sm font-medium truncate">{contact.name}</p>
@@ -1315,9 +1315,9 @@ export default function ChatPage() {
               <button
                 onClick={sendMessage}
                 disabled={(!message.trim() && !selectedFile) || isUploadingFile}
-                className="p-3 rounded-full transition-all duration-200 hover:scale-105"
+                className="p-3 rounded-full transition-all duration-200 hover:scale-105 bg-[#0CA9F6]"
                 style={{
-                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+
                   color: "#fff",
                   opacity: (!message.trim() && !selectedFile) || isUploadingFile ? 0.5 : 1,
                   cursor: (!message.trim() && !selectedFile) || isUploadingFile ? "not-allowed" : "pointer",
