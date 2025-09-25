@@ -497,11 +497,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                           DESCRIPTION
                         </span>
                       </th>
-                      <th className="px-4 sm:px-6 py-4 text-left w-[110px] border-b-2 border-[#4A6A65]">
-                        <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left whitespace-nowrap uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
-                          STATUS
-                        </span>
-                      </th>
+                      {/* Status column removed */}
                       <th className="px-4 sm:px-6 py-4 text-left w-[110px] border-b-2 border-[#4A6A65]">
                         <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left whitespace-nowrap uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
                           START DATE
@@ -565,20 +561,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                            {truncateByWords(project.description, 30)}
                           </p>
                         </td>
-                        <td className="px-6 py-6">
-                          <span
-                            className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold capitalize shadow-sm whitespace-nowrap"
-                            style={(() => {
-                              const status = project.isActive ? 'active' : 'inactive';
-                              if (status === "active") {
-                                return { background: "#D1FAE5", color: "#065F46", border: "1px solid #A7F3D0" };
-                              }
-                              return { background: "#E5E7EB", color: "#111827", border: "1px solid #D1D5DB" };
-                            })()}
-                          >
-                            {project.isActive ? 'Active' : 'Inactive'}
-                          </span>
-                        </td>
+                        {/* Status cell removed */}
                         <td className="px-6 py-6">
                           <span className="text-sm text-white/80 whitespace-nowrap">
                             {project.startDate ? new Date(project.startDate).toLocaleDateString() : "—"}
@@ -592,14 +575,15 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                         <td className="px-6 py-6">
                           <button
                             onClick={() => handleProjectSelect(project)}
-                            className="px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 shadow hover:shadow-lg transform hover:scale-105 inline-flex items-center gap-2 whitespace-nowrap"
-                            style={{
-                              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                              color: "#fff",
-                            }}
+                            className="group inline-flex items-center justify-center w-12 h-12 "
+                           
                           >
-                            <Eye className="w-4 h-4" />
-                            <span className="whitespace-nowrap">View Tasks</span>
+                            <img
+                              src="/images/icons/BUTTON-168.svg"
+                              alt="View Tasks"
+                              className="w-10 h-10 object-contain"
+                              style={{ display: 'block', margin: 'auto' }}
+                            />
                           </button>
                         </td>
                       </tr>
