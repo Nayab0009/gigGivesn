@@ -789,11 +789,15 @@ export default function ChatPage() {
       setCurrentSearchIndex((prev) => (prev <= 0 ? searchResults.length - 1 : prev - 1))
     }
   }
-  return (
-    <div className="flex h-screen  rounded-3xl p-4 gap-10">
+  return (<>
+  <div>
+    <h1 className="font-[600] text-[20px] text-white">Communication</h1>
+  <h5 className="font-[400] text-[14px] text-white">Welcome back, Oversee your assigned projects and manage your team effectively</h5></div>
+    <div className="flex h-screen  rounded-3xl gap-10 pt-6 px-1">
+
       {/* Sidebar */}
       {/* Sidebar - Replace from line 473 */}
-      <aside className=" top-[226px] left-[30px]  w-80 bg-black/30  rounded-xl     pr-[1px] border border-[#FFFFFF33] flex flex-col">
+      <aside className=" top-[226px] left-[10px]  w-80 bg-black/30  rounded-xl     pr-[1px] border border-[#FFFFFF33] flex flex-col">
         {/* Header */}
         <div className="p-4 border-b border-white/10">
   <div className="flex items-center justify-between mb-4">
@@ -1492,5 +1496,6 @@ export default function ChatPage() {
   </aside>
 )}
     </div>
+    </>
   )
 }
