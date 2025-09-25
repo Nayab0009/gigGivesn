@@ -24,7 +24,7 @@ interface CustomToastStyle extends Omit<ToastOptions, "icon"> {
 export default function SignInForm() {
   const router = useRouter()
   const { signin, error: authError, isAuthenticated, getRedirectPath, isLoading } = useAuth()
-  
+
   const [showPassword, setShowPassword] = useState(false)
   const [isChecked, setIsChecked] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -192,9 +192,9 @@ if (isAuthenticated) {
           alt="Background"
           fill
           priority
-         
+
         />
-      
+
       </div>
 
       {/* Toasts */}
@@ -363,7 +363,7 @@ if (isAuthenticated) {
           padding: 16px;
           margin-bottom: 16px;
         }
-        
+
         .Toastify__toast-body {
           font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }

@@ -80,7 +80,7 @@ const ProfessionalNotesEditor = () => {
     try {
       const payload: Notespayload = {
         title: "Untitled Document",
-        content: "<p>i am fixing the 500 internal server error</p>", // Updated default content
+        content: "<p></p>", // Updated default content
               // createdBy: user.id, // Pass the current user's ID
 
       }

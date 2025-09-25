@@ -57,7 +57,12 @@ export default function ChatPage() {
   const [isUploadingFile, setIsUploadingFile] = useState(false)
   const [showUserProfile, setShowUserProfile] = useState(false)
   const [fullScreenImageUrl, setFullScreenImageUrl] = useState<string | null>(null)
-   // New state for full screen image
+  const [messageSearchQuery, setMessageSearchQuery] = useState("")
+  const [isSearchActive, setIsSearchActive] = useState(false)
+  const [searchResults, setSearchResults] = useState<Message[]>([])
+  const [currentSearchIndex, setCurrentSearchIndex] = useState(0)
+   const [activeTab, setActiveTab] = useState<"pictures" | "files">("files")
+  // New state for full screen image
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "auto" })
   }
@@ -140,61 +145,61 @@ export default function ChatPage() {
     return Date.now().toString(36) + Math.random().toString(36).substring(2, 15)
   }
   // Generate a unique room ID and link for the call
- const generateRoom = async () => {
-  const roomId = generateUniqueId()
-  const link = `${window.location.origin}/call?roomId=${roomId}`
-  setGeneratedLink(link)
+  const generateRoom = async () => {
+    const roomId = generateUniqueId()
+    const link = `${window.location.origin}/call?roomId=${roomId}`
+    setGeneratedLink(link)
 
-  // Create the message data
-  const meetingMessage = `Join the meeting: ${link}`
+    // Create the message data
+    const meetingMessage = `Join the meeting: ${link}`
 
-  // Send the message automatically
-  const socket = getSocket()
-  if (socket && selectedUserId) {
-    const msgData = {
-      message: meetingMessage,
-      timestamp: Date.now(),
-      userId: currentUser?.id?.toString(),
-      username: currentUser?.name,
-      senderId: currentUser?.id?.toString(),
-      receiverId: selectedUserId?.toString(),
-      isFile: false,
-      isPending: false,
+    // Send the message automatically
+    const socket = getSocket()
+    if (socket && selectedUserId) {
+      const msgData = {
+        message: meetingMessage,
+        timestamp: Date.now(),
+        userId: currentUser?.id?.toString(),
+        username: currentUser?.name,
+        senderId: currentUser?.id?.toString(),
+        receiverId: selectedUserId?.toString(),
+        isFile: false,
+        isPending: false,
+      }
+
+      // Emit to socket
+      socket.emit("message", msgData)
+
+      // Update local state
+      setMessages((prev) => [...prev, msgData])
+      setTimeout(scrollToBottom, 0)
+
+      // Save read status and update contacts
+      saveReadStatus(selectedUserId)
+      setContactMessages((prev) => {
+        const existing = prev[selectedUserId.toString()] || []
+        return {
+          ...prev,
+          [selectedUserId.toString()]: [...existing, msgData],
+        }
+      })
+
+      setContacts((prev) =>
+        prev.map((contact) =>
+          contact.id.toString() === selectedUserId.toString()
+            ? {
+                ...contact,
+                lastMessage: msgData.message,
+                lastMessageTimestamp: msgData.timestamp,
+                lastMessageSenderId: currentUser?.id?.toString(),
+              }
+            : contact,
+        ),
+      )
     }
 
-    // Emit to socket
-    socket.emit("message", msgData)
-
-    // Update local state
-    setMessages((prev) => [...prev, msgData])
-    setTimeout(scrollToBottom, 0)
-
-    // Save read status and update contacts
-    saveReadStatus(selectedUserId)
-    setContactMessages((prev) => {
-      const existing = prev[selectedUserId.toString()] || []
-      return {
-        ...prev,
-        [selectedUserId.toString()]: [...existing, msgData],
-      }
-    })
-
-    setContacts((prev) =>
-      prev.map((contact) =>
-        contact.id.toString() === selectedUserId.toString()
-          ? {
-              ...contact,
-              lastMessage: msgData.message,
-              lastMessageTimestamp: msgData.timestamp,
-              lastMessageSenderId: currentUser?.id?.toString(),
-            }
-          : contact,
-      ),
-    )
+    return link
   }
-
-  return link
-}
   // Sort contacts by most recent message first, then filter by search
   const filteredContacts = contacts
     .sort((a, b) => {
@@ -296,95 +301,95 @@ export default function ChatPage() {
     }
   }
   useEffect(() => {
-  const fetchContactsAndLastMessages = async () => {
-    try {
-      let response
-      if (currentRole === "manager") {
-        response = await ShowEmployee("employee")
-      } else if (currentRole === "employee") {
-        response = await ShowEmployee("manager")
-      }
+    const fetchContactsAndLastMessages = async () => {
+      try {
+        let response
+        if (currentRole === "manager") {
+          response = await ShowEmployee("employee")
+        } else if (currentRole === "employee") {
+          response = await ShowEmployee("manager")
+        }
 
-      // Fix: Handle the nested array structure
-      let contactsData = []
-      if (Array.isArray(response)) {
-        // If response is the nested array directly [[...], 1]
-        contactsData = Array.isArray(response[0]) ? response[0] : response
-      } else if (response?.data) {
-        // If response has a data property
-        contactsData = Array.isArray(response.data[0]) ? response.data[0] : response.data
-      } else {
-        contactsData = []
-      }
+        // Fix: Handle the nested array structure
+        let contactsData = []
+        if (Array.isArray(response)) {
+          // If response is the nested array directly [[...], 1]
+          contactsData = Array.isArray(response[0]) ? response[0] : response
+        } else if (response?.data) {
+          // If response has a data property
+          contactsData = Array.isArray(response.data[0]) ? response.data[0] : response.data
+        } else {
+          contactsData = []
+        }
 
-      const basicContacts = contactsData.map((contact: any) => ({
-        ...contact,
-        lastMessage: "",
-        lastMessageTimestamp: undefined,
-        lastMessageSenderId: undefined,
-        unread: 0,
-      }))
+        const basicContacts = contactsData.map((contact: any) => ({
+          ...contact,
+          lastMessage: "",
+          lastMessageTimestamp: undefined,
+          lastMessageSenderId: undefined,
+          unread: 0,
+        }))
 
-      setContacts(basicContacts)
+        setContacts(basicContacts)
 
-      if (currentUser?.id) {
-        const userId = currentUser.id.toString()
-        const updatedContacts = [...basicContacts]
-        const readStatus = loadReadStatus()
-        const lastSelectedIdFromStorage = localStorage.getItem("lastSelectedUserId")
+        if (currentUser?.id) {
+          const userId = currentUser.id.toString()
+          const updatedContacts = [...basicContacts]
+          const readStatus = loadReadStatus()
+          const lastSelectedIdFromStorage = localStorage.getItem("lastSelectedUserId")
 
-        const messagePromises = basicContacts.map(async (contact: EnhancedContact, index: number) => {
-          const latestMessage = await fetchLatestMessage(userId, contact.id.toString())
-          if (latestMessage) {
-            const isRead = readStatus[contact.id.toString()] === true
-            const messageContent =
-              latestMessage.message ||
-              (latestMessage.isFile
-                ? latestMessage.senderId === userId
-                  ? `You: Sent a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
-                  : `Received a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
-                : "New message")
+          const messagePromises = basicContacts.map(async (contact: EnhancedContact, index: number) => {
+            const latestMessage = await fetchLatestMessage(userId, contact.id.toString())
+            if (latestMessage) {
+              const isRead = readStatus[contact.id.toString()] === true
+              const messageContent =
+                latestMessage.message ||
+                (latestMessage.isFile
+                  ? latestMessage.senderId === userId
+                    ? `You: Sent a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
+                    : `Received a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
+                  : "New message")
 
-            updatedContacts[index] = {
-              ...updatedContacts[index],
-              lastMessage: messageContent,
-              lastMessageTimestamp: latestMessage.timestamp,
-              lastMessageSenderId: latestMessage.senderId,
-              unread: latestMessage.senderId !== userId && !isRead ? 1 : 0,
+              updatedContacts[index] = {
+                ...updatedContacts[index],
+                lastMessage: messageContent,
+                lastMessageTimestamp: latestMessage.timestamp,
+                lastMessageSenderId: latestMessage.senderId,
+                unread: latestMessage.senderId !== userId && !isRead ? 1 : 0,
+              }
             }
-          }
-          return null
-        })
+            return null
+          })
 
-        await Promise.all(messagePromises)
-        setContacts(updatedContacts)
+          await Promise.all(messagePromises)
+          setContacts(updatedContacts)
 
-        // Initialize selectedUser and selectedUserId
-        if (lastSelectedIdFromStorage) {
-          const foundContact = updatedContacts.find((c) => c.id.toString() === lastSelectedIdFromStorage)
-          if (foundContact) {
-            setSelectedUser(foundContact.name)
-            setSelectedUserId(foundContact.id)
-            saveReadStatus(foundContact.id)
+          // Initialize selectedUser and selectedUserId
+          if (lastSelectedIdFromStorage) {
+            const foundContact = updatedContacts.find((c) => c.id.toString() === lastSelectedIdFromStorage)
+            if (foundContact) {
+              setSelectedUser(foundContact.name)
+              setSelectedUserId(foundContact.id)
+              saveReadStatus(foundContact.id)
+            } else if (updatedContacts.length > 0) {
+              setSelectedUser(updatedContacts[0].name)
+              setSelectedUserId(updatedContacts[0].id)
+              saveReadStatus(updatedContacts[0].id)
+            }
           } else if (updatedContacts.length > 0) {
             setSelectedUser(updatedContacts[0].name)
             setSelectedUserId(updatedContacts[0].id)
             saveReadStatus(updatedContacts[0].id)
           }
-        } else if (updatedContacts.length > 0) {
-          setSelectedUser(updatedContacts[0].name)
-          setSelectedUserId(updatedContacts[0].id)
-          saveReadStatus(updatedContacts[0].id)
         }
+      } catch (error) {
+        console.error("Error fetching contacts:", error)
+        setContacts([])
       }
-    } catch (error) {
-      console.error("Error fetching contacts:", error)
-      setContacts([])
     }
-  }
 
-  if (currentRole && currentUser?.id) fetchContactsAndLastMessages()
-}, [currentRole, currentUser?.id])
+    if (currentRole && currentUser?.id) fetchContactsAndLastMessages()
+  }, [currentRole, currentUser?.id])
   useEffect(() => {
     if (selectedUserId) {
       localStorage.setItem("lastSelectedUserId", selectedUserId.toString())
@@ -719,8 +724,8 @@ export default function ChatPage() {
     }
   }
 
-  // Helper function to render message content with clickable links
-  const renderMessageContent = (text: string) => {
+  // Helper function to render message content with clickable links and search highlighting
+  const renderMessageContent = (text: string, searchQuery: string) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g
     const parts = text.split(urlRegex)
 
@@ -738,287 +743,405 @@ export default function ChatPage() {
           </a>
         )
       }
-      return <span key={index}>{part}</span>
+      // Highlight search query
+      const highlightedPart = searchQuery
+        ? part.split(new RegExp(`(${searchQuery.replace(/[-/\\^$*+?.()|[\]{}]/g, "\\$&")})`, "gi"))
+        : [part]
+      return (
+        <span key={index}>
+          {highlightedPart.map((segment, segIndex) =>
+            searchQuery && segment.toLowerCase() === searchQuery.toLowerCase() ? (
+              <mark key={segIndex} className="bg-yellow-300 text-black">
+                {segment}
+              </mark>
+            ) : (
+              segment
+            ),
+          )}
+        </span>
+      )
     })
   }
+  const searchMessages = (query: string) => {
+    if (!query.trim()) {
+      setSearchResults([])
+      setIsSearchActive(false)
+      setCurrentSearchIndex(0)
+      return
+    }
 
+    const filteredMessages = messages.filter(
+      (msg) =>
+        msg.message.toLowerCase().includes(query.toLowerCase()) ||
+        (msg.username && msg.username.toLowerCase().includes(query.toLowerCase())),
+    )
+
+    setSearchResults(filteredMessages)
+    setIsSearchActive(true)
+    setCurrentSearchIndex(0)
+  }
+  const navigateSearchResults = (direction: "next" | "prev") => {
+    if (searchResults.length === 0) return
+
+    if (direction === "next") {
+      setCurrentSearchIndex((prev) => (prev >= searchResults.length - 1 ? 0 : prev + 1))
+    } else {
+      setCurrentSearchIndex((prev) => (prev <= 0 ? searchResults.length - 1 : prev - 1))
+    }
+  }
   return (
-<div className="flex h-screen  rounded-3xl p-4 gap-10">
-
-
+    <div className="flex h-screen  rounded-3xl p-4 gap-10">
       {/* Sidebar */}
-     {/* Sidebar - Replace from line 473 */}
-<aside className=" top-[226px] left-[30px]  w-80 bg-black/30  rounded-xl     pr-[1px] border border-[#FFFFFF33] flex flex-col">
-  {/* Header */}
-  <div className="p-4 border-b border-white/10">
-    <div className="flex items-center justify-between mb-4">
+      {/* Sidebar - Replace from line 473 */}
+      <aside className=" top-[226px] left-[30px]  w-80 bg-black/30  rounded-xl     pr-[1px] border border-[#FFFFFF33] flex flex-col">
+        {/* Header */}
+        <div className="p-4 border-b border-white/10">
+  <div className="flex items-center justify-between mb-4">
+    <div className="flex items-center gap-3">
+      {/* Current User Avatar */}
+      {currentUser?.avatar ? (
+        <img
+          src={currentUser.avatar}
+          alt={currentUser.name || "User"}
+          className="w-9 h-9 rounded-full object-cover"
+        />
+      ) : (
+        <div
+          className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold"
+          style={{
+            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+          }}
+        >
+          {currentUser?.name?.[0]?.toUpperCase() || "?"}
+        </div>
+      )}
+
+      {/* Chat Title */}
       <h1 className="text-xl font-bold flex items-center gap-2 text-white">
-        <MessageCircle className="w-6 h-6" />
+
         <span>Chat</span>
       </h1>
     </div>
-    {/* Modern search bar */}
-    <div className="relative">
-     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 z-10" />
-      <input
-        type="text"
-        placeholder="Search"
-        className="w-full pl-10 pr-4 py-2 rounded-2xl bg-black/30 backdrop-blur-sm  text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
-    </div>
   </div>
 
-  {/* Contact list with modern cards */}
-  <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-    {/* Team section */}
-    <div className="p-4">
-      <h3 className="text-sm font-medium text-white/70 mb-3">Team</h3>
-      <div className="space-y-2">
-        {filteredContacts.slice(0, Math.ceil(filteredContacts.length / 2)).map((contact) => (
-          <div
-            key={contact.id}
-            onClick={() => {
-              setSelectedUser(contact.name)
-              setSelectedUserId(contact.id)
-              saveReadStatus(contact.id)
-              setContacts((prevContacts) => prevContacts.map((c) => (c.id === contact.id ? { ...c, unread: 0 } : c)))
-            }}
-            className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all hover:bg-black/30 ${
-              selectedUser === contact.name ? 'bg-black/30 ' : ''
-            }`}
-          >
-            <div className="relative">
-  {contact.avatar ? (
-    <img
-      src={contact.avatar}
-      alt={contact.name}
-      className="w-9 h-9 rounded-full object-cover"
+  {/* Modern search bar */}
+  <div className="relative">
+    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 z-10" />
+    <input
+      type="text"
+      placeholder="Search"
+      className="w-full pl-10 pr-4 py-2 rounded-2xl bg-black/30 backdrop-blur-sm  text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
     />
-  ) : (
-    <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold"
-      style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
-      {contact.name?.[0]?.toUpperCase() || "?"}
-    </div>
-  )}
-  <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-gray-400 rounded-full border-2 border-white/20"></div>
-</div>
-            <div className="flex-1 min-w-0">
-              <p className="text-white text-sm font-medium truncate">{contact.name}</p>
-              <p className="text-white/60 text-xs truncate">
-                {contact.lastMessage ? (
-                  <>
-                    {contact.lastMessageSenderId === currentUser?.id?.toString() &&
-                    !contact.lastMessage?.startsWith("You:") ? (
-                      <span className="font-medium mr-1">You:</span>
-                    ) : null}
-                    {contact.lastMessage}
-                  </>
-                ) : (
-                  "No messages yet"
-                )}
-              </p>
-            </div>
-            {contact.unread > 0 && (
-              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-
-    {/* Personal section */}
-    <div className="p-4">
-      <h3 className="text-sm font-medium text-white/70 mb-3">Personal</h3>
-      <div className="space-y-2">
-        {filteredContacts.slice(Math.ceil(filteredContacts.length / 2)).map((contact) => (
-          <div
-            key={contact.id}
-            onClick={() => {
-              setSelectedUser(contact.name)
-              setSelectedUserId(contact.id)
-              saveReadStatus(contact.id)
-              setContacts((prevContacts) => prevContacts.map((c) => (c.id === contact.id ? { ...c, unread: 0 } : c)))
-            }}
-            className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all hover:bg-white/10 ${
-              selectedUser === contact.name ? 'bg-white/15 border border-white/20' : ''
-            }`}
-          >
-            <div className="relative">
-              <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold"
-                style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
-                {contact.name?.[0]?.toUpperCase() || "?"}
-              </div>
-              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-gray-400 rounded-full border-2 border-white/20"></div>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-white text-sm font-medium truncate">{contact.name}</p>
-              <p className="text-white/60 text-xs truncate">
-                {contact.lastMessage ? (
-                  <>
-                    {contact.lastMessageSenderId === currentUser?.id?.toString() &&
-                    !contact.lastMessage?.startsWith("You:") ? (
-                      <span className="font-medium mr-1">You:</span>
-                    ) : null}
-                    {contact.lastMessage}
-                  </>
-                ) : (
-                  "No messages yet"
-                )}
-              </p>
-            </div>
-            {contact.unread > 0 && (
-              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
   </div>
-</aside>
+</div>
+        {/* Contact list with modern cards */}
+        <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          {/* Team section */}
+          <div className="p-4">
+            <h3 className="text-sm font-medium text-white/70 mb-3">Team</h3>
+            <div className="space-y-2">
+              {filteredContacts.slice(0, Math.ceil(filteredContacts.length / 2)).map((contact) => (
+                <div
+                  key={contact.id}
+                  onClick={() => {
+                    setSelectedUser(contact.name)
+                    setSelectedUserId(contact.id)
+                    saveReadStatus(contact.id)
+                    setContacts((prevContacts) =>
+                      prevContacts.map((c) => (c.id === contact.id ? { ...c, unread: 0 } : c)),
+                    )
+                  }}
+                  className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all hover:bg-black/30 ${
+                    selectedUser === contact.name ? "bg-black/30 " : ""
+                  }`}
+                >
+                  <div className="relative">
+                    {contact.avatar ? (
+                      <img
+                        src={contact.avatar || "/placeholder.svg"}
+                        alt={contact.name}
+                        className="w-9 h-9 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div
+                        className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold"
+                        style={{
+                          background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                        }}
+                      >
+                        {contact.name?.[0]?.toUpperCase() || "?"}
+                      </div>
+                    )}
+                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-gray-400 rounded-full border-2 border-white/20"></div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-sm font-medium truncate">{contact.name}</p>
+                    <p className="text-white/60 text-xs truncate">
+                      {contact.lastMessage ? (
+                        <>
+                          {contact.lastMessageSenderId === currentUser?.id?.toString() &&
+                          !contact.lastMessage?.startsWith("You:") ? (
+                            <span className="font-medium mr-1">You:</span>
+                          ) : null}
+                          {contact.lastMessage}
+                        </>
+                      ) : (
+                        "No messages yet"
+                      )}
+                    </p>
+                  </div>
+                  {contact.unread > 0 && <div className="w-2 h-2 bg-red-500 rounded-full"></div>}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Personal section */}
+          <div className="p-4">
+            <h3 className="text-sm font-medium text-white/70 mb-3">Personal</h3>
+            <div className="space-y-2">
+              {filteredContacts.slice(Math.ceil(filteredContacts.length / 2)).map((contact) => (
+                <div
+                  key={contact.id}
+                  onClick={() => {
+                    setSelectedUser(contact.name)
+                    setSelectedUserId(contact.id)
+                    saveReadStatus(contact.id)
+                    setContacts((prevContacts) =>
+                      prevContacts.map((c) => (c.id === contact.id ? { ...c, unread: 0 } : c)),
+                    )
+                  }}
+                  className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all hover:bg-white/10 ${
+                    selectedUser === contact.name ? "bg-white/15 border border-white/20" : ""
+                  }`}
+                >
+                  <div className="relative">
+                    <div
+                      className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold"
+                      style={{
+                        background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                      }}
+                    >
+                      {contact.name?.[0]?.toUpperCase() || "?"}
+                    </div>
+                    <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-gray-400 rounded-full border-2 border-white/20"></div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-sm font-medium truncate">{contact.name}</p>
+                    <p className="text-white/60 text-xs truncate">
+                      {contact.lastMessage ? (
+                        <>
+                          {contact.lastMessageSenderId === currentUser?.id?.toString() &&
+                          !contact.lastMessage?.startsWith("You:") ? (
+                            <span className="font-medium mr-1">You:</span>
+                          ) : null}
+                          {contact.lastMessage}
+                        </>
+                      ) : (
+                        "No messages yet"
+                      )}
+                    </p>
+                  </div>
+                  {contact.unread > 0 && <div className="w-2 h-2 bg-red-500 rounded-full"></div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </aside>
       {/* Main Chat Area - Conditional Rendering */}
       {selectedUserId ? (
-        <main className="flex flex-col flex-1  rounded-[20px]
-    border border-[#FFFFFF33]">
+        <main
+          className="flex flex-col flex-1  rounded-[20px]
+    border border-[#FFFFFF33]"
+        >
           {/* Chat
            */}
-         <header className={`
+          <header
+            className={`
     bg-black/30
     rounded-t-[20px]
     border-b border-b-[#FFFFFF33]
     pt-[24px] pr-[24px] pb-[25px] pl-[24px]
-  `}>
+  `}
+          >
             <div className="flex items-center justify-between">
-             <div className="flex items-center gap-3">
-  <div className="relative">
-    {contacts.find(c => c.id === selectedUserId)?.avatar ? (
-      <img
-        src={contacts.find(c => c.id === selectedUserId)?.avatar}
-        alt={selectedUser}
-        className="w-10 h-10 rounded-full object-cover"
-      />
-    ) : (
-      <div
-        className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
-        style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}
-      >
-        {selectedUser[0]}
-      </div>
-    )}
-  </div>
-  <div>
-    <h2 className="font-semibold text-white">
-      {selectedUser}
-    </h2>
-  </div>
-</div>
-  <div className="flex items-center gap-3 px-3 py-2 rounded-md">
-  {/* Search Icon */}
-  <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] cursor-pointer">
-  <Search className="w-5 h-5 text-white" />
-</div>
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  {contacts.find((c) => c.id === selectedUserId)?.avatar ? (
+                    <img
+                      src={contacts.find((c) => c.id === selectedUserId)?.avatar || "/placeholder.svg"}
+                      alt={selectedUser}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div
+                      className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
+                      style={{
+                        background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                      }}
+                    >
+                      {selectedUser[0]}
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <h2 className="font-semibold text-white">{selectedUser}</h2>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 px-3 py-2 rounded-md">
+                {/* Search Icon */}
+                <div
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] cursor-pointer"
+                  onClick={() => setIsSearchActive(!isSearchActive)}
+                >
+                  <Search className="w-5 h-5 text-white" />
+                </div>
+                {isSearchActive && (
+                  <div className="relative flex items-center gap-2">
+                    <input
+                      type="text"
+                      placeholder="Search messages..."
+                      className="w-48 pl-4 pr-16 py-2 rounded-2xl bg-black/30 backdrop-blur-sm text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30"
+                      value={messageSearchQuery}
+                      onChange={(e) => {
+                        setMessageSearchQuery(e.target.value)
+                        searchMessages(e.target.value)
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          searchMessages(messageSearchQuery)
+                        }
+                      }}
+                    />
+                    {searchResults.length > 0 && (
+                      <div className="absolute right-2 flex items-center gap-1">
+                        <span className="text-white text-sm">
+                          {currentSearchIndex + 1}/{searchResults.length}
+                        </span>
+                        <button
+                          onClick={() => navigateSearchResults("prev")}
+                          className="p-1 rounded-full hover:bg-white/20 text-white"
+                          aria-label="Previous search result"
+                        >
+                          {"<"}
+                        </button>
+                        <button
+                          onClick={() => navigateSearchResults("next")}
+                          className="p-1 rounded-full hover:bg-white/20 text-white"
+                          aria-label="Next search result"
+                        >
+                          {">"}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {/* End CHANGE */}
 
-  {/* Video Button */}
- <button
-  onClick={() => setShowMeetingDialog(true)}
-  className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] hover:bg-white/20 transition"
-  aria-label="Start meeting"
-  type="button"
->
-  <Video className="w-6 h-6 text-white" />
-</button>
-  {/* User Button */}
-  <button
-    onClick={() => setShowUserProfile(!showUserProfile)}
-    className="p-2 rounded-full hover:bg-white/10 transition"
-    aria-label="Toggle user profile"
-    type="button"
-  >
-    {contacts.find((c) => c.id === selectedUserId)?.avatar ? (
-      <img
-        src={contacts.find((c) => c.id === selectedUserId)?.avatar}
-        alt={selectedUser}
-        className="w-6 h-6 rounded-full object-cover"
-      />
-    ) : (
-      <div
-        className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
-        style={{
-          background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-        }}
-      >
-        {selectedUser[0]?.toUpperCase()}
-      </div>
-    )}
-  </button>
-</div>
+                {/* Video Button */}
+                <button
+                  onClick={() => setShowMeetingDialog(true)}
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] hover:bg-white/20 transition"
+                  aria-label="Start meeting"
+                  type="button"
+                >
+                  <Video className="w-6 h-6 text-white" />
+                </button>
+                {/* User Button */}
+                <button
+                  onClick={() => setShowUserProfile(!showUserProfile)}
+                  className="p-2 rounded-full hover:bg-white/10 transition"
+                  aria-label="Toggle user profile"
+                  type="button"
+                >
+                  {contacts.find((c) => c.id === selectedUserId)?.avatar ? (
+                    <img
+                      src={contacts.find((c) => c.id === selectedUserId)?.avatar || "/placeholder.svg"}
+                      alt={selectedUser}
+                      className="w-6 h-6 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
+                      style={{
+                        background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                      }}
+                    >
+                      {selectedUser[0]?.toUpperCase()}
+                    </div>
+                  )}
+                </button>
+              </div>
 
               {/* Meeting Dialog */}
-             {typeof window !== "undefined" && (
-  <>
-    {showMeetingDialog && (
-      <div className="fixed inset-0 z-50 flex items-center justify-center">
-        {/* Blurred backdrop overlay */}
-        <div
-          className="absolute inset-0 bg-black/50 backdrop-blur-md"
-          onClick={() => setShowMeetingDialog(false)}
-        ></div>
+              {typeof window !== "undefined" && (
+                <>
+                  {showMeetingDialog && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center">
+                      {/* Blurred backdrop overlay */}
+                      <div
+                        className="absolute inset-0 bg-black/50 backdrop-blur-md"
+                        onClick={() => setShowMeetingDialog(false)}
+                      ></div>
 
-        {/* Modal content */}
-        <div className="relative bg-black/30 rounded-2xl shadow-2xl p-8 w-96 border border-white/20">
-          <div className="text-center">
-            {/* Video call icon */}
-            <div className="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center"
-              style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
-              <Video className="w-8 h-8 text-white" />
-            </div>
+                      {/* Modal content */}
+                      <div className="relative bg-black/30 rounded-2xl shadow-2xl p-8 w-96 border border-white/20">
+                        <div className="text-center">
+                          {/* Video call icon */}
+                          <div
+                            className="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center"
+                            style={{
+                              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                            }}
+                          >
+                            <Video className="w-8 h-8 text-white" />
+                          </div>
 
-            <h3 className="text-xl font-semibold mb-2 text-white">Start Video Call</h3>
-            <p className="text-white/70 text-sm mb-8">Ready to start a meeting with {selectedUser}?</p>
+                          <h3 className="text-xl font-semibold mb-2 text-white">Start Video Call</h3>
+                          <p className="text-white/70 text-sm mb-8">Ready to start a meeting with {selectedUser}?</p>
 
-            {/* Action buttons */}
-            <div className="space-y-3">
-              <button
-                className="w-full py-3 rounded-xl font-medium text-white transition-all duration-200 hover:scale-105"
-                style={{
-                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                }}
-                onClick={async () => {
-                  const link = await generateRoom()
-                  console.log("Generated meeting link:", link)
-                  if (link) {
-                    window.open(link, "_blank")
-                  }
-                  setShowMeetingDialog(false)
-                }}
-              >
-                Start Meeting
-              </button>
+                          {/* Action buttons */}
+                          <div className="space-y-3">
+                            <button
+                              className="w-full py-3 rounded-xl font-medium text-white transition-all duration-200 hover:scale-105"
+                              style={{
+                                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                              }}
+                              onClick={async () => {
+                                const link = await generateRoom()
+                                console.log("Generated meeting link:", link)
+                                if (link) {
+                                  window.open(link, "_blank")
+                                }
+                                setShowMeetingDialog(false)
+                              }}
+                            >
+                              Start Meeting
+                            </button>
 
-              <button
-                className="w-full py-3 bg-white/10 backdrop-blur-sm text-white rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20"
-                onClick={() => setShowMeetingDialog(false)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    )}
-  </>
-)}
-
+                            <button
+                              className="w-full py-3 bg-white/10 backdrop-blur-sm text-white rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20"
+                              onClick={() => setShowMeetingDialog(false)}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </header>
           {/* Messages Area */}
-         {/* Messages Area */}
-<div
-  className="px-4 py-2 space-y-4 flex flex-col-reverse flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-black/30  "
->
+          <div className="px-4 py-2 space-y-4 flex flex-col-reverse flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-black/30  ">
             <div ref={messagesEndRef} />
-            {messages
+            {/* Conditionally render messages based on search results */}
+            {(isSearchActive ? searchResults : messages)
               .slice()
               .reverse()
               .map((msg, i) => {
@@ -1028,64 +1151,59 @@ export default function ChatPage() {
                   const contact = contacts.find((c) => c.id.toString() === msg.senderId)
                   senderName = contact?.name || msg.username || `User ${msg.senderId}`
                 }
+
+                const isCurrentSearchResult =
+                  isSearchActive && searchResults.length > 0 && searchResults[currentSearchIndex]?.id === msg.id
+
                 return (
                   <div key={i} className={`flex ${isSentByMe ? "justify-end" : "justify-start"}`}>
-                    <div className={`max-w-xs lg:max-w-md ${!isSentByMe ? "order-2" : ""}`}>
+                    <div
+                      className={`max-w-xs lg:max-w-md ${!isSentByMe ? "order-2" : ""} ${isCurrentSearchResult ? "ring-2 ring-yellow-500 rounded-xl" : ""}`}
+                    >
                       {/* Show sender name and ID for received messages */}
-                     {!isSentByMe && (
-  <div className="flex items-center gap-2 mb-1">
-    {(() => {
-      const contact = contacts.find((c) => c.id.toString() === msg.senderId);
-      return contact?.avatar ? (
-        <img
-          src={contact.avatar}
-          alt={senderName}
-          className="w-6 h-6 rounded-full object-cover"
-        />
-      ) : (
-        <div
-          className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
-          style={{
-            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-          }}
-        >
-          {senderName[0] || "?"}
-        </div>
-      );
-    })()}
-    <span className="text-xs" style={{ color: colors.secondary.hex }}>
-      {senderName}
-    </span>
-  </div>
-)}
-<div
-  className={`
+                      {!isSentByMe && (
+                        <div className="flex items-center gap-2 mb-1">
+                          {(() => {
+                            const contact = contacts.find((c) => c.id.toString() === msg.senderId)
+                            return contact?.avatar ? (
+                              <img
+                                src={contact.avatar || "/placeholder.svg"}
+                                alt={senderName}
+                                className="w-6 h-6 rounded-full object-cover"
+                              />
+                            ) : (
+                              <div
+                                className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold"
+                                style={{
+                                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                                }}
+                              >
+                                {senderName[0] || "?"}
+                              </div>
+                            )
+                          })()}
+                          <span className="text-xs" style={{ color: colors.secondary.hex }}>
+                            {senderName}
+                          </span>
+                        </div>
+                      )}
+                      <div
+                        className={`
     pt-[8px] pr-[16px] pb-[8px] pl-[16px]
     rounded-tl-[12px] rounded-tr-[24px] rounded-br-[24px] rounded-bl-[24px]
     shadow-sm
-    ${
-      isSentByMe
-        ? "text-white border"
-        : "bg-[#1F293799] backdrop-blur-sm text-white border border-[#FFFFFF33]"
-    }
-    ${
-      fontSize === "small"
-        ? "text-sm"
-        : fontSize === "large"
-        ? "text-lg"
-        : "text-base"
-    }
+    ${isSentByMe ? "text-white border" : "bg-[#1F293799] backdrop-blur-sm text-white border border-[#FFFFFF33]"}
+    ${fontSize === "small" ? "text-sm" : fontSize === "large" ? "text-lg" : "text-base"}
   `}
-  style={
-    isSentByMe
-      ? {
-          background: `linear-gradient(135deg, ${colors.primary.hex}, #006496)`,
-          borderColor: colors.primary.hex,
-        }
-      : {}
-  }
->
-
+                        style={
+                          isSentByMe
+                            ? {
+                                background: `linear-gradient(135deg, ${colors.primary.hex}, #006496)`,
+                                borderColor: colors.primary.hex,
+                              }
+                            : {}
+                        }
+                      >
                         {msg.fileUrl && msg.fileType?.startsWith("image/") ? (
                           // Render image
                           <img
@@ -1107,7 +1225,7 @@ export default function ChatPage() {
                             </a>
                           </div>
                         ) : null}
-                        {msg.message && <p>{renderMessageContent(msg.message)}</p>} {/* Updated here */}
+                        {msg.message && <p>{renderMessageContent(msg.message, messageSearchQuery)}</p>}
                         {msg.isPending && (
                           <div className="flex items-center text-xs text-gray-500 mt-1">
                             <Loader2 className="w-3 h-3 animate-spin mr-1" />
@@ -1136,7 +1254,7 @@ export default function ChatPage() {
           </div>
           {/* Chat Input */}
 
-<div className="p-4 bg-black/30    border-t border-t-[#FFFFFF33]   rounded-b-[20px]     pt-[25px] pr-[24px] pb-[24px] pl-[24px]">
+          <div className="p-4 bg-black/30    border-t border-t-[#FFFFFF33]   rounded-b-[20px]     pt-[25px] pr-[24px] pb-[24px] pl-[24px]">
             <div className="flex items-center justify-between gap-3">
               {/* File input button */}
               <input
@@ -1176,19 +1294,19 @@ export default function ChatPage() {
                   </div>
                 )}
                 <textarea
-  className="w-3/4 px-4 py-3 rounded-2xl border border-white/20 bg-black/30 backdrop-blur-sm focus:ring-2 focus:ring-white/30 resize-none max-h-32 text-white placeholder-white/60"
-  placeholder={isUploadingFile ? "Uploading file..." : "Type your message..."}
-  value={message}
-  onChange={(e) => setMessage(e.target.value)}
-  onKeyDown={(e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      sendMessage()
-    }
-  }}
-  rows={1}
-  disabled={isUploadingFile}
-/>
+                  className="w-3/4 px-4 py-3 rounded-2xl border border-white/20 bg-black/30 backdrop-blur-sm focus:ring-2 focus:ring-white/30 resize-none max-h-32 text-white placeholder-white/60"
+                  placeholder={isUploadingFile ? "Uploading file..." : "Type your message..."}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault()
+                      sendMessage()
+                    }
+                  }}
+                  rows={1}
+                  disabled={isUploadingFile}
+                />
               </div>
               <button
                 onClick={sendMessage}
@@ -1206,7 +1324,7 @@ export default function ChatPage() {
             </div>
           </div>
         </main>
-    ) : (
+      ) : (
         <div className="flex flex-col flex-1 items-center justify-center h-full bg-black/30   rounded-xl text-white">
           <MessageCircle className="w-24 h-24 mb-4" />
           <h2 className="text-2xl font-semibold mb-2">Welcome to Chat!</h2>
@@ -1239,119 +1357,136 @@ export default function ChatPage() {
       {/* Audio element for notifications */}
       <audio ref={audioRef} src="/audio/note.mp3" preload="auto" />
       {/* User Profile Panel */}
-{/* User Profile Panel */}
-{showUserProfile && selectedUserId && (
-  <aside  className={`
-    w-[300px] h-[475px]
-    rounded-[20px]
-    border border-[#FFFFFF33] border-b border-b-[#FFFFFF33]
-    bg-[#0000004D]
-    flex flex-col
-    pt-[24px] pr-[24px] pb-[25px] pl-[24px]
-  `}>
+      {/* User Profile Panel */}
+      {showUserProfile && selectedUserId && (
+  <aside
+    className={`
+      w-[300px] h-[475px]
+      rounded-[20px]
+      border border-[#FFFFFF33]
+      bg-[#0000004D]
+      flex flex-col
+      pt-[24px] pr-[24px] pb-[25px] pl-[24px]
+    `}
+  >
     {/* Profile Header */}
     <div className="p-6 border-b border-white/10">
-  <div className="flex items-center gap-4 mb-4">
-    {contacts.find(c => c.id === selectedUserId)?.avatar ? (
-      <img
-        src={contacts.find(c => c.id === selectedUserId)?.avatar}
-        alt={selectedUser}
-        className="w-16 h-16 rounded-full object-cover"
-      />
-    ) : (
-      <div className="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-bold"
-        style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}>
-        {selectedUser[0]?.toUpperCase()}
+      <div className="flex items-center gap-4 mb-4">
+        {contacts.find((c) => c.id === selectedUserId)?.avatar ? (
+          <img
+            src={contacts.find((c) => c.id === selectedUserId)?.avatar || "/placeholder.svg"}
+            alt={selectedUser}
+            className="w-16 h-16 rounded-full object-cover"
+          />
+        ) : (
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-bold"
+            style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}
+          >
+            {selectedUser[0]?.toUpperCase()}
+          </div>
+        )}
+        <div>
+          <h3 className="text-lg font-semibold text-white">{selectedUser}</h3>
+        </div>
       </div>
-    )}
-    <div>
-      <h3 className="text-lg font-semibold text-white">{selectedUser}</h3>
+
+      {/* Actions */}
+      <div className="flex items-center justify-center gap-3 px-3 py-2 rounded-md">
+        <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] cursor-pointer">
+          <Search className="w-5 h-5 text-white" />
+        </div>
+        <button
+          onClick={() => setShowMeetingDialog(true)}
+          className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] hover:bg-white/20 transition"
+          aria-label="Start meeting"
+          type="button"
+        >
+          <Video className="w-6 h-6 text-white" />
+        </button>
+      </div>
     </div>
-  </div>
-   <div className="flex items-center justify-center gap-3 px-3 py-2 rounded-md">
-   <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] cursor-pointer">
-  <Search className="w-5 h-5 text-white" />
-</div>
- <button
-  onClick={() => setShowMeetingDialog(true)}
-  className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] hover:bg-white/20 transition"
-  aria-label="Start meeting"
-  type="button"
->
-  <Video className="w-6 h-6 text-white" />
-</button>
-</div>
-</div>
 
     {/* Profile Content */}
     <div className="flex-1 p-4 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-      {/* All Files Section */}
-      <div className="mb-6">
-        <h4 className="text-white font-medium mb-3">All Files</h4>
-        <div className="space-y-3">
-          {messages
-            .filter(msg => msg.isFile && msg.fileUrl)
-            .map((fileMsg, index) => {
-              const isImage = fileMsg.fileType?.startsWith('image/')
-              const fileName = fileMsg.fileUrl?.split('/').pop() || 'Unknown file'
-              const fileExtension = fileName.split('.').pop()?.toLowerCase()
 
-              const getFileIcon = (type) => {
-                if (type?.startsWith('image/')) return '🖼️'
-                if (type?.includes('pdf')) return '📄'
-                if (type?.includes('doc')) return '📝'
-                if (type?.includes('excel') || type?.includes('sheet')) return '📊'
-                return '📎'
-              }
+      {/* Tabs */}
+      <div className="flex mb-4 bg-black/30 rounded-lg overflow-hidden border-t border-b border-white/10">
+  <button
+    className={`flex-1 py-2 text-sm font-medium border-r border-white/10 ${
+      activeTab === "pictures" ? "bg-[#0CA9F6] text-white" : "text-white/60"
+    }`}
+    onClick={() => setActiveTab("pictures")}
+  >
+    Pictures
+  </button>
+  <button
+    className={`flex-1 py-2 text-sm font-medium ${
+      activeTab === "files" ? "bg-[#0CA9F6] text-white" : "text-white/60"
+    }`}
+    onClick={() => setActiveTab("files")}
+  >
+    Files
+  </button>
+</div>
+      {/* Uploaded Files Section */}
+      <div className="space-y-3">
+        {messages
+          .filter((msg) => msg.isFile && msg.fileUrl)
+          .filter((fileMsg) =>
+            activeTab === "pictures"
+              ? fileMsg.fileType?.startsWith("image/")
+              : !fileMsg.fileType?.startsWith("image/")
+          )
+          .map((fileMsg, index) => {
+            const isImage = fileMsg.fileType?.startsWith("image/")
+            const fileName = fileMsg.fileUrl?.split("/").pop() || "Unknown file"
+            const fileExtension = fileName.split(".").pop()?.toLowerCase()
 
-              const getFileColor = (type) => {
-                if (type?.startsWith('image/')) return 'bg-green-500'
-                if (type?.includes('pdf')) return 'bg-red-500'
-                if (type?.includes('doc')) return 'bg-blue-500'
-                if (type?.includes('excel') || type?.includes('sheet')) return 'bg-orange-500'
-                return 'bg-gray-500'
-              }
-
-              return (
-                <div key={index} className="flex items-center gap-3 p-3 bg-black/30 rounded-lg hover:bg-white/10 transition cursor-pointer">
-                  {isImage ? (
-                    <img
-                      src={fileMsg.fileUrl}
-                      alt="Shared image"
-                      className="w-8 h-8 rounded object-cover"
-                      onClick={() => setFullScreenImageUrl(fileMsg.fileUrl)}
-                    />
-                  ) : (
-                    <div className={`w-8 h-8 ${getFileColor(fileMsg.fileType)} rounded flex items-center justify-center`}>
-                      <span className="text-white text-xs">{getFileIcon(fileMsg.fileType)}</span>
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white text-sm font-medium truncate">
-                      {isImage ? 'Image' : fileName}
-                    </p>
-                    <p className="text-white/60 text-xs">
-                      {fileMsg.fileType || fileExtension} • {new Date(fileMsg.timestamp || 0).toLocaleDateString()}
-                    </p>
+            return (
+              <div
+                key={index}
+                className="flex items-center gap-3 p-3 bg-black/30 rounded-lg hover:bg-white/10 transition cursor-pointer"
+              >
+                {isImage ? (
+                  <img
+                    src={fileMsg.fileUrl || "/placeholder.svg"}
+                    alt="Shared image"
+                    className="w-8 h-8 rounded object-cover"
+                    onClick={() => setFullScreenImageUrl(fileMsg.fileUrl || "/placeholder.svg")}
+                  />
+                ) : (
+                  <div className="w-8 h-8 bg-gray-500 rounded flex items-center justify-center">
+                    <span className="text-white text-xs">📎</span>
                   </div>
-                  <a
-                    href={fileMsg.fileUrl}
-                    download={fileName}
-                    className="text-blue-400 hover:text-blue-300 text-xs"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    Download
-                  </a>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-white text-sm font-medium truncate">{isImage ? "Image" : fileName}</p>
+                  <p className="text-white/60 text-xs">
+                    {fileMsg.fileType || fileExtension} •{" "}
+                    {new Date(fileMsg.timestamp || 0).toLocaleDateString()}
+                  </p>
                 </div>
-              )
-            })}
+                <a
+                  href={fileMsg.fileUrl || "#"}
+                  download={fileName}
+                  className="text-blue-400 hover:text-blue-300 text-xs"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Download
+                </a>
+              </div>
+            )
+          })}
 
-          {messages.filter(msg => msg.isFile && msg.fileUrl).length === 0 && (
-            <div className="text-center py-8 text-white/60">
-              <p>No files shared yet</p>
-            </div>
-          )}
-        </div>
+        {/* Empty state */}
+        {messages.filter((msg) => msg.isFile && msg.fileUrl && (
+          activeTab === "pictures" ? msg.fileType?.startsWith("image/") : !msg.fileType?.startsWith("image/")
+        )).length === 0 && (
+          <div className="text-center py-8 text-white/60">
+            <p>No {activeTab === "pictures" ? "pictures" : "files"} shared yet</p>
+          </div>
+        )}
       </div>
     </div>
   </aside>
