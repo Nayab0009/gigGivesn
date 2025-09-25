@@ -204,7 +204,7 @@ const ProfessionalNotesEditor = () => {
 
 
 {/* Header Searchbar */}
-<div className="bg-black/30 backdrop-blur-md py-6 px-9 rounded-4xl border-[1px] my-5 border-gray-500 text-white mx-4">
+<div className="bg-black/30 backdrop-blur-md py-6 px-6 rounded-[24px] border-[1px] my-5 border-gray-500 text-white">
   <div className="flex flex-row items-center gap-4">
     <div className="relative group flex-grow">
       <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white  transition-colors" />
@@ -229,7 +229,7 @@ const ProfessionalNotesEditor = () => {
 
 
 
-      <div className="flex flex-col md:flex-row bg-black/30 backdrop-blur-md py-6 px-4 md:px-9 rounded-4xl border-[1px] my-5 border-gray-500 text-white mx-4">
+      <div className="flex flex-col md:flex-row bg-black/30 backdrop-blur-md py-6 px-4 md:px-9 rounded-4xl border-[1px] my-5 border-gray-500 text-white">
         {/* Sidebar */}
         <aside className={`w-full md:w-80 flex flex-col transition-all duration-300 bg-none`}>
 
