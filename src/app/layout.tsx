@@ -3,6 +3,12 @@ import Providers from "@/components/common/Providers";
 import { Metadata } from "next";
 import ProtectedRoute from "@/components/protectedRoutes/ProtectedRoute";
 import Image from "next/image";
+import {Montserrat} from "next/font/google";
+
+const montserrat  = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"], // choose weights you need
+});
 
 export const metadata: Metadata = {
   title: "GiGgives",
@@ -17,8 +23,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className="relative font-outfit dark:bg-gray-900 min-h-screen"
+        className={`relative font-outfit dark:bg-gray-900 min-h-screen ${montserrat.className} `}
         suppressHydrationWarning={true}
+        
       >
         {/* Background Image */}
         <div className="fixed inset-0 -z-20">

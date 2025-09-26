@@ -294,12 +294,12 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
             <p className="text-md font-extralight text-gray-200">Welcome back! See your latest project insights below.</p>
           </div>
           <div className="mt-4 sm:mt-0 flex items-center space-x-3">
-            <Link href="/dashboard/admin/addmanager" className="px-5 py-2 text-white rounded-full hover:text-gray-200 shadow transition-all font-semibold text-sm inline-flex gap-x-1 md:gap-x-3 bg-black-600 bg-gray-500/30">
-              <Plus className="w-5 h-4 text-white font-light" /> <p className="text-white font-light">Add Manager</p>
+            <Link href="/dashboard/admin/addmanager" className="px-5 py-2 text-white rounded-full hover:text-gray-200 shadow transition-all font-semibold text-sm inline-flex gap-x-1 md:gap-x-2  bg-black-600 bg-gray-500/30 items-center">
+              <Plus className="w-5 h-4 text-white font-light" /> <p className="text-white font-medium">Add Manager</p>
             </Link> 
            
-            <Link href="/dashboard/admin/addProject" className="px-5 py-2 text-white rounded-full transition-all shadow font-semibold text-sm inline-flex bg-blur-green bg-sky-400 gap-x-1 md:gap-x-3">
-            <Plus className="w-4 h-4 text-white" /> <p className="text-white font-light">New Project</p>
+            <Link href="/dashboard/admin/addProject" className="px-5 py-2 text-white rounded-full transition-all shadow font-semibold text-sm inline-flex bg-blur-green bg-sky-400 gap-x-1 md:gap-x-2 items-center">
+            <Plus className="w-4 h-4 text-white " /> <p className="text-white font-medium">New Project</p>
             </Link>
           </div>
         </div>
@@ -414,7 +414,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
             <div className="flex items-center gap-4 w-full justify-between">
             
               <div>
-                <h3 className="text-xl font-bold text-white mb-1">Team Activity</h3>
+                <h3 className="text-xl font-medium text-white mb-1">Team Activity</h3>
                 <p className="text-gray-300 text-sm">Task distribution and efficiency by team</p>
               </div>
               <div className="w-10 h-10 bg-[rgba(0,0,0,0.3)] rounded-full flex items-center justify-center">
@@ -442,7 +442,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                 <Image src="/images/clock.svg" alt="clock" width={20} height={20} className=" text-white" />
               </div>
               <div>
-  <h3 className="text-xl font-extrabold text-white mb-1 flex items-center">Project Breakdown</h3>
+  <h3 className="text-xl font-medium text-white mb-1 flex items-center">Project Breakdown</h3>
                 <p className="text-gray-300 text-sm ">Open vs completed vs bugs</p>
               </div>
                 </div>
@@ -490,7 +490,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                         key={index} 
                         className="px-4 py-2 text-center text-xs font-semibold text-white border-r border-white/30"
                       >
-                        <span className="bg-black/30 p-2 rounded-md">{header.title}</span>
+                        <span className="bg-black/30 p-2 rounded-md font-medium">{header.title}</span>
                       </th>
                     ))}
                   </tr>
