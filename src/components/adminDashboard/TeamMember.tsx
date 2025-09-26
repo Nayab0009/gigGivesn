@@ -254,24 +254,24 @@ export default function TeamListPage() {
 </div>
 
     {/* Add Button (only for managers) */}
-    {userRole === "manager" && (
-    <button
-  type="button"
-  onClick={() => router.push("/dashboard/admin/addemployee")}
-  className="inline-flex items-center justify-center gap-[10px]
-             w-[155px] h-[44px] px-[12px] py-[12px]
-             rounded-[99px] border border-[#0CA9F6]
-             bg-[#0CA9F6] text-white text-sm font-medium
-             transition-all duration-300 ease-in-out
-             shadow-lg hover:shadow-xl
-             transform hover:scale-105 hover:-translate-y-0.5
-             mt-4 sm:mt-0"
->
-  <Plus className="w-4 h-4" />
-  Add Employee
-</button>
+   {(userRole === "manager" || userRole === "admin") && (
+  <button
+    type="button"
+    onClick={() => router.push("/dashboard/admin/addemployee")}
+    className="inline-flex items-center justify-center gap-[10px]
+               w-[155px] h-[44px] px-[12px] py-[12px]
+               rounded-[99px] border border-[#0CA9F6]
+               bg-[#0CA9F6] text-white text-sm font-medium
+               transition-all duration-300 ease-in-out
+               shadow-lg hover:shadow-xl
+               transform hover:scale-105 hover:-translate-y-0.5
+               mt-4 sm:mt-0"
+  >
+    <Plus className="w-4 h-4" />
+    Add Employee
+  </button>
+)}
 
-    )}
   </div>
 </div>
 
@@ -510,17 +510,17 @@ export default function TeamListPage() {
   ">
               Contact Info
             </th>
-            {userRole === "manager" && (
-              <th className="
+        {(userRole === "manager" || userRole === "admin") && (
+      <th  className="
     px-6 text-left
     font-inter font-semibold
     text-[18.3px] leading-[28.47px] tracking-[0px]
     align-middle text-white
     w-[35%]
   ">
-                Actions
-              </th>
-            )}
+        Actions
+      </th>
+    )}
           </tr>
         </thead>
 
@@ -605,47 +605,38 @@ export default function TeamListPage() {
         </td>
 
         {/* Actions Cell (Manager Only) */}
-        {userRole === "manager" && (
-          <td className="px-6 py-5 rounded-r-xl" style={{ background: "transparent", border: "none" }}>
-            <div className="flex items-center justify-end gap-2">
-              {/* <button
-                onClick={() => handleEditStart(member)}
-                className="inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 hover:bg-white/10 backdrop-blur-xl"
-                style={{
-                  background: "rgba(255, 255, 255, 0.05)",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
-                }}
-              >
-                <Edit className="w-4 h-4 text-white/70" />
-              </button> */}
-               <button
-    onClick={() => handleOpenDetails(member)}
-    className="inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 hover:bg-blue-500/20 backdrop-blur-xl"
-    style={{
-      border: "1px solid rgba(255, 255, 255, 0.2)",
-    }}
-  >
-    <Image
-      src="/images/Eye.svg"
-      alt="View"
-      width={16}
-      height={16}
-      className="text-white"
-    />
-  </button>
-              <button
-                onClick={() => handleEmployeeDelete(String(member.id))}
-                className="inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 hover:bg-red-500/20 backdrop-blur-xl"
-                style={{
-                  border: "1px solid rgba(255, 255, 255, 0.2)",
-                }}
-              >
-                <Trash2 className="w-4 h-4 text-white" />
-              </button>
-            </div>
-          </td>
+       {(userRole === "manager" || userRole === "admin") && (
+  <td className="px-6 py-5 rounded-r-xl" style={{ background: "transparent", border: "none" }}>
+    <div className="flex items-center justify-end gap-2">
+      <button
+        onClick={() => handleOpenDetails(member)}
+        className="inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 hover:bg-blue-500/20 backdrop-blur-xl"
+        style={{
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+        }}
+      >
+        <Image
+          src="/images/Eye.svg"
+          alt="View"
+          width={16}
+          height={16}
+          className="text-white"
+        />
+      </button>
 
-        )}
+      <button
+        onClick={() => handleEmployeeDelete(String(member.id))}
+        className="inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 hover:bg-red-500/20 backdrop-blur-xl"
+        style={{
+          border: "1px solid rgba(255, 255, 255, 0.2)",
+        }}
+      >
+        <Trash2 className="w-4 h-4 text-white" />
+      </button>
+    </div>
+  </td>
+)}
+
       </tr>
     ))
   )}
