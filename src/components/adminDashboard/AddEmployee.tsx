@@ -1,7 +1,7 @@
 "use client"
 import type React from "react"
 import { useState } from "react"
-import { User, Mail, Phone, Loader2, KeyRound, MapPin, Building2, UserPlus, Sparkles } from "lucide-react"
+import { User, Mail, Phone, Loader2, KeyRound, MapPin, Building2, UserPlus, Sparkles ,X } from "lucide-react"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
 import { useRouter } from "next/navigation"
@@ -108,10 +108,16 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       </div>
 
      <div className="relative w-full max-w-5xl bg-black/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 sm:p-10">
-
+   <button
+          type="button"
+          onClick={() => router.push("/dashboard/admin/team/list")}
+          className="absolute top-4 left-4 p-2 rounded-full bg-black/50 hover:bg-black/70 transition"
+        >
+          <X className="w-6 h-6 text-white" />
+        </button>
         {/* Header */}
         <div className="text-center mb-10">
-  
+
           <h1 className="text-2xl font-bold mb-3" style={{ color: colors.white.hex }}>
             Add New Employee
           </h1>
@@ -172,7 +178,7 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-            
+
                   <span className="text-md"style={{ color: colors.white.hex }}>Email Address</span>
                 </label>
                 <div className="relative">
@@ -194,7 +200,7 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                
+
                   <span className="text-md" style={{ color: colors.white.hex }}>Password</span>
                 </label>
                 <div className="relative">
@@ -213,7 +219,7 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                
+
                   <span className="text-md" style={{ color: colors.white.hex }}>Phone Number</span>
                 </label>
                 <div className="relative">
