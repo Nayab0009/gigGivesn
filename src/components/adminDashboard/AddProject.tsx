@@ -100,13 +100,14 @@ const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
       <div className="relative w-full max-w-5xl bg-black/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 sm:p-10">
 
-         <button
-        type="button"
-        onClick={() => router.push("/dashboard/admin/addProject")}
-        className="absolute top-4 right-4 p-2 rounded-full bg-black/50 hover:bg-black/70 transition"
-      >
-        <X className="w-4 h-4 text-white" />
-      </button> {/* Header */}
+       <button
+  type="button"
+  onClick={() => router.push("/dashboard/admin/projects")}
+
+  className="absolute top-4 right-4 p-2 rounded-full bg-black/50 hover:bg-black/70 transition"
+>
+  <X className="w-4 h-4 text-white" />
+</button>{/* Header */}
         <div className="text-center mb-10">
           <h1 className="text-2xl font-bold mb-3" style={{ color: colors.white.hex }}>
             Add New Project
