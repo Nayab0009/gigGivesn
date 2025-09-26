@@ -142,14 +142,14 @@ const EmployeeTasks = () => {
   }
 const truncateByWords = (text: string, maxLength: number = 100) => {
   if (!text || text.length <= maxLength) return text;
-  
+
   const truncated = text.substring(0, maxLength);
   const lastSpaceIndex = truncated.lastIndexOf(' ');
-  
+
   if (lastSpaceIndex > 0) {
     return truncated.substring(0, lastSpaceIndex) + '...';
   }
-  
+
   return truncated + '...';
 };
   // Refresh data
@@ -309,7 +309,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
   }
 
   return (
-    <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%] h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar">
+    <div className="w-full relative top-[30px] max-w-full">
       <div className="mx-auto">
         {/* Header & Action Bar - match ProjectTable styling */}
         <div className="mb-8 flex items-center justify-between gap-4">
@@ -484,7 +484,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
               </div>
             ) : (
               <div className="overflow-x-hidden">
-                <table className="min-w-full table-fixed divide-y divide-white/10">
+                <table className="min-w-full  divide-y divide-white/10">
                   <thead className="backdrop-blur-md bg-white/5" style={{height: '73px', borderBottom: '5px solid #FFFFFF1A'}}>
                     <tr className="h-[56px]">
                       <th className="px-4 sm:px-6 py-4 text-left w-[180px] border-b-2 border-[#4A6A65]">
@@ -576,7 +576,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                           <button
                             onClick={() => handleProjectSelect(project)}
                             className="group inline-flex items-center justify-center w-12 h-12 "
-                           
+
                           >
                             <img
                               src="/images/icons/BUTTON-168.svg"
@@ -625,7 +625,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full table-fixed divide-y divide-white/10">
+              <table className="min-w-full divide-y divide-white/10">
                 <thead className="backdrop-blur-md bg-white/5">
                   <tr>
                     <th className="px-4 sm:px-6 py-4 text-left w-[180px]">

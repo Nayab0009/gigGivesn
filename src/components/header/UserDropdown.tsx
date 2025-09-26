@@ -49,13 +49,15 @@ export default function UserDropdown() {
 >
   {/* Avatar */}
   {user.avatar ? (
-    <Image
-      src={user.avatar}
-      alt={displayName}
-      width={44}
-      height={44}
-      className="rounded-full object-cover mr-3"
-    />
+  <div className="mr-3 h-11 w-11 rounded-full overflow-hidden flex-shrink-0">
+  <Image
+    src={user.avatar}
+    alt={displayName}
+    width={44}
+    height={44}
+    className="w-full h-full object-cover"
+  />
+</div>
   ) : (
     <div
       className="mr-3 h-11 w-11 flex items-center justify-center rounded-full text-white font-semibold text-lg"

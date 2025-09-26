@@ -14,17 +14,17 @@ const Sprints: React.FC = () => {
   const router = useRouter();
 
   const [projects, setProjects] = useState<any[]>([]);
-  
+
   const [sprints, setSprints] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedProject, setSelectedProject] = useState<any | null>(null);
-  
+
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSprintId, setSelectedSprintId] = useState<number | null>(null);
   const [selectedSprintName, setSelectedSprintName] = useState<string>('');
-  
+
   // Task state for the modal
   const [task, setTask] = useState<Task>({
     id: '',
@@ -58,7 +58,7 @@ const Sprints: React.FC = () => {
       setError(null);
       setSelectedProject(null);
       setSprints([]);
-      
+
       ShowEmployeeTasks(String(user.id))
         .then((data) => {
           console.log('Fetched projects data:', data);
@@ -101,7 +101,7 @@ const Sprints: React.FC = () => {
     setSelectedSprintId(sprint.id);
     setSelectedSprintName(sprint.name);
     setIsModalOpen(true);
-    
+
     // Reset task state
     setTask({
       id: '',
@@ -142,7 +142,7 @@ const Sprints: React.FC = () => {
     }
     return (
       <div>
-        
+
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => (
             <div
@@ -232,7 +232,7 @@ const Sprints: React.FC = () => {
                 </div>
               )}
               <div className="mt-4 flex items-center gap-2">
-            
+
                 {/* <button
                   onClick={() => handleSprintClick(sprint)}
                   className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 text-white font-medium rounded-xl transition shadow-sm"
