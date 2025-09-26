@@ -1,7 +1,7 @@
 "use client"
 import type React from "react"
 import { useState } from "react"
-import { Loader2, CalendarDays, FileText, Plus, Sparkles } from "lucide-react"
+import { Loader2, CalendarDays, FileText, Plus, Sparkles,X } from "lucide-react"
 import { createProject } from "@/lib/ProjectService"
 import { colors } from "@/colors"
 // You can install and use react-datepicker for a better UX:
@@ -81,6 +81,7 @@ const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6">
+
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div
@@ -98,7 +99,14 @@ const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       </div>
 
       <div className="relative w-full max-w-5xl bg-black/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 sm:p-10">
-        {/* Header */}
+
+         <button
+        type="button"
+        onClick={() => router.push("/dashboard/admin/addProject")}
+        className="absolute top-4 right-4 p-2 rounded-full bg-black/50 hover:bg-black/70 transition"
+      >
+        <X className="w-4 h-4 text-white" />
+      </button> {/* Header */}
         <div className="text-center mb-10">
           <h1 className="text-2xl font-bold mb-3" style={{ color: colors.white.hex }}>
             Add New Project
@@ -239,29 +247,34 @@ const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
             {/* Submit Button */}
             <div className="pt-6 flex justify-center">
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="group relative overflow-hidden text-white font-bold py-4 px-12 rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed text-lg transform hover:scale-105 active:scale-95 min-w-[200px]"
-                style={{
-                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-                }}
-              >
-                <div className="absolute inset-0" style={{ background: colors.accent.rgb, opacity: 0.2 }}></div>
-                <div className="relative flex items-center justify-center">
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="animate-spin w-6 h-6 mr-3" style={{ color: colors.highlight.hex }} />
-                      <span>Creating...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Plus className="w-6 h-6 mr-3 group-hover:rotate-12 transition-transform duration-300" style={{ color: colors.highlight.hex }} />
-                      <span>Create Project</span>
-                    </>
-                  )}
-                </div>
-              </button>
+            <button
+  type="submit"
+  disabled={isSubmitting}
+  className="group relative overflow-hidden text-white font-bold py-4 px-12 rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed text-lg transform hover:scale-105 active:scale-95 min-w-[200px] border"
+  style={{
+    backgroundColor: "#0CA9F6",
+    border: "1px solid #57B5E7E5",
+  }}
+>
+  <div className="absolute inset-0" style={{ background: colors.accent.rgb, opacity: 0.2 }}></div>
+  <div className="relative flex items-center justify-center">
+    {isSubmitting ? (
+      <>
+        <Loader2
+          className="animate-spin w-6 h-6 mr-3"
+          style={{ color: colors.highlight.hex }}
+        />
+        <span>Creating...</span>
+      </>
+    ) : (
+      <>
+
+        <span>Create Project</span>
+      </>
+    )}
+  </div>
+</button>
+
             </div>
           </div>
         </form>
