@@ -111,9 +111,9 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
    <button
           type="button"
           onClick={() => router.push("/dashboard/admin/team/list")}
-          className="absolute top-4 left-4 p-2 rounded-full bg-black/50 hover:bg-black/70 transition"
+         className="absolute top-4 right-4 p-2 rounded-full bg-black/50 hover:bg-black/70 transition"
         >
-          <X className="w-6 h-6 text-white" />
+          <X className="w-4 h-4 text-white" />
         </button>
         {/* Header */}
         <div className="text-center mb-10">
@@ -276,32 +276,33 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
             {/* Submit Button */}
             <div className="pt-6 flex justify-center">
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="group relative overflow-hidden text-white font-bold py-4 px-12 rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed text-lg transform hover:scale-105 active:scale-95 min-w-[200px]"
-                style={{
-                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-                }}
-              >
-                <div className="absolute inset-0" style={{ background: colors.accent.rgb, opacity: 0.2 }}></div>
-                <div className="relative flex items-center justify-center">
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="animate-spin w-6 h-6 mr-3" style={{ color: colors.highlight.hex }} />
-                      <span>Adding...</span>
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus
-                        className="w-6 h-6 mr-3 group-hover:rotate-12 transition-transform duration-300"
-                        style={{ color: colors.highlight.hex }}
-                      />
-                      <span>Add Employee</span>
-                    </>
-                  )}
-                </div>
-              </button>
+             <button
+  type="submit"
+  disabled={isSubmitting}
+  className="group relative overflow-hidden text-white font-bold py-4 px-12 rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed text-lg transform hover:scale-105 active:scale-95 min-w-[200px] border"
+  style={{
+    backgroundColor: "#0CA9F6",
+    border: "1px solid #57B5E7E5",
+  }}
+>
+  <div className="absolute inset-0" style={{ background: colors.accent.rgb, opacity: 0.2 }}></div>
+  <div className="relative flex items-center justify-center">
+    {isSubmitting ? (
+      <>
+        <Loader2
+          className="animate-spin w-6 h-6 mr-3"
+          style={{ color: colors.highlight.hex }}
+        />
+        <span>Adding...</span>
+      </>
+    ) : (
+      <>
+        <span>Add Employee</span>
+      </>
+    )}
+  </div>
+</button>
+
             </div>
           </div>
         </form>
