@@ -160,20 +160,21 @@ export default function Dashboard() {
               <ProjectFilters onFilterChange={setActiveTimeFilter} />
             </div>
             {/* Timetable grows to match Reminder */}
-            <div className="rounded-2xl border border-blue-200/30 bg-black/30 flex-1 overflow-auto scrollbar-none">
+            <div >
               <TimeTable employeeId={user?.id} />
             </div>
           </div>
 
           {/* Right Column: CommunicationLogs + Reminder (define total height) */}
-          <div className="flex flex-col gap-6 w-full max-w-[340px] mx-auto h-full">
-            <div className="flex-1">
-              <CommunicationLogs userId={user?.id?.toString()} userRole={user?.role} />
-            </div>
-            <div className="flex-1">
-              <Remainder />
-            </div>
+         <div className="flex flex-col gap-6 w-full max-w-[340px] mx-auto">
+          <div>
+            <CommunicationLogs userId={user?.id?.toString()} userRole={user?.role} />
           </div>
+          <div>
+            <Remainder />
+          </div>
+        </div>
+
         </div>
       </div>
     </div>

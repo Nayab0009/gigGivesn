@@ -41,7 +41,7 @@ const TodayTasksSection: FC<TodayTasksSectionProps> = ({ tasks, isLoading }) => 
       </div>
       <div
         className="grid"
-        style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: '16.27px', width: '100%', height: '159px' }}
+        style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '16.27px', width: '100%', height: '159px' }}
       >
         {tasks && tasks.length > 0 ? (
           tasks.map((task, idx) => {
@@ -60,7 +60,7 @@ const TodayTasksSection: FC<TodayTasksSectionProps> = ({ tasks, isLoading }) => 
             return (
               <div
                 key={task.id || idx}
-                className="flex flex-col justify-between rounded-3xl border border-white/20"
+                className="flex flex-col justify-between rounded-3xl border border-white/20 w-full"
                 style={{
                   borderRadius: '24px',
                   borderWidth: '1px',
@@ -69,7 +69,7 @@ const TodayTasksSection: FC<TodayTasksSectionProps> = ({ tasks, isLoading }) => 
                   minHeight: '158.6px',
                   maxHeight: '158.6px',
                   height: '158.6px',
-                  width: '305.16px',
+                  // width: '305.16px',
                   opacity: 1,
                 }}
               >

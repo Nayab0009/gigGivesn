@@ -35,15 +35,15 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
 
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-purple-500"></span>
+            <span className="w-3 h-3 rounded-full bg-[#A855F7]"></span>
             <span className="text-xs text-white">In Progress <span className="font-bold">50%</span></span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-orange-500"></span>
+            <span className="w-3 h-3 rounded-full bg-[#FBBF72]"></span>
             <span className="text-xs text-white">Completed <span className="font-bold">25%</span></span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-blue-500"></span>
+            <span className="w-3 h-3 rounded-full bg-[#57B5E7]"></span>
             <span className="text-xs text-white">Pending <span className="font-bold">15%</span></span>
           </div>
         </div>
@@ -61,7 +61,7 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
               cy="18"
               r="15.9155"
               fill="none"
-              stroke="#8b5cf6"
+              stroke="#A855F7"
               strokeWidth="3.5"
               strokeDasharray="50 50"
               strokeLinecap="round"
@@ -74,7 +74,7 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
               cy="18"
               r="15.9155"
               fill="none"
-              stroke="#f97316"
+              stroke="#FBBF72"
               strokeWidth="3.5"
               strokeDasharray="25 75"
               strokeLinecap="round"
@@ -87,7 +87,7 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
               cy="18"
               r="15.9155"
               fill="none"
-              stroke="#3b82f6"
+              stroke="#57B5E7"
               strokeWidth="3.5"
               strokeDasharray="15 85"
               strokeLinecap="round"

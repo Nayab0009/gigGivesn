@@ -126,7 +126,7 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
     });
 
     return (
-      <div className="w-full overflow-x-auto bg-black/30 p-4 rounded-3xl h-full"
+      <div className="w-full overflow-x-auto bg-black/30 p-4 rounded-3xl h-[500px] scrollbar-hide"
       style={
         {
           scrollbarWidth: 'none',      
@@ -154,8 +154,8 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
                   
                   // Determine task code color
                   const taskCodeColor = 
-                    task.taskCode?.startsWith("FAZ") ? "text-orange-500" : 
-                    task.taskCode?.startsWith("SO") ? "text-blue-500" : "text-gray-300";
+                    task.taskCode?.startsWith("FAZ") ? "text-[#0CA9F6]" :
+                    task.taskCode?.startsWith("SO") ? "text-[#0CA9F6]" : "text-[#0CA9F6]";
                   
                   return (
                     <div
@@ -165,10 +165,10 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
                     >
                       <div className="flex justify-between items-center mb-1">
                         <div className="flex flex-col items-start gap-0">
-                          <span className={`text-xs font-semibold ${taskCodeColor}`}>{task.taskCode}</span>
-                          <span className="mt-1 px-2 py-0.5 text-[10px] rounded-full bg-blue-700/80 text-white font-semibold">Done</span>
+                          <span className={`text-xs font-semibold text-[#0CA9F6] ${taskCodeColor}`}>{task.taskCode}</span>
+                          <span className="mt-1 px-2 py-0.5 text-[10px] rounded-full bg-[#0CA9F6] text-white font-semibold">Done</span>
                         </div>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-orange-600/90 text-white font-semibold">{task.priority}</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-[#FFBE31] text-white font-semibold">{task.priority}</span>
                       </div>
                       
                       <div className="mt-2">
