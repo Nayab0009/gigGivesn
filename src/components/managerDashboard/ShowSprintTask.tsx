@@ -22,10 +22,13 @@ import {
   Users,
   Table,
   LayoutGrid,
-  ChevronDown
+  ChevronDown,
+  Plus
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { colors } from "@/colors";
+import { AssignTaskModal } from "../adminDashboard/AssignProjectTicket";
+import type { Task } from "@/types";
 
 interface TaskResponse {
   id: number;
@@ -76,7 +79,12 @@ interface TaskResponse {
   } | null;
 }
 
-const ShowSprintTask: React.FC = () => {
+type ShowSprintTaskProps = {
+  projectId?: number;
+  projectName?: string;
+};
+
+const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectId, projectName: propProjectName }) => {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -90,12 +98,48 @@ const ShowSprintTask: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [taskView, setTaskView] = useState<'table' | 'kanban'>('table');
+  // For Assign Task modal
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [selectedSprintId, setSelectedSprintId] = useState<number | null>(null);
+  const [selectedSprintName, setSelectedSprintName] = useState<string>('');
+  const [projectId, setProjectId] = useState<number | null>(propProjectId ?? null);
+  const [projectName, setProjectName] = useState<string>(propProjectName ?? '');
+  const [task, setTask] = useState<Task>({
+    id: '',
+    title: '',
+    description: '',
+    status: 'pending',
+    priority: 'medium',
+    assignedTo: [],
+    dueDate: '',
+    estimatedHours: 0,
+  });
   
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
   const [modalLoading, setModalLoading] = useState(false);
   
+  // Fetch sprint info (projectId/projectName) even if there are no tasks
+  const fetchSprintInfo = async () => {
+    if (propProjectId && propProjectName) {
+      setProjectId(propProjectId);
+      setProjectName(propProjectName);
+      return;
+    }
+    if (!sprintId) return;
+    try {
+      const response = await axiosInstance.get(`/sprint/${sprintId}`);
+      const sprintData = response.data;
+      if (sprintData?.project) {
+        setProjectId(sprintData.project.id);
+        setProjectName(sprintData.project.name);
+      }
+    } catch (err) {
+      // fallback: leave projectId/projectName null
+    }
+  };
+
   const fetchSprintTasks = async () => {
     if (!sprintId) {
       setError('Sprint ID is required');
@@ -114,6 +158,11 @@ const ShowSprintTask: React.FC = () => {
       if (tasksData.length > 0 && tasksData[0].sprint) {
         setSprint(tasksData[0].sprint);
       }
+      // If tasks exist, prefer project info from first task
+      if (tasksData.length > 0 && tasksData[0].taskOf) {
+        setProjectId(tasksData[0].taskOf.id);
+        setProjectName(tasksData[0].taskOf.name);
+      }
     } catch (error: any) {
       setError(
         error.response?.data?.message || 
@@ -123,6 +172,68 @@ const ShowSprintTask: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Helper: user status icon for modal
+  const getUserStatusIcon = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'active':
+        return <CheckCircle className="w-3 h-3" style={{ color: colors.primary.hex }} />;
+      case 'busy':
+        return <Clock className="w-3 h-3 text-yellow-500" />;
+      case 'offline':
+        return <span className="inline-block w-3 h-3 rounded-full bg-gray-400" />;
+      default:
+        return <span className="inline-block w-3 h-3 rounded-full bg-gray-400" />;
+    }
+  };
+
+  // Helper: generate project prefix for ticket numbers
+  const getProjectPrefix = (name: string) => name?.slice(0, 3).toUpperCase();
+
+  // Open Assign Task modal (same behavior as in ShowSprintsTab)
+  const handleAddTask = () => {
+    // Fallback: try to get projectId from first task if missing
+    if (!projectId && tasks.length > 0 && tasks[0].taskOf) {
+      setProjectId(tasks[0].taskOf.id);
+      setProjectName(tasks[0].taskOf.name);
+    }
+    // If still missing, show error and do not open modal
+    if (!projectId) {
+      setShowProjectIdError(true);
+      return;
+    }
+    setShowProjectIdError(false);
+    setSelectedSprintId(Number(sprintId));
+    setSelectedSprintName(sprintName || '');
+    setIsAssignModalOpen(true);
+
+    const prefix = getProjectPrefix(projectName || 'TCK');
+    setTask({
+      id: '',
+      // @ts-ignore – modal expects ticketNumber though it's not in Task type
+      ticketNumber: prefix,
+      title: '',
+      description: '',
+      status: 'pending',
+      priority: 'medium',
+      assignedTo: [],
+      dueDate: '',
+      estimatedHours: 0,
+    });
+  };
+  // UI state for projectId error
+  const [showProjectIdError, setShowProjectIdError] = useState(false);
+
+  const handleAssignClose = () => {
+    setIsAssignModalOpen(false);
+    setSelectedSprintId(null);
+    setSelectedSprintName('');
+  };
+
+  const handleTaskAdd = async () => {
+    // Refresh after successful creation
+    await refreshData();
   };
 
   const fetchTaskDetails = async (taskId: number) => {
@@ -167,14 +278,20 @@ const ShowSprintTask: React.FC = () => {
 
   useEffect(() => {
     if (sprintId) {
+      fetchSprintInfo();
       fetchSprintTasks();
     }
+    // eslint-disable-next-line
   }, [sprintId]);
+
+  // Debug log for projectId/projectName
+  useEffect(() => {
+    console.log('ShowSprintTask projectId:', projectId, 'projectName:', projectName);
+  }, [projectId, projectName]);
 
   return (
    <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%] h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar">
       <div className="mx-auto">
-      
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
@@ -200,7 +317,6 @@ const ShowSprintTask: React.FC = () => {
               Refresh
             </button>
           </div>
-          
           <div className="text-center mb-6">
             <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
               Sprint Tasks
@@ -209,6 +325,26 @@ const ShowSprintTask: React.FC = () => {
               {scope === 'employee' ? 'Browse and work on your sprint tasks' : 'Oversee your sprint and manage tasks effectively'}
             </p>
           </div>
+        </div>
+
+        {/* Add Task button above toggle */}
+        <div className="flex flex-col items-end gap-1 mb-4">
+          {showProjectIdError && (
+            <div className="mb-1 text-sm text-red-400 font-semibold bg-red-900/30 px-3 py-1 rounded">
+              Project ID is missing. Cannot add task. Please check sprint/project setup.
+            </div>
+          )}
+          <button
+            onClick={handleAddTask}
+            className="inline-flex items-center gap-2 px-4 py-2 text-white font-medium rounded-full transition shadow-sm"
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
+            }}
+            title="Add new task to this sprint"
+          >
+            <Plus className="w-4 h-4" />
+            Add Task
+          </button>
         </div>
 
         {/* Error Message */}
@@ -623,6 +759,34 @@ const ShowSprintTask: React.FC = () => {
               </div>
             </div>
           </div>
+        )}
+
+        {/* Assign Task Modal */}
+        {typeof selectedSprintId === 'number' && (
+          <>
+            {(!projectId || !projectName) ? (
+              <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[9999]">
+                <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
+                  <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+                  <h2 className="text-xl font-bold mb-2 text-gray-900">Project Info Missing</h2>
+                  <p className="text-gray-700 mb-4">Project ID or name is missing. Please check your API or parent component.</p>
+                  <div className="text-xs text-gray-500">projectId: {String(projectId)}, projectName: {projectName}</div>
+                  <button onClick={handleAssignClose} className="mt-6 px-6 py-2 bg-blue-600 text-white rounded-lg">Close</button>
+                </div>
+              </div>
+            ) : (
+              <AssignTaskModal
+                open={isAssignModalOpen}
+                onClose={handleAssignClose}
+                onAdd={handleTaskAdd}
+                task={task}
+                setTask={setTask}
+                getUserStatusIcon={getUserStatusIcon}
+                projectId={projectId}
+                sprintId={selectedSprintId}
+              />
+            )}
+          </>
         )}
       </div>
     </div>

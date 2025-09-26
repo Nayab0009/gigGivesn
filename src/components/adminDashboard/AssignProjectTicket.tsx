@@ -227,7 +227,7 @@ export function AssignTaskModal({
   // Show authorization error if user is not authorized
   if (!isAuthorizedToAssignTasks()) {
     return (
-      <div className=" inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4">
+      <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-[9999] p-4 pt-10 sm:pt-16">
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 mx-4">
           <div className="text-center">
             <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
@@ -250,7 +250,7 @@ export function AssignTaskModal({
   // Success Message Overlay
   if (showSuccess) {
     return (
-      <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
+      <div className="fixed inset-0 backdrop-blur-sm flex items-start justify-center z-[9999] p-4 pt-10 sm:pt-16">
         <div className="bg-black/40 rounded-3xl shadow-2xl w-full max-w-md border-2 border-white/40 p-8">
           <div className="text-center">
             <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -269,7 +269,7 @@ export function AssignTaskModal({
   }
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
+    <div className="fixed inset-0 backdrop-blur-sm flex items-start justify-center z-[9999] p-4 pt-10 sm:pt-16">
       <div className="bg-black/40 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[95vh] overflow-hidden border-2 border-white/40">
 
         {/* Header */}
