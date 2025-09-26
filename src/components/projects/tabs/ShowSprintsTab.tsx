@@ -30,12 +30,12 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
   const [sprints, setSprints] = useState<Sprint[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSprintId, setSelectedSprintId] = useState<number | null>(null);
   const [selectedSprintName, setSelectedSprintName] = useState<string>('');
-  
+
   // Task state for the modal
   const [task, setTask] = useState<Task>({
     id: '',
@@ -71,10 +71,10 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
   useEffect(() => {
     const fetchSprints = async () => {
       if (!projectId) return;
-      
+
       setLoading(true);
       setError(null);
-      
+
       try {
         const { data } = await axiosInstance.get(`/sprint/project/${projectId}`);
         setSprints(data);
@@ -123,7 +123,7 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
     setIsModalOpen(false);
     setSelectedSprintId(null);
     setSelectedSprintName('');
-    
+
     // Update URL to sprints tab without full navigation
     const url = new URL(window.location.href);
     url.searchParams.set('tab', 'sprints');
@@ -238,21 +238,7 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
 
               {/* Footer (actions & users) */}
               <div className="flex items-center justify-between">
-                <div className="flex -space-x-2">
-                  <img
-                    src="https://i.pravatar.cc/40?img=1"
-                    alt="user"
-                    className="w-8 h-8 rounded-full border-2 border-black"
-                  />
-                  <img
-                    src="https://i.pravatar.cc/40?img=2"
-                    alt="user"
-                    className="w-8 h-8 rounded-full border-2 border-black"
-                  />
-                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-600 text-white text-xs border-2 border-black">
-                    +5
-                  </div>
-                </div>
+
 
                 <div className="flex gap-3">
                   {/* Add Task Button with clear label */}
@@ -262,20 +248,20 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
                         e.stopPropagation();
                         handleAddTask(sprint);
                       }}
-                      className="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:opacity-80 transition text-sm font-medium"
-                      style={{ backgroundColor: `${colors.primary.rgb.replace(", 1)", ", 0.2)")}`, color: colors.primary.hex }}
+                      className="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:opacity-80 transition text-sm font-medium bg-black/60 text-white"
+
                       title="Add new task to this sprint"
                     >
                       <Plus className="w-4 h-4" />
                       <span>Add Task</span>
                     </button>
                   )}
-                  
+
                   {/* Show Tasks Button with clear label */}
                   <button
                     onClick={() => handleSprintClick(sprint)}
-                    className="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:opacity-80 transition text-sm font-medium"
-                    style={{ backgroundColor: `${colors.secondary.rgb?.replace(", 1)", ", 0.2)") || `${colors.primary.rgb.replace(", 1)", ", 0.15)")}`}`, color: colors.secondary.hex || colors.primary.hex }}
+                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:opacity-80 transition text-sm font-medium bg-black/60 text-white"
+
                     title="View all tasks in this sprint"
                   >
                     <Eye className="w-4 h-4" />

@@ -110,10 +110,10 @@ const employeeNavItems: NavItem[] = [
     name: "Discussions",
     path: "/dashboard/teammember/discussions",
   },
-  {
-    name: "Sprints",
-    path: "/dashboard/teammember/sprints",
-  },
+  // {
+  //   name: "Sprints",
+  //   path: "/dashboard/teammember/sprints",
+  // },
   {
     name: "My Calendar",
     path: "/dashboard/teammember/calendertasks",
