@@ -21,7 +21,7 @@ interface AssignTaskModalProps {
   projectId?: string | number;
   sprintId?: string | number;
   ticketNumber?: string | number;
-  priority?: TaskPriority; 
+  priority?: TaskPriority;
 }
 
 // Helper function to generate avatar
@@ -53,7 +53,7 @@ export function AssignTaskModal({
   const [isCreating, setIsCreating] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-  
+
   const today = new Date().toISOString().split("T")[0];
 
   // Check if user is authorized to assign tasks
@@ -61,7 +61,7 @@ export function AssignTaskModal({
     if (!isAuthenticated || !user) {
       return false;
     }
-    
+
     const authorizedRoles = ['admin', 'manager'];
     return authorizedRoles.includes(user.role.toLowerCase());
   };
@@ -80,25 +80,25 @@ export function AssignTaskModal({
 
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const response = await axiosInstance.get(`/projects/${projectId}`);
       const projectData = response.data;
-      
+
       if (!projectData.teamMembers || !Array.isArray(projectData.teamMembers)) {
         setError('No team members found for this project.');
         setTeams([]);
         setAllMembers([]);
         return;
       }
-      
+
       const teamMembers = projectData.teamMembers;
       const teamsMap = new Map<string, Team>();
       const allMembersArray: User[] = [];
-      
+
       teamMembers.forEach((member: any, index: number) => {
         const department = member.department || 'General';
-        
+
         if (!teamsMap.has(department)) {
           teamsMap.set(department, {
             id: `team-${department.toLowerCase().replace(/\s+/g, '-')}`,
@@ -108,7 +108,7 @@ export function AssignTaskModal({
             members: []
           });
         }
-        
+
         const team = teamsMap.get(department)!;
         const teamMember = {
           id: member.id,
@@ -118,14 +118,14 @@ export function AssignTaskModal({
           avatar: member.avatar || generateAvatar(member.name || member.email, index),
           status: member.status || 'active'
         };
-        
+
         team.members.push(teamMember);
         allMembersArray.push(teamMember);
       });
-      
+
       setTeams(Array.from(teamsMap.values()));
       setAllMembers(allMembersArray);
-      
+
     } catch (error) {
       console.error('Error fetching project team members:', error);
       setError('Failed to load project team members. Please try again.');
@@ -174,7 +174,7 @@ export function AssignTaskModal({
         .filter(member => task.assignedTo.includes(member.id))
         .map(member => member.name)
         .join(', ');
-      
+
       setSuccessMessage(`Task "${task.title}" has been successfully created and assigned to ${assignedMemberNames}.`);
       setShowSuccess(true);
 
@@ -183,7 +183,7 @@ export function AssignTaskModal({
         setShowSuccess(false);
         onAdd();
         onClose();
-        
+
         // Reset the task
         setTask({
           ...task,
@@ -198,7 +198,7 @@ export function AssignTaskModal({
     } catch (error: any) {
       console.error('Error creating tasks:', error);
       setError(
-        error.response?.data?.message || 
+        error.response?.data?.message ||
         'Failed to create tasks. Please try again.'
       );
     } finally {
@@ -210,7 +210,7 @@ export function AssignTaskModal({
   const toggleAssignment = (userId: string) => {
     setTask({
       ...task,
-      assignedTo: [userId], 
+      assignedTo: [userId],
     });
   };
 
@@ -227,7 +227,7 @@ export function AssignTaskModal({
   // Show authorization error if user is not authorized
   if (!isAuthorizedToAssignTasks()) {
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4">
+      <div className=" inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4">
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 mx-4">
           <div className="text-center">
             <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
@@ -380,8 +380,8 @@ export function AssignTaskModal({
                       key={member.id}
                       onClick={() => !isCreating && toggleAssignment(member.id)}
                       className={`p-3 rounded-xl border flex items-center space-x-3 cursor-pointer transition-all ${
-                        task.assignedTo[0] === member.id 
-                          ? "bg-white/20 border-white/40" 
+                        task.assignedTo[0] === member.id
+                          ? "bg-white/20 border-white/40"
                           : "bg-black/30 border-white/20 hover:bg-black/40"
                       }`}
                     >

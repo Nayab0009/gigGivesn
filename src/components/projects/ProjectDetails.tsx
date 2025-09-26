@@ -305,7 +305,7 @@ export default function ProjectDetailsPage() {
   ]
 
   return (
-   <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%] h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar">
+   <div className="w-full relative top-[30px] max-w-full">
       <div className="mx-auto">
         {/* Top bar */}
         <div className="flex items-center justify-between">
