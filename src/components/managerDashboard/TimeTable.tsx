@@ -73,7 +73,7 @@ const TimeTable = () => {
         console.error("Error fetching task details:", error);
       }
     };
-      
+
     const closePopup = () => {
       setIsPopupOpen(false);
       setSelectedTask(null);
@@ -83,17 +83,17 @@ const TimeTable = () => {
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     const schedule: Record<string, any[]> = {};
     days.forEach(day => (schedule[day] = []));
-    
+
     // Process tasks from API and organize by day
     tasks.forEach(task => {
       if (task.taskDate) {
         const dayName = getDayName(task.taskDate);
-        
+
         // Only add if it's in our display days
         if (days.includes(dayName)) {
           // Extract ticket code if available (e.g. "FAZ-002" or "SO-003")
           const taskCode = task.ticketNumber || `TASK-${task.id}`;
-          
+
           // Create a standardized task object
           const formattedTask = {
             id: task.id,
@@ -102,7 +102,7 @@ const TimeTable = () => {
             description: task.description || "No description provided",
             priority: task.priority || "Medium",
             attendees: [
-              task.taskFor?.name || "Assignee", 
+              task.taskFor?.name || "Assignee",
               task.createdBy?.name || "Creator"
             ],
             duration: (() => {
@@ -122,7 +122,7 @@ const TimeTable = () => {
             taskFor: task.taskFor,
             createdBy: task.createdBy
           };
-          
+
           schedule[dayName].push(formattedTask);
         } else {
           // For weekend or other days not in our display list
@@ -130,16 +130,16 @@ const TimeTable = () => {
         }
       }
     });
-    
+
     // Get the current date to generate day numbers
     const today = new Date();
     const currentDay = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
     const mondayDate = new Date(today);
-    
+
     // Adjust to get Monday's date
     const daysFromMonday = currentDay === 0 ? 7 : currentDay - 1;
     mondayDate.setDate(today.getDate() - daysFromMonday);
-    
+
     // Generate day numbers for the week starting from Monday
     const dayNumbers: Record<string, string> = {};
     days.forEach((day, index) => {
@@ -152,8 +152,8 @@ const TimeTable = () => {
       <div className="w-full overflow-x-auto bg-black/30 p-4 rounded-3xl"
       style={
         {
-          scrollbarWidth: 'none',      
-      } 
+          scrollbarWidth: 'none',
+      }
     }
       >
         <div className="flex flex-row gap-2 min-w-[900px]">
@@ -176,20 +176,20 @@ const TimeTable = () => {
                   };
                   // Determine task code color
                   const taskCodeColor =
-                    task.taskCode?.startsWith("FAZ") ? "text-orange-500" :
-                    task.taskCode?.startsWith("SO") ? "text-blue-500" : "text-gray-300";
+                    task.taskCode?.startsWith("FAZ") ? "text-[#0CA9F6]" :
+                    task.taskCode?.startsWith("SO") ? "text-[#0CA9F6]" : "text-[#0CA9F6]";
                   return (
                     <div
                       key={`${day}-${task.id || idx}`}
-                      className="flex flex-col justify-between bg-black/30 text-white relative overflow-hidden shadow-lg w-full min-h-[180px] p-4 rounded-[15px] border border-white/10 gap-y-8"
+                      className="flex flex-col justify-between bg-black/30 text-[#0CA9F6]relative overflow-hidden shadow-lg w-full min-h-[180px] p-4 rounded-[15px] border border-white/10 gap-y-8"
                       style={{ opacity: 1, boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)' }}
                     >
                       <div className="flex justify-between items-center mb-1">
                         <div className="flex flex-col items-start gap-0">
-                          <span className={`text-xs font-semibold ${taskCodeColor}`}>{task.taskCode}</span>
-                          <span className="mt-1 px-2 py-0.5 text-[10px] rounded-full bg-blue-700/80 text-white font-semibold">Done</span>
+                          <span className={`text-xs font-semibold text-[#0CA9F6] ${taskCodeColor}`}>{task.taskCode}</span>
+                          <span className="mt-1 px-2 py-0.5 text-[10px] rounded-full bg-[#0CA9F6] text-white font-semibold">Done</span>
                         </div>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-orange-600/90 text-white font-semibold">Critical</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-[#FFBE31] text-white font-semibold">Critical</span>
                       </div>
                       <div className="mt-2">
                         <div className="text-base font-semibold leading-tight">{task.title}</div>

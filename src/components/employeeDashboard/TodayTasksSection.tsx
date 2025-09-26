@@ -30,7 +30,7 @@ const TodayTasksSection: FC<TodayTasksSectionProps> = ({ tasks, isLoading }) => 
   const lowCount = tasks.filter(t => t.priority?.toLowerCase() === "low").length;
   const totalCount = tasks.length || 1; // Avoid division by zero
 
-  return (
+ return (
     <div
       className="rounded-3xl bg-black/30 backdrop-blur-md border border-white/30 shadow-md w-full"
       style={{ height: '248px', minHeight: '248px', maxHeight: '248px', padding: '16.27px', borderRadius: '24px', borderWidth: '1px', opacity: 1 }}
