@@ -82,6 +82,7 @@ const ShowSprintTask: React.FC = () => {
   const router = useRouter();
   const sprintId = params.id as string;
   const sprintName = searchParams.get('name') ? decodeURIComponent(searchParams.get('name')!) : null;
+  const scope = searchParams.get('scope') || 'manager';
   
   const [tasks, setTasks] = useState<TaskResponse[]>([]);
   const [sprint, setSprint] = useState<TaskResponse['sprint'] | null>(null);
@@ -205,7 +206,7 @@ const ShowSprintTask: React.FC = () => {
               Sprint Tasks
             </h1>
             <p className="text-gray-400">
-              Welcome back, Manager Oversee your assigned projects and manage your tasks effectively
+              {scope === 'employee' ? 'Browse and work on your sprint tasks' : 'Oversee your sprint and manage tasks effectively'}
             </p>
           </div>
         </div>

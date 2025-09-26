@@ -74,6 +74,8 @@ const EmployeeTasks = () => {
   const [error, setError] = useState<string | null>(null)
   const [refreshing, setRefreshing] = useState(false)
   const [viewMode, setViewMode] = useState<"projects" | "tasks">("projects")
+  // Search state
+  const [searchTerm, setSearchTerm] = useState("")
 
   // Modal states
   const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false)
@@ -127,11 +129,9 @@ const EmployeeTasks = () => {
     }
   }
 
-  // Handle project selection
+  // Handle project selection -> navigate to employee project details page
   const handleProjectSelect = (project: Project) => {
-    setSelectedProject(project)
-    setViewMode("tasks")
-    fetchProjectTasks(project.id)
+    router.push(`/dashboard/teammember/projects/${project.id}?tab=sprints`)
   }
 
   // Go back to projects view
@@ -308,90 +308,74 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
     return `https://api.dicebear.com/7.x/avataaars/svg?seed=${name}&backgroundColor=a7f3d0,bbf7d0,d1fae5,ecfdf5,f0fdfa`
   }
 
+
+  // --- Filtering logic for search ---
+  const filteredProjects = projects.filter((project) => {
+    const term = searchTerm.toLowerCase()
+    return (
+      (project.name?.toLowerCase() || "").includes(term) ||
+      (project.id?.toString() || "").includes(term) ||
+      (project.description?.toLowerCase() || "").includes(term)
+    )
+  })
+  const filteredTasks = tasks.filter((task) => {
+    const term = searchTerm.toLowerCase()
+    return (
+      (task.title?.toLowerCase() || "").includes(term) ||
+      (task.id?.toString() || "").includes(term) ||
+      (task.description?.toLowerCase() || "").includes(term)
+    )
+  })
+
   return (
     <div className="w-full relative top-[30px] max-w-full">
-      <div className="mx-auto">
-        {/* Header & Action Bar - match ProjectTable styling */}
-        <div className="mb-8 flex items-center justify-between gap-4">
-          {/* Left: Heading */}
-          <div className="flex flex-col gap-1 md:gap-2 justify-center flex-shrink-0" style={{ minWidth: 220 }}>
-            <h1
-              className="font-bold text-white font-sans not-italic text-2xl leading-9 tracking-normal [font-family:Montserrat,sans-serif] [font-weight:700] [vertical-align:middle] [background-clip:text]"
-              style={{
-                fontFamily: 'Montserrat, sans-serif',
-                fontWeight: 700,
-                fontStyle: 'normal',
-                fontSize: '20px',
-                lineHeight: '36px',
-                letterSpacing: '0px',
-                WebkitBackgroundClip: 'text',
-                verticalAlign: 'middle',
-              }}
-            >
-              {viewMode === "projects" ? "My Projects" : selectedProject?.name}
-            </h1>
-            <p
-              className="font-normal align-middle text-[#E5E5E5] text-opacity-75  font-montserrat not-italic text-sm leading-5 tracking-normal [font-family:Montserrat,sans-serif] [font-weight:400] [background-clip:text]"
-            >
-              {viewMode === "projects"
-                ? `Welcome back, ${user.name || user.email}! Here are your assigned projects`
-                : `Tasks for project: ${selectedProject?.name}`}
-            </p>
-          </div>
+      <div className="max-w-full">
+        {/* Header */}
+        <div className="mb-8 ml-2">
+          <h1
+            className="font-roboto font-semibold text-[20px] leading-[28px] tracking-[0px] align-middle text-white mb-2"
+          >
+            {viewMode === "projects" ? "My Projects" : selectedProject?.name}
+          </h1>
+          <p
+            className="font-roboto font-normal text-[14px] leading-[20px] tracking-[0px] align-middle text-white"
+          >
+            {viewMode === "projects"
+              ? `Welcome back, ${user.name || user.email}! Here are your assigned projects`
+              : `Tasks for project: ${selectedProject?.name}`}
+          </p>
+        </div>
 
-          {/* Center: Search (disabled, for UI match) */}
-          <div className="flex-1 flex justify-center">
-            <div className="relative w-full max-w-lg" style={{ marginLeft: '90px' }}>
-              <svg className="absolute text-[#9CA3AF] left-3 top-1/2 -translate-y-1/2 w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
-              <input
-                type="text"
-                placeholder="Search projects by name or description"
-                className="w-[396px] h-[38px] rounded-[16px] border border-[#FFFFFF4D] bg-[#0000004D] opacity-100 px-[41px] py-[9px]   pr-[17px] text-[#9CA3AF] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm mx-auto"
-                style={{
-                  borderWidth: 1,
-                  background: '#0000004D',
-                  borderColor: '#FFFFFF4D',
-                  borderRadius: '16px',
-                  paddingTop: '9px',
-                  paddingBottom: '9px',
-                  paddingLeft: '41px',
-                  paddingRight: '17px',
-                  height: '38px',
-                  width: '396px',
-                  opacity: 1,
-                }}
-                disabled
-              />
+        {/* Action Bar */}
+        <div
+          className="mb-8 bg-black/30 rounded-[24px] shadow-lg border border-[#FFFFFF4D] p-[25px]"
+        >
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+            {/* Search Bar and View Toggle Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 items-center flex-1 w-full">
+              {/* Search Bar */}
+              <div className="relative flex-1 w-full h-[44px]">
+                <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 z-10" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+                <input
+                  type="text"
+                  placeholder={viewMode === "projects" ? "Search projects by name, ID, or description..." : "Search tasks by title, ID, or description..."}
+                  style={{ backgroundColor: colors.black.transparent40 }}
+                  className="w-full h-[44px] pl-[48px] pr-[16px] py-[12px] rounded-[16px] backdrop-blur-[100px] text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 shadow-sm focus:shadow-md placeholder:font-inter placeholder:font-medium placeholder:text-[14px] placeholder:leading-[20px] placeholder:tracking-[0px] placeholder:align-middle placeholder:text-gray-400"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Right: stats and refresh */}
-          <div className="flex flex-row items-center gap-2 md:gap-3 flex-shrink-0">
-            <div
-              className="text-xs text-white sm:text-sm px-[24px] py-[8px] rounded-full border bg-[#0000004D] border-[#FFFFFF4D] opacity-100  focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm flex items-center"
-              style={{
-                borderWidth: 1,
-                background: '#0000004D',
-                borderColor: '#FFFFFF4D',
-                opacity: 1,
-              }}
-            >
-              <span className="font-semibold text-white">{projects.length}</span>
-              <span className="mx-1">Projects</span>
-              <span className="font-semibold text-white ml-4">{tasks.length}</span>
-              <span className="mx-1">Tasks</span>
-            </div>
+            {/* Refresh Button */}
             <button
-              className="group inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md transform hover:scale-105"
-              style={{
-                background: colors.primary.hex,
-                color: '#fff',
-                border: `1px solid ${colors.primary.hex}`,
-              }}
               onClick={refreshData}
               disabled={isLoading}
+              className="group inline-flex items-center justify-center gap-2 w-[122.52px] h-[46px] px-[25px] py-[13px] rounded-[99px] bg-[#0CA9F6] border border-[#57B5E7E5] text-white text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
-              <RefreshCw className="w-4 h-4 text-white" />
+              <RefreshCw
+                className={`w-4 h-4 transition-transform duration-300 ${isLoading ? "animate-spin" : "group-hover:rotate-180"}`}
+              />
               Refresh
             </button>
           </div>
@@ -467,7 +451,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
             </div>
           ) : viewMode === "projects" ? (
             // Projects Table View
-            projects.length === 0 ? (
+            filteredProjects.length === 0 ? (
               <div className="p-16 text-center">
                 <div
                   className="w-20 h-20 rounded-full flex items-center justify-center mb-6 mx-auto shadow-lg"
@@ -516,7 +500,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                     </tr>
                   </thead>
                   <tbody className="bg-transparent divide-y divide-gray-400" style={{ borderColor: '#BDBDBD' }}>
-                    {projects.map((project, index) => (
+                    {filteredProjects.map((project, index) => (
                       <tr
                         key={project.id}
                         className="transition-colors duration-300 bg-transparent hover:bg-white/5"
@@ -608,7 +592,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                 Please select a project to view its tasks.
               </p>
             </div>
-          ) : tasks.length === 0 ? (
+          ) : filteredTasks.length === 0 ? (
             <div className="p-16 text-center">
               <div
                 className="w-20 h-20 rounded-full flex items-center justify-center mb-6 mx-auto shadow-lg"
@@ -656,7 +640,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                   </tr>
                 </thead>
                 <tbody className="bg-transparent divide-y divide-white/10 text-white/90" style={{ borderColor: '#FFFFFF26' }}>
-                  {tasks.map((task, index) => {
+                  {filteredTasks.map((task, index) => {
                     const statusInfo = getStatusInfo(task.status)
                     return (
                       <tr
