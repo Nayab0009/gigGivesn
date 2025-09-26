@@ -139,72 +139,78 @@ function EditStatusModal({
   if (!open || !project) return null
 
   return (
-    <div className="fixed inset-0 bg-black/30  flex items-center justify-center z-50 p-4">
-      <div className="bg-black/20 backdrop-blur-xl rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-white/10">
-        {/* Header */}
-        <div className="p-6 text-white bg-black/30 backdrop-blur-sm border-b border-white/10">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-bold mb-1 text-white">Update Project Status</h2>
-              <p className="text-gray-300 text-sm">{project.name}</p>
-            </div>
-            <button onClick={onClose} className="p-2 rounded-full hover:bg-white/20 transition-colors">
-              <X className="w-5 h-5 text-white" />
-            </button>
-          </div>
+<div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div className="bg-black/20 rounded-2xl border border-white/20 shadow-2xl w-full max-w-md overflow-hidden hover:bg-black/40 transition-all duration-200">
+    {/* Header */}
+    <div className="p-6 text-white border-b border-white/10 bg-black/20 backdrop-blur-sm">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold mb-1 text-white">Update Project Status</h2>
+          <p className="text-gray-300 text-sm">{project.name}</p>
         </div>
+        <button
+          onClick={onClose}
+          className="p-2 rounded-full hover:bg-white/20 transition-colors"
+        >
+          <X className="w-5 h-5 text-white" />
+        </button>
+      </div>
+    </div>
 
-        {/* Content */}
-       {/* Content */}
-<div className="p-6 overflow-y-auto max-h-[calc(85vh-120px)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-black/30 backdrop-blur-xl rounded-lg">
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-200 mb-3">Select New Status</label>
-              <div className="space-y-2">
-                {Object.values(ProjectStatus).map((status) => (
-                  <label
-                    key={status}
-                    className="flex items-center p-3 border border-white/20 rounded-lg hover:bg-white/10 cursor-pointer transition-all duration-200 bg-white/5 backdrop-blur-sm"
-                  >
-                    <input
-                      type="radio"
-                      name="status"
-                      value={status}
-                      checked={selectedStatus === status}
-                      onChange={(e) => setSelectedStatus(e.target.value)}
-                      className="w-4 h-4 text-white border-white/20 focus:ring-white/30 bg-white/10"
-                    />
-                    <span className="ml-3 text-sm font-medium text-white capitalize">
-                      {status === ProjectStatus.INPROGRESS ? "In Progress" : status}
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="border-t border-white/10 bg-black/30 backdrop-blur-sm px-6 py-4">
-          <div className="flex justify-end gap-3">
-            <button
-              onClick={onClose}
-              className="px-4 py-2 border border-white/20 rounded-lg text-white font-medium hover:bg-white/10 transition-all duration-200 bg-white/5 backdrop-blur-sm"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleUpdate}
-              disabled={isUpdating || selectedStatus === project.status}
-              className="px-4 py-2 text-white rounded-lg font-medium hover:bg-white/20 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20"
-            >
-              {isUpdating && <Loader2 className="w-4 h-4 animate-spin text-white" />}
-              Update Status
-            </button>
+    {/* Content */}
+    <div className="p-6 overflow-y-auto max-h-[calc(85vh-120px)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-black/20 backdrop-blur-sm">
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-200 mb-3">
+            Select New Status
+          </label>
+          <div className="space-y-2">
+            {Object.values(ProjectStatus).map((status) => (
+              <label
+                key={status}
+                className="flex items-center p-3 border border-white/20 rounded-lg hover:bg-black/40 cursor-pointer transition-all duration-200 bg-black/30 backdrop-blur-sm"
+              >
+                <input
+                  type="radio"
+                  name="status"
+                  value={status}
+                  checked={selectedStatus === status}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  className="w-4 h-4 text-white border-white/20 focus:ring-white/30 bg-white/10"
+                />
+                <span className="ml-3 text-sm font-medium text-white capitalize">
+                  {status === ProjectStatus.INPROGRESS ? "In Progress" : status}
+                </span>
+              </label>
+            ))}
           </div>
         </div>
       </div>
     </div>
+
+    {/* Footer */}
+    <div className="border-t border-white/10 bg-black/30 backdrop-blur-sm px-6 py-4">
+      <div className="flex justify-end gap-3">
+        <button
+          onClick={onClose}
+          className="px-4 py-2 border border-white/20 rounded-lg text-white font-medium hover:bg-black/40 transition-all duration-200 bg-black/30 backdrop-blur-sm"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleUpdate}
+          disabled={isUpdating || selectedStatus === project.status}
+          className="px-4 py-2 text-white rounded-lg font-medium hover:bg-black/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bg-black/30 backdrop-blur-sm border border-white/20"
+        >
+          {isUpdating && <Loader2 className="w-4 h-4 animate-spin text-white" />}
+          Update Status
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
   )
 }
 // View Team Modal Component
