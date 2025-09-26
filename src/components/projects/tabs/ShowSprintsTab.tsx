@@ -92,7 +92,8 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
   // Handle sprint card click - navigate to sprint tasks page
   const handleSprintClick = (sprint: Sprint) => {
     const sprintName = encodeURIComponent(sprint.name);
-    router.push(`/dashboard/manager/showSprinttasks/${sprint.id}?name=${sprintName}`);
+    const projName = encodeURIComponent(projectName);
+    router.push(`/dashboard/manager/showSprinttasks/${sprint.id}?name=${sprintName}&projectId=${projectId}&projectName=${projName}`);
   };
 
   // Handle add task button click
@@ -238,37 +239,16 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
               </div>
 
               {/* Footer (actions & users) */}
-              <div className="flex items-center justify-between">
-
-
-                <div className="flex gap-3">
-                  {/* Add Task Button with clear label */}
-                  {!isAdmin && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAddTask(sprint);
-                      }}
-                      className="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:opacity-80 transition text-sm font-medium bg-black/60 text-white"
-
-                      title="Add new task to this sprint"
-                    >
-                      <Plus className="w-4 h-4" />
-                      <span>Add Task</span>
-                    </button>
-                  )}
-
-                  {/* Show Tasks Button with clear label */}
-                  <button
-                    onClick={() => handleSprintClick(sprint)}
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:opacity-80 transition text-sm font-medium bg-black/60 text-white"
-
-                    title="View all tasks in this sprint"
-                  >
-                    <Eye className="w-4 h-4" />
-                    <span>Show Tasks</span>
-                  </button>
-                </div>
+              <div>
+                {/* View Button - full width, matches progress bar */}
+                <button
+                  onClick={() => handleSprintClick(sprint)}
+                  className="flex items-center justify-center w-full gap-2 py-3 rounded-full hover:opacity-80 transition text-base font-medium bg-black/40 text-white shadow-md"
+                  style={{ minHeight: '48px' }}
+                  title="View all tasks in this sprint"
+                >
+                  <span>View</span>
+                </button>
               </div>
             </div>
           ))}
