@@ -56,6 +56,25 @@ export function AssignTaskModal({
 
   const today = new Date().toISOString().split("T")[0];
 
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (open) {
+      // Prevent background scrolling
+      document.body.style.overflow = 'hidden';
+      document.body.style.paddingRight = 'var(--scrollbar-width, 0px)';
+    } else {
+      // Restore background scrolling
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+    };
+  }, [open]);
+
   // Check if user is authorized to assign tasks
   const isAuthorizedToAssignTasks = () => {
     if (!isAuthenticated || !user) {
@@ -227,7 +246,7 @@ export function AssignTaskModal({
   // Show authorization error if user is not authorized
   if (!isAuthorizedToAssignTasks()) {
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-[9999] p-4 pt-10 sm:pt-16">
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 mx-4">
           <div className="text-center">
             <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
@@ -250,7 +269,7 @@ export function AssignTaskModal({
   // Success Message Overlay
   if (showSuccess) {
     return (
-      <div className="fixed inset-0 backdrop-blur-sm flex items-start justify-center z-[9999] p-4 pt-10 sm:pt-16">
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
         <div className="bg-black/40 rounded-3xl shadow-2xl w-full max-w-md border-2 border-white/40 p-8">
           <div className="text-center">
             <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -269,18 +288,29 @@ export function AssignTaskModal({
   }
 
   return (
-    <div className="fixed inset-0 backdrop-blur-sm flex items-start justify-center z-[9999] p-4 pt-10 sm:pt-16">
-      <div className="bg-black/40 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[95vh] overflow-hidden border-2 border-white/40">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 overflow-hidden">
+      <div className="bg-black/40 rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden border-2 border-white/40 flex flex-col">
 
-        {/* Header */}
-        <div className="p-6 text-center">
-          <h2 className="text-2xl font-bold text-white mb-1">Create New Task</h2>
-          <p className="text-gray-300 text-sm">Add a task and assign team members</p>
+        {/* Header - Fixed */}
+        <div className="p-6 text-center border-b border-white/20 flex-shrink-0">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold text-white mb-1">Create New Task</h2>
+              <p className="text-gray-300 text-sm">Add a task and assign team members</p>
+            </div>
+            <button
+              onClick={onClose}
+              disabled={isCreating}
+              className="w-8 h-8 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors ml-4 flex-shrink-0"
+            >
+              <X className="w-5 h-5 text-white" />
+            </button>
+          </div>
         </div>
 
-        {/* Error Message */}
+        {/* Error Message - Fixed */}
         {error && (
-          <div className="mx-6 mb-4 bg-red-500/20 border border-red-500/30 rounded-xl p-4">
+          <div className="mx-6 mt-4 bg-red-500/20 border border-red-500/30 rounded-xl p-4 flex-shrink-0">
             <div className="flex items-center gap-2">
               <AlertCircle className="w-5 h-5 text-red-400" />
               <p className="text-red-300 text-sm">{error}</p>
@@ -288,121 +318,123 @@ export function AssignTaskModal({
           </div>
         )}
 
-        {/* Content */}
-        <div className="p-6 border border-white/30 rounded-2xl space-y-6 overflow-y-auto scrollbar-hide m-4" style={{ maxHeight: "calc(95vh - 220px)" }}>
-          {/* Ticket Number */}
-          <div>
-            <label className="block text-sm font-medium text-white mb-2">Ticket Number*</label>
-            <div className="flex items-center">
-              <span className="px-4 py-3 rounded-l-xl bg-black/50 text-white font-semibold border-r border-white/10">
-                {task.ticketNumber?.split('-')[0] || ''}
-              </span>
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar">
+          <div className="p-6 space-y-6">
+            {/* Ticket Number */}
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">Ticket Number*</label>
+              <div className="flex items-center">
+                <span className="px-4 py-3 rounded-l-xl bg-black/50 text-white font-semibold border-r border-white/10">
+                  {task.ticketNumber?.split('-')[0] || ''}
+                </span>
+                <input
+                  type="text"
+                  value={task.ticketNumber?.split('-')[1] ?? ''}
+                  onChange={(e) => {
+                    const prefix = task.ticketNumber?.split('-')[0] || '';
+                    setTask({
+                      ...task,
+                      ticketNumber: `${prefix}-${e.target.value}`,
+                    });
+                  }}
+                  placeholder="001"
+                  disabled={isCreating}
+                  className="w-full px-4 py-3 rounded-r-xl bg-black/70 text-white placeholder-white focus:outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Task Title */}
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">Task Title*</label>
               <input
                 type="text"
-                value={task.ticketNumber?.split('-')[1] ?? ''}
-                onChange={(e) => {
-                  const prefix = task.ticketNumber?.split('-')[0] || '';
-                  setTask({
-                    ...task,
-                    ticketNumber: `${prefix}-${e.target.value}`,
-                  });
-                }}
-                placeholder="001"
+                value={task.title ?? ""}
+                onChange={(e) => setTask({ ...task, title: e.target.value })}
+                placeholder="Title ..."
                 disabled={isCreating}
-                className="w-full px-4 py-3 rounded-r-xl bg-black/70 text-white placeholder-white focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl bg-black/70 text-white placeholder-white focus:outline-none"
               />
             </div>
-          </div>
 
-          {/* Task Title */}
-          <div>
-            <label className="block text-sm font-medium text-white mb-2">Task Title*</label>
-            <input
-              type="text"
-              value={task.title ?? ""}
-              onChange={(e) => setTask({ ...task, title: e.target.value })}
-              placeholder="Title ..."
-              disabled={isCreating}
-              className="w-full px-4 py-3 rounded-xl bg-black/70 text-white placeholder-white focus:outline-none"
-            />
-          </div>
+            {/* Description */}
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">Description</label>
+              <textarea
+                value={task.description ?? ""}
+                onChange={(e) => setTask({ ...task, description: e.target.value })}
+                placeholder="Description ..."
+                rows={3}
+                disabled={isCreating}
+                className="w-full px-4 py-3 rounded-xl bg-black/70 text-white placeholder-white resize-none focus:outline-none"
+              />
+            </div>
 
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-white mb-2">Description</label>
-            <textarea
-              value={task.description ?? ""}
-              onChange={(e) => setTask({ ...task, description: e.target.value })}
-              placeholder="Description ..."
-              rows={3}
-              disabled={isCreating}
-              className="w-full px-4 py-3 rounded-xl bg-black/70 text-white placeholder-white resize-none focus:outline-none"
-            />
-          </div>
+            {/* Due Date */}
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">Task Due Date*</label>
+              <input
+                type="date"
+                min={today}
+                value={task.dueDate ? task.dueDate.substring(0, 10) : ""}
+                onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
+                disabled={isCreating}
+                className="w-full px-4 py-3 rounded-xl bg-black/70 text-white focus:outline-none"
+              />
+            </div>
 
-          {/* Due Date */}
-          <div>
-            <label className="block text-sm font-medium text-white mb-2">Task Due Date*</label>
-            <input
-              type="date"
-              min={today}
-              value={task.dueDate ? task.dueDate.substring(0, 10) : ""}
-              onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
-              disabled={isCreating}
-              className="w-full px-4 py-3 rounded-xl bg-black/70 text-white focus:outline-none"
-            />
-          </div>
+            {/* Task Priority */}
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">Priority*</label>
+              <select
+                value={task.priority || TaskPriority.MEDIUM}
+                onChange={(e) => setTask({ ...task, priority: e.target.value as TaskPriority })}
+                disabled={isCreating}
+                className="w-full px-4 py-3 rounded-xl bg-black/70 text-white focus:outline-none"
+              >
+                <option value={TaskPriority.HIGH}>High</option>
+                <option value={TaskPriority.MEDIUM}>Medium</option>
+                <option value={TaskPriority.LOW}>Low</option>
+              </select>
+            </div>
 
-          {/* Task Priority */}
-          <div>
-            <label className="block text-sm font-medium text-white mb-2">Priority*</label>
-            <select
-              value={task.priority || TaskPriority.MEDIUM}
-              onChange={(e) => setTask({ ...task, priority: e.target.value as TaskPriority })}
-              disabled={isCreating}
-              className="w-full px-4 py-3 rounded-xl bg-black/70 text-white focus:outline-none"
-            >
-              <option value={TaskPriority.HIGH}>High</option>
-              <option value={TaskPriority.MEDIUM}>Medium</option>
-              <option value={TaskPriority.LOW}>Low</option>
-            </select>
-          </div>
-
-          {/* Assign Team Members */}
-          <div>
-            <h3 className="text-white font-semibold text-sm mb-3">Assign Team Members*</h3>
-            {teams.map((team) => (
-              <div key={team.id} className="mb-4">
-                <p className="text-sm text-gray-300 mb-2">{team.department} Department</p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                  {team.members.map((member: any) => (
-                    <div
-                      key={member.id}
-                      onClick={() => !isCreating && toggleAssignment(member.id)}
-                      className={`p-3 rounded-xl border flex items-center space-x-3 cursor-pointer transition-all ${
-                        task.assignedTo[0] === member.id
-                          ? "bg-white/20 border-white/40"
-                          : "bg-black/30 border-white/20 hover:bg-black/40"
-                      }`}
-                    >
-                      <img src={member.avatar} alt={member.name} className="w-10 h-10 rounded-full border" />
-                      <div>
-                        <p className="text-white font-medium">{member.name}</p>
-                        <p className="text-gray-400 text-sm">{member.role}</p>
+            {/* Assign Team Members */}
+            <div>
+              <h3 className="text-white font-semibold text-sm mb-3">Assign Team Members*</h3>
+              {teams.map((team) => (
+                <div key={team.id} className="mb-4">
+                  <p className="text-sm text-gray-300 mb-2">{team.department} Department</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {team.members.map((member: any) => (
+                      <div
+                        key={member.id}
+                        onClick={() => !isCreating && toggleAssignment(member.id)}
+                        className={`p-3 rounded-xl border flex items-center space-x-3 cursor-pointer transition-all ${
+                          task.assignedTo[0] === member.id
+                            ? "bg-white/20 border-white/40"
+                            : "bg-black/30 border-white/20 hover:bg-black/40"
+                        }`}
+                      >
+                        <img src={member.avatar} alt={member.name} className="w-10 h-10 rounded-full border flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-white font-medium truncate">{member.name}</p>
+                          <p className="text-gray-400 text-sm truncate">{member.role}</p>
+                        </div>
+                        {task.assignedTo[0] === member.id && (
+                          <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
+                        )}
                       </div>
-                      {task.assignedTo[0] === member.id && (
-                        <CheckCircle className="w-5 h-5 text-green-400 ml-auto" />
-                      )}
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="border-white/20 p-6 flex justify-end space-x-3">
+        {/* Footer - Fixed */}
+        <div className="border-t border-white/20 p-6 flex justify-end space-x-3 flex-shrink-0 bg-black/20">
           <button
             onClick={onClose}
             disabled={isCreating}

@@ -2,12 +2,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import axiosInstance from '@/lib/axios';
-import { 
-  Clock, 
-  CheckCircle, 
-  AlertCircle, 
-  Loader2, 
-  RefreshCw, 
+import {
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  Loader2,
+  RefreshCw,
   Calendar,
   FileText,
   AlertTriangle,
@@ -91,7 +91,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
   const sprintId = params.id as string;
   const sprintName = searchParams.get('name') ? decodeURIComponent(searchParams.get('name')!) : null;
   const scope = searchParams.get('scope') || 'manager';
-  
+
   const [tasks, setTasks] = useState<TaskResponse[]>([]);
   const [sprint, setSprint] = useState<TaskResponse['sprint'] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -114,12 +114,12 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
     dueDate: '',
     estimatedHours: 0,
   });
-  
+
   // Modal states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
   const [modalLoading, setModalLoading] = useState(false);
-  
+
   // Fetch sprint info (projectId/projectName) even if there are no tasks
   const fetchSprintInfo = async () => {
     if (propProjectId && propProjectName) {
@@ -165,7 +165,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
       }
     } catch (error: any) {
       setError(
-        error.response?.data?.message || 
+        error.response?.data?.message ||
         'Failed to load sprint tasks. Please try again.'
       );
       setTasks([]);
@@ -268,7 +268,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
   const getAssigneeAvatar = (task: TaskResponse) => {
     const assignee = task.taskFor || task.user;
     if (!assignee) return null;
-    
+
     return (
       <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center text-white text-sm font-semibold">
         {assignee.name.charAt(0).toUpperCase()}
@@ -290,7 +290,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
   }, [projectId, projectName]);
 
   return (
-   <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%] h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar">
+   <div className="w-full relative top-[30px] max-w-full">
       <div className="mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -493,7 +493,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                       </tbody>
                     </table>
                   </div>
-  
+
                 </div>
 
                 {/* Completed Tasks Table */}
@@ -627,7 +627,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                             <div className="font-semibold text-base mb-1">{task.title}</div>
                             {/* Description */}
                             <div className="text-xs text-white/70 mb-2">{task.description || 'No description'}</div>
-                             
+
                             {/* Assignee & Time */}
                             <div className="flex items-center gap-2">
                               <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
@@ -702,7 +702,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                             {selectedTask.comment}
                           </p>
                         </div>
-                        
+
                         {/* Task Details */}
                         <div className="grid grid-cols-2 gap-4 mt-6 p-4 bg-blue-50 rounded-xl">
                           <div>
