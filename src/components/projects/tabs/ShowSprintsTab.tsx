@@ -168,16 +168,17 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
           <p className="text-white/70 mt-1">Manage and track sprints for this project</p>
         </div>
         {!isAdmin && (
-          <button
-            onClick={() => router.push('/dashboard/manager/addsprints')}
-            className="inline-flex items-center gap-2 px-4 py-2 text-white font-medium rounded-full transition shadow-sm"
-            style={{
-              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-            }}
-          >
-            <Plus className="w-4 h-4" />
-            Add Sprint
-          </button>
+        <button
+  onClick={() => router.push("/dashboard/manager/addsprints")}
+  className="inline-flex items-center gap-2 px-4 py-2 text-white font-medium rounded-full transition shadow-sm hover:shadow-md transform hover:scale-105 active:scale-95 border"
+  style={{
+    backgroundColor: "#0CA9F6",
+    border: "1px solid #57B5E7E5",
+  }}
+>
+  <Plus className="w-4 h-4" />
+  Add Sprint
+</button>
         )}
       </div>
 
