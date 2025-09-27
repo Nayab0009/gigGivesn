@@ -737,7 +737,7 @@ export default function ChatPage() {
             href={part}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 hover:underline"
+            className="text-white hover:underline"
           >
             {part}
           </a>
@@ -1238,7 +1238,7 @@ export default function ChatPage() {
                         )}
                         <div className="flex items-center justify-between mt-1">
                           {msg.timestamp && (
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-white">
                               {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                             </p>
                           )}
