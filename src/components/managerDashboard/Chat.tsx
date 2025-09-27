@@ -797,164 +797,171 @@ export default function ChatPage() {
 
       {/* Sidebar */}
       {/* Sidebar - Replace from line 473 */}
-      <aside className=" top-[226px] left-[10px]  w-80 bg-black/30  rounded-xl     pr-[1px] border border-[#FFFFFF33] flex flex-col">
-        {/* Header */}
-        <div className="p-4 border-b border-white/10">
-  <div className="flex items-center justify-between mb-4">
-    <div className="flex items-center gap-3">
-      {/* Current User Avatar */}
-      {currentUser?.avatar ? (
-        <img
-          src={currentUser.avatar}
-          alt={currentUser.name || "User"}
-          className="w-9 h-9 rounded-full object-cover"
-        />
-      ) : (
-        <div
-          className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold"
-          style={{
-            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-          }}
-        >
-          {currentUser?.name?.[0]?.toUpperCase() || "?"}
-        </div>
-      )}
+  <aside className="top-[226px] left-[10px] w-80 bg-black/30 rounded-xl pr-[1px] border border-[#FFFFFF33] flex flex-col">
+  {/* Header */}
+  <div className="p-4 border-b border-white/10">
+    <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center gap-3">
+        {/* Current User Avatar */}
+        {currentUser?.avatar ? (
+          <img
+            src={currentUser.avatar}
+            alt={currentUser.name || "User"}
+            className="w-9 h-9 rounded-full object-cover"
+          />
+        ) : (
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold"
+            style={{
+              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+            }}
+          >
+            {currentUser?.name?.[0]?.toUpperCase() || "?"}
+          </div>
+        )}
 
-      {/* Chat Title */}
-      <h1 className="text-xl font-bold flex items-center gap-2 text-white">
+        {/* Chat Title */}
+        <h1 className="text-xl font-bold flex items-center gap-2 text-white">
+          <span>Chat</span>
+        </h1>
+      </div>
+    </div>
 
-        <span>Chat</span>
-      </h1>
+    {/* Modern search bar */}
+    <div className="relative">
+      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 z-10" />
+      <input
+        type="text"
+        placeholder="Search"
+        className="w-full pl-10 pr-4 py-2 rounded-2xl bg-black/30 backdrop-blur-sm text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
     </div>
   </div>
 
-  {/* Modern search bar */}
-  <div className="relative">
-    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 z-10" />
-    <input
-      type="text"
-      placeholder="Search"
-      className="w-full pl-10 pr-4 py-2 rounded-2xl bg-black/30 backdrop-blur-sm  text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/30"
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-    />
+  {/* Contact list with modern cards */}
+  <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+    {/* Team section */}
+    <div className="p-4">
+      <h3 className="text-sm font-medium text-white/70 mb-3">Team</h3>
+      <div className="space-y-2">
+        {filteredContacts.slice(0, Math.ceil(filteredContacts.length / 2)).map((contact) => (
+          <div
+            key={contact.id}
+            onClick={() => {
+              setSelectedUser(contact.name)
+              setSelectedUserId(contact.id)
+              saveReadStatus(contact.id)
+              setContacts((prevContacts) =>
+                prevContacts.map((c) => (c.id === contact.id ? { ...c, unread: 0 } : c)),
+              )
+            }}
+            className={`flex items-center gap-3 rounded-xl cursor-pointer transition-all
+              w-full h-[68px] px-[15px] py-[12px]
+              ${
+                selectedUser === contact.name
+                  ? "bg-[#0CA9F633] border-l-[3px] border-[#0CA9F6]"
+                  : "hover:bg-[#0CA9F633] hover:border-l-[3px] hover:border-[#0CA9F6]"
+              }`}
+          >
+            <div className="relative">
+              {contact.avatar ? (
+                <img
+                  src={contact.avatar || "/placeholder.svg"}
+                  alt={contact.name}
+                  className="w-9 h-9 rounded-full object-cover"
+                />
+              ) : (
+                <div
+                  className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold"
+                  style={{
+                    background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                  }}
+                >
+                  {contact.name?.[0]?.toUpperCase() || "?"}
+                </div>
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-white text-sm font-medium truncate">{contact.name}</p>
+              <p className="text-white/60 text-xs truncate">
+                {contact.lastMessage ? (
+                  <>
+                    {contact.lastMessageSenderId === currentUser?.id?.toString() &&
+                    !contact.lastMessage?.startsWith("You:") ? (
+                      <span className="font-medium mr-1">You:</span>
+                    ) : null}
+                    {contact.lastMessage}
+                  </>
+                ) : (
+                  "No messages yet"
+                )}
+              </p>
+            </div>
+            {contact.unread > 0 && <div className="w-2 h-2 bg-red-500 rounded-full"></div>}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    {/* Personal section */}
+    <div className="p-4">
+      <h3 className="text-sm font-medium text-white/70 mb-3">Personal</h3>
+      <div className="space-y-2">
+        {filteredContacts.slice(Math.ceil(filteredContacts.length / 2)).map((contact) => (
+          <div
+            key={contact.id}
+            onClick={() => {
+              setSelectedUser(contact.name)
+              setSelectedUserId(contact.id)
+              saveReadStatus(contact.id)
+              setContacts((prevContacts) =>
+                prevContacts.map((c) => (c.id === contact.id ? { ...c, unread: 0 } : c)),
+              )
+            }}
+            className={`flex items-center gap-3 rounded-xl cursor-pointer transition-all
+              w-[322px] h-[68px] px-[15px] py-[12px]
+              ${
+                selectedUser === contact.name
+                  ? "bg-[#0CA9F633] border-l-[3px] border-[#0CA9F6]"
+                  : "hover:bg-[#0CA9F633] hover:border-l-[3px] hover:border-[#0CA9F6]"
+              }`}
+          >
+            <div className="relative">
+              <div
+                className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold"
+                style={{
+                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                }}
+              >
+                {contact.name?.[0]?.toUpperCase() || "?"}
+              </div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-white text-sm font-medium truncate">{contact.name}</p>
+              <p className="text-white/60 text-xs truncate">
+                {contact.lastMessage ? (
+                  <>
+                    {contact.lastMessageSenderId === currentUser?.id?.toString() &&
+                    !contact.lastMessage?.startsWith("You:") ? (
+                      <span className="font-medium mr-1">You:</span>
+                    ) : null}
+                    {contact.lastMessage}
+                  </>
+                ) : (
+                  "No messages yet"
+                )}
+              </p>
+            </div>
+            {contact.unread > 0 && <div className="w-2 h-2 bg-red-500 rounded-full"></div>}
+          </div>
+        ))}
+      </div>
+    </div>
   </div>
-</div>
-        {/* Contact list with modern cards */}
-        <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          {/* Team section */}
-          <div className="p-4">
-            <h3 className="text-sm font-medium text-white/70 mb-3">Team</h3>
-            <div className="space-y-2">
-              {filteredContacts.slice(0, Math.ceil(filteredContacts.length / 2)).map((contact) => (
-                <div
-                  key={contact.id}
-                  onClick={() => {
-                    setSelectedUser(contact.name)
-                    setSelectedUserId(contact.id)
-                    saveReadStatus(contact.id)
-                    setContacts((prevContacts) =>
-                      prevContacts.map((c) => (c.id === contact.id ? { ...c, unread: 0 } : c)),
-                    )
-                  }}
-                  className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all hover:bg-black/30 ${
-                    selectedUser === contact.name ? "bg-black/30 " : ""
-                  }`}
-                >
-                  <div className="relative">
-                    {contact.avatar ? (
-                      <img
-                        src={contact.avatar || "/placeholder.svg"}
-                        alt={contact.name}
-                        className="w-9 h-9 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div
-                        className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold"
-                        style={{
-                          background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                        }}
-                      >
-                        {contact.name?.[0]?.toUpperCase() || "?"}
-                      </div>
-                    )}
+</aside>
 
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white text-sm font-medium truncate">{contact.name}</p>
-                    <p className="text-white/60 text-xs truncate">
-                      {contact.lastMessage ? (
-                        <>
-                          {contact.lastMessageSenderId === currentUser?.id?.toString() &&
-                          !contact.lastMessage?.startsWith("You:") ? (
-                            <span className="font-medium mr-1">You:</span>
-                          ) : null}
-                          {contact.lastMessage}
-                        </>
-                      ) : (
-                        "No messages yet"
-                      )}
-                    </p>
-                  </div>
-                  {contact.unread > 0 && <div className="w-2 h-2 bg-red-500 rounded-full"></div>}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Personal section */}
-          <div className="p-4">
-            <h3 className="text-sm font-medium text-white/70 mb-3">Personal</h3>
-            <div className="space-y-2">
-              {filteredContacts.slice(Math.ceil(filteredContacts.length / 2)).map((contact) => (
-                <div
-                  key={contact.id}
-                  onClick={() => {
-                    setSelectedUser(contact.name)
-                    setSelectedUserId(contact.id)
-                    saveReadStatus(contact.id)
-                    setContacts((prevContacts) =>
-                      prevContacts.map((c) => (c.id === contact.id ? { ...c, unread: 0 } : c)),
-                    )
-                  }}
-                  className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all hover:bg-white/10 ${
-                    selectedUser === contact.name ? "bg-white/15 border border-white/20" : ""
-                  }`}
-                >
-                  <div className="relative">
-                    <div
-                      className="w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-semibold"
-                      style={{
-                        background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                      }}
-                    >
-                      {contact.name?.[0]?.toUpperCase() || "?"}
-                    </div>
-
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white text-sm font-medium truncate">{contact.name}</p>
-                    <p className="text-white/60 text-xs truncate">
-                      {contact.lastMessage ? (
-                        <>
-                          {contact.lastMessageSenderId === currentUser?.id?.toString() &&
-                          !contact.lastMessage?.startsWith("You:") ? (
-                            <span className="font-medium mr-1">You:</span>
-                          ) : null}
-                          {contact.lastMessage}
-                        </>
-                      ) : (
-                        "No messages yet"
-                      )}
-                    </p>
-                  </div>
-                  {contact.unread > 0 && <div className="w-2 h-2 bg-red-500 rounded-full"></div>}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </aside>
       {/* Main Chat Area - Conditional Rendering */}
       {selectedUserId ? (
         <main
