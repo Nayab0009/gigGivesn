@@ -213,7 +213,7 @@ const ProfessionalNotesEditor = () => {
   return (
     <div className={`min-h-screen transition-all duration-300 ${themeClass} bg-transparent `}>
 
-      <div className="flex flex-col md:flex-row bg-black/30 backdrop-blur-md py-6 px-4 md:px-9 rounded-4xl border-[1px] my-5 border-gray-500 text-white">
+      <div className="flex flex-col md:flex-row bg-black/30 backdrop-blur-md p-[22px] rounded-4xl border-[1px] my-5 border-gray-500 text-white">
         {/* Sidebar */}
         <aside className={`w-full md:w-80 flex flex-col transition-all duration-300 bg-none`}>
           <div className="flex flex-row gap-3 mb-4">
