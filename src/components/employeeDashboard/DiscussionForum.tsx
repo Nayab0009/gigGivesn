@@ -127,8 +127,8 @@ export default function ForumPage() {
   const selectedThread = threads.find((t) => t.id === selectedThreadId)
 
   return (
-  <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%]
-                h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar -mt-3">
+  <div  className="relative top-[40px] left-1/2 transform -translate-x-1/2 w-[96%]
++               min-h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar -mt-3">
       {/* Header Section */}
       <div className="mb-6 flex items-center justify-between opacity-100 mx-auto">
         <div className="flex flex-col justify-leftye sp">
@@ -154,7 +154,7 @@ export default function ForumPage() {
         </div>
       </div>
 
-      <div className="relative rounded-[20px] border border-white/30 p-[30px] gap-[20px] bg-black/30 opacity-100 mx-auto">
+      <div className="relative rounded-[20px] border border-white/30 p-[30px] gap-[20px] bg-[#0000004D] opacity-100 mx-auto">
         {/* Authentication Check */}
         {!isAuthenticated ? (
           <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-2xl p-8 mb-10 shadow-lg">
@@ -173,7 +173,7 @@ export default function ForumPage() {
             {/* New Thread Form */}
             {showNewThreadForm && (
               <div
-                className="rounded-[15px] border border-white/30 p-10 mb-10 relative overflow-hidden shadow-2xl bg-black/30"
+                className="rounded-[15px] border border-white/30 p-10 mb-10 relative overflow-hidden shadow-2xl bg-["
                 style={{
                   border: '1px solid #FFFFFF4D',
                   color: '#fff',
@@ -181,9 +181,7 @@ export default function ForumPage() {
               >
                 <div
                   className="absolute top-0 left-0 w-full h-1"
-                  style={{
-                    background: `linear-gradient(90deg, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-                  }}
+                 
                 ></div>
 
                 <h2 className="text-3xl font-bold mb-8 text-center text-[white]">Create New Discussion</h2>
@@ -221,10 +219,8 @@ export default function ForumPage() {
                   <button
                     onClick={handleAddThread}
                     disabled={isLoading || !newThreadTitle.trim() || !newThreadContent.trim()}
-                    className="group relative px-10 py-4 rounded-2xl font-bold text-white text-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none overflow-hidden"
-                    style={{
-                      background: `linear-gradient(135deg, ${colors.secondary.hex} 0%, ${colors.accent.hex} 100%)`,
-                    }}
+                    className="group relative px-10 py-4 bg-[#0CA9F6] rounded-2xl font-bold text-white text-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none overflow-hidden"
+                   
                   >
                     <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                     <span className="relative z-10">{isLoading ? "Posting..." : "Post Discussion"}</span>
@@ -258,7 +254,7 @@ export default function ForumPage() {
               threads.map((thread) => (
                 <div
                   key={thread.id}
-                  className="group cursor-pointer overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] mb-6 w-full bg-black/30 rounded-[15px] border border-white/30"
+                  className="group cursor-pointer overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] mb-6 w-full bg-[#0000004D] rounded-[15px] border border-white/30"
                   onClick={() => setSelectedThreadId(thread.id)}
                 >
                   <div className="p-8 relative h-full flex flex-col justify-between min-h-[182px]">
