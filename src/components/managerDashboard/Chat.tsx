@@ -1374,65 +1374,73 @@ export default function ChatPage() {
     `}
   >
     {/* Profile Header */}
-    <div className="p-6 border-b border-white/10">
-      <div className="flex items-center gap-4 mb-4">
-        {contacts.find((c) => c.id === selectedUserId)?.avatar ? (
-          <img
-            src={contacts.find((c) => c.id === selectedUserId)?.avatar || "/placeholder.svg"}
-            alt={selectedUser}
-            className="w-16 h-16 rounded-full object-cover"
-          />
-        ) : (
-          <div
-            className="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-bold"
-            style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})` }}
-          >
-            {selectedUser[0]?.toUpperCase()}
-          </div>
-        )}
-        <div>
-          <h3 className="text-lg font-semibold text-white">{selectedUser}</h3>
-        </div>
-      </div>
-
-      {/* Actions */}
-      <div className="flex items-center justify-center gap-3 px-3 py-2 rounded-md">
-        <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] cursor-pointer">
-          <Search className="w-5 h-5 text-white" />
-        </div>
-        <button
-          onClick={() => setShowMeetingDialog(true)}
-          className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] hover:bg-white/20 transition"
-          aria-label="Start meeting"
-          type="button"
-        >
-          <Video className="w-6 h-6 text-white" />
-        </button>
-      </div>
+    <div className="p-6 border-b border-white/10 flex flex-col items-center text-center">
+  {/* Avatar */}
+  {contacts.find((c) => c.id === selectedUserId)?.avatar ? (
+    <img
+      src={contacts.find((c) => c.id === selectedUserId)?.avatar || "/placeholder.svg"}
+      alt={selectedUser}
+      className="w-20 h-20 rounded-full object-cover mb-3"
+    />
+  ) : (
+    <div
+      className="w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-3"
+      style={{
+        background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+      }}
+    >
+      {selectedUser[0]?.toUpperCase()}
     </div>
+  )}
+
+  {/* Name */}
+  <h3 className="font-roboto font-semibold text-[20px] leading-[28px] text-white text-center align-middle">
+  {selectedUser}
+</h3>
+
+  {/* Actions */}
+  <div className="flex items-center justify-center gap-3 mt-4">
+    <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] cursor-pointer">
+      <Search className="w-5 h-5 text-white" />
+    </div>
+    <button
+      onClick={() => setShowMeetingDialog(true)}
+      className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] hover:bg-white/20 transition"
+      aria-label="Start meeting"
+      type="button"
+    >
+      <Video className="w-6 h-6 text-white" />
+    </button>
+  </div>
+</div>
 
     {/* Profile Content */}
     <div className="flex-1 p-4 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
       {/* Tabs */}
-      <div className="flex mb-4 bg-black/30 rounded-lg overflow-hidden border-t border-b border-white/10">
+<div className="w-full h-[93px] px-[22px] pt-6 pb-[25px] border-b border-white/10 flex justify-between items-center">
   <button
-    className={`flex-1 py-2 text-sm font-medium border-r border-white/10 ${
-      activeTab === "pictures" ? "bg-[#0CA9F6] text-white" : "text-white/60"
-    }`}
+    className={`h-[36px] w-[131.5px] rounded-[8px] text-sm font-medium transition
+      ${activeTab === "pictures"
+        ? "bg-[#0CA9F6] text-white"
+        : "bg-black/30 text-white/60 hover:bg-white/10"}
+    `}
     onClick={() => setActiveTab("pictures")}
   >
     Pictures
   </button>
   <button
-    className={`flex-1 py-2 text-sm font-medium ${
-      activeTab === "files" ? "bg-[#0CA9F6] text-white" : "text-white/60"
-    }`}
+    className={`h-[36px] w-[131.5px] rounded-[8px] text-sm font-medium transition
+      ${activeTab === "files"
+        ? "bg-[#0CA9F6] text-white"
+        : "bg-black/30 text-white/60 hover:bg-white/10"}
+    `}
     onClick={() => setActiveTab("files")}
   >
     Files
   </button>
 </div>
+
       {/* Uploaded Files Section */}
       <div className="space-y-3">
         {messages

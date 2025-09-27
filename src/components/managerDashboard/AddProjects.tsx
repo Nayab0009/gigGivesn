@@ -758,7 +758,16 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                     </tr>
                   ) : (
                     paginatedProjects.map((project) => (
-                      <tr key={project.id.toString()} className="transition-all duration-300">
+                      <tr key={project.id.toString()} className="transition-all duration-300  cursor-pointer "
+                           onClick={(e) => {
+      // Prevent navigation if clicking on buttons or interactive elements
+      const target = e.target as HTMLElement;
+      const isButton = target.closest('button') || target.closest('a');
+
+      if (!isButton) {
+        window.location.href = `/dashboard/manager/projects/${project.id}`;
+      }
+    }}>
                         {/* Project Name */}
                     <td className="px-6 py-6">
       <div className="flex items-center gap-3">
@@ -768,6 +777,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
             src={project.logo}
             alt={`${project.name} logo`}
             className="w-12 h-12 rounded-lg object-cover"
+
             onError={(e) => {
 
               e.currentTarget.src = `https://api.dicebear.com/7.x/initials/svg?seed=${project.name}&backgroundColor=3b82f6,8b5cf6,10b981,f59e0b,ef4444`
