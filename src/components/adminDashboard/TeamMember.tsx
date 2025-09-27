@@ -224,20 +224,21 @@ export default function TeamListPage() {
   <div className="md:flex md:flex-1 items-center gap-6 w-full lg:w-auto justify-between mt-5 md:mt-0 md:ml-20 space-y-4">
     {/* Search Bar */}
   <div className="relative block sm:flex flex-1 w-full max-w-[396px]">
-<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 z-10" />
+<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-[14px] h-[14px] text-white/60 z-10" />
 
-  <input
-    type="text"
-    placeholder="Search employees by name, email or ID..."
-    className="w-full h-[38px] rounded-[16px] border border-[#37415180]
-               bg-[#0000004D] text-white placeholder-white/60
-               pt-[9px] pr-[17px] pb-[9px] pl-[41px]
-               focus:ring-2 focus:ring-[#0CA9F6]
-               transition-all duration-300 shadow-lg focus:shadow-xl
-               focus:outline-none backdrop-blur-md"
-    value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-  />
+<input
+  type="text"
+  placeholder="Search employees by name, email or ID..."
+  className="w-full h-[38px] rounded-[16px] border border-[#37415180]
+             bg-[#0000004D] text-white placeholder-white/60
+             placeholder:text-[14px]
+             pt-[9px] pr-[17px] pb-[9px] pl-[41px]
+             focus:ring-2 focus:ring-[#0CA9F6]
+             transition-all duration-300 shadow-lg focus:shadow-xl
+             focus:outline-none backdrop-blur-md"
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+/>
 </div>
 
 
@@ -247,7 +248,7 @@ export default function TeamListPage() {
    <div
   className="inline-flex items-center justify-center w-[143px] h-[36px]
              rounded-[99px] border border-[#0CA9F6]
-             px-[16px] py-[8px] text-sm text-white mr-5"
+             px-[16px] py-[8px] text-sm text-white mr-5 whitespace-nowrap"
 >
   <span className="font-semibold">{filteredMembers.length}</span>
   &nbsp;of {teamMembers.length} employees
@@ -265,7 +266,7 @@ export default function TeamListPage() {
                transition-all duration-300 ease-in-out
                shadow-lg hover:shadow-xl
                transform hover:scale-105 hover:-translate-y-0.5
-               mt-4 sm:mt-0"
+               mt-4 sm:mt-0 whitespace-nowrap"
   >
     <Plus className="w-4 h-4" />
     Add Employee
@@ -277,7 +278,7 @@ export default function TeamListPage() {
 
         {/* Edit Modal */}
        {editingMember && (
-  <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div className="fixed inset-0 bg-[#0000004D] backdrop-blur-sm flex items-center justify-center z-50 p-4">
     <div
       className="rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto scrollbar-hide transform transition-all duration-300 scale-100"
       style={{
@@ -477,7 +478,7 @@ export default function TeamListPage() {
   ) : (
     <div className="overflow-x-auto">
       <table
-  className="min-w-full  rounded-[20.33px] border-separate border-spacing-y-4 bg-black/30 px-5  border border-[#FFFFFF4D]"
+  className="min-w-full  rounded-[20.33px] border-separate border-spacing-y-4 bg-black/40 px-5  border border-[#FFFFFF4D]"
 >
         <thead className="text-white rounded-t-2xl h-[32px]">
           <tr className="h-[60px]">

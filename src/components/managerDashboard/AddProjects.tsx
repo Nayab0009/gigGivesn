@@ -691,7 +691,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
               <table className="min-w-full divide-y divide-emerald-200 ">
 <thead
   className="
-    bg-black/40
+    bg-black/50
     rounded-tl-[20px] rounded-tr-[20px]
     shadow-lg
     border-b border-b-white/20

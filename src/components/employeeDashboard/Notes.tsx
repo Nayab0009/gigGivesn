@@ -79,9 +79,20 @@ const ProfessionalNotesEditor = () => {
 
     try {
       const payload: Notespayload = {
-        title: "Untitled Document",
-        content: "<p></p>", // Updated default content
-              // createdBy: user.id, // Pass the current user's ID
+ title: "Untitled Document",
+  content: `<p 
+    style="
+      width:747px;
+      height:36px;
+      font-family:Inter, sans-serif;
+      font-weight:300;
+      font-style:normal;
+      font-size:10px;
+      line-height:100%;
+      letter-spacing:0px;
+      vertical-align:middle;
+    "
+  ></p>`,
 
       }
       const newNote = await addNote(payload)
@@ -202,36 +213,28 @@ const ProfessionalNotesEditor = () => {
   return (
     <div className={`min-h-screen transition-all duration-300 ${themeClass} bg-transparent `}>
 
-
-{/* Header Searchbar */}
-<div className="bg-black/30 backdrop-blur-md py-6 px-6 rounded-[24px] border-[1px] my-5 border-gray-500 text-white">
-  <div className="flex flex-row items-center gap-4">
-    <div className="relative group flex-grow">
+      <div className="flex flex-col md:flex-row bg-black/30 backdrop-blur-md py-6 px-4 md:px-9 rounded-4xl border-[1px] my-5 border-gray-500 text-white">
+        {/* Sidebar */}
+        <aside className={`w-full md:w-80 flex flex-col transition-all duration-300 bg-none`}>
+          <div className="flex flex-row gap-3 mb-4">
+    <div className="relative ">
       <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white  transition-colors" />
       <input
         type="text"
-        placeholder="Search notes..."
+        placeholder="Search "
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="pl-12 pr-4 py-3 rounded-4xl dark:border-gray-600/50 border-none transition-all duration-200 placeholder:text-white/40 w-full bg-black/30 backdrop-blur-md outline-none focus:ring-1 focus:ring-gray-500 focus:border-none"
+        className="pl-12 pr-4 py-3 rounded-4xl dark:border-gray-600/50 border-none transition-all duration-200 placeholder:text-white/40 w-[166px] h-[38px] bg-black/30 backdrop-blur-md outline-none focus:ring-1 focus:ring-gray-500 focus:border-none"
       />
     </div>
     <button
       onClick={handleAddNote}
-      className="flex items-center gap-2 px-4 py-2 bg-[#0CA9F6] text-white text-sm rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+      className="flex items-center gap-2 px-4 py-2 w-[127px] h-[36px] whitespace-nowrap bg-[#0CA9F6] text-white text-sm rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
     >
       <Plus className="w-4 h-4" />
       New Note
     </button>
   </div>
-</div>
-
-
-
-
-      <div className="flex flex-col md:flex-row bg-black/30 backdrop-blur-md py-6 px-4 md:px-9 rounded-4xl border-[1px] my-5 border-gray-500 text-white">
-        {/* Sidebar */}
-        <aside className={`w-full md:w-80 flex flex-col transition-all duration-300 bg-none`}>
 
           {/* Notes List */}
           <div className="flex-1">
