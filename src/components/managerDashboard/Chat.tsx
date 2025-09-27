@@ -1363,145 +1363,155 @@ export default function ChatPage() {
       {/* User Profile Panel */}
       {/* User Profile Panel */}
       {showUserProfile && selectedUserId && (
-  <aside
-    className={`
-      w-[300px] h-[475px]
-      rounded-[20px]
-      border border-[#FFFFFF33]
-      bg-[#0000004D]
-      flex flex-col
-      pt-[24px] pr-[24px] pb-[25px] pl-[24px]
-    `}
-  >
-    {/* Profile Header */}
-    <div className="p-6 border-b border-white/10 flex flex-col items-center text-center">
-  {/* Avatar */}
-  {contacts.find((c) => c.id === selectedUserId)?.avatar ? (
-    <img
-      src={contacts.find((c) => c.id === selectedUserId)?.avatar || "/placeholder.svg"}
-      alt={selectedUser}
-      className="w-20 h-20 rounded-full object-cover mb-3"
-    />
-  ) : (
-    <div
-      className="w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-3"
-      style={{
-        background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-      }}
-    >
-      {selectedUser[0]?.toUpperCase()}
-    </div>
-  )}
-
-  {/* Name */}
-  <h3 className="font-roboto font-semibold text-[20px] leading-[28px] text-white text-center align-middle">
-  {selectedUser}
-</h3>
-
-  {/* Actions */}
-  <div className="flex items-center justify-center gap-3 mt-4">
-    <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] cursor-pointer">
-      <Search className="w-5 h-5 text-white" />
-    </div>
-    <button
-      onClick={() => setShowMeetingDialog(true)}
-      className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] hover:bg-white/20 transition"
-      aria-label="Start meeting"
-      type="button"
-    >
-      <Video className="w-6 h-6 text-white" />
-    </button>
-  </div>
-</div>
-
-    {/* Profile Content */}
-    <div className="flex-1 p-4 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-
-      {/* Tabs */}
-<div className="w-full h-[93px] px-[22px] pt-6 pb-[25px] border-b border-white/10 flex justify-between items-center">
-  <button
-    className={`h-[36px] w-[131.5px] rounded-[8px] text-sm font-medium transition
-      ${activeTab === "pictures"
-        ? "bg-[#0CA9F6] text-white"
-        : "bg-black/30 text-white/60 hover:bg-white/10"}
-    `}
-    onClick={() => setActiveTab("pictures")}
-  >
-    Pictures
-  </button>
-  <button
-    className={`h-[36px] w-[131.5px] rounded-[8px] text-sm font-medium transition
-      ${activeTab === "files"
-        ? "bg-[#0CA9F6] text-white"
-        : "bg-black/30 text-white/60 hover:bg-white/10"}
-    `}
-    onClick={() => setActiveTab("files")}
-  >
-    Files
-  </button>
-</div>
-
-      {/* Uploaded Files Section */}
-      <div className="space-y-3">
-        {messages
-          .filter((msg) => msg.isFile && msg.fileUrl)
-          .filter((fileMsg) =>
-            activeTab === "pictures"
-              ? fileMsg.fileType?.startsWith("image/")
-              : !fileMsg.fileType?.startsWith("image/")
-          )
-          .map((fileMsg, index) => {
-            const isImage = fileMsg.fileType?.startsWith("image/")
-            const fileName = fileMsg.fileUrl?.split("/").pop() || "Unknown file"
-            const fileExtension = fileName.split(".").pop()?.toLowerCase()
-
-            return (
-              <div
-                key={index}
-                className="flex items-center gap-3 p-3 bg-black/30 rounded-lg hover:bg-white/10 transition cursor-pointer"
-              >
-                {isImage ? (
-                  <img
-                    src={fileMsg.fileUrl || "/placeholder.svg"}
-                    alt="Shared image"
-                    className="w-8 h-8 rounded object-cover"
-                    onClick={() => setFullScreenImageUrl(fileMsg.fileUrl || "/placeholder.svg")}
-                  />
-                ) : (
-                  <div className="w-8 h-8 bg-gray-500 rounded flex items-center justify-center">
-                    <span className="text-white text-xs">📎</span>
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className="text-white text-sm font-medium truncate">{isImage ? "Image" : fileName}</p>
-                  <p className="text-white/60 text-xs">
-                    {fileMsg.fileType || fileExtension} •{" "}
-                    {new Date(fileMsg.timestamp || 0).toLocaleDateString()}
-                  </p>
-                </div>
-                <a
-                  href={fileMsg.fileUrl || "#"}
-                  download={fileName}
-                  className="text-blue-400 hover:text-blue-300 text-xs"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  Download
-                </a>
-              </div>
-            )
-          })}
-
-        {/* Empty state */}
-        {messages.filter((msg) => msg.isFile && msg.fileUrl && (
-          activeTab === "pictures" ? msg.fileType?.startsWith("image/") : !msg.fileType?.startsWith("image/")
-        )).length === 0 && (
-          <div className="text-center py-8 text-white/60">
-            <p>No {activeTab === "pictures" ? "pictures" : "files"} shared yet</p>
-          </div>
-        )}
+<aside
+  className={`
+    w-[300px] h-[475px]
+    rounded-[20px]
+    border border-[#FFFFFF33]
+    bg-[#0000004D]
+    flex flex-col
+    pt-[24px]  pb-[25px]
+  `}
+>
+  {/* Profile Header */}
+  <div className="p-6 border-b border-white/10 flex flex-col items-center text-center">
+    {/* Avatar */}
+    {contacts.find((c) => c.id === selectedUserId)?.avatar ? (
+      <img
+        src={contacts.find((c) => c.id === selectedUserId)?.avatar || "/placeholder.svg"}
+        alt={selectedUser}
+        className="w-20 h-20 rounded-full object-cover mb-3"
+      />
+    ) : (
+      <div
+        className="w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-3"
+        style={{
+          background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+        }}
+      >
+        {selectedUser[0]?.toUpperCase()}
       </div>
+    )}
+
+    {/* Name */}
+    <h3 className="font-roboto font-semibold text-[20px] leading-[28px] text-white text-center align-middle">
+      {selectedUser}
+    </h3>
+
+    {/* Actions */}
+    <div className="flex items-center justify-center gap-3 mt-4">
+      <div className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] cursor-pointer">
+        <Search className="w-5 h-5 text-white" />
+      </div>
+      <button
+        onClick={() => setShowMeetingDialog(true)}
+        className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] hover:bg-white/20 transition"
+        aria-label="Start meeting"
+        type="button"
+      >
+        <Video className="w-6 h-6 text-white" />
+      </button>
     </div>
-  </aside>
+  </div>
+
+  {/* Profile Content */}
+  <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+
+    {/* Tabs */}
+    <div className="w-full flex flex-col">
+      {/* Top Border (full width) */}
+      <div className="border-b border-white/10"></div>
+
+      {/* Buttons */}
+      <div className="flex justify-between items-center px-[22px] py-4">
+        <button
+          className={`h-[36px] w-[131.5px] rounded-[8px] text-sm font-medium transition
+            ${activeTab === "pictures"
+              ? "bg-[#0CA9F6] text-white"
+              : "bg-black/30 text-white/60 hover:bg-white/10"}
+          `}
+          onClick={() => setActiveTab("pictures")}
+        >
+          Pictures
+        </button>
+        <button
+          className={`h-[36px] w-[131.5px] rounded-[8px] text-sm font-medium transition
+            ${activeTab === "files"
+              ? "bg-[#0CA9F6] text-white"
+              : "bg-black/30 text-white/60 hover:bg-white/10"}
+          `}
+          onClick={() => setActiveTab("files")}
+        >
+          Files
+        </button>
+      </div>
+
+      {/* Bottom Border (full width) */}
+      <div className="border-b border-white/10 "></div>
+    </div>
+
+    {/* Uploaded Files Section */}
+    <div className="p-4 space-y-3">
+      {messages
+        .filter((msg) => msg.isFile && msg.fileUrl)
+        .filter((fileMsg) =>
+          activeTab === "pictures"
+            ? fileMsg.fileType?.startsWith("image/")
+            : !fileMsg.fileType?.startsWith("image/")
+        )
+        .map((fileMsg, index) => {
+          const isImage = fileMsg.fileType?.startsWith("image/")
+          const fileName = fileMsg.fileUrl?.split("/").pop() || "Unknown file"
+          const fileExtension = fileName.split(".").pop()?.toLowerCase()
+
+          return (
+            <div
+              key={index}
+              className="flex items-center gap-3 p-3 bg-black/30 rounded-lg hover:bg-white/10 transition cursor-pointer"
+            >
+              {isImage ? (
+                <img
+                  src={fileMsg.fileUrl || "/placeholder.svg"}
+                  alt="Shared image"
+                  className="w-8 h-8 rounded object-cover"
+                  onClick={() => setFullScreenImageUrl(fileMsg.fileUrl || "/placeholder.svg")}
+                />
+              ) : (
+                <div className="w-8 h-8 bg-gray-500 rounded flex items-center justify-center">
+                  <span className="text-white text-xs">📎</span>
+                </div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-white text-sm font-medium truncate">{isImage ? "Image" : fileName}</p>
+                <p className="text-white/60 text-xs">
+                  {fileMsg.fileType || fileExtension} •{" "}
+                  {new Date(fileMsg.timestamp || 0).toLocaleDateString()}
+                </p>
+              </div>
+              <a
+                href={fileMsg.fileUrl || "#"}
+                download={fileName}
+                className="text-blue-400 hover:text-blue-300 text-xs"
+                onClick={(e) => e.stopPropagation()}
+              >
+                Download
+              </a>
+            </div>
+          )
+        })}
+
+      {/* Empty state */}
+      {messages.filter((msg) => msg.isFile && msg.fileUrl && (
+        activeTab === "pictures" ? msg.fileType?.startsWith("image/") : !msg.fileType?.startsWith("image/")
+      )).length === 0 && (
+        <div className="text-center py-8 text-white/60">
+          <p>No {activeTab === "pictures" ? "pictures" : "files"} shared yet</p>
+        </div>
+      )}
+    </div>
+  </div>
+</aside>
+
 )}
     </div>
     </>
