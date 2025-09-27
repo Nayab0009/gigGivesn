@@ -69,7 +69,7 @@ export default function UserProfile({ onClose }: UserProfileProps) {
         setError('Please select a valid image file')
         return
       }
-      
+
       // Validate file size (e.g., 5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         setError('Image size should be less than 5MB')
@@ -77,7 +77,7 @@ export default function UserProfile({ onClose }: UserProfileProps) {
       }
 
       setSelectedFile(file)
-      
+
       // Create preview
       const reader = new FileReader()
       reader.onload = (e) => {
@@ -103,7 +103,7 @@ export default function UserProfile({ onClose }: UserProfileProps) {
       formData.append('phone', form.phone)
       formData.append('address', form.address)
       formData.append('email', form.email)
-      
+
       // Add avatar if selected
       if (selectedFile) {
         formData.append('avatar', selectedFile)
@@ -140,14 +140,13 @@ export default function UserProfile({ onClose }: UserProfileProps) {
             <h1 className="text-2xl font-bold mb-2" style={{ color: colors.white.hex }}>
               Profile Settings
             </h1>
-            <p className="text-lg font-medium text-gray-300">
-              Manage your account details and preferences
-            </p>
+
           </div>
 
-          {/* Avatar with upload functionality */}
-          <div className="flex justify-center mb-8">
-            <div className="relative">
+          {/* Profile Info Section - Avatar on left, Name/Email on right */}
+          <div className="flex items-center gap-6 mb-8">
+            {/* Avatar with upload functionality */}
+            <div className="relative flex-shrink-0">
               <div className="h-32 w-32 rounded-full flex items-center justify-center bg-gray-700 text-white text-3xl font-bold overflow-hidden shadow-lg">
                 {imagePreview ? (
                   <img
@@ -159,7 +158,7 @@ export default function UserProfile({ onClose }: UserProfileProps) {
                   form.name.charAt(0) || "?"
                 )}
               </div>
-              
+
               {/* Upload button overlay */}
               <button
                 type="button"
@@ -171,7 +170,7 @@ export default function UserProfile({ onClose }: UserProfileProps) {
                   <span className="text-xs">Change</span>
                 </div>
               </button>
-              
+
               {/* Hidden file input */}
               <input
                 ref={fileInputRef}
@@ -181,42 +180,51 @@ export default function UserProfile({ onClose }: UserProfileProps) {
                 className="hidden"
               />
             </div>
+
+            {/* Name and Email Display */}
+            <div className="flex-1">
+              <h2 className="text-2xl font-bold text-white mb-1">
+                {form.name || "No Name"}
+              </h2>
+              <p className="text-lg text-gray-300">
+                {form.email || "No Email"}
+              </p>
+            </div>
           </div>
 
           {/* Form with proper spacing */}
           <div className="max-w-2xl mx-auto">
-          
-            
-
-            
             <form id="profile-form" onSubmit={handleSubmit} className="space-y-6">
-              {/* Name */}
-              <div className="group">
-                <label className="block mb-2 text-sm font-medium text-gray-300">
-                  Name
-                </label>
-                <input
-                  name="name"
-                  type="text"
-                  value={form.name}
-                  onChange={handleChange}
-                  placeholder="Enter full name"
-                  className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
-                />
-              </div>
+              {/* First row - Name and Email */}
+              <div className="grid grid-cols-2 gap-6">
+                {/* Name */}
+                <div className="group">
+                  <label className="block mb-2 text-sm font-medium text-gray-300">
+                    Name
+                  </label>
+                  <input
+                    name="name"
+                    type="text"
+                    value={form.name}
+                    onChange={handleChange}
+                    placeholder="Enter full name"
+                    className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
+                  />
+                </div>
 
-              {/* Email */}
-              <div className="group">
-                <label className="block mb-2 text-sm font-medium text-gray-300">
-                  Email
-                </label>
-                <input
-                  name="email"
-                  type="email"
-                  value={form.email}
-                  readOnly
-                  className="w-full rounded-lg border border-white/20 bg-black/40 px-4 py-3 text-gray-400 cursor-not-allowed"
-                />
+                {/* Email */}
+                <div className="group">
+                  <label className="block mb-2 text-sm font-medium text-gray-300">
+                    Email
+                  </label>
+                  <input
+                    name="email"
+                    type="email"
+                    value={form.email}
+                    readOnly
+                    className="w-full rounded-lg border border-white/20 bg-black/40 px-4 py-3 text-gray-400 cursor-not-allowed"
+                  />
+                </div>
               </div>
 
               {/* Phone */}
@@ -256,7 +264,7 @@ export default function UserProfile({ onClose }: UserProfileProps) {
               {error && (
                 <div className="text-red-400 text-center">{error}</div>
               )}
-                          
+
               <button
                 type="submit"
                 form="profile-form"

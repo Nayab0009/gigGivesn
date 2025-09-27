@@ -93,12 +93,13 @@ export default function UserDropdown() {
       {/* Dropdown */}
       {isOpen && (
         <div
-          className="absolute right-0 mt-[17px] flex w-[280px] flex-col rounded-2xl p-4 shadow-lg backdrop-blur-md"
-          style={{
-            backgroundColor: "rgba(0,0,0,0.55)", // darker glass
-            border: "1px solid rgba(164, 167, 174, 1)", // subtle border
-          }}
-        >
+  className="
+    absolute right-0 mt-[17px] flex flex-col w-[280px]
+    rounded-2xl p-4 shadow-lg
+    bg-black/30 border border-[#A4A7AE]
+    backdrop-blur-[100px]
+  "
+>
           {/* User Info */}
           <div className="mb-3">
             <span className="block text-base font-semibold text-white">
