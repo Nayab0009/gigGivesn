@@ -127,8 +127,7 @@ export default function ForumPage() {
   const selectedThread = threads.find((t) => t.id === selectedThreadId)
 
   return (
-  <div  className="relative top-[40px] left-1/2 transform -translate-x-1/2 w-[96%]
-+               min-h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar -mt-3">
+  <div  className="relative top-[40px] left-1/2 transform -translate-x-1/2 w-full   min-h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar -mt-3">
       {/* Header Section */}
       <div className="mb-6 flex items-center justify-between opacity-100 mx-auto">
         <div className="flex flex-col justify-leftye sp">
@@ -181,7 +180,7 @@ export default function ForumPage() {
               >
                 <div
                   className="absolute top-0 left-0 w-full h-1"
-                 
+
                 ></div>
 
                 <h2 className="text-3xl font-bold mb-8 text-center text-[white]">Create New Discussion</h2>
@@ -220,7 +219,7 @@ export default function ForumPage() {
                     onClick={handleAddThread}
                     disabled={isLoading || !newThreadTitle.trim() || !newThreadContent.trim()}
                     className="group relative px-10 py-4 bg-[#0CA9F6] rounded-2xl font-bold text-white text-lg transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none overflow-hidden"
-                   
+
                   >
                     <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
                     <span className="relative z-10">{isLoading ? "Posting..." : "Post Discussion"}</span>
