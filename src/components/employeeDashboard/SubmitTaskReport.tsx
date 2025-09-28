@@ -82,18 +82,13 @@ const SubmitTaskReport = () => {
     try {
       console.log('Fetching task details for task ID:', taskId);
       
-      const response = await axiosInstance.post('/tasks/user/all', {
-        userId: user.id,
-        projectId: parseInt(projectId || '0')
-      });
+      // Direct API call to get task by ID
+      const response = await axiosInstance.get(`/tasks/${taskId}`);
 
-      console.log('Tasks API Response:', response.data);
+      console.log('Task API Response:', response.data);
       
-      const tasksData = Array.isArray(response.data) ? response.data : [];
-      const foundTask = tasksData.find((t: TaskResponse) => t.id === parseInt(taskId));
-      
-      if (foundTask) {
-        setTask(foundTask);
+      if (response.data) {
+        setTask(response.data);
       } else {
         setError('Task not found or you do not have access to it');
       }
@@ -116,20 +111,25 @@ const SubmitTaskReport = () => {
       return;
     }
 
+    if (!taskId || !user?.id) {
+      setError('Invalid task ID or user not authenticated');
+      return;
+    }
+
     setSubmitting(true);
     setError(null);
 
     try {
       // PATCH API call to update task with report
-      // Based on your swagger test, only send the comment in the body
       const response = await axiosInstance.patch(`/tasks/${task.id}`, {
-        comment: comment
+        comment: comment,
+        userId: user.id // Add user ID for authorization check
       });
 
       console.log('Report submitted successfully:', response.data);
       
-      // Navigate back to tasks page
-      router.push('/dashboard/teammember/mytasks');
+      // Navigate back to the previous page
+      router.back();
       
     } catch (error: any) {
       console.error('Error submitting report:', error);
@@ -197,8 +197,8 @@ const SubmitTaskReport = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        // Clicked outside the main container, redirect to tasks page
-        router.push(`/dashboard/teammember/mytasks?projectId=${projectId}`);
+        // Clicked outside the main container, go back to previous page
+        router.back();
       }
     };
     
@@ -209,7 +209,7 @@ const SubmitTaskReport = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [router, projectId]);
+  }, [router]);
 
   // Show authentication error if user is not logged in
   if (!isAuthenticated || !user?.id) {
@@ -229,10 +229,11 @@ const SubmitTaskReport = () => {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 bg-black/60 -p-30">
-      <div ref={containerRef} className="max-w-2xl mx-auto bg-black/30 border border-white/30 rounded-2xl">
+
+    <div className="min-h-screen bg-black/30  relative z-40 pt-32 backdrop-blur-lg -m-4 md:-m-6 -mt-52 py-23" style={{ marginTop: '-150px' }}>
+      <div ref={containerRef} className="max-w-2xl mx-auto bg-black/30 border border-white/30 rounded-2xl ">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-7">
           <div className="flex items-center gap-4 mb-6">
             {/* <button
               onClick={() => router.push(`/dashboard/teammember/mytasks?projectId=${projectId}`)}
@@ -244,8 +245,8 @@ const SubmitTaskReport = () => {
             </button> */}
           </div>
           
-          <div className="text-center mb-8">
-            <h1 className="text-white text-3xl sm:text-4xl font-bold mb-4">
+          <div className="text-center">
+            <h1 className="text-white text-3xl sm:text-4xl font-medium mb-4">
               Submit Task Report
             </h1>
             <p className="text-white text-lg max-w-xl mx-auto">
@@ -291,12 +292,12 @@ const SubmitTaskReport = () => {
               <p className="text-slate-500 text-lg">The requested task could not be found or you don't have access to it.</p>
             </div>
           ) : (
-            <div className="p-8">
+            <div className="p-8 pt-0">
               {/* Task Information Card */}
               <div className="mb-8 rounded-2xl border-1 p-6 border-white/30 bg-black/30 shadow-lg">
                 <div className="flex justify-between items-center">
                   <div>
-                <h3 className="text-white text-xl font-extralight mb-4">Task Information</h3>
+                <h3 className="text-[#D1D5DB] text-xl font-extralight  mb-4">Task Information</h3>
                   </div>
 <div>
   <div className={`inline-flex items-center gap-2 px-2 rounded-full text-sm font-extralight ${getStatusInfo(task.status).color} shadow-lg`}>
@@ -307,8 +308,8 @@ const SubmitTaskReport = () => {
                 
                 <div className="space-y-4">
                   <div>
-                    <h4 className="text-lg font-extralight mb-2 text-white">{task.title}</h4>
-                    <p className="text-white mb-3 font-extralight">{task.description}</p>
+                    <h4 className="text-lg font-extralight mb-2 text-[#D1D5DB]">{task.title}</h4>
+                    <p className="text-[#D1D5DB] mb-3 font-extralight">{task.description}</p>
                   </div>
                   
                   <div className="my-7">
@@ -317,7 +318,7 @@ const SubmitTaskReport = () => {
                     </div>
                   </div>
                   
-                  <div className="text-sm font-extralight text-white">
+                  <div className="text-sm font-extralight text-[#D1D5DB]">
                     Project: {task.taskOf.name}
                   </div>
                 </div>
@@ -325,10 +326,10 @@ const SubmitTaskReport = () => {
 
               {/* Comment Form */}
               <div className="space-y-6 border-1 border-white/30 rounded-2xl p-6">
-                <h3 className="text-xl text-white mb-4 font-extralight">Add Comment</h3>
+                <h3 className="text-xl text-[#D1D5DB] mb-4 font-extralight">Add Comment</h3>
                 
                 <div>
-                  <label className="block text-sm text-white mb-2 font-extralight">
+                  <label className="block text-sm text-[#D1D5DB] mb-2 font-extralight">
                     Comment
                   </label>
                   <textarea
@@ -340,7 +341,7 @@ const SubmitTaskReport = () => {
                   />
                 </div>
 {/* Upload File */}
- <button className="px-9 py-3 font-extralight transition-all duration-300 text-white rounded-2xl border-1 border-dashed boder-white/30"
+ <button className="px-9 py-3 font-extralight transition-all duration-300 text-[#D1D5DB] rounded-2xl border-1 border-dashed boder-white/30"
                   >
                    <Upload className="inline w-5 h-5 mr-3"/>
                     Upload File
@@ -348,7 +349,7 @@ const SubmitTaskReport = () => {
                 {/* Action Buttons */}
                 <div className="flex space-x-4 pt-2">
                   <button
-                    onClick={() => router.push(`/dashboard/teammember/mytasks?projectId=${projectId}`)}
+                    onClick={() => router.back()}
                     className="flex-1 px-6 py-3 font-extralight transition-all duration-300 text-white rounded-full"
                   style={{ background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`, color: '#fff' }}>
                     In Progress
