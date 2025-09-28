@@ -1,16 +1,49 @@
 "use client"
-import { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, useMemo } from "react"
+import { createPortal } from "react-dom"
 import { Sparkles, Loader2, Trash2, Save, Camera, Upload } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
 import { colors } from "@/colors"
 import { getEmployeeById, updateTeamMember } from "@/lib/TeamService"
 
-interface UserProfileProps {
-  onClose: () => void
-}
 
-export default function UserProfile({ onClose }: UserProfileProps) {
+type UserProfileProps = {
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
   const { user } = useAuth()
+  const [mounted, setMounted] = useState(false);
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+  // Modal mount logic
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Close on Escape
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    if (isOpen) {
+      document.addEventListener("keydown", onKey);
+    }
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isOpen, onClose]);
+
+  // Reset form when opened
+  useEffect(() => {
+    if (!isOpen) return;
+    setSuccess(null);
+    setError(null);
+    setSelectedFile(null);
+  }, [isOpen]);
+
+  // Overlay click to close
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === overlayRef.current) onClose();
+  };
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -69,7 +102,7 @@ export default function UserProfile({ onClose }: UserProfileProps) {
         setError('Please select a valid image file')
         return
       }
-
+      
       // Validate file size (e.g., 5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         setError('Image size should be less than 5MB')
@@ -77,7 +110,7 @@ export default function UserProfile({ onClose }: UserProfileProps) {
       }
 
       setSelectedFile(file)
-
+      
       // Create preview
       const reader = new FileReader()
       reader.onload = (e) => {
@@ -103,7 +136,7 @@ export default function UserProfile({ onClose }: UserProfileProps) {
       formData.append('phone', form.phone)
       formData.append('address', form.address)
       formData.append('email', form.email)
-
+      
       // Add avatar if selected
       if (selectedFile) {
         formData.append('avatar', selectedFile)
@@ -122,31 +155,47 @@ export default function UserProfile({ onClose }: UserProfileProps) {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-lg">
-        <Loader2 className="w-10 h-10 text-white animate-spin" />
-      </div>
-    )
-  }
+  if (!isOpen || !mounted) return null;
 
-  return (
-    <div className="m-5 inset-0 z-50 flex items-center justify-center backdrop-blur-lg p-4">
-      <div className="relative w-full max-w-3xl bg-black/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
-        {/* Content Container with proper spacing */}
-        <div className="px-10 py-8">
+  return createPortal(
+    <div
+      ref={overlayRef}
+      onMouseDown={handleOverlayClick}
+      className="fixed inset-0 z-[1000] flex items-center justify-center p-2 bg-black/60 backdrop-blur-sm"
+    >
+      {loading ? (
+        <div className="flex items-center justify-center w-full h-full">
+          <Loader2 className="w-10 h-10 text-white animate-spin" />
+        </div>
+      ) : (
+        <div
+          onMouseDown={(e) => e.stopPropagation()}
+          className="relative w-full max-w-3xl max-h-[80vh] rounded-3xl border overflow-y-auto custom-scrollbar shadow-2xl p-8"
+          style={{
+            background: "rgba(0,0,0,0.55)",
+            borderColor: "#FFFFFF26",
+            boxShadow: "0 16px 40px rgba(0,0,0,0.45)",
+          }}
+        >
+          <style>{`
+            .custom-scrollbar::-webkit-scrollbar { width: 8px; background: transparent; }
+            .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 8px; border: 2px solid rgba(255,255,255,0.08); }
+            .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+            .custom-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
+          `}</style>
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold mb-2" style={{ color: colors.white.hex }}>
               Profile Settings
             </h1>
-
+            <p className="text-lg font-medium text-gray-300">
+              Manage your account details and preferences
+            </p>
           </div>
 
-          {/* Profile Info Section - Avatar on left, Name/Email on right */}
-          <div className="flex items-center gap-6 mb-8">
-            {/* Avatar with upload functionality */}
-            <div className="relative flex-shrink-0">
+          {/* Avatar, Name & Email in one row */}
+          <div className="flex items-center gap-8 mb-8">
+            <div className="relative">
               <div className="h-32 w-32 rounded-full flex items-center justify-center bg-gray-700 text-white text-3xl font-bold overflow-hidden shadow-lg">
                 {imagePreview ? (
                   <img
@@ -158,7 +207,6 @@ export default function UserProfile({ onClose }: UserProfileProps) {
                   form.name.charAt(0) || "?"
                 )}
               </div>
-
               {/* Upload button overlay */}
               <button
                 type="button"
@@ -170,7 +218,6 @@ export default function UserProfile({ onClose }: UserProfileProps) {
                   <span className="text-xs">Change</span>
                 </div>
               </button>
-
               {/* Hidden file input */}
               <input
                 ref={fileInputRef}
@@ -180,25 +227,21 @@ export default function UserProfile({ onClose }: UserProfileProps) {
                 className="hidden"
               />
             </div>
-
-            {/* Name and Email Display */}
+            {/* Name & Email as plain text */}
             <div className="flex-1">
-              <h2 className="text-2xl font-bold text-white mb-1">
-                {form.name || "No Name"}
-              </h2>
-              <p className="text-lg text-gray-300">
-                {form.email || "No Email"}
-              </p>
+              <div className="flex flex-col justify-center h-full">
+                <div className="text-2xl font-bold text-white mb-2">{form.name || "-"}</div>
+                <div className="text-base text-gray-300">{form.email || "-"}</div>
+              </div>
             </div>
           </div>
 
           {/* Form with proper spacing */}
           <div className="max-w-2xl mx-auto">
             <form id="profile-form" onSubmit={handleSubmit} className="space-y-6">
-              {/* First row - Name and Email */}
-              <div className="grid grid-cols-2 gap-6">
-                {/* Name */}
-                <div className="group">
+              {/* Name & Email in one row */}
+              <div className="flex gap-6">
+                <div className="group w-1/2">
                   <label className="block mb-2 text-sm font-medium text-gray-300">
                     Name
                   </label>
@@ -211,9 +254,7 @@ export default function UserProfile({ onClose }: UserProfileProps) {
                     className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
                   />
                 </div>
-
-                {/* Email */}
-                <div className="group">
+                <div className="group w-1/2">
                   <label className="block mb-2 text-sm font-medium text-gray-300">
                     Email
                   </label>
@@ -264,7 +305,6 @@ export default function UserProfile({ onClose }: UserProfileProps) {
               {error && (
                 <div className="text-red-400 text-center">{error}</div>
               )}
-
               <button
                 type="submit"
                 form="profile-form"
@@ -296,7 +336,8 @@ export default function UserProfile({ onClose }: UserProfileProps) {
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  )
+      )}
+    </div>,
+    document.body
+  );
 }

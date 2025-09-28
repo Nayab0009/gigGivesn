@@ -1,9 +1,10 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { colors } from "@/colors";
 import Image from "next/image";
+import UserProfile from "../generic/UserProfile";
 import SupportModal from "@/components/generic/SupportModal";
 
 export default function UserDropdown() {
@@ -11,36 +12,8 @@ export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isSupportOpen, setIsSupportOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const router = useRouter();
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // 🔹 Close dropdown on outside click or ESC key
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    }
-
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setIsOpen(false);
-      }
-    }
-
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-      document.addEventListener("keydown", handleEscape);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [isOpen]);
 
   const handleSignOut = async () => {
     setIsLoggingOut(true);
@@ -52,7 +25,7 @@ export default function UserDropdown() {
   if (!user) return null;
 
   const displayName = user.name ? user.name : user.email.split("@")[0];
-  const role = user.role ? user.role : "User";
+  const role = user.role ? user.role : "User"; // fallback role
 
   const getInitials = (name: string) =>
     name
@@ -66,70 +39,66 @@ export default function UserDropdown() {
   });
 
   return (
-    <div className="relative" ref={dropdownRef}>
-      {/* Toggle button */}
+    <div className="relative">
+      {/* Toggle button with avatar + name */}
       <button
-        onClick={(e) => {
-          e.stopPropagation();
-          setIsOpen((prev) => !prev);
-        }}
-        className="flex items-center text-white"
-      >
-        {/* Avatar */}
-        {user.avatar ? (
-          <div className="mr-3 h-11 w-11 rounded-full overflow-hidden flex-shrink-0">
-            <Image
-              src={user.avatar}
-              alt={displayName}
-              width={44}
-              height={44}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        ) : (
-          <div
-            className="mr-3 h-11 w-11 flex items-center justify-center rounded-full text-white font-semibold text-lg"
-            style={getAvatarColor()}
-          >
-            {getInitials(displayName)}
-          </div>
-        )}
+  onClick={(e) => {
+    e.stopPropagation();
+    setIsOpen((prev) => !prev);
+  }}
+  className="flex items-center text-white"
+>
+  {/* Avatar */}
+  {user.avatar ? (
+  <div className="mr-3 h-11 w-11 rounded-full overflow-hidden flex-shrink-0">
+  <Image
+    src={user.avatar}
+    alt={displayName}
+    width={44}
+    height={44}
+    className="w-full h-full object-cover"
+  />
+</div>
+  ) : (
+    <div
+      className="mr-3 h-11 w-11 flex items-center justify-center rounded-full text-white font-semibold text-lg"
+      style={getAvatarColor()}
+    >
+      {getInitials(displayName)}
+    </div>
+  )}
 
-        {/* Name */}
-        <span className="mr-2 text-base font-medium text-white">
-          {displayName}
-        </span>
+  {/* Name */}
+  <span className="mr-2 text-base font-medium text-white">{displayName}</span>
 
-        {/* Dropdown Arrow */}
-        <svg
-          className={`stroke-white transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
-          width="18"
-          height="20"
-          viewBox="0 0 18 20"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M4.3125 8.65625L9 13.3437L13.6875 8.65625"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </button>
+  {/* Dropdown Arrow */}
+  <svg
+    className={`stroke-white transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+    width="18"
+    height="20"
+    viewBox="0 0 18 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M4.3125 8.65625L9 13.3437L13.6875 8.65625"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+</button>
+
 
       {/* Dropdown */}
       {isOpen && (
         <div
-          className="
-            absolute right-0 mt-[17px] flex flex-col w-[280px]
-            rounded-2xl p-4 shadow-lg
-            bg-black/30 border border-[#A4A7AE]
-            backdrop-blur-[100px]
-          "
+          className="absolute right-0 mt-[17px] flex w-[280px] flex-col rounded-2xl p-4 shadow-lg backdrop-blur-md"
+          style={{
+            backgroundColor: "rgba(0,0,0,0.55)", // darker glass
+            border: "1px solid rgba(164, 167, 174, 1)", // subtle border
+          }}
         >
           {/* User Info */}
           <div className="mb-3">
@@ -139,7 +108,7 @@ export default function UserDropdown() {
             <span className="block text-sm text-gray-300">{user.email}</span>
           </div>
 
-          {/* Role + Active Badge */}
+          {/* Role + Active Badge Row */}
           <div className="flex items-center justify-between mb-4">
             <span className="px-3 py-1 text-xs font-medium rounded-md bg-white/10 text-white">
               {role}
@@ -155,11 +124,11 @@ export default function UserDropdown() {
             </span>
           </div>
 
-          {/* Profile Option */}
+          {/* Profile Option - open modal instead of redirect */}
           <button
             onClick={() => {
               setIsOpen(false);
-              router.push("/dashboard/userprofile");
+              setIsProfileOpen(true);
             }}
             className="flex items-center gap-3 w-full text-left px-3 py-2 rounded-lg text-sm text-white hover:bg-white/10 transition"
           >
@@ -183,8 +152,7 @@ export default function UserDropdown() {
             <Image src="/images/theme.svg" alt="Theme" width={22} height={22} />
             Theme
           </button>
-
-          {/* Support Option */}
+      {/* Support Option - opens in-place modal instead of navigating */}
           <button
             onClick={() => {
               setIsOpen(false);
@@ -209,7 +177,7 @@ export default function UserDropdown() {
             onClick={handleSignOut}
             className="flex items-center gap-3 w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition"
             style={{
-              color: "rgba(240, 68, 56, 0.9)", // red text
+              color: "rgba(240, 68, 56, 0.9)", // darker red text
             }}
             disabled={isLoggingOut}
           >
@@ -223,19 +191,19 @@ export default function UserDropdown() {
           </button>
         </div>
       )}
-
-      {/* Modal */}
+      {/* Modals live outside the dropdown so they can open independently */}
       <SupportModal
         isOpen={isSupportOpen}
         onClose={() => setIsSupportOpen(false)}
-        user={{
-          name: user.name,
-          email: user.email,
-          image: (user as any).image,
-        }}
+        user={{ name: user.name, email: user.email, image: (user as any).image }}
         onSubmit={async (data) => {
+          // TODO: wire to backend/email service
           console.log("Support request:", data);
         }}
+      />
+      <UserProfile
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
       />
     </div>
   );
