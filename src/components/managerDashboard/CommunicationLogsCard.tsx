@@ -14,18 +14,55 @@ interface CommunicationLogsCardProps {
 }
 
 const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs, commLoading, onSeeAll }) => (
-  <div
-    className="rounded-3xl p-5 flex flex-col justify-between border border-white/20 bg-black/30 shadow-md w-full min-w-[280px] max-w-[362px] mx-auto"
-    style={{ minHeight: '300px', boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)', transition: 'box-shadow 0.2s' }}
-  >
-    <div className="flex items-center justify-between mb-4">
-      <span className="text-lg font-semibold text-white">Communication Logs</span>
-      <button
+   <div
+      className="flex flex-col justify-between border border-white/30 bg-black/30 shadow-md w-full mx-auto"
+      style={{
+        width: '362px',
+        height: '248px',
+        minHeight: '248px',
+        maxHeight: '248px',
+        borderRadius: '22.37px',
+        borderWidth: '1px',
+        padding: '16.27px',
+        opacity: 1,
+        boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)'
+      }}
+    >
+    <div className="flex items-center justify-between mb-2">
+      <span
+        style={{
+          fontFamily: 'Inter, sans-serif',
+          fontWeight: 600,
+          fontStyle: 'normal',
+          fontSize: '18.3px',
+          lineHeight: '28.47px',
+          letterSpacing: '0px',
+          verticalAlign: 'middle',
+          color: '#fff',
+        }}
+      >
+        Communication Logs
+      </span>
+      <span
+        style={{
+          fontFamily: 'Inter, sans-serif',
+          fontWeight: 400,
+          fontStyle: 'normal',
+          fontSize: '14.23px',
+          lineHeight: '20.33px',
+          letterSpacing: '0px',
+          verticalAlign: 'middle',
+          color: '#93c5fd', // text-blue-300
+        }}
+      >
+       <button
         className="text-xs font-medium text-blue-300 hover:underline focus:outline-none"
         onClick={onSeeAll}
       >
-        See All
+        See All  
       </button>
+      </span>
+      
     </div>
     <div className="flex flex-col gap-4">
       {commLoading ? (

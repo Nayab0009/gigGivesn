@@ -40,11 +40,13 @@ const priorityColors: Record<string, string> = {
   "Low": "bg-blue-500",
 };
 
+
 interface TimeTableProps {
   projectId?: string | number;
+  projectName?: string;
 }
 
-const TimeTable = ({ projectId }: TimeTableProps) => {
+const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -68,7 +70,7 @@ const TimeTable = ({ projectId }: TimeTableProps) => {
 
 
     // Map tasks to days
-   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const schedule: Record<string, any[]> = {};
     days.forEach(day => (schedule[day] = []));
 
@@ -113,7 +115,7 @@ const TimeTable = ({ projectId }: TimeTableProps) => {
     const mondayDate = new Date(today);
 
     // Adjust to get Monday's date
-    const daysFromMonday = currentDay === 0 ? 7 : currentDay - 1;
+    const daysFromMonday = currentDay === 0 ? 6 : currentDay - 1;
     mondayDate.setDate(today.getDate() - daysFromMonday);
 
     // Generate day numbers for the week starting from Monday
@@ -126,19 +128,18 @@ const TimeTable = ({ projectId }: TimeTableProps) => {
 
     return (
       <div className="w-full overflow-x-auto bg-black/30 p-4 rounded-3xl"
-      style={
-        {
-          scrollbarWidth: 'none',
-        }
-      }
+        style={{ scrollbarWidth: 'none' }}
       >
+
         <div className="flex flex-row gap-2 min-w-[900px]">
           {/* Days headers and task columns */}
-          {days.map((day) => {
+          {days.map((day, idx) => {
             const tasks = schedule[day];
+            // Only add border-r if not the last column
+            const isLast = idx === days.length - 1;
             return (
-              <div key={day} className="flex flex-col gap-2 min-w-[120px]">
-                <div className="bg-black/30 p-2 text-white text-center rounded-md">
+              <div key={day} className={`flex flex-col gap-2 min-w-[120px] border-b border-white/30 ${!isLast ? 'border-r' : ''}`}>
+                <div className="p-2 text-white text-center  border-b border-white/30">
                   <div className="text-sm">{dayNames[day as keyof typeof dayNames]} {dayNumbers[day]}</div>
                 </div>
 
@@ -152,8 +153,8 @@ const TimeTable = ({ projectId }: TimeTableProps) => {
                   };
                   // Determine task code color
                   const taskCodeColor =
-                    task.taskCode?.startsWith("FAZ") ? "text-orange-500" :
-                    task.taskCode?.startsWith("SO") ? "text-blue-500" : "text-gray-300";
+                    task.taskCode?.startsWith("FAZ") ? "text-[#0CA9F6]" :
+                    task.taskCode?.startsWith("SO") ? "text-[#0CA9F6]" : "text-[#0CA9F6]";
                   return (
                     <div
                       key={`${day}-${task.id || idx}`}
@@ -163,9 +164,9 @@ const TimeTable = ({ projectId }: TimeTableProps) => {
                       <div className="flex justify-between items-center mb-1">
                         <div className="flex flex-col items-start gap-0">
                           <span className={`text-xs font-semibold ${taskCodeColor}`}>{task.taskCode}</span>
-                          <span className="mt-1 px-2 py-0.5 text-[10px] rounded-full bg-blue-700/80 text-white font-semibold">Done</span>
+                          <span className="mt-1 px-2 py-0.5 text-[10px] rounded-full bg-[#0CA9F6] text-white font-semibold">Done</span>
                         </div>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-orange-600/90 text-white font-semibold">{task.priority}</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-[#FFBE31] text-white font-semibold">{task.priority}</span>
                       </div>
                       <div className="mt-2">
                         <div className="text-base font-semibold leading-tight">{task.title}</div>

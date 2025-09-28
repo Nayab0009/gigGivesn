@@ -232,10 +232,10 @@ const AppHeader: React.FC = () => {
                 <Link
                   href={item.path}
                   className={`transition-all duration-200 ease-in-out hover:scale-105 whitespace-nowrap ${
-  isActive(item.path)
-    ? "bg-[#0CA9F6] text-white px-4 py-1.5 rounded-full shadow-lg"
-    : "hover:text-[#0CA9F6] cursor-pointer"
-}`}
+                    isActive(item.path)
+                      ? "bg-[#0CA9F6] text-white px-4 py-1.5 rounded-full shadow-lg"
+                      : "hover:text-[#0CA9F6] cursor-pointer"
+                  }`}
 
                 >
                   {item.name}

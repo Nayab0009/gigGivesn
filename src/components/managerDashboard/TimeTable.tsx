@@ -80,7 +80,7 @@ const TimeTable = () => {
     };
 
     // Map tasks to days of the week
-  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const schedule: Record<string, any[]> = {};
     days.forEach(day => (schedule[day] = []));
 
@@ -137,7 +137,7 @@ const TimeTable = () => {
     const mondayDate = new Date(today);
 
     // Adjust to get Monday's date
-    const daysFromMonday = currentDay === 0 ? 7 : currentDay - 1;
+    const daysFromMonday = currentDay === 0 ? 6 : currentDay - 1;
     mondayDate.setDate(today.getDate() - daysFromMonday);
 
     // Generate day numbers for the week starting from Monday
@@ -156,17 +156,19 @@ const TimeTable = () => {
       }
     }
       >
-        <div className="flex flex-row gap-2 min-w-[900px]">
+        <div className="flex flex-row gap-2 min-w-[1920px]">
           {/* Days headers and task columns */}
-          {days.map((day) => {
+          {days.map((day, idx) => {
             const tasks = schedule[day];
+            // Only add border-r if not the last column
+            const isLast = idx === days.length - 1;
             return (
-              <div key={day} className="flex flex-col gap-2 min-w-[120px]">
-                <div className="bg-black/30 p-2 text-white text-center rounded-md">
+              <div key={day} className={`flex flex-col gap-2 min-w-[120px] border-b border-white/30 ${!isLast ? 'border-r' : ''}`}>
+                <div className="p-2 text-white text-center  border-b border-white/30">
                   <div className="text-sm">{dayNames[day as keyof typeof dayNames]} {dayNumbers[day]}</div>
                 </div>
 
-                {tasks.map((task, idx) => {
+                  {tasks.map((task, idx) => {
                   // Determine priority color class
                   const priorityColorMap: Record<string, string> = {
                     "High": "bg-red-500",

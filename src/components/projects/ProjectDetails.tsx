@@ -310,8 +310,18 @@ export default function ProjectDetailsPage() {
         {/* Top bar */}
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-white/70 text-sm">Project</div>
-            <h1 className="text-2xl sm:text-3xl font-semibold text-white mt-1">
+            {/* <div className="text-white/70 text-sm">Project</div> */}
+            <h1
+              className="text-[20px] font-semibold text-white mt-1"
+              style={{
+                fontFamily: 'Roboto, sans-serif',
+                fontWeight: 600,
+                fontStyle: 'normal',
+                lineHeight: '28px',
+                letterSpacing: '0px',
+                verticalAlign: 'middle',
+              }}
+            >
               {project ? project.name : isLoading ? "Loading…" : "—"}
             </h1>
           </div>
@@ -423,7 +433,25 @@ export default function ProjectDetailsPage() {
 
 
             {activeTab === "calendar" ? (
-              <CalendarTab projectId={project.id} />
+              <>
+                <div className="mb-4">
+                  <h2
+                    className="text-[20px] font-semibold text-white"
+                    style={{
+                      fontFamily: 'Roboto, sans-serif',
+                      fontWeight: 600,
+                      fontStyle: 'normal',
+                      lineHeight: '28px',
+                      letterSpacing: '0px',
+                      verticalAlign: 'middle',
+                      gap: '10px'
+                    }}
+                  >
+                    {project?.name} Calendar
+                  </h2>
+                </div>
+                <CalendarTab projectId={project.id} />
+              </>
             ) : activeTab === "sprints" ? (
               <SprintsTab projectId={project.id} projectName={project.name} />
             ) : activeTab === "tasks" ? (

@@ -36,7 +36,20 @@ const TodayTask = () => {
   }, [])
 
   const renderColumn = (title: string, taskList: any[]) => (
-    <div className="flex-1 bg-[#0000004D]/30 backdrop-blur-md rounded-2xl p-4 flex flex-col">
+    <div
+      className="flex flex-col"
+      style={{
+        width: '385.33px',
+        height: '661px',
+        borderRadius: '22px',
+        border: '1px solid #FFFFFF4D',
+        padding: '12px',
+        gap: '10px',
+        opacity: 1,
+        background: '#0000004D',
+        boxSizing: 'border-box',
+      }}
+    >
       {/* Only show column header if data is loaded */}
       {!loading && (
         <div>
@@ -58,44 +71,147 @@ const TodayTask = () => {
           {taskList.map((task, idx) => (
             <div
               key={idx}
-              className="p-4 rounded-xl bg-[#0000004D]/30 border border-white/10 shadow-md flex flex-col space-y-2"
+              style={{
+                width: '361.33px',
+                height: '197.93px',
+                borderRadius: '15px',
+                border: '1px solid #FFFFFF4D',
+                padding: '16.27px',
+                gap: '12px',
+                opacity: 1,
+                background: '#0000004D',
+                boxSizing: 'border-box',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
             >
               {/* Top Row */}
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-sky-400">{task.ticketNumber}</span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-400">
-                  {task.priority}
+              <div className="flex items-center justify-between mb-2">
+                {/* Ticket Number Badge */}
+                <span
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 600,
+                    fontStyle: 'normal',
+                    fontSize: '10px',
+                    lineHeight: '100%',
+                    letterSpacing: '0px',
+                    verticalAlign: 'middle',
+                    color: '#0CA9F6',
+                    background: 'rgba(12, 169, 246, 0.10)',
+                    borderRadius: '4px',
+                    paddingRight: '4px',
+                    paddingLeft: '4px',
+                    height: '18px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    opacity: 1,
+                  }}
+                >
+                  {task.ticketNumber}
                 </span>
+                {/* Priority Badge ("Done" badge styling if task.status === 'done') */}
+                {task.status === 'done' ? (
+                  <span
+                    style={{
+                      width: '26px',
+                      height: '10px',
+                      borderRadius: '4px',
+                      background: '#BD4242',
+                      color: '#fff',
+                      fontSize: '10px',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 600,
+                      gap: '4px',
+                      paddingRight: '4px',
+                      paddingLeft: '4px',
+                      opacity: 1,
+                    }}
+                  >
+                    Done
+                  </span>
+                ) : (
+                  <span
+                    style={{
+                      fontFamily: 'Inter, sans-serif',
+                      fontWeight: 600,
+                      fontSize: '10px',
+                      borderRadius: '4px',
+                      background: '#BD4242',
+                      color: '#fff',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '4px',
+                      paddingRight: '4px',
+                      paddingLeft: '4px',
+                      height: '18px',
+                      opacity: 1,
+                    }}
+                  >
+                    {task.priority}
+                  </span>
+                )}
               </div>
 
               {/* Title & Description */}
               <div>
-                <h4 className="text-white font-medium">{task.title}</h4>
-                <p className="text-gray-400 text-sm">{task.description}</p>
+                <h4
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 600,
+                    fontStyle: 'normal',
+                    fontSize: '14px',
+                    lineHeight: '28.47px',
+                    letterSpacing: '0px',
+                    verticalAlign: 'middle',
+                    color: '#fff',
+                  }}
+                >
+                  {task.title}
+                </h4>
+                <p
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 400,
+                    fontStyle: 'normal',
+                    fontSize: '12px',
+                    lineHeight: '100%',
+                    letterSpacing: '0px',
+                    verticalAlign: 'middle',
+                    color: '#fff',
+                  }}
+                >
+                  {task.description}
+                </p>
               </div>
 
               {/* Bottom Row */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mt-2">
                 <div className="flex items-center space-x-2">
-                {task.taskFor?.avatar ? (
+                  {task.taskFor?.avatar ? (
                     <Image
-                    src={task.taskFor.avatar}
-                    alt={task.taskFor?.name || "User"}
-                    width={28}
-                    height={28}
-                    className="rounded-full w-7 h-7 object-cover border border-black"
+                      src={task.taskFor.avatar}
+                      alt={task.taskFor?.name || "User"}
+                      width={28}
+                      height={28}
+                      className="rounded-full w-7 h-7 object-cover border border-black"
                     />
-                ) : (
+                  ) : (
                     <div
-                    className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs border border-black"
-                    title={task.taskFor?.name || "User"}
+                      className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs border border-black"
+                      title={task.taskFor?.name || "User"}
                     >
-                    {task.taskFor?.name?.charAt(0) || "U"}
+                      {task.taskFor?.name?.charAt(0) || "U"}
                     </div>
-                )}
-                <span className="text-gray-400 text-sm">
+                  )}
+                  <span className="text-gray-400 text-sm">
                     {task.taskDate ? new Date(task.taskDate).toLocaleDateString() : "—"}
-                </span>
+                  </span>
                 </div>
 
                 <MoreHorizontal className="text-gray-400 w-4 h-4" />
@@ -109,7 +225,15 @@ const TodayTask = () => {
 
   return (
     <div className="w-full h-full flex flex-col">
-      <div className="flex gap-6 flex-grow">
+      <div
+        className="flex flex-row items-center justify-center mx-auto"
+        style={{
+          width: '1180px',
+          height: '661px',
+          gap: '12px',
+          opacity: 1,
+        }}
+      >
         {renderColumn("High", tasks.high)}
         {renderColumn("Low", tasks.low)}
         {renderColumn("Medium", tasks.medium)}

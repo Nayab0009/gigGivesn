@@ -22,9 +22,9 @@ const formatDuration = (start: Date, end: Date) => {
 
 const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) => {
 
-    if (!task) return null;
+  if (!task) return null;
 
-   // Sprint estimated time
+  // Sprint estimated time
   const sprintEstimatedTime = formatDuration(
     new Date(task.sprint?.startDate),
     new Date(task.sprint?.endDate)
@@ -36,110 +36,295 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
     new Date(task.taskDate)
   )
 
-
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center bg-black/60 z-50"
+      className="fixed inset-0 flex items-center justify-center z-50"
       onClick={onClose}
+      style={{
+        background: '#00000099',
+        backdropFilter: 'blur(30px)',
+      }}
     >
+
       <div
-        className="relative bg-[#0000004D]/100 backdrop-blur-md rounded-2xl p-6 w-[420px] shadow-2xl border border-white/10"
         onClick={e => e.stopPropagation()}
+        style={{
+          borderRadius: '20px',
+          border: '1px solid #FFFFFF4D',
+          padding: '42px',
+          gap: '22px',
+          opacity: 1,
+          background: '#0000004D',
+          boxSizing: 'border-box',
+          top: '267px',
+          left: '478px',
+          width: '420px',
+          height: '512.4px',
+        }}
       >
 
+        {/* Flex container for Status and Ticket Info */}
+        <div className="flex justify-between mb-6">
 
-        {/* Status badge */}
-        <div className="absolute top-3 right-12">
-          <span className="px-3 py-1 text-xs font-medium rounded-full bg-sky-500 text-white">
-            {task.status || "In progress"}
-          </span>
-        </div>
+          {/* Ticket Info */}
+          <div className="space-y-2 flex-shrink-0">
+            <div>
+              <p
+                className="text-[#A4A7AE]"
+                style={{
+                  fontFamily: "Roboto",
+                  fontWeight: 300,
+                  fontStyle: "normal",
+                  fontSize: "10px",
+                  lineHeight: "100%",
+                  letterSpacing: "0px",
+                  verticalAlign: "middle",
+                }}
+              >
+                Ticket Number
+              </p>
 
-        {/* Ticket Info */}
-        <div className="mb-6 space-y-2">
-          <div>
-            <p className="text-xs text-gray-400">Ticket Number</p>
-            <p className="text-white font-medium">{task.ticketNumber || "-"}</p>
+              <p className="text-[#BDBDBD] font-medium"
+                style={{
+                  fontFamily: "Roboto",
+                  fontWeight: 500,
+                  fontSize: "22px",
+                  lineHeight: "28px",
+                  letterSpacing: "0px",
+                  verticalAlign: "middle",
+                }}
+              >
+                {task.ticketNumber || "-"}
+              </p>
+            </div>
+            <div>
+              <p
+                className="text-[#A4A7AE]"
+                style={{
+                  fontFamily: "Roboto",
+                  fontWeight: 300,
+                  fontStyle: "normal",
+                  fontSize: "10px",
+                  lineHeight: "100%",
+                  letterSpacing: "0px",
+                  verticalAlign: "middle",
+                }}
+              >
+                Sprint Number
+              </p>
+              <p className="text-[#BDBDBD] font-medium"
+                style={{
+                  fontFamily: "Roboto",
+                  fontWeight: 500,
+                  fontSize: "22px",
+                  lineHeight: "28px",
+                  letterSpacing: "0px",
+                  verticalAlign: "middle",
+                }}>
+                  {task.sprint.name || "-"}
+                </p>
+            </div>
           </div>
-          <div>
-            <p className="text-xs text-gray-400">Sprint Number</p>
-            <p className="text-white font-medium">{task.sprint.name || "-"}</p>
+
+
+          {/* Status badge */}
+          <div className="flex-shrink-0">
+            <span
+              className="text-[#FFFFFF]"
+              style={{
+                background: "#0CA9F6",
+                fontFamily: "Roboto",
+                fontWeight: 400,
+                fontStyle: "normal",
+                fontSize: "12px",
+                lineHeight: "28px",
+                letterSpacing: "0px",
+                borderRadius: "99px",
+                padding: "0 12px",
+                opacity: 1,
+                width: "84px",
+                height: "28px",
+                textAlign: "center",
+                display: "flex",         
+                alignItems: "center",    
+                justifyContent: "center", 
+                overflow: "hidden"       
+              }}
+            >
+              {task.status || "In progress"}
+            </span>
           </div>
+
+          
         </div>
 
         {/* Meta Info */}
-        <div className="grid grid-cols-2 gap-y-4 gap-x-8 mb-6 text-sm">
-          <div>
-            <p className="text-gray-400">Priority</p>
-            <p className="text-white flex items-center gap-2">
-              <span className="w-2 h-2 bg-red-500 rounded-full"></span> {task.priority || "-"}
-            </p>
+        <div className="space-y-3 mb-6 text-[#A4A7AE]"
+          style={{
+            fontFamily: "Inter",
+            fontWeight: 500,
+            fontStyle: "Medium",
+            fontSize: "18px",
+            lineHeight: "20px",
+            letterSpacing: "0px",
+            verticalAlign: "middle",
+          }}
+        >
+          <div className="flex items-center justify-between">
+            <p >Priority</p>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-red-500 rounded-full"></span> 
+              <span >{task.priority || "High"}</span>
+            </div>
           </div>
-          <div>
-            <p className="text-gray-400">Due date</p>
-            <p className="text-white flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-sky-600 flex items-center justify-center text-xs">
-                📅
-              </span>{" "}
-              {task.taskDate ? new Date(task.taskDate).toLocaleDateString() : "-"}
-
-            </p>
+          
+          <div className="flex items-center justify-between">
+            <p>Due date</p>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-4 rounded-full bg-gray-600 flex items-center justify-center text-xs">
+                ⭘
+              </span>
+              <span>{task.taskDate ? new Date(task.taskDate).toLocaleDateString() : "Yesterday"}</span>
+            </div>
           </div>
-          <div>
-            <p className="text-gray-400">Assignee</p>
-            <p className="text-white flex items-center gap-2">
+          
+          <div className="flex items-center justify-between">
+            <p>Assignee</p>
+            <div className="flex items-center gap-2">
               {task.taskFor?.avatar ? (
-                <Image src={task.taskFor.avatar} alt={task.taskFor.name || "Assignee"} width={20} height={20} className="rounded-full" />
+                <img
+                  src={task.taskFor.avatar}
+                  alt={task.taskFor.name || "Assignee"}
+                  className="rounded-full w-[19px] h-[19px]"
+                />
+
               ) : (
-                <span className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-xs text-white">{task.taskFor?.name?.charAt(0) || "A"}</span>
+                <span className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center text-xs text-white">
+                  {task.taskFor?.name?.charAt(0) || "M"}
+                </span>
               )}
-              {task.taskFor?.name || "-"}
-            </p>
+              <span>{task.taskFor?.name || "Musa Khan"}</span>
+            </div>
           </div>
-          <div>
-            <p className="text-gray-400">Reporter</p>
-            <p className="text-white flex items-center gap-2">
-              {task.taskOf?.avatar ? (
-                <Image src={task.taskOf.avatar} alt={task.taskOf.name || "Reporter"} width={20} height={20} className="rounded-full" />
-              ) : (
-                <span className="w-6 h-6 rounded-full bg-emerald-600 flex items-center justify-center text-xs text-white">{task.taskOf?.name?.charAt(0) || "C"}</span>
-              )}
-              {task.taskOf?.name || "-"}
-            </p>
+          
+          <div className="flex items-center justify-between">
+            <p>Reporter</p>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] bg-gray-700 rounded-sm px-1">AK</span>
+              <span>{task.taskOf?.name || "Me"}</span>
+            </div>
           </div>
-          <div>
-            <p className="text-gray-400">Estimated time</p>
-            <p className="text-white">{taskEstimatedTime || "-"}</p>
+          
+          <div className="flex items-center justify-between">
+            <p>Estimated time</p>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-4 rounded-full bg-gray-600 flex items-center justify-center text-xs">
+                ⭘
+              </span>
+              <span>{taskEstimatedTime || "0.15h (spent 0.15h)"}</span>
+            </div>
           </div>
         </div>
 
         {/* Task Card */}
-        <div className="p-4 rounded-xl bg-[#181c24] border border-white/10 shadow-md">
-          <div className="flex justify-between items-center mb-2">
-            <h4 className="text-white font-semibold">{task.title || "-"}</h4>
-            <span className="px-2 py-0.5 text-[10px] bg-orange-500/20 text-orange-400 rounded">
+        <div 
+          style={{
+            width: 340,
+            height: 150,
+            borderRadius: "12px",
+            borderWidth: "1px",
+            gap: "12px",
+            opacity: 1,
+            paddingTop: "22px",
+            paddingRight: "32px",
+            paddingBottom: "22px",
+            paddingLeft: "32px",
+            background: "#0000004D",
+            border: "1px solid #FFFFFF4D"
+          }}
+        >
+          <div className="flex justify-between items-start mb-3">
+            <h4
+              className="flex-1 break-words pr-2"
+              style={{
+                fontFamily: "Inter",
+                fontWeight: 600,
+                fontSize: "22px",
+                lineHeight: "120%",
+                color: "#FFFFFF"
+              }}
+            >
+              {task.title || "-"}
+            </h4>
+
+            <span
+              style={{
+                width: 50,
+                height: 15,
+                borderRadius: "4px",
+                padding: "0 4px",
+                background: "#FF8731",
+                color: "#FFFFFF",
+                fontSize: "10px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+            >
               {task.priority || "-"}
             </span>
           </div>
-          <p className="text-gray-400 text-sm mb-3">
+
+          <p 
+            style={{
+              fontFamily: "Inter",
+              fontWeight: 400,
+              fontStyle: "Regular",
+              fontSize: "12px",
+              lineHeight: "100%",
+              letterSpacing: "0px",
+              verticalAlign: "middle",
+              color: "#FFFFFF",
+              marginBottom: "12px"
+            }}
+          >
             {task.description || "-"}
           </p>
-          <div className="flex items-center justify-between text-sm text-gray-400">
+          <div className="flex items-center justify-between">
             <div className="flex -space-x-2">
               {task.taskFor?.avatar ? (
-                <Image src={task.taskFor.avatar} alt={task.taskFor.name || "User"} width={24} height={24} className="rounded-full border-2 border-[#181c24]" />
+                <img
+                  src={task.taskFor.avatar}
+                  alt={task.taskFor.name || "User"}
+                  className="rounded-full border-2 border-[#181c24] w-[24px] h-[24px]"
+                />
               ) : (
-                <span className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-xs text-white">{task.taskFor?.name?.charAt(0) || "U"}</span>
+                <span className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-xs text-white">
+                  {task.taskFor?.name?.charAt(0) || "U"}
+                </span>
               )}
             </div>
             <div className="flex items-center gap-1">
-              ⏱ <span>{sprintEstimatedTime || "-"}</span>
+              ⏱ <span
+                style={{
+                  fontFamily: "Inter",
+                  fontWeight: 400,
+                  fontStyle: "Regular",
+                  fontSize: "12px",
+                  lineHeight: "100%",
+                  letterSpacing: "0px",
+                  verticalAlign: "middle",
+                  color: "#FFFFFF"
+                }}
+              >
+                {sprintEstimatedTime || "-"}
+              </span>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TaskDetailsPopup
+export default TaskDetailsPopup;

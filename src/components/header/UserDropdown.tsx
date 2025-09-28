@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { colors } from "@/colors";
@@ -8,6 +8,7 @@ import UserProfile from "../generic/UserProfile";
 import SupportModal from "@/components/generic/SupportModal";
 
 export default function UserDropdown() {
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const { user, signout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -38,8 +39,20 @@ export default function UserDropdown() {
     background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
   });
 
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!isOpen) return;
+    function handleClick(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [isOpen]);
+
   return (
-    <div className="relative">
+    <div className="relative " ref={dropdownRef}>
       {/* Toggle button with avatar + name */}
       <button
   onClick={(e) => {
@@ -94,10 +107,12 @@ export default function UserDropdown() {
       {/* Dropdown */}
       {isOpen && (
         <div
-          className="absolute right-0 mt-[17px] flex w-[280px] flex-col rounded-2xl p-4 shadow-lg backdrop-blur-md"
+          className="absolute right-0 mt-[17px] flex w-[280px] flex-col rounded-2xl p-4 shadow-lg "
           style={{
-            backgroundColor: "rgba(0,0,0,0.55)", // darker glass
-            border: "1px solid rgba(164, 167, 174, 1)", // subtle border
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            border: "1px solid rgba(164, 167, 174, 1)", 
+            backdropFilter: "blur(100px)",
+            WebkitBackdropFilter: "blur(100px)",
           }}
         >
           {/* User Info */}

@@ -48,7 +48,19 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
       style={{ height: '248px', minHeight: '248px', maxHeight: '248px', padding: '16.27px', borderRadius: '20.33px', borderWidth: '1px', opacity: 1 }}
     >
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-lg md:text-xl font-bold tracking-tight">Today Task</h4>
+        <h4
+          className="text-[18.3px] font-semibold text-white"
+          style={{
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: 600,
+            fontStyle: 'normal',
+            lineHeight: '28.47px',
+            letterSpacing: '0px',
+            verticalAlign: 'middle',
+          }}
+        >
+          Today Task
+        </h4>
         <button className="text-sm text-blue-400 hover:text-blue-300" onClick={onViewAll}>
           See All
         </button>
@@ -82,7 +94,7 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
             return (
               <div
                 key={task.id || idx}
-                className="flex flex-col justify-between border border-white/20"
+                className="flex flex-col justify-between border border-white/20 w-full"
                 style={{
                   borderRadius: '15px',
                   borderWidth: '1px',
@@ -91,12 +103,39 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
                   minHeight: '158.6px',
                   maxHeight: '158.6px',
                   height: '158.6px',
-                  width: '305.16px',
                   opacity: 1,
                 }}
               >
-                <div className={`text-xs font-medium mb-2 ${priorityColorClass}`}>{priorityLabel}</div>
-                <div className="font-bold text-lg text-white mb-4">{task.title || task.name || "Untitled Task"}</div>
+                <div
+                  className={`mb-2`}
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 400,
+                    fontStyle: 'normal',
+                    fontSize: '12.2px',
+                    lineHeight: '16.27px',
+                    letterSpacing: '0px',
+                    verticalAlign: 'middle',
+                    color: '#60a5fa', // text-blue-400
+                  }}
+                >
+                  {priorityLabel}
+                </div>
+                <div
+                  className="mb-4"
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 600,
+                    fontStyle: 'normal',
+                    fontSize: '18.3px',
+                    lineHeight: '28.47px',
+                    letterSpacing: '0px',
+                    verticalAlign: 'middle',
+                    color: '#fff',
+                  }}
+                >
+                  {task.title || task.name || "Untitled Task"}
+                </div>
                 <div className="flex -space-x-2 mb-4">
                   {assignedUsers.map((user, i) => (
                     <div key={user?.id || i} className="relative">

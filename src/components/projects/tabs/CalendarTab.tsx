@@ -1,12 +1,14 @@
 "use client"
 import TimeTable from "../ProjectTimeTable"
 
+
 type CalendarTabProps = {
-  projectId: number
+  projectId: number;
+  projectName?: string;
 }
 
-const CalendarTab = ({ projectId }: CalendarTabProps) => {
-  return <TimeTable projectId={projectId} />
+const CalendarTab = ({ projectId, projectName }: CalendarTabProps) => {
+  return <TimeTable projectId={projectId} projectName={projectName} />
 }
 
 export default CalendarTab
