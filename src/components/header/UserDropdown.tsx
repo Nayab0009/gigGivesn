@@ -107,12 +107,12 @@ export default function UserDropdown() {
       {/* Dropdown */}
       {isOpen && (
         <div
-          className="absolute right-0 mt-[17px] flex w-[280px] flex-col rounded-2xl p-4 shadow-lg "
+          className="absolute right-0 backdrop-blur-[101.67px] mt-[17px] flex w-[280px] flex-col rounded-2xl p-4 shadow-lg "
           style={{
-            backgroundColor: "rgba(0, 0, 0, 0.8)",
-            border: "1px solid rgba(164, 167, 174, 1)", 
-            backdropFilter: "blur(100px)",
-            WebkitBackdropFilter: "blur(100px)",
+            backgroundColor: "rgba(0, 0, 0, 0.3)",
+            border: "1px solid rgba(164, 167, 174, 1)",
+
+
           }}
         >
           {/* User Info */}
