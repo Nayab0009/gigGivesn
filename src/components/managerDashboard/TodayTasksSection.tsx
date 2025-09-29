@@ -68,6 +68,7 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
             verticalAlign: 'middle',
           }}
         >
+          
           Today Task
         </h4>
         <button className="text-sm text-blue-400 hover:text-blue-300" onClick={onViewAll}>

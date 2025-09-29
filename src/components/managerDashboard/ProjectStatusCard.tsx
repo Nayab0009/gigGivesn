@@ -11,7 +11,7 @@ interface ProjectStatusCardProps {
 const ProjectStatusCard: React.FC<ProjectStatusCardProps> = ({ analytics }) => (
 
     <div
-      className="flex flex-col justify-between border border-white/30 bg-black/30 shadow-md w-full mx-auto"
+      className="flex flex-col justify-between border border-white/30 bg-black/30  backdrop-blur-[101.67px]   shadow-md w-full mx-auto"
       style={{
         minHeight: '240px',
         borderRadius: '20px',
