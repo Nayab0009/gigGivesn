@@ -170,7 +170,7 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
           className="rounded-3xl shadow-2xl bg-[#000000] max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 no-scrollbar"
           style={{
             // background: "black/40",
-          
+
           }}
         >
      {/* <style>{`
@@ -309,7 +309,7 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
                   className="w-full px-4 py-3 border-2 rounded-xl bg-[#000000] focus:ring-4 focus:outline-none transition-all duration-300 font-medium  text-white placeholder-gray-300"
                   style={{
                     borderColor: "rgba(255, 255, 255, 0.3)",
-                    
+
                   }}
                   disabled={isUpdating}
                 >
@@ -561,7 +561,7 @@ export default function ProjectDashboard() {
     }
   }
 
-  // Assign manager to project with API call
+
   const assignManager = async (projectId: string, manager: Manager) => {
     setIsAssigning(true)
     try {
@@ -609,14 +609,14 @@ export default function ProjectDashboard() {
   const editProject = editProjectId ? projects.find((p) => p.id === editProjectId) : null
 const truncateByWords = (text: string, maxLength: number = 100) => {
   if (!text || text.length <= maxLength) return text;
-  
+
   const truncated = text.substring(0, maxLength);
   const lastSpaceIndex = truncated.lastIndexOf(' ');
-  
+
   if (lastSpaceIndex > 0) {
     return truncated.substring(0, lastSpaceIndex) + '...';
   }
-  
+
   return truncated + '...';
 };
   // Refresh projects list (used by header Refresh button)
