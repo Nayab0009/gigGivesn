@@ -190,23 +190,8 @@ const TimeTable = () => {
                   return (
                     <div
                       key={`${day}-${task.id || idx}`}
-                      style={{
-                        width: '155.33px',
-                        height: '237.93px',
-                        borderRadius: '15px',
-                        border: '1px solid #FFFFFF4D',
-                        padding: '16.27px',
-                        gap: '32px',
-                        opacity: 1,
-                        background: '#0000004D',
-                        backgroundBlendMode: 'luminosity',
-                        backdropFilter: 'blur(101.66923522949219px)',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        overflow: 'hidden',
-                      }}
-                      className="relative overflow-hidden shadow-lg"
+                      className="flex flex-col justify-between bg-black/30 text-[#0CA9F6]relative overflow-hidden shadow-lg w-full min-h-[180px] p-4 rounded-[15px] border border-white/10 gap-y-8"
+                      style={{ opacity: 1, boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)' }}
                     >
                       <div className="flex justify-between items-center mb-1">
                         <div className="flex flex-col items-start gap-0">
