@@ -165,32 +165,19 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
     if (!open || !project) return null
 
     return (
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div
-          className="rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 custom-scrollbar"
+          className="rounded-3xl shadow-2xl bg-[#000000] max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 no-scrollbar"
           style={{
-            background: "rgba(255, 255, 255, 0.08)",
-            border: `2px solid ${colors.primary.hex}40`,
+            // background: "black/40",
+          
           }}
         >
-        <style>{`
-          .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
-            background: transparent;
-          }
-          .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.12);
-            border-radius: 8px;
-            border: 2px solid rgba(255,255,255,0.08);
-          }
-          .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(255,255,255,0.18);
-          }
-          .custom-scrollbar {
-            scrollbar-width: thin;
-            scrollbar-color: rgba(255,255,255,0.12) transparent;
-          }
-        `}</style>
+     {/* <style>{`
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+`}</style> */}
           {/* Header */}
           <div
             className="px-8 py-6 border-b relative overflow-hidden rounded-t-3xl"
@@ -199,7 +186,7 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
             //   color: "#fff",
             // }}
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+            <div className="absolute inset-0 bg-[#000000]"></div>
             <div className="relative flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold mb-1 text-white">Edit Project</h2>
@@ -207,7 +194,7 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
               </div>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-white/20 rounded-full transition-all duration-300 transform hover:scale-110"
+                className="p-2 hover:bg-white/20 rounded-full transition-all text-white duration-300 transform hover:scale-110"
                 disabled={isUpdating}
               >
                 <X className="w-6 h-6" />
@@ -216,7 +203,7 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="flex flex-col h-full">
+          <form onSubmit={handleSubmit} className="flex flex-col h-full bg-[#000000]">
             <div className="px-8 py-6 space-y-6 text-white">
               {/* Project Name */}
               <div className="space-y-2">
@@ -228,9 +215,9 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
-                  className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
+                  className="w-full px-4 py-3 rounded-xl focus:ring-4 focus:outline-none border  border-white/30 transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
                   style={{
-                    borderColor: errors.name ? "#ef4444" : colors.primary.hex,
+                    borderColor: errors.name ? "#ef4444" : "rgba(255, 255, 255, 0.3)",
                   }}
                   placeholder="Enter project name"
                   disabled={isUpdating}
@@ -255,7 +242,7 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
                   rows={3}
                   className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none resize-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
                   style={{
-                    borderColor: errors.description ? "#ef4444" : colors.primary.hex,
+                    borderColor: errors.description ? "#ef4444" : "rgba(255, 255, 255, 0.3)",
                   }}
                   placeholder="Enter project description"
                   disabled={isUpdating}
@@ -280,7 +267,7 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
                   onChange={(e) => handleInputChange("startDate", e.target.value)}
                   className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
                   style={{
-                    borderColor: colors.primary.hex,
+                    borderColor: "rgba(255, 255, 255, 0.3)",
                   }}
                   disabled={isUpdating}
                 />
@@ -298,7 +285,7 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
                   onChange={(e) => handleInputChange("endDate", e.target.value)}
                   className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
                   style={{
-                    borderColor: errors.endDate ? "#ef4444" : colors.primary.hex,
+                    borderColor: errors.endDate ? "#ef4444" : "rgba(255, 255, 255, 0.3)",
                   }}
                   disabled={isUpdating}
                 />
@@ -319,10 +306,10 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
                 <select
                   value={formData.status}
                   onChange={(e) => handleInputChange("status", e.target.value)}
-                  className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
+                  className="w-full px-4 py-3 border-2 rounded-xl bg-[#000000] focus:ring-4 focus:outline-none transition-all duration-300 font-medium  text-white placeholder-gray-300"
                   style={{
-                    borderColor: colors.primary.hex,
-                    background: "rgba(0,0,0,0.2)",
+                    borderColor: "rgba(255, 255, 255, 0.3)",
+                    
                   }}
                   disabled={isUpdating}
                 >
@@ -658,7 +645,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
   }, [])
 
   return (
-   <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%] h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar">
+   <div className="w-full mx-auto px-4 py-6 overflow-y-auto">
       <div className="mx-auto">
         {/* Header & Action Bar - match Manager header styling */}
         <div className="mb-8 flex items-center justify-between gap-4">
