@@ -36,12 +36,12 @@ const SummaryTab = ({
   statCards 
 }: SummaryTabProps) => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 px-24">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {statCards.map((c) => (
           <div
             key={c.label}
-            className="rounded-2xl border border-white/10 p-4 text-white/90 backdrop-blur-xl flex flex-col gap-2"
+            className="rounded-2xl border border-white/30 p-4 text-white/90 backdrop-blur-xl flex flex-col gap-2"
             style={{ background: "#0000004D" }}
           >
             <div className="flex items-center gap-2 mb-1">
@@ -57,7 +57,7 @@ const SummaryTab = ({
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div
-          className="rounded-2xl border border-white/10 p-6 text-white/90 backdrop-blur-xl min-h-[320px]"
+          className="rounded-2xl border border-white/30 p-6 text-white/90 backdrop-blur-xl min-h-[320px]"
           style={{ background: "#0000004D" }}
         >
           <div className="text-lg font-semibold mb-2">Status overview</div>
@@ -75,7 +75,7 @@ const SummaryTab = ({
           <div className="text-center text-white/60 text-sm">Total work items</div>
         </div>
         <div
-          className="rounded-2xl border border-white/10 p-6 text-white/90 backdrop-blur-xl min-h-[320px]"
+          className="rounded-2xl border border-white/30 p-6 text-white/90 backdrop-blur-xl min-h-[320px]"
           style={{ background: "#0000004D" }}
         >
           <div className="text-lg font-semibold mb-2">Description</div>
@@ -90,7 +90,7 @@ const SummaryTab = ({
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div
-          className="rounded-2xl border border-white/10 p-6 text-white/90 backdrop-blur-xl min-h-[320px]"
+          className="rounded-2xl border border-white/30 p-6 text-white/90 backdrop-blur-xl min-h-[320px]"
           style={{ background: "#0000004D" }}
         >
           <div className="text-lg font-semibold mb-2">Priority breakdown</div>
@@ -218,7 +218,7 @@ const SummaryTab = ({
           </div>
         </div>
         <div
-          className="rounded-2xl border border-white/10 p-6 text-white/90 backdrop-blur-xl min-h-[320px] flex flex-col justify-center"
+          className="rounded-2xl border border-white/30 p-6 text-white/90 backdrop-blur-xl min-h-[320px] flex flex-col justify-center"
           style={{ background: "#0000004D" }}
         >
           <div className="text-lg font-semibold mb-2">Members Task Breakdown</div>

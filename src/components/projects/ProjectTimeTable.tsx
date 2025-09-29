@@ -154,7 +154,7 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
                   // Determine task code color
                   const taskCodeColor =
                     task.taskCode?.startsWith("FAZ") ? "text-[#0CA9F6]" :
-                    task.taskCode?.startsWith("SO") ? "text-[#0CA9F6]" : "text-[#0CA9F6]";
+                    task.taskCode?.startsWith("SO") ? "text-[#0CA9F6]" : "text-[#0CA9F26]";
                   return (
                     <div
                       key={`${day}-${task.id || idx}`}

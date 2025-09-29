@@ -305,7 +305,7 @@ export default function ProjectDetailsPage() {
   ]
 
   return (
-   <div className="w-full relative top-[30px] max-w-full">
+   <div className="w-full relative top-[30px] max-w-full mb-3.5">
       <div className="mx-auto">
         {/* Top bar */}
         <div className="flex items-center justify-between">
@@ -335,7 +335,7 @@ export default function ProjectDetailsPage() {
               <span className="text-sm font-medium">Filter</span>
             </button>
             <div
-              className="flex border border-white/20 rounded-full p-1 gap-1 shadow-inner"
+              className="flex  rounded-full p-1 gap-1 shadow-inner"
               style={{ background: "#0000004D" }}
             >
               {[
@@ -356,8 +356,8 @@ export default function ProjectDetailsPage() {
                   }}
                   className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
                     activeTab === t.key
-                      ? "bg-[#0000004D] text-white shadow border border-white/20"
-                      : "text-white/80 hover:text-white hover:bg-white/10 border border-transparent"
+                      ? "bg-[#0000004D] text-white shadow "
+                      : "text-white/80  hover:bg-[#0000004D] border-transparent"
                   }`}
                   style={{ minWidth: 90 }}
                 >

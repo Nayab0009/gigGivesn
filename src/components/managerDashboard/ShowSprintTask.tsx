@@ -292,7 +292,7 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
   }, [projectId, projectName]);
 
   return (
-   <div className="w-full relative top-[30px] max-w-full">
+   <div className="w-full relative top-[30px] max-w-full mb-5">
       <div className="mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -330,7 +330,7 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
         </div>
 
         {/* Add Task button above toggle */}
-        <div className="flex flex-col items-end gap-1 mb-4">
+        <div className="flex flex-col items-end gap-1 mb-5">
           {showProjectIdError && (
             <div className="mb-1 text-sm text-red-400 font-semibold bg-red-900/30 px-3 py-1 rounded">
               Project ID is missing. Cannot add task. Please check sprint/project setup.
@@ -338,7 +338,7 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
           )}
           <button
             onClick={handleAddTask}
-            className="inline-flex items-center gap-2 px-4 py-2 text-white font-medium rounded-full transition shadow-sm"
+            className="inline-flex items-center text-sm py-2.5 gap-2  px-3 text-white font-medium rounded-full transition shadow-sm"
             style={{
               background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
             }}
@@ -373,23 +373,23 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
         ) : (
           <div className="space-y-6">
             {/* Sprint name and view toggle buttons in one row */}
-            <div className="flex items-center justify-between w-full mb-4">
+            <div className="flex items-center justify-between w-full py-2.5 mb-5">
               {/* Sprint Name at left */}
               {sprintName ? (
-                <span className="text-[20px] font-[600px] text-white  px-4 py-2 " style={{ minWidth: '180px' }}>
+                <span className="text-[20px]  text-white font-semibold   py-2 " style={{ minWidth: '180px' }}>
                   {sprintName}
                 </span>
               ) : <span />}
               <div
-                className="flex border border-white/20 rounded-full p-1 gap-1 shadow-inner"
-                style={{ background: "#0000004D" }}
+                className="flex  rounded-full p-1 gap-1 shadow-inner bg-black/30"
+              
               >
                 <button
                   onClick={() => setTaskView("table")}
                   className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
                     taskView === "table"
-                      ? "bg-white/10 text-white border border-white/20"
-                      : "text-white/90 hover:text-white hover:bg-white/10 border border-transparent"
+                      ? "bg-black/30 text-white"
+                      : "text-white/90  hover:bg-black/30 "
                   }`}
                 >
                   <Table className="w-4 h-4" /> Table View
@@ -398,8 +398,8 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                   onClick={() => setTaskView("kanban")}
                   className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
                     taskView === "kanban"
-                      ? "bg-white/10 text-white border border-white/20"
-                      : "text-white/90 hover:text-white hover:bg-white/10 border border-transparent"
+                      ? "bg-black/30 text-white"
+                      : "text-white/90  hover:bg-black/30 "
                   }`}
                 >
                   <LayoutGrid className="w-4 h-4" /> Kanban Board
@@ -410,25 +410,25 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
             {taskView === "table" ? (
               <div className="space-y-6">
                 {/* Sprint name moved to toggle row */}
-                <div className="rounded-2xl border border-white/10 backdrop-blur-xl" style={{ background: "#0000004D" }}>
+                <div className="rounded-2xl border border-white/30 backdrop-blur-xl" style={{ background: "#0000004D" }}>
                   <div className="overflow-x-auto">
                     <table className="min-w-full">
                       <thead>
-                        <tr className="text-white/70 text-sm border-b border-white/10">
-                          <th className="px-6 py-3 text-left font-medium">
+                        <tr className="text-white/70 text-lg border-b border-white/30 ">
+                          <th className="px-6 py-3 text-left font-semibold text-white ">
                             <div className="flex items-center gap-2 text-white">
-                              <ChevronDown className="w-4 h-4 text-white/80" />
+                              <ChevronDown className="w-4 h-4 " />
                               <span className="font-semibold">Active tasks</span>
-                              <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/10 text-white/80">
+                              <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-black/30 text-white/80">
                                 {tasks.filter(task => task.status?.toLowerCase() === 'inprogress').length}
                               </span>
                             </div>
                           </th>
-                          <th className="px-6 py-3 text-white text-left font-medium">Status</th>
-                          <th className="px-6 py-3 text-left font-medium">Type</th>
-                          <th className="px-6 py-3 text-left font-medium">Due Date</th>
-                          <th className="px-6 py-3 text-left font-medium">Priority</th>
-                          <th className="px-6 py-3 text-left font-medium">Assignee</th>
+                          <th className="px-6 py-3 text-white text-left font-normal">Status</th>
+                          <th className="px-6 py-3 text-white text-left font-normal">Type</th>
+                          <th className="px-6 py-3 text-white text-left font-normal">Due Date</th>
+                          <th className="px-6 py-3 text-white text-left font-normal">Priority</th>
+                          <th className="px-6 py-3 text-white text-left font-normal">Assignee</th>
                         </tr>
                       </thead>
                       <tbody className="bg-transparent">
@@ -437,29 +437,29 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                           .map((task) => (
                             <tr
                               key={task.id}
-                              className="text-white text-sm border-b border-white/10 last:border-b-0 cursor-pointer hover:bg-white/5"
+                              className="text-white text-sm border-b border-white/30 last:border-b-0 cursor-pointer hover:bg-white/5"
                               onClick={() => handleViewReport(task)}
                             >
                               <td className="px-6 py-4 whitespace-nowrap font-medium">
                                 {task.title}
                                 <span className="ml-2 text-white/50 text-xs">#{task.id}</span>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
                                 <span className="inline-flex items-center gap-2">
                                   <span className="w-2 h-2 rounded-full bg-white"></span>
                                   In Progress
                                 </span>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
                                 <span className="inline-flex items-center gap-2">
                                   <span className="w-2 h-2 rounded-full bg-sky-400"></span>
                                   <span>{task.description ? "Task" : "—"}</span>
                                 </span>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
                                 {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "—"}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
                                 <span className="inline-flex items-center gap-2">
                                   <ChevronDown
                                     className={`w-4 h-4 ${
@@ -473,7 +473,7 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                                   <span className="capitalize">{task.priority || "Low"}</span>
                                 </span>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
                                 <span className="inline-flex items-center gap-2">
                                   <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
                                     {getAssigneeAvatar(task)}
@@ -499,25 +499,25 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                 </div>
 
                 {/* Completed Tasks Table */}
-                <div className="rounded-2xl border border-white/10 backdrop-blur-xl" style={{ background: "#0000004D" }}>
+                <div className="rounded-2xl border border-white/30 backdrop-blur-xl" style={{ background: "#0000004D" }}>
                   <div className="overflow-x-auto">
                     <table className="min-w-full">
                       <thead>
-                        <tr className="text-white/70 text-sm border-b border-white/10">
-                          <th className="px-6 py-3 text-left font-medium">
+                        <tr className="text-white/70 text-lg border-b border-white/30">
+                          <th className="px-6 py-3 text-left font-semibold">
                             <div className="flex items-center gap-2 text-white">
                               <ChevronDown className="w-4 h-4 text-white/80" />
                               <span className="font-semibold">Completed Task</span>
-                              <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/10 text-white/80">
+                              <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/30 text-white/80">
                                 {tasks.filter(task => task.status?.toLowerCase() === 'completed').length}
                               </span>
                             </div>
                           </th>
-                          <th className="px-6 py-3 text-white text-left font-medium">Status</th>
-                          <th className="px-6 py-3 text-left font-medium">Type</th>
-                          <th className="px-6 py-3 text-left font-medium">Due Date</th>
-                          <th className="px-6 py-3 text-left font-medium">Priority</th>
-                          <th className="px-6 py-3 text-left font-medium">Assignee</th>
+                          <th className="px-6 py-3 text-white text-left font-normal">Status</th>
+                          <th className="px-6 py-3 text-white text-left font-normal">Type</th>
+                          <th className="px-6 py-3 text-white text-left font-normal">Due Date</th>
+                          <th className="px-6 py-3 text-white text-left font-normal">Priority</th>
+                          <th className="px-6 py-3 text-white text-left font-normal">Assignee</th>
                         </tr>
                       </thead>
                       <tbody className="bg-transparent">
@@ -526,29 +526,29 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                           .map((task) => (
                             <tr
                               key={task.id}
-                              className="text-white text-sm border-b border-white/10 last:border-b-0 cursor-pointer hover:bg-white/5"
+                              className="text-white text-sm border-b border-white/30 last:border-b-0 cursor-pointer hover:bg-white/5"
                               onClick={() => handleViewReport(task)}
                             >
                               <td className="px-6 py-4 whitespace-nowrap font-medium">
                                 {task.title}
                                 <span className="ml-2 text-white/50 text-xs">#{task.id}</span>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
                                 <span className="inline-flex items-center gap-2">
                                   <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
                                   Completed
                                 </span>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
                                 <span className="inline-flex items-center gap-2">
                                   <span className="w-2 h-2 rounded-full bg-sky-400"></span>
                                   <span>{task.description ? "Task" : "—"}</span>
                                 </span>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
                                 {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "—"}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
                                 <span className="inline-flex items-center gap-2">
                                   <ChevronDown
                                     className={`w-4 h-4 ${
@@ -562,7 +562,7 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                                   <span className="capitalize">{task.priority || "Low"}</span>
                                 </span>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
                                 <span className="inline-flex items-center gap-2">
                                   <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
                                     {getAssigneeAvatar(task)}
@@ -594,22 +594,22 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                   { key: "cancelled", title: "Cancelled", color: "white" }].map((column, idx) => {
                   const columnTasks = tasks.filter(task => task.status?.toLowerCase() === column.key);
                   return (
-                    <div key={column.key} className="flex-1 min-w-[260px] rounded-2xl border border-white/10 backdrop-blur-xl p-4 flex flex-col" style={{ background: '#0000004D', boxShadow: '0 2px 16px 0 rgba(0,0,0,0.10)' }}>
+                    <div key={column.key} className="flex-1 min-w-[260px] rounded-2xl border gap-3 border-white/30 backdrop-blur-xl p-4 flex flex-col bg-black/30">
                       {/* Header */}
                       <div className="flex items-center gap-2 mb-2">
                         <span className="w-3 h-3 rounded-full bg-white"></span>
                         <span className="text-white/90 font-semibold text-base">{column.title}</span>
-                        <span className="ml-2 inline-flex items-center justify-center w-6 h-6 rounded-full text-xs bg-white/10 text-white/80 font-bold">{columnTasks.length}</span>
+                        <span className="ml-2 inline-flex items-center justify-center w-6 h-6 rounded-full text-xs bg-black/30 text-white/80 font-bold">{columnTasks.length}</span>
                       </div>
-                      <div className="border-b border-white/20 mb-4"></div>
+                      <div className="border-b border-white/30 mb-4"></div>
                       {/* Tasks */}
                       <div className="flex-1 flex flex-col gap-4">
                         {columnTasks.length > 0 ? columnTasks.map((task) => (
-                          <div key={task.id} className="rounded-xl border border-white/10 shadow-md p-4 text-white/90 transition-all duration-200 cursor-pointer min-h-[150px] flex flex-col justify-center gap-4" style={{ background: '#0000004D' }} onClick={() => handleViewReport(task)}>
+                          <div key={task.id} className="rounded-xl border border-white/30 shadow-md p-4 text-white/90 transition-all duration-200 cursor-pointer min-h-[150px] flex flex-col justify-center gap-4" style={{ background: '#0000004D' }} onClick={() => handleViewReport(task)}>
                             {/* Task Header */}
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs font-bold text-blue-300">{`${task.id}`}</span>
-                              <span className="text-[10px] px-2 py-1 rounded-full text-white font-bold"
+                              <span className="text-xs font-bold text-[#0CA9F6]">{`${task.id}`}</span>
+                              <span className="text-[10px] px-2 py-0 rounded-full text-white font-bold"
                                 style={{
                                   backgroundColor:
                                     task.priority?.toLowerCase() === 'high' ? '#BD4242' :
