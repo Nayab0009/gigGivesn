@@ -24,7 +24,7 @@ const TasksTab = ({ project, tasks, taskCounts, taskView, setTaskView }: TasksTa
   const router = useRouter()
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 ">
       {/* View toggle buttons (moved from main component) */}
       <div className="flex justify-end">
         <div
