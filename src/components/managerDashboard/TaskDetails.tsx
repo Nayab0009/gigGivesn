@@ -48,18 +48,15 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
 
       <div
         onClick={e => e.stopPropagation()}
+        className="max-w-md w-[95%] mx-auto"
         style={{
           borderRadius: '20px',
-          border: '1px solid #FFFFFF4D',
-          padding: '42px',
-          gap: '22px',
+          border: '1px solid rgba(255, 255, 255, 0.3)',
+          padding: '20px',
+          gap: '16px',
           opacity: 1,
-          background: '#0000004D',
+          background: 'rgba(0, 0, 0, 0.3)',
           boxSizing: 'border-box',
-          top: '267px',
-          left: '478px',
-          width: '420px',
-          height: '512.4px',
         }}
       >
 

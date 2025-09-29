@@ -163,9 +163,9 @@ export default function ManagerDashboard() {
       <HeaderSection userName={user?.name} />
 
       {/* Error Message */}
-  <div className="mx-auto">
+      <div className="mx-auto">
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
             <div className="flex items-center gap-2">
               <AlertCircle className="w-5 h-5 text-red-500" />
               <p className="text-red-700">{error}</p>
@@ -175,10 +175,10 @@ export default function ManagerDashboard() {
       </div>
 
       {/* Today Task Section */}
-  <div className="w-full mx-auto mb-10">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-stretch">
+      <div className="w-full mx-auto mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 md:gap-4 items-stretch">
           {/* Today Task + Timetable */}
-          <div className="lg:col-span-3 flex flex-col gap-6 w-full">
+          <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-3 md:gap-4 w-full">
             <TodayTasksSection
               tasks={todayTasks}
               tasksLoading={tasksLoading}
@@ -198,7 +198,7 @@ export default function ManagerDashboard() {
           </div>
 
           {/* Right column: Project Status + Communication Logs stacked */}
-          <div className="flex flex-col gap-6 w-full lg:max-w-[370px] lg:w-[370px] ml-auto">
+          <div className="lg:col-span-4 xl:col-span-3 flex flex-col gap-3 md:gap-4 w-full">
             <ProjectStatusCard analytics={analytics} />
             <CommunicationLogsCard
               commLogs={commLogs}

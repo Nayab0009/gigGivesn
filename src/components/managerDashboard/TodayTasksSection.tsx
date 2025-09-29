@@ -44,8 +44,8 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
 
   return (
     <div
-      className="rounded-3xl bg-black/30 backdrop-blur-md border border-white/20 shadow-md w-full"
-      style={{ height: '248px', minHeight: '248px', maxHeight: '248px', padding: '16.27px', borderRadius: '20.33px', borderWidth: '1px', opacity: 1 }}
+      className="rounded-3xl bg-black/30 backdrop-blur-md border border-white/20 shadow-md w-full h-full"
+      style={{ minHeight: '248px', padding: '16px', borderRadius: '20px', borderWidth: '1px', opacity: 1 }}
     >
       <div className="flex items-center justify-between mb-4">
         <h4

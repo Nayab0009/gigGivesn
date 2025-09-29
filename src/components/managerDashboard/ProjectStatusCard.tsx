@@ -13,13 +13,10 @@ const ProjectStatusCard: React.FC<ProjectStatusCardProps> = ({ analytics }) => (
     <div
       className="flex flex-col justify-between border border-white/30 bg-black/30 shadow-md w-full mx-auto"
       style={{
-        width: '362px',
-        height: '248px',
-        minHeight: '248px',
-        maxHeight: '248px',
-        borderRadius: '22.37px',
+        minHeight: '240px',
+        borderRadius: '20px',
         borderWidth: '1px',
-        padding: '16.27px',
+        padding: '16px',
         opacity: 1,
         boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)'
       }}

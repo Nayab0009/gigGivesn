@@ -37,16 +37,17 @@ const TodayTask = () => {
 
   const renderColumn = (title: string, taskList: any[]) => (
     <div
-      className="flex flex-col"
+      className="flex flex-col w-full"
       style={{
-        width: '385.33px',
-        height: '661px',
+        maxWidth: '385px',
+        height: 'auto',
+        minHeight: '661px',
         borderRadius: '22px',
-        border: '1px solid #FFFFFF4D',
+        border: '1px solid rgba(255, 255, 255, 0.3)',
         padding: '12px',
         gap: '10px',
         opacity: 1,
-        background: '#0000004D',
+        background: 'rgba(0, 0, 0, 0.3)',
         boxSizing: 'border-box',
       }}
     >
@@ -72,14 +73,14 @@ const TodayTask = () => {
             <div
               key={idx}
               style={{
-                width: '361.33px',
-                height: '197.93px',
+                width: '100%',
+                height: '197px',
                 borderRadius: '15px',
-                border: '1px solid #FFFFFF4D',
-                padding: '16.27px',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                padding: '16px',
                 gap: '12px',
                 opacity: 1,
-                background: '#0000004D',
+                background: 'rgba(0, 0, 0, 0.3)',
                 boxSizing: 'border-box',
                 display: 'flex',
                 flexDirection: 'column',
@@ -226,11 +227,10 @@ const TodayTask = () => {
   return (
     <div className="w-full h-full flex flex-col">
       <div
-        className="flex flex-row items-center justify-center mx-auto"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full mx-auto"
         style={{
-          width: '1180px',
-          height: '661px',
-          gap: '12px',
+          maxWidth: '1180px',
+          minHeight: '661px',
           opacity: 1,
         }}
       >
