@@ -294,7 +294,13 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
             <p className="text-md font-extralight text-gray-200">Welcome back! See your latest project insights below.</p>
           </div>
           <div className="mt-4 sm:mt-0 flex items-center space-x-3">
-            <Link href="/dashboard/admin/addmanager" className="px-5 py-2 text-white rounded-full hover:text-gray-200 shadow transition-all font-semibold text-sm inline-flex gap-x-1 md:gap-x-2  bg-black-600 bg-gray-500/30 items-center">
+            
+            <Link href="/dashboard/admin/addemployee" className="px-5 py-2 text-white rounded-full hover:text-gray-200 transition-all font-semibold text-sm inline-flex gap-x-1 md:gap-x-2  bg-black-600  items-center border border-white/30">
+              <Plus className="w-5 h-4 text-white font-light" /> <p className="text-white font-medium">Add Employee</p>
+            </Link>
+
+            
+            <Link href="/dashboard/admin/addmanager" className="px-5 py-2 text-white rounded-full hover:text-gray-200 shadow transition-all font-semibold text-sm inline-flex gap-x-1 md:gap-x-2  bg-black-600 bg-black/30 items-center">
               <Plus className="w-5 h-4 text-white font-light" /> <p className="text-white font-medium">Add Manager</p>
             </Link> 
            
@@ -318,7 +324,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
           
             <div>
               <p className="text-lg font-bold text-white">
-                {formatNumber(dashboardData.adminStats.totalProjects)}
+               {formatNumber(dashboardData.adminStats.totalProjects)}
               </p>
               <div className="flex items-center">
                 <div>
@@ -326,7 +332,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                 </div>
                 <div>
                     <div className="flex space-x-1">
-                <span className="text-white text-xs ml-3 bg-[rgba(194,65,12,0.3)]  px-4 py-1 rounded-full font-light border-2 border-[#615041]">{dashboardData.adminStats.activeProjects}</span>
+                <span className="text-white text-xs ml-3 bg-[rgba(194,65,12,0.3)]  px-4 py-1 rounded-full font-light border-2 border-[#615041]">+{dashboardData.adminStats.activeProjects}</span>
               </div>
                 </div>
               </div>
@@ -360,7 +366,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                     </div>
                     <div>
                       <div className="flex space-x-1">
-                        <span className="text-white text-xs ml-3 bg-[#696032] px-4 py-1 rounded-full border-[#716c4e] font-light border-2">{dashboardData.adminStats.allTime}</span>
+                        <span className="text-white text-xs ml-3 bg-[#696032] px-4 py-1 rounded-full border-[#716c4e] font-light border-2">+{dashboardData.adminStats.allTime}</span>
                       </div>
                     </div>
                   </div>
