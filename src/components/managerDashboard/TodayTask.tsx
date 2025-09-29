@@ -40,7 +40,6 @@ const TodayTask = () => {
       className="flex flex-col w-full"
       style={{
         maxWidth: '385px',
-        height: 'auto',
         minHeight: '661px',
         borderRadius: '22px',
         border: '1px solid rgba(255, 255, 255, 0.3)',
@@ -74,7 +73,7 @@ const TodayTask = () => {
               key={idx}
               style={{
                 width: '100%',
-                height: '197px',
+                minHeight: '197px',
                 borderRadius: '15px',
                 border: '1px solid rgba(255, 255, 255, 0.3)',
                 padding: '16px',
@@ -85,6 +84,7 @@ const TodayTask = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
+                
               }}
             >
               {/* Top Row */}
@@ -171,6 +171,7 @@ const TodayTask = () => {
                     letterSpacing: '0px',
                     verticalAlign: 'middle',
                     color: '#fff',
+                    
                   }}
                 >
                   {task.title}
@@ -185,6 +186,7 @@ const TodayTask = () => {
                     letterSpacing: '0px',
                     verticalAlign: 'middle',
                     color: '#fff',
+                    
                   }}
                 >
                   {task.description}

@@ -19,6 +19,12 @@ function getDayName(dateString: string) {
   return days[date.getDay()];
 }
 
+// Helper to truncate text with ellipsis if it exceeds maxLength
+function truncateText(text: string, maxLength: number): string {
+  if (!text) return '';
+  return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+}
+
 // Short day names for the header
 const dayNames: Record<string, string> = {
   Monday: "MON",
@@ -227,7 +233,7 @@ const TimeTable = () => {
                       </div>
                       <div className="mt-2 gap-[12px]">
                         <div
-                          className="text-white font-semibold"
+                          className="text-white font-semibold overflow-hidden"
                           style={{
                             fontFamily: "Inter",
                             fontWeight: 600,
@@ -235,19 +241,30 @@ const TimeTable = () => {
                             lineHeight: "100%",
                             letterSpacing: "0px",
                             verticalAlign: "middle",
+                            textOverflow: "ellipsis",
+                            display: "-webkit-box",
+                            WebkitLineClamp: 1,
+                            WebkitBoxOrient: "vertical",
+
                           }}
+                          title={task.title} // Show full title on hover
                         >
                           {task.title}
                         </div>
-                        <div className="text-xs text-[#FFFFFF] mt-1"
+                        <div className="text-xs text-[#FFFFFF] mt-1 overflow-hidden"
                         style={{
                             fontFamily: "Inter",
                             fontWeight: 400,
                             fontSize: "12px",
-                            lineHeight: "100%",
+                            lineHeight: "140%",
                             letterSpacing: "0px",
                             verticalAlign: "middle",
+                            textOverflow: "ellipsis",
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical"
                           }}
+                          title={task.description} // Show full description on hover
                         >
                           {task.description}
                         </div>
