@@ -23,10 +23,9 @@ export default function UserDropdown() {
     router.push("/signin");
   };
 
-  if (!user) return null;
-
-  const displayName = user.name ? user.name : user.email.split("@")[0];
-  const role = user.role ? user.role : "User"; // fallback role
+  // fallback values if user is null
+  const displayName = user?.name ?? user?.email?.split("@")[0] ?? "Guest";
+  const role = user?.role ?? "User";
 
   const getInitials = (name: string) =>
     name
@@ -43,7 +42,10 @@ export default function UserDropdown() {
   useEffect(() => {
     if (!isOpen) return;
     function handleClick(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
@@ -51,58 +53,70 @@ export default function UserDropdown() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, [isOpen]);
 
+  // show minimal UI when not signed in
+  if (!user) {
+    return (
+      <div className="text-gray-400 text-sm italic">
+        Not signed in
+      </div>
+    );
+  }
+
   return (
-    <div className="relative " ref={dropdownRef}>
+    <div className="relative" ref={dropdownRef}>
       {/* Toggle button with avatar + name */}
       <button
-  onClick={(e) => {
-    e.stopPropagation();
-    setIsOpen((prev) => !prev);
-  }}
-  className="flex items-center text-white"
->
-  {/* Avatar */}
-  {user.avatar ? (
-  <div className="mr-3 h-11 w-11 rounded-full overflow-hidden flex-shrink-0">
-  <Image
-    src={user.avatar}
-    alt={displayName}
-    width={44}
-    height={44}
-    className="w-full h-full object-cover"
-  />
-</div>
-  ) : (
-    <div
-      className="mr-3 h-11 w-11 flex items-center justify-center rounded-full text-white font-semibold text-lg"
-      style={getAvatarColor()}
-    >
-      {getInitials(displayName)}
-    </div>
-  )}
+        onClick={(e) => {
+          e.stopPropagation();
+          setIsOpen((prev) => !prev);
+        }}
+        className="flex items-center text-white"
+      >
+        {/* Avatar */}
+        {user.avatar ? (
+          <div className="mr-3 h-11 w-11 rounded-full overflow-hidden flex-shrink-0">
+            <Image
+              src={user.avatar}
+              alt={displayName}
+              width={44}
+              height={44}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ) : (
+          <div
+            className="mr-3 h-11 w-11 flex items-center justify-center rounded-full text-white font-semibold text-lg"
+            style={getAvatarColor()}
+          >
+            {getInitials(displayName)}
+          </div>
+        )}
 
-  {/* Name */}
-  <span className="mr-2 text-base font-medium text-white">{displayName}</span>
+        {/* Name */}
+        <span className="mr-2 text-base font-medium text-white">
+          {displayName}
+        </span>
 
-  {/* Dropdown Arrow */}
-  <svg
-    className={`stroke-white transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
-    width="18"
-    height="20"
-    viewBox="0 0 18 20"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M4.3125 8.65625L9 13.3437L13.6875 8.65625"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-</button>
-
+        {/* Dropdown Arrow */}
+        <svg
+          className={`stroke-white transition-transform duration-200 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+          width="18"
+          height="20"
+          viewBox="0 0 18 20"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M4.3125 8.65625L9 13.3437L13.6875 8.65625"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </button>
 
       {/* Dropdown */}
       {isOpen && (
@@ -111,8 +125,6 @@ export default function UserDropdown() {
           style={{
             backgroundColor: "rgba(0, 0, 0, 0.3)",
             border: "1px solid rgba(164, 167, 174, 1)",
-
-
           }}
         >
           {/* User Info */}
@@ -139,7 +151,7 @@ export default function UserDropdown() {
             </span>
           </div>
 
-          {/* Profile Option - open modal instead of redirect */}
+          {/* Profile Option */}
           <button
             onClick={() => {
               setIsOpen(false);
@@ -167,7 +179,8 @@ export default function UserDropdown() {
             <Image src="/images/theme.svg" alt="Theme" width={22} height={22} />
             Theme
           </button>
-      {/* Support Option - opens in-place modal instead of navigating */}
+
+          {/* Support Option */}
           <button
             onClick={() => {
               setIsOpen(false);
@@ -206,13 +219,17 @@ export default function UserDropdown() {
           </button>
         </div>
       )}
-      {/* Modals live outside the dropdown so they can open independently */}
+
+      {/* Modals */}
       <SupportModal
         isOpen={isSupportOpen}
         onClose={() => setIsSupportOpen(false)}
-        user={{ name: user.name, email: user.email, image: (user as any).image }}
+        user={{
+          name: user.name ?? displayName,
+          email: user.email ?? "",
+          image: (user as any)?.image ?? "",
+        }}
         onSubmit={async (data) => {
-          // TODO: wire to backend/email service
           console.log("Support request:", data);
         }}
       />

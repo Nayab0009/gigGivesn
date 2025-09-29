@@ -26,7 +26,7 @@ const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs,
         background: '#0000004D',
         backdropFilter: 'blur(107.25px)',
         backgroundBlendMode: 'luminosity',
-        
+
       }}
     >
     <div className="flex items-center justify-between mb-2">
@@ -60,10 +60,10 @@ const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs,
         className="text-xs font-medium text-blue-300 hover:underline focus:outline-none"
         onClick={onSeeAll}
       >
-        See All  
+        See All
       </button>
       </span>
-      
+
     </div>
     <div className="flex flex-col gap-4">
       {commLoading ? (
@@ -73,9 +73,9 @@ const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs,
       ) : commLogs.length === 0 ? (
         <div className="text-center text-blue-200 py-8">No communication logs found.</div>
       ) : (
-        commLogs.map((log) => (
+        commLogs.map((log,index) => (
           <div
-            key={log.id}
+       key={log.id ?? index}
             className="flex items-center gap-3 rounded-lg p-2 mb-2 bg-black/40 transition-shadow duration-200 hover:shadow-[0px_0px_10.7px_0px_#81818166]"
           >
             <div className="w-10 h-10 rounded-full flex items-center justify-center bg-blue-900 text-white font-bold text-lg">
