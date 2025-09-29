@@ -97,9 +97,15 @@ const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs,
             </div>
 
             {/* Right side: icons */}
-            <div className="flex gap-2">
-              <button className="p-2 rounded-full bg-black/30 hover:bg-black/50 text-white">📞</button>
-              <button className="p-2 rounded-full bg-black/30 hover:bg-black/50 text-white">🎥</button>
+            <div className="flex justify-between w-20">
+              <button
+                className="p-2 rounded-full bg-black/30 hover:bg-black/50 text-white"
+                onClick={onSeeAll}
+              >📞</button>
+              <button
+                className="p-2 rounded-full bg-black/30 hover:bg-black/50 text-white"
+                onClick={onSeeAll}
+              >🎥</button>
             </div>
           </div>
 
