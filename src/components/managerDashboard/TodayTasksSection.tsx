@@ -44,7 +44,7 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
 
   return (
     <div
-      className="rounded-3xl bg-black/30 backdrop-blur-md border border-white/20 shadow-md w-full h-full"
+      className="rounded-3xl bg-black/30 backdrop-blur-[101.67px] border border-white/20 shadow-md w-full h-full"
       style={{ minHeight: '248px', padding: '16px', borderRadius: '20px', borderWidth: '1px', opacity: 1 }}
     >
       <div className="flex items-center justify-between mb-4">
@@ -59,6 +59,7 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
             verticalAlign: 'middle',
           }}
         >
+          
           Today Task
         </h4>
         <button className="text-sm text-blue-400 hover:text-blue-300" onClick={onViewAll}>
