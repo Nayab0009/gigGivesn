@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
 import axiosInstance from '@/lib/axios';
+import { useAuth } from '@/context/AuthContext';
 import {
   Clock,
   CheckCircle,
@@ -25,6 +26,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { colors } from "@/colors";
+import Image from 'next/image';
 
 interface TaskResponse {
   id: number;
@@ -60,6 +62,7 @@ const EmployeeShowSprintTask: React.FC = () => {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { user } = useAuth();
   const sprintId = params.id as string;
   const sprintName = searchParams.get('name') ? decodeURIComponent(searchParams.get('name')!) : null;
 
@@ -114,14 +117,29 @@ const EmployeeShowSprintTask: React.FC = () => {
     setRefreshing(false);
   };
 
-  const getAssigneeAvatar = (task: TaskResponse) => {
-    const assignee = task.taskFor;
-    if (!assignee) return null;
-    return (
-      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 flex items-center justify-center text-white text-sm font-semibold">
-        {assignee.name.charAt(0).toUpperCase()}
-      </div>
-    );
+    const getAssigneeAvatar = (task: TaskResponse) => {
+    if (!task.taskFor?.avatar) {
+      return <User className="w-4 h-4 text-white" />;
+    }
+    return <img src={task.taskFor.avatar} alt={task.taskFor.name} className="w-full h-full object-cover" />;
+  };
+
+  // Handle submit report button click
+  const handleSubmitReport = (e: React.MouseEvent, taskId: number) => {
+    e.stopPropagation(); // Prevent row click event
+    router.push(`/dashboard/teammember/submittaskreport?taskId=${taskId}&projectId=${sprintId}`);
+  };
+
+  // Handle update status button click
+  const handleUpdateStatus = (e: React.MouseEvent, task: TaskResponse) => {
+    e.stopPropagation(); // Prevent row click event
+    // Redirect to UpdateTaskStatus page with task ID and sprint ID
+    router.push(`/dashboard/teammember/updatetaskstatus?taskId=${task.id}&sprintId=${sprintId}`);
+  };
+
+  // Check if user is an employee
+  const isEmployee = () => {
+    return user?.role?.toLowerCase() === 'employee';
   };
 
   useEffect(() => {
@@ -250,6 +268,7 @@ const EmployeeShowSprintTask: React.FC = () => {
                           <th className="px-6 py-3 text-left font-medium">Due Date</th>
                           <th className="px-6 py-3 text-left font-medium">Priority</th>
                           <th className="px-6 py-3 text-left font-medium">Assignee</th>
+                          <th className="px-6 py-3 text-left font-medium">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="bg-transparent">
@@ -304,11 +323,31 @@ const EmployeeShowSprintTask: React.FC = () => {
                                   </span>
                                 </span>
                               </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                {isEmployee() && (
+                                  <div className="flex gap-2 justify-center">
+                                    <button
+                                      onClick={(e) => handleSubmitReport(e, task.id)}
+                                      className="px-3 text-xs bg-gradient-to-r border border-white/20 text-white font-medium transition-all duration-200 flex items-center gap-1 py-3 bg-black/30 rounded-2xl"
+                                    >
+                                      <Image src="/images/submit.svg" alt="Submit Report" className="w-7 h-7 border border-white/20 p-2 rounded-full" height={20} width={20} />
+                                      Submit Report
+                                    </button>
+                                    <button
+                                      onClick={(e) => handleUpdateStatus(e, task)}
+                                      className="px-3 py-1.5 text-xs bg-black/40 hover:bg-black/60 text-white font-medium border border-white/20 transition-all duration-200 flex items-center gap-1 rounded-2xl"
+                                    >
+                                      <Image src="/images/update.svg" alt="Update Status" className="w-7 h-7 border border-white/20 p-2 rounded-full" height={20} width={20}/>
+                                      Update Status
+                                    </button>
+                                  </div>
+                                )}
+                              </td>
                             </tr>
                           ))}
                         {tasks.filter((task) => task.status?.toLowerCase() === 'inprogress').length === 0 && (
                           <tr>
-                            <td className="px-6 py-4 text-white/60 text-sm" colSpan={6}>
+                            <td className="px-6 py-4 text-white/60 text-sm" colSpan={7}>
                               No active tasks
                             </td>
                           </tr>
@@ -338,6 +377,7 @@ const EmployeeShowSprintTask: React.FC = () => {
                           <th className="px-6 py-3 text-left font-medium">Due Date</th>
                           <th className="px-6 py-3 text-left font-medium">Priority</th>
                           <th className="px-6 py-3 text-left font-medium">Assignee</th>
+                          <th className="px-6 py-3 text-left font-medium">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="bg-transparent">
@@ -392,11 +432,24 @@ const EmployeeShowSprintTask: React.FC = () => {
                                   </span>
                                 </span>
                               </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                {isEmployee() && (
+                                  <div className="flex gap-2 justify-center">
+                                    <button
+                                      onClick={(e) => handleSubmitReport(e, task.id)}
+                                      className="px-3 py-1.5 text-xs rounded-md bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-medium transition-all duration-200 flex items-center gap-1"
+                                    >
+                                      <FileText className="w-3 h-3" />
+                                      View Report
+                                    </button>
+                                  </div>
+                                )}
+                              </td>
                             </tr>
                           ))}
                         {tasks.filter((task) => task.status?.toLowerCase() === 'completed').length === 0 && (
                           <tr>
-                            <td className="px-6 py-4 text-white/60 text-sm" colSpan={6}>
+                            <td className="px-6 py-4 text-white/60 text-sm" colSpan={7}>
                               No completed tasks
                             </td>
                           </tr>
