@@ -102,7 +102,7 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
         setError('Please select a valid image file')
         return
       }
-      
+
       // Validate file size (e.g., 5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         setError('Image size should be less than 5MB')
@@ -110,7 +110,7 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
       }
 
       setSelectedFile(file)
-      
+
       // Create preview
       const reader = new FileReader()
       reader.onload = (e) => {
@@ -136,7 +136,7 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
       formData.append('phone', form.phone)
       formData.append('address', form.address)
       formData.append('email', form.email)
-      
+
       // Add avatar if selected
       if (selectedFile) {
         formData.append('avatar', selectedFile)
@@ -161,22 +161,21 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
     <div
       ref={overlayRef}
       onMouseDown={handleOverlayClick}
-      className="fixed inset-0 z-[1000] flex items-center justify-center p-2 bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-[1000] flex items-center justify-center p-2 bg-black/60 backdrop-blur-[50px]"
     >
       {loading ? (
         <div className="flex items-center justify-center w-full h-full">
           <Loader2 className="w-10 h-10 text-white animate-spin" />
         </div>
       ) : (
-        <div
-          onMouseDown={(e) => e.stopPropagation()}
-          className="relative w-full max-w-3xl max-h-[80vh] rounded-3xl border overflow-y-auto custom-scrollbar shadow-2xl p-8"
-          style={{
-            background: "rgba(0,0,0,0.55)",
-            borderColor: "#FFFFFF26",
-            boxShadow: "0 16px 40px rgba(0,0,0,0.45)",
-          }}
-        >
+       <div
+  onMouseDown={(e) => e.stopPropagation()}
+  className="relative w-full bg-black/30 backdrop-blur-[101px] max-w-3xl max-h-[80vh] rounded-3xl border overflow-y-auto hide-scrollbar shadow-2xl p-8"
+  style={{
+    borderColor: "#FFFFFF26",
+    boxShadow: "0 16px 40px rgba(0,0,0,0.45)",
+  }}
+>
           <style>{`
             .custom-scrollbar::-webkit-scrollbar { width: 8px; background: transparent; }
             .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 8px; border: 2px solid rgba(255,255,255,0.08); }
@@ -184,14 +183,7 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
             .custom-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
           `}</style>
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold mb-2" style={{ color: colors.white.hex }}>
-              Profile Settings
-            </h1>
-            <p className="text-lg font-medium text-gray-300">
-              Manage your account details and preferences
-            </p>
-          </div>
+
 
           {/* Avatar, Name & Email in one row */}
           <div className="flex items-center gap-8 mb-8">
@@ -230,8 +222,8 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
             {/* Name & Email as plain text */}
             <div className="flex-1">
               <div className="flex flex-col justify-center h-full">
-                <div className="text-2xl font-bold text-white mb-2">{form.name || "-"}</div>
-                <div className="text-base text-gray-300">{form.email || "-"}</div>
+                <div className="text-[22px] font-semibold   text-white mb-2">{form.name || "-"}</div>
+                <div className="text-base text-[14] text-gray-300">{form.email || "-"}</div>
               </div>
             </div>
           </div>
@@ -242,7 +234,7 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
               {/* Name & Email in one row */}
               <div className="flex gap-6">
                 <div className="group w-1/2">
-                  <label className="block mb-2 text-sm font-medium text-gray-300">
+                  <label className="block mb-2 text-[14px] font-[400] text-[#D1D5DB]">
                     Name
                   </label>
                   <input
@@ -255,7 +247,7 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
                   />
                 </div>
                 <div className="group w-1/2">
-                  <label className="block mb-2 text-sm font-medium text-gray-300">
+                  <label className="block mb-2 text-[14px] font-[400] text-[#D1D5DB]">
                     Email
                   </label>
                   <input
@@ -270,7 +262,7 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
 
               {/* Phone */}
               <div className="group">
-                <label className="block mb-2 text-sm font-medium text-gray-300">
+                <label className="block mb-2 text-[14px] font-[400] text-[#D1D5DB]">
                   Phone
                 </label>
                 <input
@@ -285,7 +277,7 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
 
               {/* Address */}
               <div className="group">
-                <label className="block mb-2 text-sm font-medium text-gray-300">
+                  <label className="block mb-2 text-[14px] font-[400] text-[#D1D5DB]">
                   Address
                 </label>
                 <input
@@ -323,7 +315,7 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
             {/* Delete Account Section */}
             <div className="mt-12 pt-8 border-t border-white/20">
               <h2 className="text-xl font-bold text-white mb-4">Delete Account</h2>
-              <p className="text-gray-300 mb-6 leading-relaxed">
+              <p className="text-[#D1D5DB] text-[14px] font-[400] mb-6 leading-relaxed">
                 After deleting your account you will lose all related information including tasks, projects, notes etc. You will not be able to recover it later, so think twice before doing this.
               </p>
               <button
