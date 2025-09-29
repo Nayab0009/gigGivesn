@@ -33,6 +33,7 @@ interface Project {
   isActive: boolean
   createdAt: string
   updatedAt: string
+  logo: string
 }
 
 // Interface for task response from backend
@@ -510,7 +511,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                             {/* Circular Logo */}
                             <div className="flex-shrink-0 w-7 h-7 rounded-full overflow-hidden border-2 border-white/30 bg-white/10 flex items-center justify-center">
                               <img
-                                src={generateAvatar(project.name)}
+                                src={ project.logo||generateAvatar(project.name)}
                                 alt={project.name + ' avatar'}
                                 className="w-full h-full object-cover rounded-full"
                                 style={{ width: 40, height: 40 }}

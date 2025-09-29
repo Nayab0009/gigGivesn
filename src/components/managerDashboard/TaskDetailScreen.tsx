@@ -39,9 +39,9 @@ type ProjectTask = {
     status?: string
   }
   // Assignee
-  taskFor?: { 
+  taskFor?: {
     id: number
-    name: string 
+    name: string
     email?: string
     avatar?: string | null
     role?: string

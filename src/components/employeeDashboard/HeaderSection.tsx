@@ -10,12 +10,12 @@ interface HeaderSectionProps {
 const HeaderSection: FC<HeaderSectionProps> = ({ userName, error }) => {
   return (
     <>
-      <header className="py-10 rounded-b-3xl mb-8">
+      <header className="py-10 rounded-b-3xl mb-2">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="pl-2 md:pl-4">
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Employee Dashboard</h1>
+            <h1 className="text-3xl md:text-[20px] font-semibold tracking-tight"> Welcome back, {userName || 'Employee'}!</h1>
             <p className="text-sm md:text-base mt-1">
-              Welcome back, {userName || 'Employee'}! Ready to tackle today's challenges?
+              Ready to tackle today's challenges?
             </p>
           </div>
         </div>

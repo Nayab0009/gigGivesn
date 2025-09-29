@@ -193,45 +193,45 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
           </div>
         </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 ">
           {sprints.map((sprint) => (
             <div
               key={sprint.id}
-              className="rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 shadow-lg p-6 hover:shadow-2xl transition cursor-pointer transform hover:scale-105 group"
+              className="rounded-2xl bg-black/40 backdrop-blur-md border border-white/30 shadow-lg p-6 hover:shadow-2xl transition cursor-pointer transform hover:scale-105 group"
             >
               {/* Header */}
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center justify-between mb-0">
                 <h2 className="text-lg font-bold text-white">{sprint.name}</h2>
                 <span
-                  className="text-xs px-3 py-1 rounded-full font-medium"
-                  style={{ backgroundColor: `${colors.primary.rgb.replace(", 1)", ", 0.2)")}`, color: colors.primary.hex }}
+                  className="text-xs py-2.5 px-5 rounded-full font-medium text-white "
+                  style={{ backgroundColor: `${colors.primary.rgb.replace(", 1)", ", 1)")}`  }}
                 >
                   Active
                 </span>
               </div>
 
               {/* Description */}
-              <p className="text-sm text-gray-300 mb-4 line-clamp-2">
+              <p className="text-sm text-gray-300 mb-5 line-clamp-2 ">
                 {sprint.description || "No description provided"}
               </p>
 
               {/* Details */}
-              <div className="space-y-2 text-sm text-gray-300 mb-4">
+              <div className="space-y-2 text-sm text-gray-300 mb-5">
                 <div className="flex justify-between">
-                  <span className="font-medium text-white">Timeline:</span>
-                  <span>
+                  <span className="font-medium ">Timeline</span>
+                  <span className="text-white">
                     {sprint.startDate && new Date(sprint.startDate).toLocaleDateString()} -{" "}
                     {sprint.endDate && new Date(sprint.endDate).toLocaleDateString()}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="font-medium text-white">Progress:</span>
-                  <span>68%</span>
+                  <span className="font-medium ">Progress</span>
+                  <span className="text-white">68%</span>
                 </div>
               </div>
 
               {/* Progress bar */}
-              <div className="w-full bg-gray-700/40 rounded-full h-2 mb-4">
+              <div className="w-full bg-gray-700/40 rounded-full h-2 mb-5">
                 <div
                   className="h-2 rounded-full"
                   style={{ width: "68%", backgroundColor: colors.primary.hex }}
@@ -243,8 +243,8 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
                 {/* View Button - full width, matches progress bar */}
                 <button
                   onClick={() => handleSprintClick(sprint)}
-                  className="flex items-center justify-center w-full gap-2 py-3 rounded-full hover:opacity-80 transition text-base font-medium bg-black/40 text-white shadow-md"
-                  style={{ minHeight: '48px' }}
+                  className="flex min-h-9 items-center justify-center w-full gap-2 py-3 rounded-full hover:opacity-80 transition text-xs font-medium bg-black/30 text-white "
+                  
                   title="View all tasks in this sprint"
                 >
                   <span>View</span>
