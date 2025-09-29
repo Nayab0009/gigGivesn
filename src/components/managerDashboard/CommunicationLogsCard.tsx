@@ -75,25 +75,34 @@ const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs,
       ) : (
         commLogs.map((log,index) => (
           <div
-       key={log.id ?? index}
-            className="flex items-center gap-3 rounded-lg p-2 mb-2 bg-black/40 transition-shadow duration-200 hover:shadow-[0px_0px_10.7px_0px_#81818166]"
+            key={log.id ?? index}
+            className="flex items-center justify-between rounded-lg p-2 mb-2 bg-black/40 transition-shadow duration-200 hover:shadow-[0px_0px_10.7px_0px_#81818166]"
           >
-            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-blue-900 text-white font-bold text-lg">
-              {log.name?.[0]?.toUpperCase() || "?"}
+            {/* Left side: avatar + text */}
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-blue-900 text-white font-bold text-lg">
+                {log.name?.[0]?.toUpperCase() || "?"}
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-medium text-white">{log.name}</span>
+                <span
+                  className="text-xs text-blue-300 truncate max-w-[120px]"
+                  title={log.lastMessage}
+                >
+                  {log.lastMessage && log.lastMessage.length > 10
+                    ? log.lastMessage.slice(0, 10) + "..."
+                    : log.lastMessage}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-medium text-white">{log.name}</span>
-              <span className="text-xs text-blue-300 truncate max-w-[120px]" title={log.lastMessage}>
-                {log.lastMessage && log.lastMessage.length > 10
-                  ? log.lastMessage.slice(0, 10) + '...'
-                  : log.lastMessage}
-              </span>
-            </div>
-            <div className="flex gap-3">
+
+            {/* Right side: icons */}
+            <div className="flex gap-2">
               <button className="p-2 rounded-full bg-black/30 hover:bg-black/50 text-white">📞</button>
               <button className="p-2 rounded-full bg-black/30 hover:bg-black/50 text-white">🎥</button>
             </div>
           </div>
+
         ))
       )}
     </div>

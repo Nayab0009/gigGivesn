@@ -32,11 +32,12 @@ const dayNames: Record<string, string> = {
 
 // Colors for different priority levels
 const priorityColors: Record<string, string> = {
-  Critical: "bg-[#FF8731]",
-  High: "bg-[#FF4C4C]",
-  Medium: "bg-[#FFBE31]",
-  Low: "bg-[#4C8FFF]",
+  Critical: "#FF8731",
+  High: "#FF4C4C",
+  Medium: "#FFBE31",
+  Low: "#4C8FFF",
 };
+
 
 const TimeTable = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -172,20 +173,38 @@ const TimeTable = () => {
                   return (
                     <div
                       key={`${day}-${task.id || idx}`}
-                      className="flex flex-col justify-between bg-black/30 text-[#0CA9F6] relative overflow-hidden shadow-lg h-[240px] p-4 rounded-[15px] border border-white/10 gap-y-8"
+                      className="flex flex-col justify-between bg-black/30 text-[#0CA9F6] relative overflow-hidden shadow-lg h-[240px] p-4 rounded-[15px] border border-white/10 gap-y-[12px]"
                       style={{
                         opacity: 1,
                         boxShadow: "0 2px 12px 0 rgba(0,0,0,0.10)",
                       }}
                     >
-                      <div className="flex justify-between items-center mb-1">
+                      <div className="flex justify-between items-center mb-1 gap-[32px]">
                         <div className="flex flex-col items-start gap-0">
                           <span
-                            className={`text-xs font-semibold text-[#0CA9F6] ${taskCodeColor}`}
+                            className={`font-semibold text-[#0CA9F6] ${taskCodeColor}`}
+
+                            style={{
+                            fontFamily: "Inter",
+                            fontWeight: 600,
+                            fontSize: "10px",
+                            lineHeight: "100%",
+                            letterSpacing: "0px",
+                            verticalAlign: "middle",
+                          }}
                           >
                             {task.taskCode}
                           </span>
-                          <span className="mt-1 px-2 py-0.5 text-[10px] rounded-full bg-[#0CA9F6] text-white font-semibold">
+                          <span className="mt-1 px-2 py-0.5 text-[10px] rounded-full bg-[#0CA9F6] text-white font-semibold"
+                          style={{
+                            fontFamily: "Inter",
+                            fontWeight: 600,
+                            fontSize: "8px",
+                            lineHeight: "100%",
+                            letterSpacing: "0px",
+                            verticalAlign: "middle",
+                          }}
+                          >
                             Done
                           </span>
                         </div>
@@ -194,22 +213,47 @@ const TimeTable = () => {
                           style={{
                             backgroundColor: priorityColors[
                               (task.priority || "Medium").trim().charAt(0).toUpperCase() + (task.priority || "Medium").trim().slice(1).toLowerCase()
-                            ] || "#FFBE31"
+                            ] || "#FFBE31",
+                            fontFamily: "Inter",
+                            fontWeight: 500,
+                            fontSize: "8px",
+                            lineHeight: "100%",
+                            letterSpacing: "0px",
+                            verticalAlign: "middle",
                           }}
                         >
                           {task.priority}
                         </span>
                       </div>
-                      <div className="mt-2">
-                        <div className="text-base font-semibold leading-tight truncate">
+                      <div className="mt-2 gap-[12px]">
+                        <div
+                          className="text-white font-semibold"
+                          style={{
+                            fontFamily: "Inter",
+                            fontWeight: 600,
+                            fontSize: "14px",
+                            lineHeight: "100%",
+                            letterSpacing: "0px",
+                            verticalAlign: "middle",
+                          }}
+                        >
                           {task.title}
                         </div>
-                        <div className="text-xs text-white/80 mt-1 leading-tight truncate">
+                        <div className="text-xs text-[#FFFFFF] mt-1"
+                        style={{
+                            fontFamily: "Inter",
+                            fontWeight: 400,
+                            fontSize: "12px",
+                            lineHeight: "100%",
+                            letterSpacing: "0px",
+                            verticalAlign: "middle",
+                          }}
+                        >
                           {task.description}
                         </div>
                       </div>
                       <div className="flex flex-col gap-2 mt-6">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
                           {/* Avatar */}
                           {task.taskFor?.avatar ? (
                             <img
@@ -226,22 +270,8 @@ const TimeTable = () => {
                               {task.taskFor?.name?.charAt(0) || "A"}
                             </div>
                           )}
-                          {/* Eye Icon */}
-                          <span
-                            className="w-7 h-7 flex items-center justify-center rounded-full bg-black/30 border border-white/10 cursor-pointer"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleTaskClick(task.id);
-                            }}
-                          >
-                            <img
-                              src="/images/Eye.svg"
-                              alt="View Icon"
-                              className="w-4 h-4 text-white/80"
-                            />
-                          </span>
                         </div>
-                        <div className="flex items-center gap-2 mt-2">
+                        <div className="flex items-center justify-between gap-2 mt-2">
                           <span className="flex items-center text-xs font-semibold text-white/80">
                             <svg
                               className="w-4 h-4 mr-1"
@@ -267,6 +297,20 @@ const TimeTable = () => {
                               />
                             </svg>
                             {task.duration}
+                          </span>
+                          {/* Eye Icon */}
+                          <span
+                            className="w-7 h-7 flex items-center justify-center rounded-full bg-black/30 border border-white/10 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleTaskClick(task.id);
+                            }}
+                          >
+                            <img
+                              src="/images/Eye.svg"
+                              alt="View Icon"
+                              className="w-4 h-4 text-white/80"
+                            />
                           </span>
                         </div>
                       </div>
