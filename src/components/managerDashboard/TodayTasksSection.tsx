@@ -44,8 +44,17 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
 
   return (
     <div
-      className="rounded-3xl bg-black/30 backdrop-blur-[101.67px] border border-white/20 shadow-md w-full h-full"
-      style={{ minHeight: '248px', padding: '16px', borderRadius: '20px', borderWidth: '1px', opacity: 1 }}
+      className="rounded-3xl w-full h-full border border-white/20 shadow-md"
+      style={{
+        minHeight: '248px',
+        padding: '16px',
+        borderRadius: '20px',
+        borderWidth: '1px',
+        opacity: 1,
+        background: '#0000004D',
+        backdropFilter: 'blur(101.66923522949219px)',
+        backgroundBlendMode: 'luminosity',
+      }}
     >
       <div className="flex items-center justify-between mb-4">
         <h4
@@ -100,11 +109,14 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
                   borderRadius: '15px',
                   borderWidth: '1px',
                   padding: '16.27px',
-                  background: 'rgba(0,0,0,0.18)',
                   minHeight: '158.6px',
                   maxHeight: '158.6px',
                   height: '158.6px',
-                  opacity: 1,
+                  border: '1px solid #FFFFFF4D',
+                  background: '#0000004D',
+                  backgroundBlendMode: 'luminosity',
+                  backdropFilter: 'blur(101.66923522949219px)',
+                  
                 }}
               >
                 <div

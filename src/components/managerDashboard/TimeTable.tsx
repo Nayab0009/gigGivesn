@@ -149,13 +149,20 @@ const TimeTable = () => {
     });
 
     return (
-      <div className="w-full overflow-x-auto bg-black/30 p-4 rounded-3xl"
+      <div className="w-full overflow-x-auto p-4 rounded-3xl"
       style={
         {
           scrollbarWidth: 'none',
-      }
-    }
-      >
+          opacity: 1,
+          padding: '4px',
+          borderRadius: '12px',
+          background: '#0000004D',
+          backdropFilter: 'blur(101.67px)',
+          backgroundBlendMode: 'luminosity',
+          borderWidth: '1px',
+        }
+      }>
+      
         <div className="flex flex-row gap-2 min-w-[1920px]">
           {/* Days headers and task columns */}
           {days.map((day, idx) => {

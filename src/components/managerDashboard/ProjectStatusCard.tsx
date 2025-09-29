@@ -18,7 +18,10 @@ const ProjectStatusCard: React.FC<ProjectStatusCardProps> = ({ analytics }) => (
         borderWidth: '1px',
         padding: '16px',
         opacity: 1,
-        boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)'
+        boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)',
+        background: '#0000004D',
+        backdropFilter: 'blur(101.67px)',
+        backgroundBlendMode: 'luminosity',
       }}
     >
     <div className="flex items-center justify-between mb-2">

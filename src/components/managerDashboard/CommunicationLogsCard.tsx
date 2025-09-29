@@ -15,14 +15,18 @@ interface CommunicationLogsCardProps {
 
 const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs, commLoading, onSeeAll }) => (
    <div
-      className="flex flex-col justify-between border border-white/30 bg-black/30 shadow-md w-full mx-auto"
+      className="flex flex-col justify-between border border-white/30 shadow-md w-full mx-auto"
       style={{
         minHeight: '240px',
         borderRadius: '20px',
         borderWidth: '1px',
         padding: '16px',
         opacity: 1,
-        boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)'
+        boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)',
+        background: '#0000004D',
+        backdropFilter: 'blur(107.25px)',
+        backgroundBlendMode: 'luminosity',
+        
       }}
     >
     <div className="flex items-center justify-between mb-2">
@@ -69,20 +73,21 @@ const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs,
       ) : commLogs.length === 0 ? (
         <div className="text-center text-blue-200 py-8">No communication logs found.</div>
       ) : (
-        commLogs.map((log, idx) => (
-          <div key={log.id || idx} className="flex items-center justify-between bg-black/20 rounded-2xl px-3 py-2">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-blue-900 text-white font-bold text-lg">
-                {log.name?.[0]?.toUpperCase() || "?"}
-              </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-white">{log.name}</span>
-                <span className="text-xs text-blue-300 truncate max-w-[120px]" title={log.lastMessage}>
-                  {log.lastMessage && log.lastMessage.length > 10
-                    ? log.lastMessage.slice(0, 10) + '...'
-                    : log.lastMessage}
-                </span>
-              </div>
+        commLogs.map((log) => (
+          <div
+            key={log.id}
+            className="flex items-center gap-3 rounded-lg p-2 mb-2 bg-black/40 transition-shadow duration-200 hover:shadow-[0px_0px_10.7px_0px_#81818166]"
+          >
+            <div className="w-10 h-10 rounded-full flex items-center justify-center bg-blue-900 text-white font-bold text-lg">
+              {log.name?.[0]?.toUpperCase() || "?"}
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-medium text-white">{log.name}</span>
+              <span className="text-xs text-blue-300 truncate max-w-[120px]" title={log.lastMessage}>
+                {log.lastMessage && log.lastMessage.length > 10
+                  ? log.lastMessage.slice(0, 10) + '...'
+                  : log.lastMessage}
+              </span>
             </div>
             <div className="flex gap-3">
               <button className="p-2 rounded-full bg-black/30 hover:bg-black/50 text-white">📞</button>
