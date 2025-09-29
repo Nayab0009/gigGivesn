@@ -249,25 +249,19 @@ export default function EnhancedManagersTable() {
           </div>
           {/* Center: Search */}
           <div className="flex-1 flex justify-center">
-            <div className="relative w-full max-w-lg" style={{ marginLeft: '90px' }}>
+            <div className="relative w-full max-w-md ml-16">
               <Search
                 className="absolute text-[#9CA3AF] left-3 top-1/2 -translate-y-1/2 w-4 h-4"
               />
               <input
                 type="text"
                 placeholder="Search manager by name, email or ID"
-                className="w-[396px] h-[38px] rounded-[16px] border border-[#FFFFFF4D] bg-[#0000004D] opacity-100 px-[41px] py-[9px]   pr-[17px] text-[#9CA3AF] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm mx-auto"
+                className="w-full h-[38px] rounded-[16px] border border-[#FFFFFF4D] bg-[#0000004D] opacity-100 px-[41px] py-[9px] pr-[17px] text-[#9CA3AF] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm"
                 style={{
                   borderWidth: 1,
                   background: '#0000004D',
                   borderColor: '#FFFFFF4D',
                   borderRadius: '16px',
-                  paddingTop: '9px',
-                  paddingBottom: '9px',
-                  paddingLeft: '41px',
-                  paddingRight: '17px',
-                  height: '38px',
-                  width: '396px',
                   opacity: 1,
                 }}
                 value={searchTerm}
