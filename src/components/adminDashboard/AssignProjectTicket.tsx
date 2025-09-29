@@ -289,7 +289,7 @@ export function AssignTaskModal({
 
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-[100px] flex items-center justify-center z-[9999] p-4 overflow-hidden">
-      <div className="bg-black/30 backdrop-blur-md rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden border-2 border-white/30 flex flex-col">
+      <div className="bg-black/30 backdrop-blur-md rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden border-2 px-4 border-white/30 flex flex-col">
         
         {/* Header - Fixed */}
         <div className="p-6 text-center  flex-shrink-0 ">
@@ -319,7 +319,7 @@ export function AssignTaskModal({
         )}
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar backdrop-blur-md border border-white/30 rounded-[20px] mx-4 my-4">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden hide-scrollbar backdrop-blur-md border border-white/30 rounded-[20px] mx-4 my-4 shadow-xl">
           <div className="p-6 space-y-6 bg-">
             {/* Ticket Number */}
             <div>
