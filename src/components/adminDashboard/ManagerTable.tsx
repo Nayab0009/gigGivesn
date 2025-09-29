@@ -8,6 +8,7 @@ import { colors } from "@/colors"
 import { deleteManager } from "@/lib/ManagerService"
 import { updateManager } from "@/lib/ManagerService"
 import Pagination from "../pagination"
+import Image from "next/image"
 
 interface Manager {
   id?: string
@@ -219,7 +220,7 @@ export default function EnhancedManagersTable() {
   }
 
   return (
-  <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%] h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar">
+  <div className="w-[100%] px-2">
       <div className="mx-auto">
         {/* Header & Action Bar (improved layout) */}
         <div className="mb-8 flex items-center justify-between gap-4">
@@ -337,7 +338,7 @@ export default function EnhancedManagersTable() {
               <p className="text-slate-400">Try adjusting your search criteria</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
               {paginatedManagers.map((manager, index) => {
                 const initials = manager.name
                   .split(' ')
@@ -393,12 +394,12 @@ export default function EnhancedManagersTable() {
 
                     <div className="relative mt-5 flex items-center justify-between">
                       <button
-                        className="group inline-flex items-center justify-center gap-2 px-7 py-2 rounded-full text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md min-w-[130px] text-center"
+                        className="group inline-flex items-center justify-center gap-2 px-13 md:py-2 rounded-full text-sm font-medium transition-all duration-300 shadow-sm hover:shadow-md text-center"
                         style={{
                           background: '#0CA9F6',
                           color: '#fff',
                           border: `1px solid ${colors.primary.hex}`,
-                          minWidth: '250px',
+                          // minWidth: '250px',
                           textAlign: 'center',
                         }}
                         onClick={() => handleViewDetails(manager)}
@@ -410,18 +411,21 @@ export default function EnhancedManagersTable() {
                         <button
                           onClick={() => handleDelete(manager.id)}
                           className="inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200"
-                          style={{ background: '#0000004D', border: '1px solid #FFFFFF4D' }}
+                          style={{ background: '#0000004D' }}
                           title="Delete"
                         >
-                          <Trash2 className="w-4 h-4 text-slate-200" />
+                          <Image src="/images/liteDelete.svg" alt="Delete" width={16} height={16} className="w-4 h-4" style={{ color: '#B0B9C6' }}/>
                         </button>
+                        
+                        
+                        
                         <button
                           onClick={() => handleEditClick(manager)}
                           className="inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200"
-                          style={{ background: '#0000005D', border: '1px solid #FFFFFF4D' }}
+                          style={{ background: '#0000005D' }}
                           title="Edit"
                         >
-                          <Edit className="w-4 h-4" style={{ color: '#B0B9C6' }} />
+                          <Image src="/images/ri_edit-line.svg" alt="Edit" width={16} height={16} className="w-4 h-4" style={{ color: '#B0B9C6' }} />
                         </button>
                       </div>
                     </div>
@@ -456,12 +460,7 @@ export default function EnhancedManagersTable() {
         {showEditModal && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div
-              className="rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 custom-scrollbar"
-              style={{
-                background: "rgba(255, 255, 255, 0.08)",
-                border: `2px solid ${colors.primary.hex}40`,
-              }}
-            >
+              className="rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 custom-scrollbar border border-white/30 bg-black/30">
               <style>{`
                 .custom-scrollbar::-webkit-scrollbar {
                   width: 8px;
@@ -482,13 +481,8 @@ export default function EnhancedManagersTable() {
               `}</style>
               {/* Header */}
               <div
-                className="px-8 py-6 border-b relative overflow-hidden rounded-t-3xl"
-                style={{
-                  background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                  color: "#fff",
-                }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+                className="px-8 py-6 relative overflow-hidden rounded-t-3xl text-white">
+                <div className="absolute"></div>
                 <div className="relative flex items-center justify-between">
                   <div>
                     <h2 className="text-2xl font-bold mb-1">Edit Manager</h2>
@@ -509,7 +503,7 @@ export default function EnhancedManagersTable() {
 
               {/* Form */}
               <form onSubmit={e => { e.preventDefault(); handleUpdateManager(); }} className="flex flex-col h-full">
-                <div className="px-8 py-6 space-y-6 text-white">
+                <div className="px-8 pb-6 space-y-6 text-white">
                   {/* Name */}
                   <div className="space-y-2">
                     <label className="text-sm font-semibold mb-2 flex items-center gap-2">
@@ -520,8 +514,8 @@ export default function EnhancedManagersTable() {
                       name="name"
                       value={editForm.name}
                       onChange={handleEditFormChange}
-                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
-                      style={{ borderColor: editFormErrors.name ? "#ef4444" : colors.primary.hex }}
+                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-1 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300 border-white/30"
+                     
                       placeholder="Enter manager name"
                       disabled={isUpdating}
                     />
@@ -539,8 +533,7 @@ export default function EnhancedManagersTable() {
                       name="email"
                       value={editForm.email}
                       onChange={handleEditFormChange}
-                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
-                      style={{ borderColor: editFormErrors.email ? "#ef4444" : colors.primary.hex }}
+                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300 border-white/30"
                       placeholder="Enter manager email"
                       disabled={isUpdating}
                     />
@@ -558,8 +551,8 @@ export default function EnhancedManagersTable() {
                       name="phone"
                       value={editForm.phone}
                       onChange={handleEditFormChange}
-                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
-                      style={{ borderColor: editFormErrors.phone ? "#ef4444" : colors.primary.hex }}
+                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300 border-white/30"
+                      
                       placeholder="Enter manager phone"
                       disabled={isUpdating}
                     />
@@ -577,8 +570,8 @@ export default function EnhancedManagersTable() {
                       name="address"
                       value={editForm.address}
                       onChange={handleEditFormChange}
-                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
-                      style={{ borderColor: editFormErrors.address ? "#ef4444" : colors.primary.hex }}
+                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300 border-white/30"
+                      // style={{ borderColor: editFormErrors.address ? "#ef4444" : colors.primary.hex }}
                       placeholder="Enter manager address"
                       disabled={isUpdating}
                     />
@@ -590,11 +583,8 @@ export default function EnhancedManagersTable() {
 
                 {/* Footer */}
                 <div
-                  className="px-8 py-6 border-t rounded-b-3xl flex gap-4"
-                  style={{
-                    background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                    borderColor: `${colors.primary.hex}40`,
-                  }}
+                  className="px-8 rounded-b-3xl flex gap-4 mb-6"
+               
                 >
                   <button
                     type="button"
@@ -602,8 +592,7 @@ export default function EnhancedManagersTable() {
                       setShowEditModal(false);
                       setEditFormErrors({ name: '', email: '', phone: '', address: '' });
                     }}
-                    className="flex-1 px-6 py-3 border-2 rounded-xl font-semibold transition-all duration-300 hover:bg-white/20 transform hover:scale-105 text-white"
-                    style={{ borderColor: "#fff" }}
+                    className="flex-1 px-6 py-3 border-2 rounded-xl font-semibold transition-all duration-300 hover:bg-white/20 transform hover:scale-105 text-white border-white/30"
                     disabled={isUpdating}
                   >
                     Cancel

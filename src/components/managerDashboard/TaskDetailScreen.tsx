@@ -219,6 +219,7 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[350px_1fr] gap-4 bg-black/40 border border-white/10 rounded-2xl shadow-xl overflow-hidden min-h-[560px]">
+      
       {/* Left: Task Details */}
       <div className="p-6 flex flex-col gap-4 border-r border-white/10 backdrop-blur-md" style={{ minWidth: 320 }}>
         {/* Top: Breadcrumb + Edit */}
