@@ -155,14 +155,13 @@ export default function CommunicationLogs({ userId, userRole }: CommunicationLog
               <button
                 className="p-2 rounded-full bg-black/30 hover:bg-black/50 text-white"
                 // onClick={onSeeAll}
-              >📞</button>
+              ><img src="/images/DIV-27.svg" alt="Call" className="w-[40px] h-[40px]" /></button>
               <button
                 className="p-2 rounded-full bg-black/30 hover:bg-black/50 text-white"
                 // onClick={onSeeAll}
-              >🎥</button>
+              ><img src="/images/DIV-28.svg" alt="Video" className="w-[40px] h-[40px]" /></button>
             </div>
           </div>
-
         ))
       )}
     </div>
