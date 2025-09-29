@@ -224,18 +224,11 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
         </div>
 
         {/* Task Card */}
-        <div 
+        <div
+          className="w-full h-[150px] rounded-[12px] border border-white/30 bg-black/30 px-4 py-6 flex flex-col justify-between mx-auto"
           style={{
-            width: 340,
-            height: 150,
-            borderRadius: "12px",
-            borderWidth: "1px",
             gap: "12px",
             opacity: 1,
-            paddingTop: "22px",
-            paddingRight: "32px",
-            paddingBottom: "22px",
-            paddingLeft: "32px",
             background: "#0000004D",
             border: "1px solid #FFFFFF4D"
           }}
