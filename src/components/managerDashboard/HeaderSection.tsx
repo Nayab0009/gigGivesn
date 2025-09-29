@@ -5,7 +5,7 @@ interface HeaderSectionProps {
 }
 
 const HeaderSection: React.FC<HeaderSectionProps> = ({ userName }) => (
-  <header className="py-10 rounded-b-3xl mb-8">
+  <header className="py-4 rounded-b-3xl mb-8">
     <div className="flex flex-col md:flex-row items-center justify-between gap-6">
       <div className="pl-2 md:pl-4">
         <h1 className="text-[20px] font-[600]  font-semibold tracking-tight">Manager Dashboard</h1>
