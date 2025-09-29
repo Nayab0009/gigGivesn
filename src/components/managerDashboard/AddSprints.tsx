@@ -12,7 +12,7 @@ const AddSprint: React.FC = () => {
   const router = useRouter();
   const [projects, setProjects] = useState<{id: string | number, name: string}[]>([]);
   const [loadingProjects, setLoadingProjects] = useState(true);
-  const [form, setForm] = useState({    
+  const [form, setForm] = useState({
     title: '',
     description: '',
     startDate: '',
@@ -44,40 +44,40 @@ const today = new Date().toISOString().split("T")[0];
       const createdSprint = await createSprint(payload);
       console.log('Sprint Created:', createdSprint);
       setForm({ title: '', description: '', startDate: '', endDate: '', project: '' });
-      
+
       // Navigate to showsprints page after successful creation
 router.push(`/dashboard/manager/projects/${createdSprint.project.id}`)
     } catch (error) {
-      console.log('Error to create Sprint', error);       
+      console.log('Error to create Sprint', error);
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-   <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
-  <div className="rounded-3xl shadow-2xl w-full max-w-3xl max-h-[95vh] overflow-y-auto border-2 border-white/40 scrollbar-hide">
-    <div className="p-6 sm:p-8 bg-black/30 backdrop-blur-md relative">
+   <div className="fixed inset-0 bg-black/30 backdrop-blur-[100px] flex items-center justify-center z-[9999] p-4">
+  <div className="rounded-3xl shadow-2xl w-full max-w-3xl max-h-[95vh] overflow-y-auto border-2 border-white/30 scrollbar-hide">
+    <div className="p-4 sm:p-6 bg-black/30 backdrop-blur-md relative">
           {/* Header */}
           <div className="text-center mb-8">
-      
-            <h1 className="text-xl font-bold mb-2 text-white">Create New Sprint</h1>
-            <p className="text-md text-white">Plan and organize your next development sprint</p>
+
+            <h1 className="text-[32px] font-semibold font-[600] mb-2 text-white">Create New Sprint</h1>
+            <p className="text-[12px] font-semibold  text-white">Plan and organize your next development sprint</p>
           </div>
 
           {/* Form Container */}
-        <div className="rounded-3xl backdrop-blur-md border border-white/10 shadow-xl overflow-hidden">
-        <form className="p-6 sm:p-8 space-y-8" onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
-          
+        <div className="rounded-[20px] backdrop-blur-md border border-white/10 shadow-xl overflow-hidden">
+        <form className="p-6 sm:p-8 space-y-4" onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
+
               {/* Basic Info Section */}
               <div className="space-y-6">
                 <div className="flex items-center gap-3 pb-4 " style={{ borderColor: colors.primary.hex }}>
-            
-                  <h2 className="text-lg font-semibold text-white">Basic Information</h2>
+
+                  <h2 className="text-[18px] font-semibold text-white">Basic Information</h2>
                 </div>
-                <div className="grid grid-cols-1 gap-6">
+                <div className="grid grid-cols-1 gap-3">
                   <div>
-                    <label className="block text-sm font-semibold mb-3 text-white">
+                    <label className="block text-[14px] font-semibold mb-3 text-white">
                       Sprint Title <span style={{ color: colors.warning.hex }}>*</span>
                     </label>
                     <input
@@ -86,43 +86,43 @@ router.push(`/dashboard/manager/projects/${createdSprint.project.id}`)
                       value={form.title}
                       onChange={e => setForm(prev => ({ ...prev, title: e.target.value }))}
                       placeholder="e.g., Sprint 24 - User Authentication & Dashboard"
-                      className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none 
+                      className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none
                        bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
                         focus:border-white/40"
-                      style={{ 
+                      style={{
                         focusRingColor: colors.primary.hex,
                       }}
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-semibold mb-3 text-white">Description</label>
+                    <label className="block text-[14px] font-semibold mb-3 text-white">Description</label>
                     <textarea
                       value={form.description}
                       onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
                       rows={4}
                       placeholder="Describe the main objectives, scope, and expected outcomes for this sprint..."
-                   className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none 
+                   className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none
                                  bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
                                   focus:border-white/40"
-                      style={{ 
+                      style={{
                         focusRingColor: colors.primary.hex,
                       }}
                     />
                   </div>
-                  
+
                   <div>
-                    <label className="block text-sm font-semibold mb-3 text-white">
+                    <label className="block text-[14px] font-semibold mb-3 text-white">
                       Project <span style={{ color: colors.warning.hex }}>*</span>
                     </label>
                     <select
                       required
                       value={form.project}
                       onChange={e => setForm(prev => ({ ...prev, project: e.target.value }))}
-                  className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none 
+                  className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none
                                  bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
                                   focus:border-white/40"
-                      style={{ 
+                      style={{
                         focusRingColor: colors.primary.hex,
                       }}
                     >
@@ -144,12 +144,12 @@ router.push(`/dashboard/manager/projects/${createdSprint.project.id}`)
               {/* Timeline Section */}
               <div className="space-y-6">
                 <div className="flex items-center gap-3 pb-4" style={{ borderColor: colors.primary.hex }}>
-        
-                  <h2 className="text-xl font-semibold text-white">Timeline & Duration</h2>
+
+                  <h2 className="text-[18px] font-[600] font-semibold text-white">Timeline & Duration</h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-semibold mb-3 text-white">
+                    <label className="block text-[14px] font-semibold mb-3 text-white">
                       Start Date <span style={{ color: colors.warning.hex }}>*</span>
                     </label>
                     <input
@@ -158,29 +158,29 @@ router.push(`/dashboard/manager/projects/${createdSprint.project.id}`)
                       required
                       value={form.startDate}
                       onChange={e => setForm(prev => ({ ...prev, startDate: e.target.value }))}
-                    className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none 
+                    className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none
                                  bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
                                   focus:border-white/40"
-                      style={{ 
+                      style={{
                         focusRingColor: colors.primary.hex,
                         colorScheme: 'dark'
                       }}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold mb-3 text-white">
+                    <label className="block text-[14px] font-semibold mb-3 text-white">
                       End Date <span style={{ color: colors.warning.hex }}>*</span>
                     </label>
                     <input
                       type="date"
-                        min={form.startDate || today} 
+                        min={form.startDate || today}
                       required
                       value={form.endDate}
                     onChange={e => setForm(prev => ({ ...prev, endDate: e.target.value }))}
-                     className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none 
+                     className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none
                                  bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
                                   focus:border-white/40"
-                      style={{ 
+                      style={{
                         focusRingColor: colors.primary.hex,
                         colorScheme: 'dark'
                       }}
@@ -200,7 +200,7 @@ router.push(`/dashboard/manager/projects/${createdSprint.project.id}`)
   disabled={
     submitting || !form.title || !form.startDate || !form.endDate || !form.project
   }
-  className="inline-flex items-center gap-3 px-8 py-4 font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 text-white bg-[#0CA9F6]"
+  className="text-[12px] font-[500] inline-flex items-center gap-3 px-8 py-4 font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 text-white bg-[#0CA9F6]"
 >
   {submitting ? (
     <>
