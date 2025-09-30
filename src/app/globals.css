@@ -1,8 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
 @import 'tailwindcss';
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-@custom-variant dark (&:is(.dark *));
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap'); */
 
+@custom-variant dark (&:is(.dark *));
+.font-inter{
+font-family: 'Inter', sans-serif;
+}
 /* Add animations for the splash page */
 @keyframes blink {
   0%, 100% { opacity: 1; }

@@ -4,6 +4,7 @@
 import { getTasksByProjectId } from "@/lib/TaskService";
 import TaskDetailsPopup from "../managerDashboard/TaskDetails";
 import { useEffect, useState } from "react";
+import { interFont } from "@/app/layout";
 
 // Helper to get day name from date string
 function getDayName(dateString: string) {
@@ -146,7 +147,7 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
   return (
     <>
       <div
-        className="w-full p-4 rounded-3xl overflow-x-auto"
+        className={`w-full p-4 rounded-3xl overflow-x-auto`}
         style={{
           scrollbarWidth: "none",
           opacity: 1,
@@ -195,25 +196,25 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
                             className={`font-semibold text-[#0CA9F6] ${taskCodeColor}`}
 
                             style={{
-                            fontFamily: "Inter",
-                            fontWeight: 600,
-                            fontSize: "10px",
-                            lineHeight: "100%",
-                            letterSpacing: "0px",
-                            verticalAlign: "middle",
-                          }}
+                              fontFamily: "Inter",
+                              fontWeight: 600,
+                              fontSize: "10px",
+                              lineHeight: "100%",
+                              letterSpacing: "0px",
+                              verticalAlign: "middle",
+                            }}
                           >
                             {task.taskCode}
                           </span>
                           <span className="mt-1 px-2 py-0.5 text-[10px] rounded-full bg-[#0CA9F6] text-white font-semibold"
-                          style={{
-                            fontFamily: "Inter",
-                            fontWeight: 600,
-                            fontSize: "8px",
-                            lineHeight: "100%",
-                            letterSpacing: "0px",
-                            verticalAlign: "middle",
-                          }}
+                            style={{
+                              fontFamily: "Inter",
+                              fontWeight: 600,
+                              fontSize: "8px",
+                              lineHeight: "100%",
+                              letterSpacing: "0px",
+                              verticalAlign: "middle",
+                            }}
                           >
                             Done
                           </span>
@@ -256,7 +257,7 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
                           {task.title}
                         </div>
                         <div className="text-xs text-[#FFFFFF] mt-1 overflow-hidden"
-                        style={{
+                          style={{
                             fontFamily: "Inter",
                             fontWeight: 400,
                             fontSize: "12px",
