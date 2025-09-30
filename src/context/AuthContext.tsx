@@ -1,7 +1,7 @@
 "use client"
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 import { authenticateUser } from "../lib/authService"
-
+import { disconnectSocket,initiateSocket  } from "@/lib/socket"
 // Define our types
 interface User {
   id: number
@@ -93,6 +93,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (isValid && validatedUser) {
         setUser(validatedUser)
         setToken(storedToken)
+          initiateSocket(validatedUser.id.toString())
         console.log("Valid session found:", validatedUser)
       } else {
         console.log("No valid session found")
@@ -140,6 +141,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(userObj)
           const apiToken = localStorage.getItem("authToken")
           setToken(apiToken)
+           initiateSocket(userObj.id.toString())
           console.log("Signed in via API:", userObj)
         } else {
           setError("Invalid credentials. Please check your email and password.")
@@ -177,6 +179,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       setUser(newUser)
       setToken(token)
+       initiateSocket(newUser.id.toString())
       console.log("Signed up as:", newUser)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Registration failed")
@@ -187,12 +190,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }
 
   const signout = () => {
-    setUser(null)
-    setToken(null)
-    localStorage.removeItem("user")
-    localStorage.removeItem("authToken")
-    console.log("Signed out and cleared all auth data")
-  }
+  // 1. Disconnect socket FIRST (before clearing data)
+  disconnectSocket()
+
+  // 2. Clear state
+  setUser(null)
+  setToken(null)
+
+  // 3. Clear localStorage (including chat-related data)
+  localStorage.removeItem("user")
+  localStorage.removeItem("authToken")
+  localStorage.removeItem("chatReadStatus") // Clear chat read status
+  localStorage.removeItem("lastSelectedUserId") // Clear last selected chat
+
+  console.log("Signed out and cleared all auth data")
+}
 
   const isAuthenticated = !!user
 

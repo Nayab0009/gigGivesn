@@ -24,8 +24,8 @@ export const initiateSocket = (userId?: string): void => {
   if (!socket) {
     console.log("🔄 Creating new socket connection...");
 
-    socket = io("https://geekjives-26190134d520.herokuapp.com" ,{
-    // socket = io("http://192.168.1.18:3002" ,{
+    // socket = io("https://geekjives-26190134d520.herokuapp.com" ,{
+    socket = io("http://192.168.1.18:3000" ,{
       transports: ['websocket', 'polling'],
       withCredentials: true,
       autoConnect: true,
@@ -62,11 +62,13 @@ export const getSocket = (): Socket | undefined => {
   return socket;
 };
 
-export const disconnectSocket = (): void => {
+export const disconnectSocket = () => {
   if (socket) {
-    console.log("🔌 Disconnecting socket...");
+    console.log("Disconnecting socket...");
     socket.disconnect();
-    socket = undefined;
+    socket = null;
+    console.log("Socket disconnected");
+  } else {
+    console.log("Socket not initialized, call initiateSocket() first");
   }
 };
- 
