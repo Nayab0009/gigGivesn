@@ -121,27 +121,27 @@ export default function UserDropdown() {
       {/* Dropdown */}
       {isOpen && (
         <div
-          className="absolute right-0 backdrop-blur-[101.67px] mt-[17px] flex w-[280px] flex-col rounded-2xl p-4 shadow-lg "
+          className="absolute bg-black/30 right-0 backdrop-blur-[100px] mt-[17px] flex w-[280px] flex-col rounded-2xl p-[1.375rem] shadow-lg "
           style={{
-            backgroundColor: "rgba(0, 0, 0, 0.3)",
-            border: "1px solid rgba(164, 167, 174, 1)",
+            border: "0.5px solid #A4A7AE",
           }}
         >
           {/* User Info */}
+          <div className="flex justify-between items-center">
           <div className="mb-3">
-            <span className="block text-base font-semibold text-white">
+            <span className="block text-xs font-semibold text-white">
               {displayName}
             </span>
-            <span className="block text-sm text-gray-300">{user.email}</span>
+            <span className="block text-sm text-gray-400">{user.email}</span>
           </div>
 
           {/* Role + Active Badge Row */}
-          <div className="flex items-center justify-between mb-4">
-            <span className="px-3 py-1 text-xs font-medium rounded-md bg-white/10 text-white">
+          <div className="flex items-center mb-4 gap-1">
+            <span className="px-3 py-0.5  font-bold text-[10px] rounded-[50px] bg-white/10 text-white">
               {role}
             </span>
             <span
-              className="px-3 py-1 text-xs font-medium rounded-md"
+              className="px-3 py-0.5 text-[10px] font-bold rounded-[50px]"
               style={{
                 backgroundColor: "rgba(50, 213, 131, 0.4)",
                 color: "#fff",
@@ -150,6 +150,7 @@ export default function UserDropdown() {
               Active
             </span>
           </div>
+          </div>
 
           {/* Profile Option */}
           <button
@@ -157,13 +158,13 @@ export default function UserDropdown() {
               setIsOpen(false);
               setIsProfileOpen(true);
             }}
-            className="flex items-center gap-3 w-full text-left px-3 py-2 rounded-lg text-sm text-white hover:bg-white/10 transition"
+            className="flex items-center hover:px-3 gap-3 w-full text-left  py-2 rounded-lg text-xs text-white hover:bg-white/10 transition"
           >
             <Image
               src="/images/profile.svg"
               alt="Profile"
-              width={22}
-              height={22}
+              width={16}
+              height={16}
             />
             Profile
           </button>
@@ -174,9 +175,9 @@ export default function UserDropdown() {
               setIsOpen(false);
               console.log("Theme toggle clicked");
             }}
-            className="flex items-center gap-3 w-full text-left px-3 py-2 rounded-lg text-sm text-white hover:bg-white/10 transition"
+            className="flex items-center hover:px-3 gap-3 w-full text-left  py-2 rounded-lg text-xs text-white hover:bg-white/10 transition"
           >
-            <Image src="/images/theme.svg" alt="Theme" width={22} height={22} />
+            <Image src="/images/theme.svg" alt="Theme" width={16} height={16} />
             Theme
           </button>
 
@@ -186,24 +187,21 @@ export default function UserDropdown() {
               setIsOpen(false);
               setIsSupportOpen(true);
             }}
-            className="flex items-center gap-3 w-full text-left px-3 py-2 rounded-lg text-sm text-white hover:bg-white/10 transition"
+            className="flex items-center hover:px-3 gap-3 w-full text-left  py-2 rounded-lg text-xs text-white hover:bg-black/10 transition"
           >
             <Image
               src="/images/support.svg"
               alt="Support"
-              width={22}
-              height={22}
+              width={16}
+              height={16}
             />
             Support
           </button>
 
-          {/* Divider */}
-          <hr className="my-3 border-white/20" />
-
           {/* Logout Option */}
           <button
             onClick={handleSignOut}
-            className="flex items-center gap-3 w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition"
+            className="flex items-center gap-3 hover:px-3 w-full text-left  py-2 rounded-lg text-xs font-medium transition"
             style={{
               color: "rgba(240, 68, 56, 0.9)", // darker red text
             }}
@@ -212,8 +210,8 @@ export default function UserDropdown() {
             <Image
               src="/images/logout.svg"
               alt="Logout"
-              width={22}
-              height={22}
+              width={16}
+              height={16}
             />
             {isLoggingOut ? "Signing out..." : "Logout"}
           </button>
