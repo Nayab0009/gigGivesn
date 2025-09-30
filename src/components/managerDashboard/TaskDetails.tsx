@@ -52,7 +52,7 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
         style={{
           borderRadius: '20px',
           border: '1px solid rgba(255, 255, 255, 0.3)',
-          padding: '20px',
+          padding: '42px',
           gap: '16px',
           opacity: 1,
           background: 'rgba(0, 0, 0, 0.3)',
@@ -94,7 +94,7 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
                 {task.ticketNumber || "-"}
               </p>
             </div>
-            <div>
+            <div className="pt-[22px]">
               <p
                 className="text-[#A4A7AE]"
                 style={{

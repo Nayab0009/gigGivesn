@@ -109,7 +109,8 @@ export default function ManagerDashboard() {
       try {
         const contactRole = user.role === "manager" ? "employee" : "manager";
         const response = await ShowEmployee(contactRole);
-        const contacts = (response?.data || []).slice(0, 4);
+        console.log('ShowEmployee response:', response);
+        const contacts = Array.isArray(response?.data?.[0]) ? response.data[0].slice(0, 4) : [];
         const logs = await Promise.all(
           contacts.map(async (contact: any) => {
             let lastMsg = null;
@@ -227,4 +228,3 @@ export default function ManagerDashboard() {
     </div>
   );
 }
-                             
