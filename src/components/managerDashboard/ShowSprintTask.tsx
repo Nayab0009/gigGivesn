@@ -32,6 +32,7 @@ import { colors } from "@/colors";
 import { AssignTaskModal } from "../adminDashboard/AssignProjectTicket";
 import type { Task } from "@/types";
 import { useProjectContext } from '@/context/ProjectContext';
+import { getDuration } from '@/lib/general';
 
 interface TaskResponse {
   id: number;
@@ -42,7 +43,7 @@ interface TaskResponse {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  dueDate?: string;
+  taskDate?: string;
   comment?: string | null;
   user?: {
     id: number;
@@ -371,8 +372,8 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
 
                     }}
                     className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${activeTab === t.key
-                        ? "bg-[#0000004D] text-white shadow "
-                        : "text-white/80  hover:bg-[#0000004D] border-transparent"
+                      ? "bg-[#0000004D] text-white shadow "
+                      : "text-white/80  hover:bg-[#0000004D] border-transparent"
                       }`}
                     style={{ minWidth: 90 }}
                   >
@@ -432,8 +433,8 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                 <button
                   onClick={() => setTaskView("table")}
                   className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${taskView === "table"
-                      ? "bg-black/30 text-white"
-                      : "text-white/90  hover:bg-black/30 "
+                    ? "bg-black/30 text-white"
+                    : "text-white/90  hover:bg-black/30 "
                     }`}
                 >
                   <Table className="w-4 h-4" /> Table View
@@ -441,8 +442,8 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                 <button
                   onClick={() => setTaskView("kanban")}
                   className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${taskView === "kanban"
-                      ? "bg-black/30 text-white"
-                      : "text-white/90  hover:bg-black/30 "
+                    ? "bg-black/30 text-white"
+                    : "text-white/90  hover:bg-black/30 "
                     }`}
                 >
                   <LayoutGrid className="w-4 h-4" /> Kanban Board
@@ -500,16 +501,16 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                                 </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
-                                {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "—"}
+                                {task.taskDate ? new Date(task.taskDate).toLocaleDateString() : "—"}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
                                 <span className="inline-flex items-center gap-2">
                                   <ChevronDown
                                     className={`w-4 h-4 ${task.priority?.toLowerCase() === "high"
-                                        ? "text-red-400"
-                                        : task.priority?.toLowerCase() === "medium"
-                                          ? "text-yellow-300"
-                                          : "text-emerald-400"
+                                      ? "text-red-400"
+                                      : task.priority?.toLowerCase() === "medium"
+                                        ? "text-yellow-300"
+                                        : "text-emerald-400"
                                       }`}
                                   />
                                   <span className="capitalize">{task.priority || "Low"}</span>
@@ -588,16 +589,16 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                                 </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
-                                {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "—"}
+                                {task.taskDate ? new Date(task.taskDate).toLocaleDateString() : "—"}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
                                 <span className="inline-flex items-center gap-2">
                                   <ChevronDown
                                     className={`w-4 h-4 ${task.priority?.toLowerCase() === "high"
-                                        ? "text-red-400"
-                                        : task.priority?.toLowerCase() === "medium"
-                                          ? "text-yellow-300"
-                                          : "text-emerald-400"
+                                      ? "text-red-400"
+                                      : task.priority?.toLowerCase() === "medium"
+                                        ? "text-yellow-300"
+                                        : "text-emerald-400"
                                       }`}
                                   />
                                   <span className="capitalize">{task.priority || "Low"}</span>
@@ -680,7 +681,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                               {/* Time (example static) */}
                               <span className="flex items-center gap-1 text-xs text-white/60 ml-auto">
                                 <Clock className="w-4 h-4" />
-                                0h 52m
+                                {getDuration(task.taskDate || '')}
                               </span>
                             </div>
                           </div>

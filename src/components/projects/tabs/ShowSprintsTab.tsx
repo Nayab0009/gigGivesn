@@ -166,7 +166,7 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
 
         {!isAdmin && (
           <button
-            onClick={() => router.push("/dashboard/manager/addsprints")}
+            onClick={() => router.push(`/dashboard/manager/addsprints/${projectId}`)}
             className="inline-flex items-center gap-2 px-4 py-2 text-white font-medium rounded-full transition shadow-sm hover:shadow-md transform hover:scale-105 active:scale-95 border"
             style={{
               backgroundColor: "#0CA9F6",
@@ -199,15 +199,21 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
             >
               {/* Header */}
               <div className="flex items-center justify-between mb-0">
-                <h2 className="text-lg font-bold text-white">{sprint.name}</h2>
-                <span className="text-xs py-2.5 px-5 rounded-full font-medium text-white bg-[#0CA9F6]">
+
+                <h2 className="text-lg font-bold text-white">{sprint.title}</h2>
+                <span
+                  className="text-xs py-2.5 px-5 rounded-full font-medium text-white "
+                  style={{ backgroundColor: `${colors.primary.rgb.replace(", 1)", ", 1)")}` }}
+                >
                   Active
                 </span>
               </div>
 
-              {/* Description (truncated to one line with ellipsis) */}
-              <p className="text-sm text-gray-300 mb-5 truncate">
-                {truncateText(sprint.description || "No description provided", 80)}
+
+              {/* Description */}
+              <p className="text-sm text-gray-300 mb-5 line-clamp-2 ">
+                {sprint.name || "No description provided"}
+
               </p>
 
               {/* Details */}
