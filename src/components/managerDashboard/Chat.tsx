@@ -1379,7 +1379,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
           <p className="text-lg">Select a conversation from the sidebar to start messaging.</p>
         </div>
       )}
-      {/* Full-screen image preview modal */}
+     
       {fullScreenImageUrl && (
         <div
           className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
