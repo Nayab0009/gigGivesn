@@ -202,7 +202,7 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
             >
               {/* Header */}
               <div className="flex items-center justify-between mb-0">
-                <h2 className="text-lg font-bold text-white">{sprint.name}</h2>
+                <h2 className="text-lg font-bold text-white">{sprint.title}</h2>
                 <span
                   className="text-xs py-2.5 px-5 rounded-full font-medium text-white "
                   style={{ backgroundColor: `${colors.primary.rgb.replace(", 1)", ", 1)")}` }}
@@ -213,7 +213,7 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
 
               {/* Description */}
               <p className="text-sm text-gray-300 mb-5 line-clamp-2 ">
-                {sprint.description || "No description provided"}
+                {sprint.name || "No description provided"}
               </p>
 
               {/* Details */}

@@ -17,6 +17,7 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
     title: '',
     description: '',
     startDate: '',
+    title2: '',
     endDate: '',
   });
   const [submitting, setSubmitting] = useState(false);
@@ -36,6 +37,7 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
     try {
       const payload = {
         name: form.title,
+        title: form.title2,
         description: form.description,
         startDate: form.startDate || undefined,
         endDate: form.endDate || undefined,
@@ -85,6 +87,25 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
                       required
                       value={form.title}
                       onChange={e => setForm(prev => ({ ...prev, title: e.target.value }))}
+                      placeholder="e.g., Sprint 24 - User Authentication & Dashboard"
+                      className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none
+                       bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
+                        focus:border-white/40"
+                      style={{
+                        focusRingColor: colors.primary.hex,
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[14px] font-semibold mb-3 text-white">
+                      Sprint Name <span style={{ color: colors.warning.hex }}>*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={form.title2}
+                      onChange={e => setForm(prev => ({ ...prev, title2: e.target.value }))}
                       placeholder="e.g., Sprint 24 - User Authentication & Dashboard"
                       className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none
                        bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
