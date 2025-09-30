@@ -4,6 +4,22 @@ import { getTaskById } from "@/lib/TaskService"
 import { useAuth } from "@/context/AuthContext"
 import { initiateSocket, getSocket } from "@/lib/socket"
 import { sendMessage as sendChatMessage } from "@/lib/chatService"
+import {
+  ChevronDown,
+  Calendar,
+  User,
+  Circle,
+  Clock,
+  CheckCircle2,
+  Plus,
+  LogIn,
+  LogOut,
+  Timer,
+  MessageCircle,
+  Edit,
+  X,
+} from "lucide-react"
+
 // Chat message type
 type ChatMessage = {
   id?: string
@@ -29,7 +45,6 @@ type ProjectTask = {
   createdAt?: string
   updatedAt?: string
   comment?: string | null
-  // Project reference
   taskOf?: {
     id: number
     name: string
@@ -38,7 +53,6 @@ type ProjectTask = {
     endDate?: string
     status?: string
   }
-  // Assignee
   taskFor?: {
     id: number
     name: string
@@ -63,22 +77,6 @@ type TaskLog = {
   time?: string
   user?: { name: string }
 }
-import {
-  ChevronDown,
-  Calendar,
-  User,
-  Circle,
-  Clock,
-  CheckCircle2,
-  Plus,
-  LogIn,
-  LogOut,
-  Timer,
-  MessageCircle,
-  MoreHorizontal,
-  Edit,
-  X,
-} from "lucide-react"
 
 type TaskDetailsPanelProps = {
   taskId: string | number
@@ -102,13 +100,10 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
       setLoading(true)
       setError(null)
       try {
-        // Convert taskId to string since the API expects a string
         const taskObj = await getTaskById(String(taskId))
-        console.log("Task data:", taskObj);
         setTask(taskObj)
-        // Create synthetic logs from task data since API doesn't provide logs
-        const syntheticLogs: TaskLog[] = [];
-        // Add creation log
+
+        const syntheticLogs: TaskLog[] = []
         if (taskObj.createdAt) {
           syntheticLogs.push({
             id: `${taskObj.id}-created`,
@@ -117,10 +112,9 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
             timestamp: taskObj.createdAt,
             message: "Task was created",
             time: taskObj.createdAt,
-            user: { name: taskObj.taskFor?.name || "System" }
-          });
+            user: { name: taskObj.taskFor?.name || "System" },
+          })
         }
-        // Add status log if updated
         if (taskObj.updatedAt && taskObj.updatedAt !== taskObj.createdAt) {
           syntheticLogs.push({
             id: `${taskObj.id}-updated`,
@@ -129,12 +123,12 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
             timestamp: taskObj.updatedAt,
             message: `Task status updated to ${taskObj.status}`,
             time: taskObj.updatedAt,
-            user: { name: taskObj.taskFor?.name || "System" }
-          });
+            user: { name: taskObj.taskFor?.name || "System" },
+          })
         }
-        setLogs(syntheticLogs);
+        setLogs(syntheticLogs)
       } catch (err) {
-        console.error("Error fetching task:", err);
+        console.error("Error fetching task:", err)
         setError("Failed to load task details.")
       } finally {
         setLoading(false)
@@ -149,25 +143,40 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
     initiateSocket(currentUser.id.toString())
     const socket = getSocket()
     if (!socket) return
-    // Join a room for this task
+
     socket.emit("join_task_room", { taskId: String(taskId) })
-    // Listen for incoming messages
-    socket.on("task_message", (msg: ChatMessage) => {
-      setChatMessages((prev) => [...prev, msg])
-    })
-    // Optionally: fetch previous messages for this task from your backend here
+
+    const handleTaskMessage = (data: any) => {
+      const mappedMessage: ChatMessage = {
+        id: data.id,
+        message: data.message || "",
+        timestamp: data.createdAt ? new Date(data.createdAt).getTime() : data.timestamp || Date.now(),
+        userId: data.userId,
+        username: data.username,
+        senderId: data.sendBy?.id?.toString() || data.senderId?.toString(),
+        receiverId: data.receivedBy?.id?.toString() || data.receiverId?.toString(),
+      }
+
+      if (
+        mappedMessage.senderId === currentUser.id.toString() ||
+        mappedMessage.receiverId === currentUser.id.toString()
+      ) {
+        setChatMessages((prev) => [...prev, mappedMessage])
+      }
+    }
+
+    socket.on("task_message", handleTaskMessage)
+
     return () => {
-      socket.off("task_message")
+      socket.off("task_message", handleTaskMessage)
       socket.emit("leave_task_room", { taskId: String(taskId) })
     }
   }, [currentUser, taskId])
 
-  // Scroll chat to bottom on new message
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [chatMessages])
 
-  // Send chat message
   const handleSendChat = async () => {
     if (!chatInput.trim() || !currentUser) return
     const socket = getSocket()
@@ -176,14 +185,12 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
       userId: currentUser.id.toString(),
       username: currentUser.name,
       senderId: currentUser.id.toString(),
-      receiverId: String(taskId), // Use taskId as receiver/room
+      receiverId: String(taskId),
       timestamp: Date.now(),
     }
     setChatMessages((prev) => [...prev, msg])
     setChatInput("")
-    // Emit to socket
     socket?.emit("task_message", { ...msg, taskId: String(taskId) })
-    // Optionally: persist to backend
     try {
       await sendChatMessage(currentUser.id, taskId)
     } catch {}
@@ -209,17 +216,9 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
   }
   if (!task) return null
 
-  // Example field extraction
-  const statusColor = {
-    new: "bg-sky-400",
-    inprogress: "bg-emerald-400",
-    completed: "bg-emerald-700",
-    cancelled: "bg-rose-400",
-  }[task.status?.toLowerCase() || "new"]
-
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[350px_1fr] gap-4 bg-black/40 border border-white/10 rounded-2xl shadow-xl overflow-hidden min-h-[560px]">
-      
+    <div className="grid grid-cols-1 md:grid-cols-[350px_1fr] gap-4 bg-black/30 backdrop-blur-[100px] border border-white/10 rounded-2xl shadow-xl overflow-hidden min-h-[560px]">
+
       {/* Left: Task Details */}
       <div className="p-6 flex flex-col gap-4 border-r border-white/10 backdrop-blur-md" style={{ minWidth: 320 }}>
         {/* Top: Breadcrumb + Edit */}
@@ -251,6 +250,7 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
             <ChevronDown className="w-3 h-3 ml-1" />
           </span>
         </div>
+
         {/* Meta fields */}
         <div className="space-y-2 text-sm text-white/80">
           <div className="flex items-center gap-2">
@@ -289,8 +289,8 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
                 task.priority === "high"
                   ? "text-red-400"
                   : task.priority === "medium"
-                    ? "text-yellow-300"
-                    : "text-emerald-400"
+                  ? "text-yellow-300"
+                  : "text-emerald-400"
               }`}
             >
               {task.priority ?? "—"}
@@ -299,20 +299,6 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
         </div>
 
         {/* Action buttons */}
-        <div className="flex flex-wrap gap-2 mt-3">
-          <button className="bg-emerald-700 text-white px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-emerald-800">
-            <Plus className="w-4 h-4" /> Add Subtask
-          </button>
-          <button className="bg-blue-700 text-white px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-blue-800">
-            <LogIn className="w-4 h-4" /> Attach File
-          </button>
-          <button className="bg-orange-700 text-white px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-orange-800">
-            <Timer className="w-4 h-4" /> Start Timer
-          </button>
-          <button className="bg-gray-700 text-white px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-gray-800">
-            <LogOut className="w-4 h-4" /> Log Time
-          </button>
-        </div>
 
         {/* Description */}
         <div className="mt-4">
@@ -324,7 +310,7 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
       </div>
 
       {/* Right: Task Chat */}
-      <div className="flex flex-col h-full bg-black/20">
+      <div className="flex flex-col h-full bg-black/30">
         {/* Chat header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <div className="font-semibold text-white/80">Task Chat</div>
@@ -336,7 +322,12 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
               <div className="text-white/40 text-sm text-center mt-12">No messages yet</div>
             ) : (
               chatMessages.map((msg, idx) => (
-                <div key={idx} className={`flex items-center gap-2 text-xs ${msg.userId === currentUser?.id.toString() ? "text-emerald-300" : "text-white/70"}`}>
+                <div
+                  key={idx}
+                  className={`flex items-center gap-2 text-xs ${
+                    msg.userId === currentUser?.id.toString() ? "text-emerald-300" : "text-white/70"
+                  }`}
+                >
                   <span className="font-semibold">{msg.username ?? "User"}:</span>
                   <span>{msg.message}</span>
                   <span className="ml-auto text-white/40">
@@ -350,13 +341,19 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
         </div>
         {/* Chat input */}
         <div className="border-t border-white/10 px-6 py-4">
-          <form className="flex gap-2" onSubmit={e => { e.preventDefault(); handleSendChat(); }}>
+          <form
+            className="flex gap-2"
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleSendChat()
+            }}
+          >
             <input
               type="text"
               className="flex-1 px-4 py-2 rounded-lg bg-white/10 text-white focus:outline-none"
               placeholder="Type a message…"
               value={chatInput}
-              onChange={e => setChatInput(e.target.value)}
+              onChange={(e) => setChatInput(e.target.value)}
             />
             <button
               type="submit"
@@ -372,4 +369,3 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
     </div>
   )
 }
-

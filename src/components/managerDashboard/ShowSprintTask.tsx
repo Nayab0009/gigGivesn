@@ -117,7 +117,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
     dueDate: '',
     estimatedHours: 0,
   });
-  
+
   // Modal states
   // const [isModalOpen, setIsModalOpen] = useState(false);
   // const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
@@ -331,7 +331,7 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
             </p> */}
           </div>
         </div>
-             
+
         {/* Add Task button above toggle */}
         <div className="flex flex-col items-end gap-1 mb-5">
           {showProjectIdError && (
@@ -361,14 +361,14 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                 <button
                   key={t.key}
                   onClick={() => {
-                    
+
                     setActiveTab(t.key as any);
                     const url = new URL(window.location.href);
                     url.searchParams.set('tab', t.key);
                     router.replace(url.pathname + url.search);
                     router.push(`/dashboard/manager/projects/${projectId}?tab=${t.key}`);
-                    
-                    
+
+
                   }}
                   className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
                     activeTab === t.key
@@ -381,20 +381,18 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                 </button>
               ))}
             </div>
-          </div>  
+          </div>
           <button
             onClick={handleAddTask}
-            className="inline-flex items-center text-sm py-2.5 gap-2  px-3 text-white font-medium rounded-full transition shadow-sm"
-            style={{
-              background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex}, ${colors.accent.hex})`,
-            }}
+            className="inline-flex items-center text-sm py-2.5 gap-2  px-3 text-white font-medium rounded-full transition shadow-sm bg-[#0CA9F6] text-white"
+
             title="Add new task to this sprint"
           >
             <Plus className="w-4 h-4" />
             Add Task
           </button>
           </div>
-          
+
         </div>
 
         {/* Error Message */}
@@ -430,7 +428,7 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
               ) : <span />}
               <div
                 className="flex  rounded-full p-1 gap-1 shadow-inner bg-black/30"
-              
+
               >
                 <button
                   onClick={() => setTaskView("table")}
