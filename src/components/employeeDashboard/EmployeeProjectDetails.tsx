@@ -9,9 +9,10 @@ import {
   type MemberTaskCount,
   type ProjectTask,
 } from "@/lib/ProjectService"
-import { AlertCircle, RefreshCw } from "lucide-react"
+import { AlertCircle, Filter, RefreshCw } from "lucide-react"
 import { CalendarTab, MembersTab } from "@/components/projects/tabs"
 import EmployeeSprintsTab from "@/components/employeeDashboard/EmployeeSprintsTab"
+import { useEmployeeContext } from "@/context/EmployeeContext"
 
 type TeamMember = {
   id: string
@@ -59,13 +60,8 @@ export default function EmployeeProjectDetails() {
     cancelledTask: 0,
   })
   const [tasks, setTasks] = useState<ProjectTask[]>([])
+  const { activeTab, setActiveTab } = useEmployeeContext()
 
-  const [activeTab, setActiveTab] = useState<"sprints" | "calendar" | "members">(() => {
-    if (typeof window === "undefined") return "sprints"
-    const params = new URLSearchParams(window.location.search)
-    const tab = params.get("tab")
-    return (tab as any) === "calendar" ? "calendar" : (tab as any) === "members" ? "members" : "sprints"
-  })
 
   useEffect(() => {
     let isMounted = true
@@ -138,7 +134,7 @@ export default function EmployeeProjectDetails() {
   return (
     <div className="fixed top-[150px] left-1/2 transform -translate-x-1/2 w-[96%] h-[calc(100vh-160px)] overflow-y-auto hide-scrollbar">
       <div className="mx-auto">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-8">
           <div>
             <div className="text-white/70 text-sm">Project</div>
             <h1 className="text-2xl sm:text-3xl font-semibold text-white mt-1">
@@ -148,9 +144,13 @@ export default function EmployeeProjectDetails() {
         </div>
 
         <div className="flex items-center justify-between mt-2 mb-6">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-5">
+            <button className="flex items-center gap-2 text-white hover:text-white px-2 py-1 rounded-full transition-all focus:outline-none ">
+              <Filter className="w-4 h-4" />
+              <span className="text-sm font-medium">Filter</span>
+            </button>
             <div
-              className="flex border border-white/20 rounded-full p-1 gap-1 shadow-inner"
+              className="flex  rounded-full p-1 gap-1 shadow-inner"
               style={{ background: "#0000004D" }}
             >
               {[
@@ -165,12 +165,12 @@ export default function EmployeeProjectDetails() {
                     const url = new URL(window.location.href)
                     url.searchParams.set("tab", t.key)
                     router.replace(url.pathname + url.search)
+
                   }}
-                  className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
-                    activeTab === (t.key as any)
-                      ? "bg-[#0000004D] text-white shadow border border-white/20"
-                      : "text-white/80 hover:text-white hover:bg-white/10 border border-transparent"
-                  }`}
+                  className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${activeTab === (t.key as any)
+                    ? "bg-[#0000004D] text-white shadow "
+                    : "text-white/80 hover:text-white hover:bg-white/10 "
+                    }`}
                   style={{ minWidth: 90 }}
                 >
                   {t.label}

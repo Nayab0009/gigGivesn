@@ -122,8 +122,8 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
   // const [isModalOpen, setIsModalOpen] = useState(false);
   // const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
   // const [modalLoading, setModalLoading] = useState(false);
-const [isTaskDetailOpen, setIsTaskDetailOpen] = useState(false);
-const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
+  const [isTaskDetailOpen, setIsTaskDetailOpen] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
   // Fetch sprint info (projectId/projectName) even if there are no tasks
   const fetchSprintInfo = async () => {
     if (propProjectId && propProjectName) {
@@ -254,10 +254,10 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
   //   }
   // };
 
- const handleViewReport = (task: TaskResponse) => {
-  setSelectedTaskId(task.id);
-  setIsTaskDetailOpen(true);
-};
+  const handleViewReport = (task: TaskResponse) => {
+    setSelectedTaskId(task.id);
+    setIsTaskDetailOpen(true);
+  };
 
   // const closeModal = () => {
   //   setIsModalOpen(false);
@@ -295,7 +295,7 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
   }, [projectId, projectName]);
 
   return (
-   <div className="w-full relative top-[30px] max-w-full mb-5">
+    <div className="w-full relative top-[30px] max-w-full mb-5">
       <div className="mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -341,56 +341,55 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
           )}
           <div className="flex justify-between w-full">
 
-          <div className="flex items-center gap-4">
-            <button className="flex items-center gap-1 text-white/70 hover:text-white px-2 py-1 rounded-full transition-all focus:outline-none">
-              <Filter className="w-4 h-4" />
-              <span className="text-sm font-medium">Filter</span>
-            </button>
-            <div
-              className="flex  rounded-full p-1 gap-1 shadow-inner"
-              style={{ background: "#0000004D" }}
-            >
-              {[
-                { key: "summary", label: "Summary" },
-                // { key: "tasks", label: "Tasks" },
-                 { key: "sprints", label: "Sprints" },
-                { key: "calendar", label: "Calendar" },
-                { key: "members", label: "Members" },
-                // { key: "settings", label: "Settings" },
-              ].map((t) => (
-                <button
-                  key={t.key}
-                  onClick={() => {
+            <div className="flex items-center gap-5">
+              <button className="flex items-center gap-1 text-white/70 hover:text-white px-2 py-1 rounded-full transition-all focus:outline-none">
+                <Filter className="w-4 h-4" />
+                <span className="text-sm font-medium">Filter</span>
+              </button>
+              <div
+                className="flex  rounded-full p-1 gap-1 shadow-inner"
+                style={{ background: "#0000004D" }}
+              >
+                {[
+                  { key: "summary", label: "Summary" },
+                  // { key: "tasks", label: "Tasks" },
+                  { key: "sprints", label: "Sprints" },
+                  { key: "calendar", label: "Calendar" },
+                  { key: "members", label: "Members" },
+                  // { key: "settings", label: "Settings" },
+                ].map((t) => (
+                  <button
+                    key={t.key}
+                    onClick={() => {
 
-                    setActiveTab(t.key as any);
-                    const url = new URL(window.location.href);
-                    url.searchParams.set('tab', t.key);
-                    router.replace(url.pathname + url.search);
-                    router.push(`/dashboard/manager/projects/${projectId}?tab=${t.key}`);
+                      setActiveTab(t.key as any);
+                      const url = new URL(window.location.href);
+                      url.searchParams.set('tab', t.key);
+                      router.replace(url.pathname + url.search);
+                      router.push(`/dashboard/manager/projects/${projectId}?tab=${t.key}`);
 
 
-                  }}
-                  className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
-                    activeTab === t.key
-                      ? "bg-[#0000004D] text-white shadow "
-                      : "text-white/80  hover:bg-[#0000004D] border-transparent"
-                  }`}
-                  style={{ minWidth: 90 }}
-                >
-                  {t.label}
-                </button>
-              ))}
+                    }}
+                    className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${activeTab === t.key
+                        ? "bg-[#0000004D] text-white shadow "
+                        : "text-white/80  hover:bg-[#0000004D] border-transparent"
+                      }`}
+                    style={{ minWidth: 90 }}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-          <button
-            onClick={handleAddTask}
-            className="inline-flex items-center text-sm py-2.5 gap-2  px-3 text-white font-medium rounded-full transition shadow-sm bg-[#0CA9F6] text-white"
+            <button
+              onClick={handleAddTask}
+              className="inline-flex items-center text-sm py-2.5 gap-2  px-3 text-white font-medium rounded-full transition shadow-sm bg-[#0CA9F6] text-white"
 
-            title="Add new task to this sprint"
-          >
-            <Plus className="w-4 h-4" />
-            Add Task
-          </button>
+              title="Add new task to this sprint"
+            >
+              <Plus className="w-4 h-4" />
+              Add Task
+            </button>
           </div>
 
         </div>
@@ -432,21 +431,19 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
               >
                 <button
                   onClick={() => setTaskView("table")}
-                  className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
-                    taskView === "table"
+                  className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${taskView === "table"
                       ? "bg-black/30 text-white"
                       : "text-white/90  hover:bg-black/30 "
-                  }`}
+                    }`}
                 >
                   <Table className="w-4 h-4" /> Table View
                 </button>
                 <button
                   onClick={() => setTaskView("kanban")}
-                  className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
-                    taskView === "kanban"
+                  className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${taskView === "kanban"
                       ? "bg-black/30 text-white"
                       : "text-white/90  hover:bg-black/30 "
-                  }`}
+                    }`}
                 >
                   <LayoutGrid className="w-4 h-4" /> Kanban Board
                 </button>
@@ -496,7 +493,7 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                                   In Progress
                                 </span>
                               </td>
-                                <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
                                 <span className="inline-flex items-center gap-2">
                                   <span className="w-2 h-2 rounded-full bg-sky-400"></span>
                                   <span>{task.description ? "Task" : "—"}</span>
@@ -508,13 +505,12 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                               <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
                                 <span className="inline-flex items-center gap-2">
                                   <ChevronDown
-                                    className={`w-4 h-4 ${
-                                      task.priority?.toLowerCase() === "high"
+                                    className={`w-4 h-4 ${task.priority?.toLowerCase() === "high"
                                         ? "text-red-400"
                                         : task.priority?.toLowerCase() === "medium"
-                                        ? "text-yellow-300"
-                                        : "text-emerald-400"
-                                    }`}
+                                          ? "text-yellow-300"
+                                          : "text-emerald-400"
+                                      }`}
                                   />
                                   <span className="capitalize">{task.priority || "Low"}</span>
                                 </span>
@@ -597,13 +593,12 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                               <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
                                 <span className="inline-flex items-center gap-2">
                                   <ChevronDown
-                                    className={`w-4 h-4 ${
-                                      task.priority?.toLowerCase() === "high"
+                                    className={`w-4 h-4 ${task.priority?.toLowerCase() === "high"
                                         ? "text-red-400"
                                         : task.priority?.toLowerCase() === "medium"
-                                        ? "text-yellow-300"
-                                        : "text-emerald-400"
-                                    }`}
+                                          ? "text-yellow-300"
+                                          : "text-emerald-400"
+                                      }`}
                                   />
                                   <span className="capitalize">{task.priority || "Low"}</span>
                                 </span>
@@ -636,8 +631,8 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
               /* Kanban board view */
               <div className="flex gap-6 px-18 pb-6">
                 {[{ key: "inprogress", title: "In Progress", color: "white" },
-                  { key: "completed", title: "Completed", color: "white" },
-                  { key: "cancelled", title: "Cancelled", color: "white" }].map((column, idx) => {
+                { key: "completed", title: "Completed", color: "white" },
+                { key: "cancelled", title: "Cancelled", color: "white" }].map((column, idx) => {
                   const columnTasks = tasks.filter(task => task.status?.toLowerCase() === column.key);
                   return (
                     <div key={column.key} className="flex-1 min-w-[260px] rounded-2xl border gap-3 border-white/30 backdrop-blur-xl p-4 flex flex-col bg-black/30">
@@ -659,16 +654,16 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                                 style={{
                                   backgroundColor:
                                     task.priority?.toLowerCase() === 'high' ? '#BD4242' :
-                                    task.priority?.toLowerCase() === 'medium' ? '#EAB308' :
-                                    task.priority?.toLowerCase() === 'low' ? '#34D399' : 'transparent'
+                                      task.priority?.toLowerCase() === 'medium' ? '#EAB308' :
+                                        task.priority?.toLowerCase() === 'low' ? '#34D399' : 'transparent'
                                 }}>
                                 {task.priority?.toLowerCase() === 'high'
                                   ? 'High'
                                   : task.priority?.toLowerCase() === 'medium'
-                                  ? 'Medium'
-                                  : task.priority?.toLowerCase() === 'low'
-                                  ? 'Low'
-                                  : ''}
+                                    ? 'Medium'
+                                    : task.priority?.toLowerCase() === 'low'
+                                      ? 'Low'
+                                      : ''}
                               </span>
                             </div>
                             {/* Title */}
@@ -704,20 +699,20 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
           </div>
         )}
 
-       {/* Task Details Panel Modal */}
-{isTaskDetailOpen && selectedTaskId && (
-  <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div className="w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl">
-      <TaskDetailsPanel
-        taskId={selectedTaskId}
-        onClose={() => {
-          setIsTaskDetailOpen(false);
-          setSelectedTaskId(null);
-        }}
-      />
-    </div>
-  </div>
-)}
+        {/* Task Details Panel Modal */}
+        {isTaskDetailOpen && selectedTaskId && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl">
+              <TaskDetailsPanel
+                taskId={selectedTaskId}
+                onClose={() => {
+                  setIsTaskDetailOpen(false);
+                  setSelectedTaskId(null);
+                }}
+              />
+            </div>
+          </div>
+        )}
 
         {/* Assign Task Modal */}
         {typeof selectedSprintId === 'number' && (

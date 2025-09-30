@@ -3,14 +3,19 @@ import Providers from "@/components/common/Providers";
 import { Metadata } from "next";
 import ProtectedRoute from "@/components/protectedRoutes/ProtectedRoute";
 import Image from "next/image";
-import { Montserrat } from "next/font/google";
+import { Inter, Montserrat } from "next/font/google";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
   weight: ["400", "500", "700"], // choose weights you need
 });
 
-export const metadata: Metadata = {
+export const interFont = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"], // choose weights you need
+});
+
+const metadata: Metadata = {
   title: "GiGgives",
   description: "Project Management App",
 };
@@ -23,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`relative font-outfit dark:bg-gray-900 min-h-screen ${montserrat.className}`}
+        className={`relative font-outfit dark:bg-gray-900 min-h-screen  ${montserrat.className} `}
         suppressHydrationWarning={true}
       >
         {/* Background Wrapper */}
