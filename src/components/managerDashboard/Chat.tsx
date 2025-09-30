@@ -408,7 +408,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
-  
+
   // Add specific effect for when userId prop changes
   useEffect(() => {
     if (userId && contacts.length > 0) {
@@ -420,7 +420,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
       }
     }
   }, [userId, contacts])
-  
+
   useEffect(() => {
     if (message.length > 0) {
       setIsTyping(true)
@@ -1007,7 +1007,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
                   {/* Find the selected contact from contacts array */}
                   {(() => {
                     const selectedContact = contacts.find((c) => c.id.toString() === selectedUserId.toString());
-                    
+
                     if (selectedContact?.avatar) {
                       return (
                         <img
@@ -1342,7 +1342,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
                   </div>
                 )}
                 <textarea
-                  className="w-3/4 px-4 py-3 rounded-2xl border border-white/20 bg-black/30 backdrop-blur-sm focus:ring-2 focus:ring-white/30 resize-none max-h-32 text-white placeholder-white/60"
+                  className="w-full px-4 py-3 rounded-2xl border border-white/20 bg-black/30 backdrop-blur-sm focus:ring-2 focus:ring-white/30 resize-none max-h-32 text-white placeholder-white/60"
                   placeholder={isUploadingFile ? "Uploading file..." : "Type your message..."}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
