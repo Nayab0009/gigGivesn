@@ -36,6 +36,7 @@ import {
   SettingsTab,
   SprintsTab
 } from "./tabs"
+import { useProjectContext } from "@/context/ProjectContext"
 
 type TeamMember = {
   id: string
@@ -91,18 +92,8 @@ export default function ProjectDetailsPage() {
   const [membersLoading, setMembersLoading] = useState(false)
   const [members, setMembers] = useState<TeamMember[]>([])
 
-  const [activeTab, setActiveTab] = useState<
-    "summary" | "tasks" | "sprints" | "calendar" | "notes" | "members" | "settings"
-  >(() => {
-    if (typeof window === 'undefined') return "summary";
-    const params = new URLSearchParams(window.location.search);
-    const tab = params.get('tab');
-    return (tab as any) === 'sprints' ? 'sprints' :
-           (tab as any) === 'calendar' ? 'calendar' :
-           (tab as any) === 'members' ? 'members' :
-           (tab as any) === 'tasks' ? 'tasks' :
-           (tab as any) === 'settings' ? 'settings' : 'summary';
-  });
+
+  const { activeTab, setActiveTab } = useProjectContext();
   const [taskView, setTaskView] = useState<"table" | "kanban">("table")
 
   // Settings state
@@ -305,7 +296,7 @@ export default function ProjectDetailsPage() {
   ]
 
   return (
-   <div className="w-full relative top-[30px] max-w-full mb-3.5">
+   <div className="w-full relative top-[1.875rem] max-w-full mb-3.5">
       <div className="mx-auto">
         {/* Top bar */}
         <div className="flex items-center justify-between">
