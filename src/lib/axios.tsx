@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosError } from "axios"
 const axiosInstance: AxiosInstance = axios.create({
-  // baseURL: "https://geekjives-26190134d520.herokuapp.com",
-  baseURL: "http://192.168.1.18:3000",
+  baseURL: "https://geekjives-26190134d520.herokuapp.com",
+  // baseURL: "http://192.168.1.18:3000",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
