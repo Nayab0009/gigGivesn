@@ -17,6 +17,7 @@ type Manager = {
   email: string
   role?: string
   isActive?: boolean
+  avatar?: string
 }
 
 type Project = {
@@ -48,7 +49,7 @@ const MembersTab = ({ project, membersLoading, members }: MembersTabProps) => {
       </div>
     )
   }
-
+  console.log("members", members, project);
   return (
     <div
       className="    border-t border-t-[#FFFFFF4D]  rounded-[22px] p-[22px] border border-white/10 backdrop-blur-xl overflow-hidden    bg-[#0000004D] "
@@ -72,9 +73,9 @@ const MembersTab = ({ project, membersLoading, members }: MembersTabProps) => {
               >
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm">
+                    {project.manager.avatar ? <img src={project.manager.avatar} alt={project.manager.name} className="w-8 h-8 rounded-full object-cover" /> :   <div className="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm">
                       {project.manager.name.charAt(0)}
-                    </div>
+                    </div>}
                     <span className="text-white font-medium">
                       {project.manager.name}{" "}
                       <span className="ml-1 text-xs text-emerald-400"></span>
@@ -104,9 +105,9 @@ const MembersTab = ({ project, membersLoading, members }: MembersTabProps) => {
               >
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm">
+                    {member.avatar ? <img src={member.avatar} alt={member.name} className="w-8 h-8 rounded-full object-cover" /> : <div className="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm">
                       {member.name.charAt(0)}
-                    </div>
+                    </div>}
                     <span className="text-white font-medium">{member.name}</span>
                   </div>
                 </td>
