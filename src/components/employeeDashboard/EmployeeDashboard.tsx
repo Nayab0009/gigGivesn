@@ -171,7 +171,7 @@ export default function Dashboard() {
             <CommunicationLogs userId={user?.id?.toString()} userRole={user?.role} />
           </div>
           <div>
-            <Remainder />
+            {/* <Remainder /> */}
           </div>
         </div>
 

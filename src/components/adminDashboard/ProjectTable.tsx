@@ -170,7 +170,7 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
           className="rounded-3xl shadow-2xl bg-[#000000] max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 no-scrollbar"
           style={{
             // background: "black/40",
-          
+
           }}
         >
      {/* <style>{`
@@ -309,7 +309,7 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
                   className="w-full px-4 py-3 border-2 rounded-xl bg-[#000000] focus:ring-4 focus:outline-none transition-all duration-300 font-medium  text-white placeholder-gray-300"
                   style={{
                     borderColor: "rgba(255, 255, 255, 0.3)",
-                    
+
                   }}
                   disabled={isUpdating}
                 >
@@ -397,78 +397,96 @@ function AssignManagerModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
-        <div
-          className="p-6"
-          style={{
-            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-            color: "#fff",
-          }}
-        >
-          <h2 className="text-2xl font-bold">Assign Manager to {project.name}</h2>
-          <p className="mt-1 text-white">Select a manager to oversee this project</p>
-        </div>
-        <div className="p-6 max-h-96 overflow-y-auto">
-          <div className="space-y-4">
-            {managers.map((manager) => (
-              <div
-                key={manager.id}
-                className="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:bg-emerald-50 transition-colors cursor-pointer"
-                onClick={() => !assigningManagerId && handleAssign(manager)}
-              >
-                <div className="flex items-center gap-3">
-                  <div
-                    className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg"
-                    style={{
-                      background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                    }}
-                  >
-                    {manager.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900">{manager.name}</h3>
-                    <p className="text-sm text-gray-600">{manager.email}</p>
-                    <p className="text-xs text-gray-500">{manager.phone}</p>
-                  </div>
-                </div>
-                <button
-                  className="px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                  style={{
-                    background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                    color: "#fff",
-                  }}
-                  disabled={!!assigningManagerId}
-                >
-                  {assigningManagerId === manager.id ? (
-                    <>
-                      <RefreshCw className="w-4 h-4 animate-spin" />
-                      Assigning...
-                    </>
-                  ) : (
-                    "Assign"
-                  )}
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="p-6 border-t border-gray-200 flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
-            style={{
-              background: "#fff",
-              color: colors.primary.hex,
-              border: `1px solid ${colors.primary.hex}`,
-            }}
-            disabled={!!assigningManagerId}
+  <div
+  className="fixed inset-0 bg-black/60 backdrop-blur-[101.67px] flex items-center justify-center z-50 p-4"
+  onClick={onClose} // Close when clicking outside
+>
+  <div
+    className="rounded-2xl shadow-2xl max-w-2xl w-full max-h-[80vh] flex flex-col overflow-hidden"
+    onClick={(e) => e.stopPropagation()} // Prevent close when clicking inside
+  >
+    {/* Header */}
+    <div className="p-6 bg-black/30 backdrop-blur-[101.67px]">
+      <h2 className="text-[32px] font-[600] text-white text-center">
+        Assign Manager to {project.name}
+      </h2>
+      <p className="mt-1 text-[12px] text-white text-center">
+        Select a manager to oversee this project
+      </p>
+    </div>
+
+    {/* Scrollable Managers List */}
+    <div className="px-6 pb-6 flex-1 overflow-y-auto hide-scrollbar bg-black/30 backdrop-blur-[101.67px]">
+      <div className="space-y-4 rounded-xl border border-white/30 shadow-sm p-4">
+        {managers.map((manager) => (
+          <div
+            key={manager.id}
+            className="flex items-center justify-between p-4 rounded-xl transition-colors cursor-pointer"
+            onClick={() => !assigningManagerId && handleAssign(manager)}
           >
-            Cancel
-          </button>
-        </div>
+            <div className="flex items-center gap-3">
+              <div
+                className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg"
+                style={{
+                  background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                }}
+              >
+                {manager.name.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <h3 className="font-[400] text-[14px] text-[#D1D5DB]">
+                  {manager.name}
+                </h3>
+                <p className="text-[8px] text-[#D1D5DB]">{manager.email}</p>
+                <p className="text-[8px] text-[#D1D5DB]">{manager.phone}</p>
+              </div>
+            </div>
+            <button
+              className="px-4 py-2 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              style={{
+                background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                color: "#fff",
+              }}
+              disabled={!!assigningManagerId}
+            >
+              {assigningManagerId === manager.id ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  Assigning...
+                </>
+              ) : (
+                "Assign"
+              )}
+            </button>
+          </div>
+        ))}
       </div>
     </div>
+
+    {/* Footer */}
+    <div className="p-6  flex justify-between bg-black/30 backdrop-blur-[101.7px]">
+    <p className="text-[12px] font-[500] text-[#D1D5DB]">All required fields marked with must be completed</p>
+     <button
+  onClick={onClose}
+  className="flex items-center justify-center transition-colors disabled:opacity-50"
+  style={{
+    width: "86px",
+    height: "36px",
+    borderRadius: "99px",
+    color: "white",
+    border: "1px solid #FFFFFF4D",
+    padding: "10px 22px",
+    gap: "10px",
+    opacity: 1,
+  }}
+  disabled={!!assigningManagerId}
+>
+  Cancel
+</button>
+    </div>
+  </div>
+</div>
+
   )
 }
 
@@ -509,18 +527,19 @@ export default function ProjectDashboard() {
 
   // Fetch managers from API
   useEffect(() => {
-    const fetchManagers = async () => {
-      try {
-        const response = await axiosInstance.get("/user?role=manager")
-        const managersData = Array.isArray(response.data) ? response.data : [response.data]
-        setManagers(managersData.filter(Boolean))
-      } catch (error) {
-        console.error("Error fetching managers:", error)
-        setManagers([])
-      }
+  const fetchManagers = async () => {
+    try {
+      const response = await axiosInstance.get("/user?role=manager")
+      // Extract the managers array from the nested response structure
+      const managersData = Array.isArray(response.data[0]) ? response.data[0] : []
+      setManagers(managersData.filter(Boolean))
+    } catch (error) {
+      console.error("Error fetching managers:", error)
+      setManagers([])
     }
-    fetchManagers()
-  }, [])
+  }
+  fetchManagers()
+}, [])
 
   // Filter projects
   const filteredProjects = useMemo(() => {
@@ -561,7 +580,7 @@ export default function ProjectDashboard() {
     }
   }
 
-  // Assign manager to project with API call
+
   const assignManager = async (projectId: string, manager: Manager) => {
     setIsAssigning(true)
     try {
@@ -609,14 +628,14 @@ export default function ProjectDashboard() {
   const editProject = editProjectId ? projects.find((p) => p.id === editProjectId) : null
 const truncateByWords = (text: string, maxLength: number = 100) => {
   if (!text || text.length <= maxLength) return text;
-  
+
   const truncated = text.substring(0, maxLength);
   const lastSpaceIndex = truncated.lastIndexOf(' ');
-  
+
   if (lastSpaceIndex > 0) {
     return truncated.substring(0, lastSpaceIndex) + '...';
   }
-  
+
   return truncated + '...';
 };
   // Refresh projects list (used by header Refresh button)
