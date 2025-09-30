@@ -93,13 +93,13 @@ const EmployeeSprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName 
             >
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-white">{sprint.name}</h2>
-               <span
-  className="w-[82px] h-[36px] flex items-center justify-center
+                <span
+                  className="w-[82px] h-[36px] flex items-center justify-center
              px-[22px] py-[10px] gap-[10px] rounded-[99px]
              text-xs font-medium bg-[#0CA9F6] text-white"
->
-  Active
-</span>
+                >
+                  Active
+                </span>
               </div>
               <p className="text-sm text-gray-300 mb-4 line-clamp-2">{sprint.description || "No description provided"}</p>
               <div className="space-y-2 text-sm text-gray-300 mb-4">
@@ -113,18 +113,18 @@ const EmployeeSprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName 
               <div className="flex items-center justify-between">
 
                 <div className="flex gap-3 w-full">
-  <button
-    onClick={() => handleSprintClick(sprint)}
-    className="w-[337px] h-[36px] flex items-center justify-center gap-[10px]
+                  <button
+                    onClick={() => handleSprintClick(sprint)}
+                    className=" h-[36px] flex items-center justify-center gap-[10px]
                px-[22px] py-[10px] rounded-[99px] text-sm font-medium
-               transition hover:opacity-80
+               transition hover:opacity-80 w-full
                bg-[#0000004D] text-white"
-    title="View all tasks in this sprint"
-  >
+                    title="View all tasks in this sprint"
+                  >
 
-    <span>View</span>
-  </button>
-</div>
+                    <span>View</span>
+                  </button>
+                </div>
 
               </div>
             </div>

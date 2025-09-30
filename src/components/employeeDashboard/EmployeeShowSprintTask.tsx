@@ -24,10 +24,12 @@ import {
   Users,
   Table,
   LayoutGrid,
-  ChevronDown
+  ChevronDown,
+  Filter
 } from 'lucide-react';
 import { colors } from "@/colors";
 import Image from 'next/image';
+import { useEmployeeContext } from '@/context/EmployeeContext';
 
 interface TaskResponse {
   id: number;
@@ -72,18 +74,21 @@ const EmployeeShowSprintTask: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [taskView, setTaskView] = useState<'table' | 'kanban'>('table');
+  const [projectId, setProjectId] = useState<number | null>(null);
   // Modal states
   // const [isModalOpen, setIsModalOpen] = useState(false);
   // const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
   // const [modalLoading, setModalLoading] = useState(false);
-const [isTaskDetailOpen, setIsTaskDetailOpen] = useState(false);
-const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
+
+  const [isTaskDetailOpen, setIsTaskDetailOpen] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
   const fetchSprintTasks = async () => {
     setIsLoading(true);
     setError(null);
     try {
       const { data } = await axiosInstance.get(`/tasks/employee/sprint/${sprintId}`);
       setTasks(Array.isArray(data) ? data : []);
+      setProjectId(data[0].taskOf.id);
     } catch (err: any) {
       setError(err?.response?.data?.message || 'Failed to load sprint tasks.');
       setTasks([]);
@@ -91,6 +96,7 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
       setIsLoading(false);
     }
   };
+  const { activeTab, setActiveTab } = useEmployeeContext()
 
   // const fetchTaskDetails = async (taskId: number) => {
   //   setModalLoading(true);
@@ -104,9 +110,9 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
   // };
 
   const handleViewReport = (task: TaskResponse) => {
-  setSelectedTaskId(task.id);
-  setIsTaskDetailOpen(true);
-};
+    setSelectedTaskId(task.id);
+    setIsTaskDetailOpen(true);
+  };
   // const closeModal = () => {
   //   setIsModalOpen(false);
   //   setSelectedTask(null);
@@ -118,7 +124,7 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
     setRefreshing(false);
   };
 
-    const getAssigneeAvatar = (task: TaskResponse) => {
+  const getAssigneeAvatar = (task: TaskResponse) => {
     if (!task.taskFor?.avatar) {
       return <User className="w-4 h-4 text-white" />;
     }
@@ -203,7 +209,44 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
             <p className="text-gray-400">Loading sprint tasks...</p>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-8">
+            <div className="flex items-center gap-5">
+              <button className="flex items-center gap-2 text-white px-2 py-1 rounded-full transition-all focus:outline-none">
+                <Filter className="w-4 h-4" />
+                <span className="text-sm font-medium ">Filter</span>
+              </button>
+              <div className="flex items-center gap-4">
+
+                <div
+                  className="flex rounded-full p-1 gap-1 shadow-inner"
+                  style={{ background: "#0000004D" }}
+                >
+                  {[
+                    { key: "sprints", label: "Sprints" },
+                    { key: "calendar", label: "Calendar" },
+                    { key: "members", label: "Members" },
+                  ].map((t) => (
+                    <button
+                      key={t.key}
+                      onClick={() => {
+                        setActiveTab(t.key as any)
+                        const url = new URL(window.location.href)
+                        url.searchParams.set("tab", t.key)
+                        router.replace(url.pathname + url.search)
+                        router.push(`/dashboard/teammember/projects/${projectId}?tab=${t.key}`);
+                      }}
+                      className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${activeTab === (t.key as any)
+                        ? "bg-[#0000004D] text-white shadow "
+                        : "text-white/80 hover:text-white hover:bg-white/10 "
+                        }`}
+                      style={{ minWidth: 90 }}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
             {/* Sprint name and view toggle buttons in one row */}
             <div className="flex items-center justify-between w-full mb-4">
               {/* Sprint Name at left */}
@@ -213,26 +256,24 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                 </span>
               ) : <span />}
               <div
-                className="flex border border-white/20 rounded-full p-1 gap-1 shadow-inner"
+                className="flex  rounded-full p-1 gap-1 shadow-inner"
                 style={{ background: "#0000004D" }}
               >
                 <button
                   onClick={() => setTaskView("table")}
-                  className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
-                    taskView === "table"
-                      ? "bg-white/10 text-white border border-white/20"
-                      : "text-white/90 hover:text-white hover:bg-white/10 border border-transparent"
-                  }`}
+                  className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${taskView === "table"
+                    ? "bg-white/10 text-white  "
+                    : "text-white/90 hover:text-white hover:bg-white/10 "
+                    }`}
                 >
                   <Table className="w-4 h-4" /> Table View
                 </button>
                 <button
                   onClick={() => setTaskView("kanban")}
-                  className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
-                    taskView === "kanban"
-                      ? "bg-white/10 text-white border border-white/20"
-                      : "text-white/90 hover:text-white hover:bg-white/10 border border-transparent"
-                  }`}
+                  className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${taskView === "kanban"
+                    ? "bg-white/10 text-white "
+                    : "text-white/90 hover:text-white hover:bg-white/10 "
+                    }`}
                 >
                   <LayoutGrid className="w-4 h-4" /> Kanban Board
                 </button>
@@ -296,13 +337,12 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                               <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
                                 <span className="inline-flex items-center gap-2">
                                   <ChevronDown
-                                    className={`w-4 h-4 ${
-                                      task.priority?.toLowerCase() === "high"
-                                        ? "text-red-400"
-                                        : task.priority?.toLowerCase() === "medium"
+                                    className={`w-4 h-4 ${task.priority?.toLowerCase() === "high"
+                                      ? "text-red-400"
+                                      : task.priority?.toLowerCase() === "medium"
                                         ? "text-yellow-300"
                                         : "text-emerald-400"
-                                    }`}
+                                      }`}
                                   />
                                   <span className="capitalize">{task.priority || "Low"}</span>
                                 </span>
@@ -331,7 +371,7 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                                       onClick={(e) => handleUpdateStatus(e, task)}
                                       className="px-3 py-1.5 text-xs bg-black/40 hover:bg-black/60 text-white font-medium border border-white/20 transition-all duration-200 flex items-center gap-1 rounded-2xl"
                                     >
-                                      <Image src="/images/update.svg" alt="Update Status" className="w-7 h-7 border border-white/20 p-2 rounded-full" height={20} width={20}/>
+                                      <Image src="/images/update.svg" alt="Update Status" className="w-7 h-7 border border-white/20 p-2 rounded-full" height={20} width={20} />
                                       Update Status
                                     </button>
                                   </div>
@@ -352,101 +392,100 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                 </div>
 
 
-               {/* Completed Tasks Table */}
-<div className="rounded-2xl border border-white/10 backdrop-blur-xl" style={{ background: "#0000004D" }}>
-  <div className="overflow-x-auto">
-    <table className="min-w-full">
-      <thead>
-        <tr className="text-white/70 text-sm border-b border-white/10">
-          <th className="px-6 py-3 text-left font-medium">
-            <div className="flex items-center gap-2 text-white">
-              <ChevronDown className="w-4 h-4 text-white/80" />
-              <span className="font-semibold">Completed Task</span>
-              <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/10 text-white/80">
-                {tasks.filter(task => task.status?.toLowerCase() === 'completed').length}
-              </span>
-            </div>
-          </th>
-          <th className="px-6 py-3 text-white text-left font-medium">Status</th>
-          <th className="px-6 py-3 text-left font-medium">Type</th>
-          <th className="px-6 py-3 text-left font-medium">Due Date</th>
-          <th className="px-6 py-3 text-left font-medium">Priority</th>
-          <th className="px-6 py-3 text-left font-medium">Assignee</th>
-        </tr>
-      </thead>
-      <tbody className="bg-transparent">
-        {tasks
-          .filter((task) => task.status?.toLowerCase() === 'completed')
-          .map((task) => (
-            <tr
-              key={task.id}
-              className="text-white text-sm border-b border-white/10 last:border-b-0 cursor-pointer hover:bg-white/5"
-              onClick={() => handleViewReport(task)}
-            >
-              <td className="px-6 py-4 whitespace-nowrap font-medium">
-                {task.title}
-                <span className="ml-2 text-white/50 text-xs">#{task.id}</span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
-                <span className="inline-flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                  Completed
-                </span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
-                <span className="inline-flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-sky-400"></span>
-                  <span>{task.description ? "Task" : "—"}</span>
-                </span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
-                {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "—"}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
-                <span className="inline-flex items-center gap-2">
-                  <ChevronDown
-                    className={`w-4 h-4 ${
-                      task.priority?.toLowerCase() === "high"
-                        ? "text-red-400"
-                        : task.priority?.toLowerCase() === "medium"
-                        ? "text-yellow-300"
-                        : "text-emerald-400"
-                    }`}
-                  />
-                  <span className="capitalize">{task.priority || "Low"}</span>
-                </span>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
-                <span className="inline-flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
-                    {getAssigneeAvatar(task)}
-                  </span>
-                  <span className="text-white/80 text-sm font-medium">
-                    {task.taskFor?.name || "Unassigned"}
-                  </span>
-                </span>
-              </td>
-            </tr>
-          ))}
-        {tasks.filter((task) => task.status?.toLowerCase() === 'completed').length === 0 && (
-          <tr>
-            <td className="px-6 py-4 text-white/60 text-sm" colSpan={6}>
-              No completed tasks
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
-  </div>
-</div>
+                {/* Completed Tasks Table */}
+                <div className="rounded-2xl border border-white/10 backdrop-blur-xl" style={{ background: "#0000004D" }}>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full">
+                      <thead>
+                        <tr className="text-white/70 text-sm border-b border-white/10">
+                          <th className="px-6 py-3 text-left font-medium">
+                            <div className="flex items-center gap-2 text-white">
+                              <ChevronDown className="w-4 h-4 text-white/80" />
+                              <span className="font-semibold">Completed Task</span>
+                              <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/10 text-white/80">
+                                {tasks.filter(task => task.status?.toLowerCase() === 'completed').length}
+                              </span>
+                            </div>
+                          </th>
+                          <th className="px-6 py-3 text-white text-left font-medium">Status</th>
+                          <th className="px-6 py-3 text-left font-medium">Type</th>
+                          <th className="px-6 py-3 text-left font-medium">Due Date</th>
+                          <th className="px-6 py-3 text-left font-medium">Priority</th>
+                          <th className="px-6 py-3 text-left font-medium">Assignee</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-transparent">
+                        {tasks
+                          .filter((task) => task.status?.toLowerCase() === 'completed')
+                          .map((task) => (
+                            <tr
+                              key={task.id}
+                              className="text-white text-sm border-b border-white/10 last:border-b-0 cursor-pointer hover:bg-white/5"
+                              onClick={() => handleViewReport(task)}
+                            >
+                              <td className="px-6 py-4 whitespace-nowrap font-medium">
+                                {task.title}
+                                <span className="ml-2 text-white/50 text-xs">#{task.id}</span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                <span className="inline-flex items-center gap-2">
+                                  <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                                  Completed
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                <span className="inline-flex items-center gap-2">
+                                  <span className="w-2 h-2 rounded-full bg-sky-400"></span>
+                                  <span>{task.description ? "Task" : "—"}</span>
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "—"}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                <span className="inline-flex items-center gap-2">
+                                  <ChevronDown
+                                    className={`w-4 h-4 ${task.priority?.toLowerCase() === "high"
+                                      ? "text-red-400"
+                                      : task.priority?.toLowerCase() === "medium"
+                                        ? "text-yellow-300"
+                                        : "text-emerald-400"
+                                      }`}
+                                  />
+                                  <span className="capitalize">{task.priority || "Low"}</span>
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                <span className="inline-flex items-center gap-2">
+                                  <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
+                                    {getAssigneeAvatar(task)}
+                                  </span>
+                                  <span className="text-white/80 text-sm font-medium">
+                                    {task.taskFor?.name || "Unassigned"}
+                                  </span>
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        {tasks.filter((task) => task.status?.toLowerCase() === 'completed').length === 0 && (
+                          <tr>
+                            <td className="px-6 py-4 text-white/60 text-sm" colSpan={6}>
+                              No completed tasks
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
 
               </div>
             ) : (
               /* Kanban board view */
               <div className="flex gap-6 px-18 pb-6">
                 {[{ key: "inprogress", title: "In Progress", color: "white" },
-                  { key: "completed", title: "Completed", color: "white" },
-                  { key: "cancelled", title: "Cancelled", color: "white" }].map((column, idx) => {
+                { key: "completed", title: "Completed", color: "white" },
+                { key: "cancelled", title: "Cancelled", color: "white" }].map((column, idx) => {
                   const columnTasks = tasks.filter(task => task.status?.toLowerCase() === column.key);
                   return (
                     <div key={column.key} className="flex-1 min-w-[260px] rounded-2xl border border-white/10 backdrop-blur-xl p-4 flex flex-col" style={{ background: '#0000004D', boxShadow: '0 2px 16px 0 rgba(0,0,0,0.10)' }}>
@@ -468,16 +507,16 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
                                 style={{
                                   backgroundColor:
                                     task.priority?.toLowerCase() === 'high' ? '#BD4242' :
-                                    task.priority?.toLowerCase() === 'medium' ? '#EAB308' :
-                                    task.priority?.toLowerCase() === 'low' ? '#34D399' : 'transparent'
+                                      task.priority?.toLowerCase() === 'medium' ? '#EAB308' :
+                                        task.priority?.toLowerCase() === 'low' ? '#34D399' : 'transparent'
                                 }}>
                                 {task.priority?.toLowerCase() === 'high'
                                   ? 'High'
                                   : task.priority?.toLowerCase() === 'medium'
-                                  ? 'Medium'
-                                  : task.priority?.toLowerCase() === 'low'
-                                  ? 'Low'
-                                  : ''}
+                                    ? 'Medium'
+                                    : task.priority?.toLowerCase() === 'low'
+                                      ? 'Low'
+                                      : ''}
                               </span>
                             </div>
                             {/* Title */}
@@ -515,20 +554,20 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
 
         {/* Task Details Modal */}
         {/* Task Details Panel Modal */}
-{isTaskDetailOpen && selectedTaskId && (
-  <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div className="w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl">
-      <TaskDetailsPanel
-        taskId={selectedTaskId}
-        userRole="employee"
-        onClose={() => {
-          setIsTaskDetailOpen(false);
-          setSelectedTaskId(null);
-        }}
-      />
-    </div>
-  </div>
-)}
+        {isTaskDetailOpen && selectedTaskId && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl">
+              <TaskDetailsPanel
+                taskId={selectedTaskId}
+                userRole="employee"
+                onClose={() => {
+                  setIsTaskDetailOpen(false);
+                  setSelectedTaskId(null);
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
