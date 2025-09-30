@@ -150,9 +150,12 @@ const NotesCard: React.FC = () => {
                 }}>
                   {formatDate(notes[0]?.lastModified || notes[0]?.updatedAt || notes[0]?.createdAt || "May/21/2020")}
                 </span>
-                <button style={{ padding: '4px', color: '#FFFFFF', background: 'none', border: 'none', cursor: 'pointer' }}>
+                <div className="bg-[#0000004D] rounded-full w-[28px] h-[28px]">
+                  <button style={{ padding: '6px', color: '#FFFFFF', background: 'none', border: 'none', cursor: 'pointer' }}>
                   <Edit3 size={16} />
                 </button>
+                </div>
+                
               </div>
             </>
           )}
