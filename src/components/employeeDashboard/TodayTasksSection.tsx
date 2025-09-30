@@ -35,12 +35,14 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
   onViewAll,
 }) => {
   const priorityOrder: Record<string, number> = { high: 1, medium: 2, low: 3 };
-  const sortedTodayTasks = [...tasks].sort((a, b) => {
-    const pa = priorityOrder[String(a.priority).toLowerCase()] || 99;
-    const pb = priorityOrder[String(b.priority).toLowerCase()] || 99;
-    if (pa !== pb) return pa - pb;
-    return 0;
-  });
+  const sortedTodayTasks = [...tasks]
+    .sort((a, b) => {
+      const pa = priorityOrder[String(a.priority).toLowerCase()] || 99;
+      const pb = priorityOrder[String(b.priority).toLowerCase()] || 99;
+      if (pa !== pb) return pa - pb;
+      return 0;
+    })
+    .slice(0, 2); 
 
   return (
     <div

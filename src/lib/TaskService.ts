@@ -92,6 +92,7 @@ export const getManagerTasks = async (): Promise<any> => {
 
 
 
+
 //update a task
 export const updateTask = async (taskId: string, taskData: any): Promise<any> => {
     try {
@@ -138,6 +139,16 @@ export const getManagerTasksToday = async (): Promise<any> => {
     }
 }   
 
+//get tasks created by employee today 
+export const getEmployeeTasksToday = async (): Promise<any> => {
+    try {
+        const response = await axiosInstance.get('/tasks/employe/today');
+        return response.data;
+    } catch (error) {
+        console.log("Error fetching today's tasks", error);
+        throw error;
+    }
+}  
   
 export const getManagerTasksGraphData = async (): Promise<any> => {
     try {
@@ -145,6 +156,29 @@ export const getManagerTasksGraphData = async (): Promise<any> => {
         return response.data;
     } catch (error) {
         console.log("Error fetching tasks graph data", error);
+        throw error;
+    }
+}
+
+
+//get task of manager by project id
+export const getManagerTasksByProjectId = async (projectId: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/tasks/manager/project/${projectId}`);
+        return response.data;
+    } catch (error) {
+        console.log("Error fetching manager tasks by project", error);
+        throw error;
+    }
+}
+
+//get task of employee by project id`
+export const getEmployeeTasksByProjectId = async (projectId: string): Promise<any> => {
+    try {
+        const response = await axiosInstance.get(`/tasks/employee/project/${projectId}`);
+        return response.data;
+    } catch (error) {
+        console.log("Error fetching employee tasks by project", error);
         throw error;
     }
 }

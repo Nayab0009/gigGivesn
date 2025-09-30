@@ -118,7 +118,7 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
                   letterSpacing: "0px",
                   verticalAlign: "middle",
                 }}>
-                  {task.sprint.name || "-"}
+                  {task.sprint?.name || "-"}
                 </p>
             </div>
           </div>

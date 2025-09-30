@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import axiosInstance from "@/lib/axios"
 import { useAuth } from "@/context/AuthContext"
-import { getTasksByEmployeeId } from "@/lib/TaskService"
+import { getEmployeeTasksToday } from "@/lib/TaskService"
 
 // Import components
 import TimeTable from "./EmployeeTimeTable"
@@ -14,6 +14,7 @@ import HeaderSection from "./HeaderSection"
 import TodayTasksSection from "./TodayTasksSection"
 import ProjectFilters from "./ProjectFilters"
 import MyTaskCard from "./MyTaskCard"
+import TodayTask from "../managerDashboard/TodayTask"
 
 export default function Dashboard() {
   const { user } = useAuth()
@@ -21,6 +22,8 @@ export default function Dashboard() {
   const [tasksLoading, setTasksLoading] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  //  const [tasksLoading, setTasksLoading] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [activeTimeFilter, setActiveTimeFilter] = useState("Today")
   const [analytics, setAnalytics] = useState({
     totalProjects: 0,
@@ -39,7 +42,7 @@ export default function Dashboard() {
     const fetchTasks = async () => {
       setTasksLoading(true)
       try {
-        const data = user?.id ? await getTasksByEmployeeId(user.id.toString()) : []
+        const data = user?.id ? await getEmployeeTasksToday() : []
         const priorityBuckets: Record<string, any[]> = { high: [], medium: [], low: [], other: [] }
 
         if (Array.isArray(data)) {
@@ -115,10 +118,7 @@ export default function Dashboard() {
     fetchManagerProjects()
   }, [user?.id])
 
-  // Loading state
-  if (isLoading) {
-    return <LoadingSpinner />
-  }
+   const handleViewAllClick = () => setIsPopupOpen(true);
 
   return (
     <div className="min-h-screen pb-12 text-white rounded-2xl">
@@ -132,7 +132,7 @@ export default function Dashboard() {
           {/* Left Side */}
           <div className="md:col-span-3 flex gap-6">
             <div className="h-[230px] w-[1000px]">
-              <TodayTasksSection tasks={todayTasks} isLoading={tasksLoading} />
+              <TodayTasksSection tasks={todayTasks} isLoading={tasksLoading} onViewAll={handleViewAllClick} />
             </div>
             <div className="h-[230px] w-[332px]">
               <NotesCard />
@@ -177,6 +177,23 @@ export default function Dashboard() {
 
         </div>
       </div>
+
+      {/* TodayTask Popup Modal */}
+      {isPopupOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: '#00000099', backdropFilter: 'blur(30px)' }}
+          onClick={() => setIsPopupOpen(false)}
+        >
+          <div
+            className="rounded-2xl p-6 max-w-5xl w-full mx-4 relative"
+            onClick={e => e.stopPropagation()}
+          >
+            <TodayTask />
+          </div>
+        </div>
+      )}
+      
     </div>
   )
 }

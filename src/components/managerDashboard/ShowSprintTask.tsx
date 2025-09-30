@@ -650,7 +650,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                           <div key={task.id} className="rounded-xl border border-white/30 shadow-md p-4 text-white/90 transition-all duration-200 cursor-pointer min-h-[150px] flex flex-col justify-center gap-4" style={{ background: '#0000004D' }} onClick={() => handleViewReport(task)}>
                             {/* Task Header */}
                             <div className="flex items-center justify-between mb-2">
-                              <span className="text-xs font-bold text-[#0CA9F6]">{`${task.id}`}</span>
+                              <span className="text-xs font-bold text-[#0CA9F6]">{`${task?.ticketNumber || task.id}`}</span>
                               <span className="text-[10px] px-2 py-0 rounded-full text-white font-bold"
                                 style={{
                                   backgroundColor:

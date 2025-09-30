@@ -128,14 +128,14 @@ export default function ManagerDashboard() {
                 const msg = arr[arr.length - 1];
                 lastMsg = typeof msg.messageBody === "string" && msg.messageBody.startsWith("http")
                   ? "File"
-                  : msg.messageBody || "Voice Message";
+                  : msg.messageBody || "No Chat Yet";
               }
             } catch {}
             return {
               id: contact.id,
               name: contact.name,
               avatar: contact.avatar || undefined,
-              lastMessage: lastMsg || "Voice Message",
+              lastMessage: lastMsg || "No Chat Yet",
               isActive: contact.isOnline ?? false,
             };
           })

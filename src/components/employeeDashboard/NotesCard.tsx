@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react"
 import { Edit3 } from "lucide-react"
 import { getNotes } from "@/lib/notesService"
 import { useAuth } from "@/context/AuthContext"
+import Link from "next/link"
 
 const NotesCard: React.FC = () => {
   const { user } = useAuth()
@@ -56,7 +57,7 @@ const NotesCard: React.FC = () => {
     >
       <div className="flex items-center justify-between">
         <span className="text-lg font-semibold text-white">Notes</span>
-        <a href="#" className="text-xs font-medium text-blue-300 hover:underline focus:outline-none">See All</a>
+        <Link href="/dashboard/teammember/notes" className="text-xs font-medium text-blue-300 hover:underline focus:outline-none">See All</Link>
       </div>
       
       {/* Single note card with fixed content */}
@@ -68,9 +69,7 @@ const NotesCard: React.FC = () => {
             <div className="text-white/70 text-sm text-center py-6">No notes found</div>
           ) : (
             <>
-              <div className="text-white text-sm leading-relaxed">
-                {notes[0]?.content || notes[0]?.title || "The beginning of Screen less design: UI Job to be taken over by solution Architect"}
-              </div>
+              <div className="text-white text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: notes[0]?.content || notes[0]?.title || "The beginning of Screen less design: UI Job to be taken over by solution Architect" }} />
               <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/20">
                 <span className="text-xs text-white">
                   {formatDate(notes[0]?.lastModified || notes[0]?.updatedAt || notes[0]?.createdAt || "May/21/2020")}
@@ -88,3 +87,4 @@ const NotesCard: React.FC = () => {
 }
 
 export default NotesCard
+

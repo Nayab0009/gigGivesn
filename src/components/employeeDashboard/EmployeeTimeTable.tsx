@@ -1,8 +1,9 @@
 // src/components/TimeTable.jsx
 
 import { useEffect, useState } from "react";
-import { getTasksByEmployeeId } from "@/lib/TaskService";
+import { getTasksByEmployeeId,getTaskById } from "@/lib/TaskService";
 import { MoreHorizontal } from "lucide-react";
+import TaskDetailsPopup from "../managerDashboard/TaskDetails";
 
 import React from "react"
 
@@ -50,7 +51,8 @@ const priorityColors: Record<string, string> = {
 const TimeTable = ({ employeeId }: TimeTableProps) => {
     const [tasks, setTasks] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
-
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [selectedTask, setSelectedTask] = useState<any>(null);
     useEffect(() => {
       const fetchTasks = async () => {
         setLoading(true);
@@ -70,53 +72,15 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
     }, []);
 
     const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-    const schedule: Record<string, any[]> = {};
-    days.forEach(day => (schedule[day] = []));
-    
-    // Process tasks from API and organize by day
-    tasks.forEach(task => {
-      if (task.taskDate) {
-        const dayName = getDayName(task.taskDate);
-        
-        // Only add if it's in our display days
-        if (days.includes(dayName)) {
-          // Extract ticket code if available (e.g. "FAZ-002" or "SO-003")
-          const taskCode = task.ticketNumber || `TASK-${task.id}`;
-          
-          // Create a standardized task object
-          const formattedTask = {
-            id: task.id,
-            taskCode: taskCode,
-            title: task.title || "Untitled Task",
-            description: task.description || "No description provided",
-            priority: task.priority || "Medium",
-            attendees: [
-              task.taskFor?.name || "Assignee", 
-              task.createdBy?.name || "Creator"
-            ],
-            duration: "0h 52m", // Default duration
-            taskDate: task.taskDate,
-            taskFor: task.taskFor,
-            createdBy: task.createdBy
-          };
-          
-          schedule[dayName].push(formattedTask);
-        } else {
-          // For weekend or other days not in our display list
-          console.log(`Task on day not displayed (${dayName}):`, task.title);
-        }
-      }
-    });
-    
+
     // Get the current date to generate day numbers
     const today = new Date();
     const currentDay = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
     const mondayDate = new Date(today);
-    
     // Adjust to get Monday's date
     const daysFromMonday = currentDay === 0 ? 6 : currentDay - 1;
     mondayDate.setDate(today.getDate() - daysFromMonday);
-    
+
     // Generate day numbers for the week starting from Monday
     const dayNumbers: Record<string, string> = {};
     days.forEach((day, index) => {
@@ -124,6 +88,70 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
       date.setDate(mondayDate.getDate() + index);
       dayNumbers[day] = date.getDate().toString();
     });
+
+    const schedule: Record<string, any[]> = {};
+    days.forEach(day => (schedule[day] = []));
+    // Process tasks from API and organize by day
+    tasks.forEach(task => {
+      if (task.taskDate) {
+        const taskDateObj = new Date(task.taskDate);
+        // Only include if in current week
+        if (isSameWeek(taskDateObj, mondayDate)) {
+          const dayName = getDayName(task.taskDate);
+          // Only add if it's in our display days
+          if (days.includes(dayName)) {
+            // Extract ticket code if available (e.g. "FAZ-002" or "SO-003")
+            const taskCode = task.ticketNumber || `TASK-${task.id}`;
+            // Create a standardized task object
+            const formattedTask = {
+              id: task.id,
+              taskCode: taskCode,
+              title: task.title || "Untitled Task",
+              description: task.description || "No description provided",
+              priority: task.priority || "Medium",
+              attendees: [
+                task.taskFor?.name || "Assignee", 
+                task.createdBy?.name || "Creator"
+              ],
+              duration: "0h 52m", // Default duration
+              taskDate: task.taskDate,
+              taskFor: task.taskFor,
+              createdBy: task.createdBy
+            };
+            schedule[dayName].push(formattedTask);
+          } else {
+            // For weekend or other days not in our display list
+            console.log(`Task on day not displayed (${dayName}):`, task.title);
+          }
+        }
+      }
+    });
+    
+    // Helper to check if two dates are in the same week
+    function isSameWeek(date1: Date, date2: Date) {
+      const d1 = new Date(date1);
+      const d2 = new Date(date2);
+      d1.setHours(0,0,0,0);
+      d2.setHours(0,0,0,0);
+      d1.setDate(d1.getDate() - ((d1.getDay() + 6) % 7));
+      d2.setDate(d2.getDate() - ((d2.getDay() + 6) % 7));
+      return d1.getTime() === d2.getTime();
+    }
+
+    const handleTaskClick = async (taskId: string) => {
+    try {
+      const taskDetails = await getTaskById(taskId);
+      setSelectedTask(taskDetails);
+      setIsPopupOpen(true);
+    } catch (error) {
+      console.error("Error fetching task details:", error);
+    }
+  };
+
+  const closePopup = () => {
+    setIsPopupOpen(false);
+    setSelectedTask(null);
+  };
 
     return (
     <>
@@ -305,7 +333,7 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
                             className="w-7 h-7 flex items-center justify-center rounded-full bg-black/30 border border-white/10 cursor-pointer"
                             onClick={(e) => {
                               e.stopPropagation();
-                              // handleTaskClick(task.id);
+                               handleTaskClick(task.id);
                             }}
                           >
                             <img
@@ -333,9 +361,9 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
       </div>
 
       {/* Task popup */}
-      {/* {isPopupOpen && selectedTask && (
+      {isPopupOpen && selectedTask && (
         <TaskDetailsPopup task={selectedTask} onClose={closePopup} />
-      )} */}
+      )}
     </>
   );
 };

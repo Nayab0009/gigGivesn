@@ -3,7 +3,7 @@ import { useState } from "react"
 import FullCalendar from "@fullcalendar/react"
 import dayGridPlugin from "@fullcalendar/daygrid"
 import interactionPlugin from "@fullcalendar/interaction"
-import { Calendar, Clock, MapPin, User, Bell, Briefcase, Filter, Search, Plus } from "lucide-react"
+import { Calendar, Clock, MapPin, User, Bell, Briefcase, Filter, Search, Plus, ChevronLeft, ChevronRight } from "lucide-react"
 import { fetchEmployeeAllTasks } from "@/lib/TeamService"
 import { useAuth } from "@/context/AuthContext"
 import { useEffect } from "react"
@@ -60,16 +60,33 @@ const dayNames: Record<string, string> = {
   "Sunday": "SUN"
 };
 
-// Day numbers for demo - would be dynamic in real app
-const dayNumbers: Record<string, string> = {
-  "Monday": "19",
-  "Tuesday": "20",
-  "Wednesday": "21",
-  "Thursday": "22",
-  "Friday": "23",
-  "Saturday": "24",
-  "Sunday": "25"
-};
+// Days of the week (Monday to Saturday)
+const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+// Helper to check if two dates are in the same week
+function isSameWeek(date1: Date, date2: Date) {
+  const d1 = new Date(date1);
+  const d2 = new Date(date2);
+  d1.setHours(0,0,0,0);
+  d2.setHours(0,0,0,0);
+  d1.setDate(d1.getDate() - ((d1.getDay() + 6) % 7));
+  d2.setDate(d2.getDate() - ((d2.getDay() + 6) % 7));
+  return d1.getTime() === d2.getTime();
+}
+
+// Generate day numbers dynamically (week starting from Monday)
+const today = new Date();
+const currentDay = today.getDay();
+const mondayDate = new Date(today);
+const daysFromMonday = currentDay === 0 ? 6 : currentDay - 1;
+mondayDate.setDate(today.getDate() - daysFromMonday);
+
+const dayNumbers: Record<string, string> = {};
+days.forEach((day, index) => {
+  const date = new Date(mondayDate);
+  date.setDate(mondayDate.getDate() + index);
+  dayNumbers[day] = date.getDate().toString();
+});
 
 // Colors for different priority levels
 const priorityColors: Record<string, string> = {
@@ -88,11 +105,38 @@ export default function CalendarPage() {
   const [error, setError] = useState<string | null>(null)
   const [selectedProject, setSelectedProject] = useState<string>("all")
   const [searchTerm, setSearchTerm] = useState("")
+  // Week navigation state
+  const [weekOffset, setWeekOffset] = useState(0)
+
+
+  // Calculate mondayDate and week range based on weekOffset
+  const today = new Date();
+  const currentDay = today.getDay();
+  const mondayDate = new Date(today);
+  const daysFromMonday = currentDay === 0 ? 6 : currentDay - 1;
+  mondayDate.setDate(today.getDate() - daysFromMonday + weekOffset * 7);
+  // Calculate week start and end
+  const weekStart = new Date(mondayDate);
+  const weekEnd = new Date(mondayDate);
+  weekEnd.setDate(weekStart.getDate() + 5); // Saturday
+  // Format week range string
+  function formatDate(date: Date) {
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+  const weekRange = `${formatDate(weekStart)} - ${formatDate(weekEnd)}`;
+
+  // Dynamically generate day numbers for the displayed week
+  const dayNumbers: Record<string, string> = {};
+  days.forEach((day, index) => {
+    const date = new Date(mondayDate);
+    date.setDate(mondayDate.getDate() + index);
+    dayNumbers[day] = date.getDate().toString();
+  });
 
   // Get unique projects
-  const projects = Array.from(new Set(tasks.map((task) => task.projectName).filter(Boolean)))
+  const projects = Array.from(new Set(tasks.map((task) => task.projectName).filter(Boolean)));
 
-  const projectId = 1
+  const projectId = 1;
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -161,40 +205,39 @@ export default function CalendarPage() {
     setFilteredTasks(filtered)
   }, [tasks, selectedProject, searchTerm])
 
-
-
-  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  // Update dayNumbers for the current week
+  // Process tasks from API and organize by day
   const schedule: Record<string, any[]> = {};
   days.forEach(day => (schedule[day] = []));
-
-  // Process tasks from API and organize by day
   filteredTasks.forEach(task => {
     if (task.start) {
-      const dayName = getDayName(task.start);
+      const taskDateObj = new Date(task.start);
+      // Only include if in current week
+      if (isSameWeek(taskDateObj, mondayDate)) {
+        const dayName = getDayName(task.start);
+        if (days.includes(dayName)) {
+          // Extract ticket code if available (e.g. "FAZ-002" or "SO-003")
+          const taskCode = task.extendedProps?.ticketNumber || `TASK-${task.id}`;
 
-      // Only add if it's in our display days
-      if (days.includes(dayName)) {
-        // Extract ticket code if available (e.g. "FAZ-002" or "SO-003")
-        const taskCode = task.extendedProps?.ticketNumber || `TASK-${task.id}`;
+          // Create a standardized task object
+          const formattedTask = {
+            id: task.id,
+            taskCode: taskCode,
+            title: task.title || "Untitled Task",
+            description: task.description || "No description provided",
+            priority: task.priority || "Medium",
+            attendees: task.attendees || [],
+            duration: "0h 52m", // Default duration
+            taskDate: task.start,
+            taskFor: task.extendedProps?.taskFor,
+            createdBy: task.extendedProps?.createdBy
+          };
 
-        // Create a standardized task object
-        const formattedTask = {
-          id: task.id,
-          taskCode: taskCode,
-          title: task.title || "Untitled Task",
-          description: task.description || "No description provided",
-          priority: task.priority || "Medium",
-          attendees: task.attendees || [],
-          duration: "0h 52m", // Default duration
-          taskDate: task.start,
-          taskFor: task.extendedProps?.taskFor,
-          createdBy: task.extendedProps?.createdBy
-        };
-
-        schedule[dayName].push(formattedTask);
-      } else {
-        // For weekend or other days not in our display list
-        console.log(`Task on day not displayed (${dayName}):`, task.title);
+          schedule[dayName].push(formattedTask);
+        } else {
+          // For weekend or other days not in our display list
+          console.log(`Task on day not displayed (${dayName}):`, task.title);
+        }
       }
     }
   });
@@ -254,16 +297,53 @@ export default function CalendarPage() {
 
 
   return (
-    
-      <div className="min-h-screen pb-12 text-white rounded-2xl px-6 space-y-4">
-      <h1 className="text-2xl font-bold text-white">My Calendar</h1>
-      <p className="text-white/60 pb-[65.7px]">Manage your schedule and events-259</p>
+    <div className="min-h-screen pb-12 text-white rounded-2xl px-6 space-y-4">
+      {/* Calendar heading and subheading at the top */}
+      <div className="pb-[16px] pt-6 px-2">
+        <h1 className="text-2xl font-bold text-white">My Calendar</h1>
+        <p className="text-white/60 ">Manage your schedule and events-259</p>
+      </div>
+      {/* Week range and navigation header below heading */}
+      <div className="flex items-center justify-between mb-4 px-2">
+        <div 
+          style={{
+            fontFamily: 'Roboto, sans-serif',
+            fontWeight: 400,
+            fontStyle: 'normal',
+            fontSize: '16px',
+            lineHeight: '24px',
+            letterSpacing: '0px',
+            verticalAlign: 'middle',
+            borderRadius: '6px',
+            // padding: '2px 12px',
+            color: '#FFFFFF99',
+            display: 'inline-block',
+            
+          }}
+        >
+          {weekRange}
+        </div>
+        <div className="flex gap-2">
+          <button
+            className="p-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/20"
+            onClick={() => setWeekOffset((w) => w - 1)}
+            aria-label="Previous week"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            className="p-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/20"
+            onClick={() => setWeekOffset((w) => w + 1)}
+            aria-label="Next week"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
       <div
         className="w-full text-white overflow-auto scrollbar-hide mx-auto"
         style={{
-          // width: '100%',
-          // maxWidth: '1200px',
-          height: '512.87px',
+          height: 'auto',
           borderRadius: '12px',
           borderWidth: '1px',
           opacity: 1,

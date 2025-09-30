@@ -2,9 +2,11 @@
 import { useEffect, useState } from "react"
 import { MoreHorizontal } from "lucide-react"
 import Image from "next/image"
-import { getManagerTasksToday } from "@/lib/TaskService"
+import { useAuth } from "@/context/AuthContext"
+import { getManagerTasksToday, getEmployeeTasksToday } from "@/lib/TaskService"
 
 const TodayTask = () => {
+  const { user } = useAuth();
   const [tasks, setTasks] = useState({
     high: [] as any[],
     medium: [] as any[],
@@ -15,7 +17,12 @@ const TodayTask = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const res = await getManagerTasksToday()
+        let res;
+        if (user?.role === "employee") {
+          res = await getEmployeeTasksToday();
+        } else {
+          res = await getManagerTasksToday();
+        }
         if (res && Array.isArray(res)) {
           const grouped = { high: [] as any[], medium: [] as any[], low: [] as any[] }
           res.forEach((task: any) => {
@@ -33,7 +40,7 @@ const TodayTask = () => {
       }
     }
     fetchTasks()
-  }, [])
+  }, [user?.role])
 
   const renderColumn = (title: string, taskList: any[]) => (
     <div

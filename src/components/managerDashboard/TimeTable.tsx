@@ -36,6 +36,9 @@ const dayNames: Record<string, string> = {
   Sunday: "SUN",
 };
 
+// Days of the week (Monday to Saturday)
+const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
 // Colors for different priority levels
 const priorityColors: Record<string, string> = {
   Critical: "#FF8731",
@@ -44,6 +47,17 @@ const priorityColors: Record<string, string> = {
   Low: "#4C8FFF",
 };
 
+// Helper to check if two dates are in the same week
+function isSameWeek(date1: Date, date2: Date) {
+  const d1 = new Date(date1);
+  const d2 = new Date(date2);
+  // Set to nearest Monday
+  d1.setHours(0,0,0,0);
+  d2.setHours(0,0,0,0);
+  d1.setDate(d1.getDate() - ((d1.getDay() + 6) % 7));
+  d2.setDate(d2.getDate() - ((d2.getDay() + 6) % 7));
+  return d1.getTime() === d2.getTime();
+}
 
 const TimeTable = () => {
   const [tasks, setTasks] = useState<any[]>([]);
@@ -81,51 +95,6 @@ const TimeTable = () => {
     setSelectedTask(null);
   };
 
-  // Map tasks to days of the week
-  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const schedule: Record<string, any[]> = {};
-  days.forEach((day) => (schedule[day] = []));
-
-  // Process tasks from API and organize by day
-  tasks.forEach((task) => {
-    if (task.taskDate) {
-      const dayName = getDayName(task.taskDate);
-
-      if (days.includes(dayName)) {
-        const taskCode = task.ticketNumber || `TASK-${task.id}`;
-        const formattedTask = {
-          id: task.id,
-          taskCode,
-          title: task.title || "Untitled Task",
-          description: task.description || "No description provided",
-          priority: task.priority || "Medium",
-          attendees: [
-            task.taskFor?.name || "Assignee",
-            task.createdBy?.name || "Creator",
-          ],
-          duration: (() => {
-            if (task.taskOf?.startDate && task.taskOf?.endDate) {
-              const start = new Date(task.taskOf.startDate);
-              const end = new Date(task.taskOf.endDate);
-              const diffMs = end.getTime() - start.getTime();
-              if (diffMs > 0) {
-                const h = Math.floor(diffMs / 3600000);
-                const m = Math.floor((diffMs % 3600000) / 60000);
-                return `${h > 0 ? h + "h " : ""}${m}m`;
-              }
-            }
-            return "—";
-          })(),
-          taskDate: task.taskDate,
-          taskFor: task.taskFor,
-          createdBy: task.createdBy,
-        };
-
-        schedule[dayName].push(formattedTask);
-      }
-    }
-  });
-
   // Generate day numbers dynamically (week starting from Monday)
   const today = new Date();
   const currentDay = today.getDay();
@@ -138,6 +107,52 @@ const TimeTable = () => {
     const date = new Date(mondayDate);
     date.setDate(mondayDate.getDate() + index);
     dayNumbers[day] = date.getDate().toString();
+  });
+
+  // Map tasks to days of the week
+  const schedule: Record<string, any[]> = {};
+  days.forEach((day) => (schedule[day] = []));
+
+  // Process tasks from API and organize by day
+  tasks.forEach((task) => {
+    if (task.taskDate) {
+      const taskDateObj = new Date(task.taskDate);
+      // Only include if in current week
+      if (isSameWeek(taskDateObj, mondayDate)) {
+        const dayName = getDayName(task.taskDate);
+        if (days.includes(dayName)) {
+          const taskCode = task.ticketNumber || `TASK-${task.id}`;
+          const formattedTask = {
+            id: task.id,
+            taskCode,
+            title: task.title || "Untitled Task",
+            description: task.description || "No description provided",
+            priority: task.priority || "Medium",
+            attendees: [
+              task.taskFor?.name || "Assignee",
+              task.createdBy?.name || "Creator",
+            ],
+            duration: (() => {
+              if (task.taskOf?.startDate && task.taskOf?.endDate) {
+                const start = new Date(task.taskOf.startDate);
+                const end = new Date(task.taskOf.endDate);
+                const diffMs = end.getTime() - start.getTime();
+                if (diffMs > 0) {
+                  const h = Math.floor(diffMs / 3600000);
+                  const m = Math.floor((diffMs % 3600000) / 60000);
+                  return `${h > 0 ? h + "h " : ""}${m}m`;
+                }
+              }
+              return "—";
+            })(),
+            taskDate: task.taskDate,
+            taskFor: task.taskFor,
+            createdBy: task.createdBy,
+          };
+          schedule[dayName].push(formattedTask);
+        }
+      }
+    }
   });
 
   return (

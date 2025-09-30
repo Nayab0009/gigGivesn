@@ -1,7 +1,9 @@
 // src/components/TimeTable.jsx
 
 
-import { getTasksByProjectId } from "@/lib/TaskService";
+import { useAuth } from "@/context/AuthContext";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { getManagerTasksByProjectId, getEmployeeTasksByProjectId } from "@/lib/TaskService";
 import TaskDetailsPopup from "../managerDashboard/TaskDetails";
 import { useEffect, useState } from "react";
 import { interFont } from "@/app/layout";
@@ -52,6 +54,7 @@ interface TimeTableProps {
 }
 
 const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
+  const { user } = useAuth();
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -63,7 +66,11 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
       try {
         let data;
         if (projectId) {
-          data = await getTasksByProjectId(String(projectId));
+          if (user?.role === "employee") {
+            data = await getEmployeeTasksByProjectId(String(projectId));
+          } else {
+            data = await getManagerTasksByProjectId(String(projectId));
+          }
         }
         setTasks(Array.isArray(data) ? data : []);
       } catch {
@@ -73,65 +80,104 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
       }
     };
     fetchTasks();
-  }, [projectId]);
+  }, [projectId, user?.role]);
 
-  // Map tasks to days of the week
+  // Days of the week (Monday to Saturday)
   const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const schedule: Record<string, any[]> = {};
-  days.forEach((day) => (schedule[day] = []));
+  // Helper to check if two dates are in the same week
+  function isSameWeek(date1: Date, date2: Date) {
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    d1.setHours(0,0,0,0);
+    d2.setHours(0,0,0,0);
+    d1.setDate(d1.getDate() - ((d1.getDay() + 6) % 7));
+    d2.setDate(d2.getDate() - ((d2.getDay() + 6) % 7));
+    return d1.getTime() === d2.getTime();
+  }
 
-  // Process tasks from API and organize by day
-  tasks.forEach((task) => {
-    if (task.taskDate) {
-      const dayName = getDayName(task.taskDate);
-
-      if (days.includes(dayName)) {
-        const taskCode = task.ticketNumber || `TASK-${task.id}`;
-        const formattedTask = {
-          id: task.id,
-          taskCode,
-          title: task.title || "Untitled Task",
-          description: task.description || "No description provided",
-          priority: task.priority || "Medium",
-          attendees: [
-            task.taskFor?.name || "Assignee",
-            task.createdBy?.name || "Creator",
-          ],
-          duration: (() => {
-            if (task.taskOf?.startDate && task.taskOf?.endDate) {
-              const start = new Date(task.taskOf.startDate);
-              const end = new Date(task.taskOf.endDate);
-              const diffMs = end.getTime() - start.getTime();
-              if (diffMs > 0) {
-                const h = Math.floor(diffMs / 3600000);
-                const m = Math.floor((diffMs % 3600000) / 60000);
-                return `${h > 0 ? h + "h " : ""}${m}m`;
-              }
-            }
-            return "—";
-          })(),
-          taskDate: task.taskDate,
-          taskFor: task.taskFor,
-          createdBy: task.createdBy,
-        };
-
-        schedule[dayName].push(formattedTask);
-      }
-    }
-  });
-
+  // Week navigation state
+  const [weekOffset, setWeekOffset] = useState(0);
   // Generate day numbers dynamically (week starting from Monday)
   const today = new Date();
   const currentDay = today.getDay();
   const mondayDate = new Date(today);
   const daysFromMonday = currentDay === 0 ? 6 : currentDay - 1;
-  mondayDate.setDate(today.getDate() - daysFromMonday);
+  mondayDate.setDate(today.getDate() - daysFromMonday + weekOffset * 7);
+
+  // Calculate week start and end
+  const weekStart = new Date(mondayDate);
+  const weekEnd = new Date(mondayDate);
+  weekEnd.setDate(weekStart.getDate() + 5); // Saturday
+  // Format week range string
+  function formatDate(date: Date) {
+    return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+  const weekRange = `${formatDate(weekStart)} - ${formatDate(weekEnd)}`;
+
 
   const dayNumbers: Record<string, string> = {};
   days.forEach((day, index) => {
     const date = new Date(mondayDate);
     date.setDate(mondayDate.getDate() + index);
     dayNumbers[day] = date.getDate().toString();
+  });
+  
+  // Map tasks to days of the week
+  const schedule: Record<string, any[]> = {};
+  days.forEach((day) => (schedule[day] = []));
+
+  // Process tasks from API and organize by day
+  tasks.forEach((task) => {
+    if (task.taskDate) {
+      const taskDateObj = new Date(task.taskDate);
+      // Only include if in current week
+      if (isSameWeek(taskDateObj, mondayDate)) {
+        const dayName = getDayName(task.taskDate);
+        if (days.includes(dayName)) {
+          const taskCode = task.ticketNumber || `TASK-${task.id}`;
+          const formattedTask = {
+            id: task.id,
+            taskCode,
+            title: task.title || "Untitled Task",
+            description: task.description || "No description provided",
+            priority: task.priority || "Medium",
+            attendees: [
+              task.taskFor?.name || "Assignee",
+              task.createdBy?.name || "Creator",
+            ],
+            duration: (() => {
+              // Prefer taskOf.startDate/endDate if available
+              if (task.taskOf?.startDate && task.taskOf?.endDate) {
+                const start = new Date(task.taskOf.startDate);
+                const end = new Date(task.taskOf.endDate);
+                const diffMs = end.getTime() - start.getTime();
+                if (diffMs > 0) {
+                  const h = Math.floor(diffMs / 3600000);
+                  const m = Math.floor((diffMs % 3600000) / 60000);
+                  return `${h > 0 ? h + "h " : ""}${m}m`;
+                }
+              }
+              // Fallback: use createdAt and updatedAt if available
+              if (task.createdAt && task.updatedAt) {
+                const start = new Date(task.createdAt);
+                const end = new Date(task.updatedAt);
+                const diffMs = end.getTime() - start.getTime();
+                if (diffMs > 0) {
+                  const h = Math.floor(diffMs / 3600000);
+                  const m = Math.floor((diffMs % 3600000) / 60000);
+                  return `${h > 0 ? h + "h " : ""}${m}m`;
+                }
+              }
+              return "—";
+            })(),
+            taskDate: task.taskDate,
+            taskFor: task.taskFor,
+            createdBy: task.createdBy,
+          };
+          schedule[dayName].push(formattedTask);
+        }
+      }
+    }
   });
 
   const handleTaskClick = (task: any) => {
@@ -146,6 +192,25 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
 
   return (
     <>
+      <div className="flex items-center justify-between mb-2 px-4">
+        <div className="text-white/60 text-sm font-medium">{weekRange}</div>
+        <div className="flex gap-2">
+          <button
+            className="p-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/20"
+            onClick={() => setWeekOffset((w) => w - 1)}
+            aria-label="Previous week"
+          >
+            <ChevronLeft className="w-5 h-5 text-white" />
+          </button>
+          <button
+            className="p-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/20"
+            onClick={() => setWeekOffset((w) => w + 1)}
+            aria-label="Next week"
+          >
+            <ChevronRight className="w-5 h-5 text-white" />
+          </button>
+        </div>
+      </div>
       <div
         className={`w-full p-4 rounded-3xl overflow-x-auto`}
         style={{

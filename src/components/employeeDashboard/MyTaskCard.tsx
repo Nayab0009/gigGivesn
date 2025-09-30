@@ -47,7 +47,7 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
           color: '#fff',
         }}
       >
-        Project Completed
+        Task Completed
       </span>
       <span
         style={{
@@ -62,7 +62,7 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
         }}
       >
         {/* Total projects {analytics.totalProjects} */}
-        Total projects {totalProjects}
+        Total Tasks {totalProjects}
       </span>
     </div>
     <div className="flex items-center gap-2 justify-between space-evenly">
@@ -82,7 +82,7 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
             }}
           >
             {/* Project Done <span style={{ fontWeight: 600 }}>{analytics.completedProjects}</span> */}
-            Project Done <span style={{ fontWeight: 600 }}>{completed}</span>
+            Task Done <span style={{ fontWeight: 600 }}>{completed}</span>
           </span>
         </div>
         <div className="flex items-center gap-2">
