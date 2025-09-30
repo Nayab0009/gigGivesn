@@ -10,7 +10,7 @@ import { sendMessage as fetchChatHistoryAPI } from "@/lib/chatService" // Use th
 import { deletemessage, uploadfile } from "@/lib/chatService"
 // Removed: import { toast } from "@/hooks/use-toast";
 // Removed: import { v4 as uuidv4 } from "uuid";
-export default function ChatPage() {
+export default function ChatPage({ userId }: { userId?: string }) {
   type Message = {
     id?: string
     message: string // This will be the text message or an empty string for files
@@ -38,7 +38,7 @@ export default function ChatPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null) // New state for selected file
   const fileInputRef = useRef<HTMLInputElement>(null) // Ref for file input
   const [selectedUser, setSelectedUser] = useState("")
-  const [selectedUserId, setSelectedUserId] = useState<string | number>("")
+  const [selectedUserId, setSelectedUserId] = useState<string | number>(userId || "")
   const [searchQuery, setSearchQuery] = useState("")
   const [theme, setTheme] = useState("light")
   const [notifications, setNotifications] = useState(true)
@@ -333,19 +333,19 @@ export default function ChatPage() {
         setContacts(basicContacts)
 
         if (currentUser?.id) {
-          const userId = currentUser.id.toString()
+          const currentUserId = currentUser.id.toString()
           const updatedContacts = [...basicContacts]
           const readStatus = loadReadStatus()
           const lastSelectedIdFromStorage = localStorage.getItem("lastSelectedUserId")
 
           const messagePromises = basicContacts.map(async (contact: EnhancedContact, index: number) => {
-            const latestMessage = await fetchLatestMessage(userId, contact.id.toString())
+            const latestMessage = await fetchLatestMessage(currentUserId, contact.id.toString())
             if (latestMessage) {
               const isRead = readStatus[contact.id.toString()] === true
               const messageContent =
                 latestMessage.message ||
                 (latestMessage.isFile
-                  ? latestMessage.senderId === userId
+                  ? latestMessage.senderId === currentUserId
                     ? `You: Sent a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
                     : `Received a ${latestMessage.fileType?.startsWith("image/") ? "photo" : "file"}`
                   : "New message")
@@ -355,7 +355,7 @@ export default function ChatPage() {
                 lastMessage: messageContent,
                 lastMessageTimestamp: latestMessage.timestamp,
                 lastMessageSenderId: latestMessage.senderId,
-                unread: latestMessage.senderId !== userId && !isRead ? 1 : 0,
+                unread: latestMessage.senderId !== currentUserId && !isRead ? 1 : 0,
               }
             }
             return null
@@ -365,7 +365,17 @@ export default function ChatPage() {
           setContacts(updatedContacts)
 
           // Initialize selectedUser and selectedUserId
-          if (lastSelectedIdFromStorage) {
+          // If userId prop is provided, use it first - this is for direct navigation
+          if (userId) {
+            const foundContact = updatedContacts.find((c) => c.id.toString() === userId.toString())
+            if (foundContact) {
+              setSelectedUser(foundContact.name)
+              setSelectedUserId(foundContact.id)
+              saveReadStatus(foundContact.id)
+            }
+          }
+          // Otherwise use from local storage or first contact
+          else if (lastSelectedIdFromStorage) {
             const foundContact = updatedContacts.find((c) => c.id.toString() === lastSelectedIdFromStorage)
             if (foundContact) {
               setSelectedUser(foundContact.name)
@@ -389,7 +399,7 @@ export default function ChatPage() {
     }
 
     if (currentRole && currentUser?.id) fetchContactsAndLastMessages()
-  }, [currentRole, currentUser?.id])
+  }, [currentRole, currentUser?.id, userId])
   useEffect(() => {
     if (selectedUserId) {
       localStorage.setItem("lastSelectedUserId", selectedUserId.toString())
@@ -398,6 +408,19 @@ export default function ChatPage() {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+  
+  // Add specific effect for when userId prop changes
+  useEffect(() => {
+    if (userId && contacts.length > 0) {
+      const foundContact = contacts.find((c) => c.id.toString() === userId.toString())
+      if (foundContact) {
+        setSelectedUser(foundContact.name)
+        setSelectedUserId(foundContact.id)
+        saveReadStatus(foundContact.id)
+      }
+    }
+  }, [userId, contacts])
+  
   useEffect(() => {
     if (message.length > 0) {
       setIsTyping(true)
@@ -860,7 +883,7 @@ export default function ChatPage() {
             className={`flex items-center gap-3 rounded-xl cursor-pointer transition-all
               w-full h-[68px] px-[15px] py-[12px]
               ${
-                selectedUser === contact.name
+                (selectedUserId.toString() === contact.id.toString() || selectedUser === contact.name)
                   ? "bg-[#0CA9F633] border-l-[3px] border-[#0CA9F6]"
                   : "hover:bg-[#0CA9F633] hover:border-l-[3px] hover:border-[#0CA9F6]"
               }`}
@@ -923,7 +946,7 @@ export default function ChatPage() {
             className={`flex items-center gap-3 rounded-xl cursor-pointer transition-all
               w-[322px] h-[68px] px-[15px] py-[12px]
               ${
-                selectedUser === contact.name
+                (selectedUserId.toString() === contact.id.toString() || selectedUser === contact.name)
                   ? "bg-[#0CA9F633] border-l-[3px] border-[#0CA9F6]"
                   : "hover:bg-[#0CA9F633] hover:border-l-[3px] hover:border-[#0CA9F6]"
               }`}
@@ -981,25 +1004,39 @@ export default function ChatPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  {contacts.find((c) => c.id === selectedUserId)?.avatar ? (
-                    <img
-                      src={contacts.find((c) => c.id === selectedUserId)?.avatar || "/placeholder.svg"}
-                      alt={selectedUser}
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div
-                      className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
-                      style={{
-                        background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
-                      }}
-                    >
-                      {selectedUser[0]}
-                    </div>
-                  )}
+                  {/* Find the selected contact from contacts array */}
+                  {(() => {
+                    const selectedContact = contacts.find((c) => c.id.toString() === selectedUserId.toString());
+                    
+                    if (selectedContact?.avatar) {
+                      return (
+                        <img
+                          src={selectedContact.avatar}
+                          alt={selectedContact.name}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                      );
+                    } else {
+                      // If no avatar or contact not found yet, show initials or fallback
+                      const displayName = selectedContact?.name || selectedUser;
+                      return (
+                        <div
+                          className="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold"
+                          style={{
+                            background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                          }}
+                        >
+                          {displayName && displayName.length > 0 ? displayName[0].toUpperCase() : "?"}
+                        </div>
+                      );
+                    }
+                  })()}
                 </div>
                 <div>
-                  <h2 className="font-semibold text-white">{selectedUser}</h2>
+                  {/* Display the contact name from contacts array if available */}
+                  <h2 className="font-semibold text-white">
+                    {contacts.find((c) => c.id.toString() === selectedUserId.toString())?.name || selectedUser || "Chat"}
+                  </h2>
                 </div>
               </div>
               <div className="flex items-center gap-3 px-3 py-2 rounded-md">

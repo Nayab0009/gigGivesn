@@ -88,8 +88,15 @@ export default function ManagerDashboard() {
         const projectsData = Array.isArray(response.data) ? response.data : [];
         setProjects(projectsData);
         const totalProjects = projectsData.length;
-        const activeProjects = projectsData.filter((p: any) => p.status?.toLowerCase() === 'active' || p.status?.toLowerCase() === 'in-progress').length;
-        const completedProjects = projectsData.filter((p: any) => p.status?.toLowerCase() === 'completed').length;
+        // Normalize status for robust counting
+        const normalizeStatus = (status: string) => status?.toLowerCase().replace(/[-_\s]/g, "");
+        const activeProjects = projectsData.filter((p: any) => {
+          const s = normalizeStatus(p.status || "");
+          return s === 'active' || s === 'inprogress';
+        }).length;
+        const completedProjects = projectsData.filter((p: any) => normalizeStatus(p.status || "") === 'completed').length;
+        // If you want backlog count, add here:
+        // const backlogProjects = projectsData.filter((p: any) => normalizeStatus(p.status || "") === 'backlog').length;
         setAnalytics({ totalProjects, activeProjects, completedProjects });
       } catch (error) {
         setError("Failed to load projects. Please try again.");
@@ -129,6 +136,7 @@ export default function ManagerDashboard() {
               name: contact.name,
               avatar: contact.avatar || undefined,
               lastMessage: lastMsg || "Voice Message",
+              isActive: contact.isOnline ?? false,
             };
           })
         );
@@ -177,9 +185,9 @@ export default function ManagerDashboard() {
 
       {/* Today Task Section */}
       <div className="w-full mx-auto mb-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 md:gap-4 items-stretch">
+  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           {/* Today Task + Timetable */}
-          <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-3 md:gap-4 w-full">
+          <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-8 w-full">
             <TodayTasksSection
               tasks={todayTasks}
               tasksLoading={tasksLoading}
@@ -199,7 +207,7 @@ export default function ManagerDashboard() {
           </div>
 
           {/* Right column: Project Status + Communication Logs stacked */}
-          <div className="lg:col-span-4 xl:col-span-3 flex flex-col gap-3 md:gap-4 w-full">
+          <div className="lg:col-span-4 xl:col-span-3 flex flex-col gap-8 w-full">
             <ProjectStatusCard analytics={analytics} />
             <CommunicationLogsCard
               commLogs={commLogs}

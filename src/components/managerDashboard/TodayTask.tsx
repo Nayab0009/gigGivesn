@@ -186,8 +186,13 @@ const TodayTask = () => {
                     letterSpacing: '0px',
                     verticalAlign: 'middle',
                     color: '#fff',
-                    
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
                   }}
+                  title={task.description}
                 >
                   {task.description}
                 </p>

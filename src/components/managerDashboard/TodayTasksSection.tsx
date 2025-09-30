@@ -44,9 +44,9 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
 
   return (
     <div
-      className="rounded-3xl w-full h-full border border-white/20 shadow-md"
+      className="rounded-3xl w-full border border-white/20 shadow-md"
       style={{
-        minHeight: '248px',
+         minHeight: '248px',
         padding: '16px',
         borderRadius: '20px',
         borderWidth: '1px',

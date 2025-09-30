@@ -208,7 +208,7 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
             <p>Reporter</p>
             <div className="flex items-center gap-2">
               <span className="text-[10px] bg-gray-700 rounded-sm px-1">AK</span>
-              <span>{task.taskOf?.name || "Me"}</span>
+              <span>{task.sprint?.createdBy?.name || "Me"}</span>
             </div>
           </div>
           
@@ -233,9 +233,9 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
             border: "1px solid #FFFFFF4D"
           }}
         >
-          <div className="flex justify-between items-start mb-3">
+          <div className="flex justify-between items-start pb-[12px]">
             <h4
-              className="flex-1 break-words pr-2"
+              className="flex-1 break-words pr-2 "
               style={{
                 fontFamily: "Inter",
                 fontWeight: 600,
@@ -258,14 +258,15 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
                 fontSize: "10px",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center"
+                justifyContent: "center",
+                
               }}
             >
               {task.priority || "-"}
             </span>
           </div>
 
-          <p 
+          <p
             style={{
               fontFamily: "Inter",
               fontWeight: 400,
@@ -275,8 +276,14 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
               letterSpacing: "0px",
               verticalAlign: "middle",
               color: "#FFFFFF",
-              marginBottom: "12px"
+              marginBottom: "12px",
+              // overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
             }}
+            title={task.description}
           >
             {task.description || "-"}
           </p>

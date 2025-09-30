@@ -1,10 +1,12 @@
 import React from "react";
+import { useRouter } from "next/navigation";
 
 interface CommunicationLog {
   id: string | number;
   name: string;
   avatar?: string;
   lastMessage: string;
+  isActive?: boolean;
 }
 
 interface CommunicationLogsCardProps {
@@ -13,7 +15,10 @@ interface CommunicationLogsCardProps {
   onSeeAll: () => void;
 }
 
-const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs, commLoading, onSeeAll }) => (
+const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs, commLoading, onSeeAll }) => {
+  const router = useRouter();
+  
+  return (
    <div
       className="flex flex-col justify-between border border-white/30 shadow-md w-full mx-auto"
       style={{
@@ -76,12 +81,28 @@ const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs,
         commLogs.map((log,index) => (
           <div
             key={log.id ?? index}
-            className="flex items-center justify-between rounded-lg p-2 mb-2 bg-black/40 transition-shadow duration-200 hover:shadow-[0px_0px_10.7px_0px_#81818166]"
+            className="flex items-center justify-between rounded-lg p-2 mb-2 bg-black/40 transition-shadow duration-200 hover:shadow-[0px_0px_10.7px_0px_#81818166] cursor-pointer"
+            onClick={() => router.push(`/dashboard/manager/chat/${log.id}`)}
           >
             {/* Left side: avatar + text */}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-blue-900 text-white font-bold text-lg">
-                {log.name?.[0]?.toUpperCase() || "?"}
+              <div className="relative w-10 h-10 rounded-full flex items-center justify-center bg-blue-900 text-white font-bold text-lg">
+                {log.avatar ? (
+                  <img
+                    src={log.avatar}
+                    alt={log.name}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                ) : (
+                  log.name?.[0]?.toUpperCase() || "?"
+                )}
+                <span
+                  className="absolute bottom-0 right-0 w-[13px] h-[13px] rounded-full border-1 border-[#FFFFFF] "
+                  style={{
+                    background: log.isActive ? '#32D583' : '#57B5E7',
+                  }}
+                  title={log.isActive ? 'Active' : 'Inactive'}
+                />
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-white">{log.name}</span>
@@ -89,30 +110,31 @@ const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs,
                   className="text-xs text-blue-300 truncate max-w-[120px]"
                   title={log.lastMessage}
                 >
-                  {log.lastMessage && log.lastMessage.length > 10
-                    ? log.lastMessage.slice(0, 10) + "..."
+                  {log.lastMessage && log.lastMessage.length > 30
+                    ? log.lastMessage.slice(0, 30) + "..."
                     : log.lastMessage}
                 </span>
               </div>
             </div>
 
             {/* Right side: icons */}
-            <div className="flex justify-between w-20">
+            {/* <div className="flex justify-between">
               <button
-                className="p-2 rounded-full bg-black/30 hover:bg-black/50 text-white"
+                className="p-2 rounded-full text-white"
                 onClick={onSeeAll}
               ><img src="/images/DIV-27.svg" alt="Call" className="w-[40px] h-[40px]" /></button>
               <button
-                className="p-2 rounded-full bg-black/30 hover:bg-black/50 text-white"
+                className="p-2 rounded-full  text-white"
                 onClick={onSeeAll}
               ><img src="/images/DIV-28.svg" alt="Video" className="w-[40px] h-[40px]" /></button>
-            </div>
+            </div> */}
           </div>
 
         ))
       )}
     </div>
   </div>
-);
+  );
+};
 
 export default CommunicationLogsCard;

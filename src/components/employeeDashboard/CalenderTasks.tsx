@@ -73,12 +73,11 @@ const dayNumbers: Record<string, string> = {
 
 // Colors for different priority levels
 const priorityColors: Record<string, string> = {
-  "Critical": "bg-orange-500",
-  "High": "bg-red-500",
-  "Medium": "bg-amber-500",
-  "Low": "bg-blue-500",
+  Critical: "#FF8731",
+  High: "#FF4C4C",
+  Medium: "#FFBE31",
+  Low: "#4C8FFF",
 };
-
 export default function CalendarPage() {
   const { user, isAuthenticated } = useAuth()
   const [selectedEvent, setSelectedEvent] = useState<any>(null)
@@ -255,87 +254,210 @@ export default function CalendarPage() {
 
 
   return (
-    <div className="min-h-screen pb-12 text-white rounded-2xl px-6 space-y-4">
-      <h1 className="text-2xl font-bold">My Calendar</h1>
-      <p className="text-white/60">Manage your schedule and events-259</p>
-
-      <div className="w-full overflow-x-auto bg-black/30 p-4 rounded-3xl h-full"
-        style={
-          {
-            scrollbarWidth: 'none',
-          }
-      }
+    
+      <div className="min-h-screen pb-12 text-white rounded-2xl px-6 space-y-4">
+      <h1 className="text-2xl font-bold text-white">My Calendar</h1>
+      <p className="text-white/60 pb-[65.7px]">Manage your schedule and events-259</p>
+      <div
+        className="w-full text-white overflow-auto scrollbar-hide mx-auto"
+        style={{
+          // width: '100%',
+          // maxWidth: '1200px',
+          height: '512.87px',
+          borderRadius: '12px',
+          borderWidth: '1px',
+          opacity: 1,
+          padding: '4px',
+          background: '#0000004D',
+          backgroundBlendMode: 'luminosity',
+          border: '1px solid #FFFFFF4D',
+          position: 'relative',
+          boxSizing: 'border-box',
+          overflow: 'auto',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+        }}
       >
+        <style jsx>{`
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+        `}</style>
         <div className="flex flex-row gap-2 w-full">
-          {/* Days headers and task columns */}
-          {days.map((day) => {
-            const tasks = schedule[day];
-            return (
-              <div key={day} className="flex flex-col gap-2 flex-1">
-                <div className="bg-black/30 p-2 text-white text-center rounded-md">
-                  <div className="text-sm">{dayNames[day as keyof typeof dayNames]} {dayNumbers[day]}</div>
+        {days.map((day, idx) => {
+          const tasks = schedule[day];
+          const isLast = idx === days.length - 1;
+          return (
+            <div
+              key={day}
+              className={`flex flex-col gap-2 border-b border-white/30 px-2 flex-1 min-w-0 ${!isLast ? 'border-r border-white/20' : ''}`}
+            >
+              {/* Day header */}
+                <div className="p-2 text-white text-center border-b border-white/30">
+                  <div className="text-sm">
+                    {dayNames[day as keyof typeof dayNames]} {dayNumbers[day]}
+                  </div>
                 </div>
 
+                {/* Tasks */}
                 {tasks.map((task, idx) => {
-                  // Determine priority color class
-                  const priorityColorMap: Record<string, string> = {
-                    "High": "bg-red-500",
-                    "Medium": "bg-amber-500",
-                    "Low": "bg-blue-500",
-                    "Critical": "bg-orange-500"
-                  };
-
-                  // Determine task code color
                   const taskCodeColor =
-                    task.taskCode?.startsWith("FAZ") ? "text-orange-500" :
-                    task.taskCode?.startsWith("SO") ? "text-blue-500" : "text-gray-300";
+                    task.taskCode?.startsWith("FAZ") || task.taskCode?.startsWith("SO")
+                      ? "text-[#0CA9F6]"
+                      : "text-[#0CA9F6]";
 
                   return (
                     <div
                       key={`${day}-${task.id || idx}`}
-                      className="flex flex-col justify-between bg-black/30 text-white relative overflow-hidden shadow-lg w-full min-h-[180px] p-4 rounded-[15px] border border-white/10 gap-y-8"
-                      style={{ opacity: 1, boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)' }}
+                      className="flex flex-col justify-between bg-black/30 text-[#0CA9F6] relative overflow-hidden shadow-lg h-[240px] p-4 rounded-[15px] border border-white/10 gap-y-[12px]"
+                      style={{
+                        opacity: 1,
+                        boxShadow: "0 2px 12px 0 rgba(0,0,0,0.10)",
+                      }}
                     >
-                      <div className="flex justify-between items-center mb-1">
+                      <div className="flex justify-between items-center mb-1 gap-[32px]">
                         <div className="flex flex-col items-start gap-0">
-                          <span className={`text-xs font-semibold ${taskCodeColor}`}>{task.taskCode}</span>
-                          <span className="mt-1 px-2 py-0.5 text-[10px] rounded-full bg-blue-700/80 text-white font-semibold">Done</span>
+                          <span
+                            className={`font-semibold text-[#0CA9F6] ${taskCodeColor}`}
+
+                            style={{
+                            fontFamily: "Inter",
+                            fontWeight: 600,
+                            fontSize: "10px",
+                            lineHeight: "100%",
+                            letterSpacing: "0px",
+                            verticalAlign: "middle",
+                          }}
+                          >
+                            {task.taskCode}
+                          </span>
+                          <span className="mt-1 px-2 py-0.5 text-[10px] rounded-full bg-[#0CA9F6] text-white font-semibold"
+                          style={{
+                            fontFamily: "Inter",
+                            fontWeight: 600,
+                            fontSize: "8px",
+                            lineHeight: "100%",
+                            letterSpacing: "0px",
+                            verticalAlign: "middle",
+                          }}
+                          >
+                            Done
+                          </span>
                         </div>
-                        <span className="text-xs px-2 py-0.5 rounded-full bg-orange-600/90 text-white font-semibold">{task.priority}</span>
+                        <span
+                          className="text-xs px-2 py-0.5 rounded-full text-white font-semibold"
+                          style={{
+                            backgroundColor: priorityColors[
+                              (task.priority || "Medium").trim().charAt(0).toUpperCase() + (task.priority || "Medium").trim().slice(1).toLowerCase()
+                            ] || "#FFBE31",
+                            fontFamily: "Inter",
+                            fontWeight: 500,
+                            fontSize: "8px",
+                            lineHeight: "100%",
+                            letterSpacing: "0px",
+                            verticalAlign: "middle",
+                          }}
+                        >
+                          {task.priority}
+                        </span>
                       </div>
+                      <div className="mt-2 gap-[12px]">
+                        <div
+                          className="text-white font-semibold overflow-hidden"
+                          style={{
+                            fontFamily: "Inter",
+                            fontWeight: 600,
+                            fontSize: "14px",
+                            lineHeight: "100%",
+                            letterSpacing: "0px",
+                            verticalAlign: "middle",
+                            textOverflow: "ellipsis",
+                            display: "-webkit-box",
+                            WebkitLineClamp: 1,
+                            WebkitBoxOrient: "vertical",
 
-                      <div className="mt-2">
-                        <div className="text-base font-semibold leading-tight">{task.title}</div>
-                        <div className="text-xs text-white/80 mt-1">{task.description}</div>
+                          }}
+                          title={task.title} // Show full title on hover
+                        >
+                          {task.title}
+                        </div>
+                        <div className="text-xs text-[#FFFFFF] mt-1 overflow-hidden"
+                        style={{
+                            fontFamily: "Inter",
+                            fontWeight: 400,
+                            fontSize: "12px",
+                            lineHeight: "140%",
+                            letterSpacing: "0px",
+                            verticalAlign: "middle",
+                            textOverflow: "ellipsis",
+                            display: "-webkit-box",
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: "vertical"
+                          }}
+                          title={task.description} // Show full description on hover
+                        >
+                          {task.description}
+                        </div>
                       </div>
-
                       <div className="flex flex-col gap-2 mt-6">
-                        <div className="flex items-center">
+                        <div className="flex items-center gap-2">
+                          {/* Avatar */}
                           {task.taskFor?.avatar ? (
                             <img
                               src={task.taskFor.avatar}
                               className="w-7 h-7 rounded-full border-2 border-white object-cover"
-                              alt={task.taskFor.name || 'Assignee'}
-                              title={task.taskFor.name || 'Assignee'}
+                              alt={task.taskFor.name || "Assignee"}
+                              title={task.taskFor.name || "Assignee"}
                             />
                           ) : (
                             <div
                               className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs border-2 border-white"
-                              title={task.taskFor?.name || 'Assignee'}
+                              title={task.taskFor?.name || "Assignee"}
                             >
-                              {task.taskFor?.name?.charAt(0) || 'A'}
+                              {task.taskFor?.name?.charAt(0) || "A"}
                             </div>
                           )}
                         </div>
-
-                        <div className="flex items-center gap-2 mt-2 justify-between">
+                        <div className="flex items-center justify-between gap-2 mt-2">
                           <span className="flex items-center text-xs font-semibold text-white/80">
-                            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"/><path d="M12 6v6l4 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                            <svg
+                              className="w-4 h-4 mr-1"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                fill="none"
+                              />
+                              <path
+                                d="M12 6v6l4 2"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
                             {task.duration}
                           </span>
-
-                          <span className="w-7 h-7 flex items-center justify-center rounded-full bg-black/30 border border-white/10 cursor-pointer">
-                            <svg className="w-4 h-4 text-white/80" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none"/><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z" stroke="currentColor" strokeWidth="2" fill="none"/></svg>
+                          {/* Eye Icon */}
+                          <span
+                            className="w-7 h-7 flex items-center justify-center rounded-full bg-black/30 border border-white/10 cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // handleTaskClick(task.id);
+                            }}
+                          >
+                            <img
+                              src="/images/Eye.svg"
+                              alt="View Icon"
+                              className="w-4 h-4 text-white/80"
+                            />
                           </span>
                         </div>
                       </div>
@@ -343,6 +465,7 @@ export default function CalendarPage() {
                   );
                 })}
 
+                {/* No tasks fallback */}
                 {tasks.length === 0 && (
                   <div className="h-32 rounded-2xl border border-white/5 flex items-center justify-center text-white/30 text-sm">
                     No tasks
@@ -351,8 +474,10 @@ export default function CalendarPage() {
               </div>
             );
           })}
+
         </div>
       </div>
     </div>
-  )
+  );
 }
+
