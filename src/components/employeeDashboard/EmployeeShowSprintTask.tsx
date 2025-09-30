@@ -170,7 +170,7 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
               onClick={refreshData}
               disabled={refreshing || isLoading}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-medium text-white transition-all duration-300 shadow-lg disabled:opacity-50 hover:opacity-90"
-              style={{ backgroundColor: colors.primary.hex }}
+
             >
               <RefreshCw
                 className={`w-4 h-4 transition-transform duration-300 ${refreshing ? 'animate-spin' : ''}`}

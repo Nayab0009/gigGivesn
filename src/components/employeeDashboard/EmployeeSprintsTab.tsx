@@ -74,12 +74,7 @@ const EmployeeSprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName 
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-white">{projectName} Sprints</h2>
-          <p className="text-white/70 mt-1">Browse sprints in this project</p>
-        </div>
-      </div>
+
 
       {sprints.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-4 text-white py-12">
@@ -98,12 +93,13 @@ const EmployeeSprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName 
             >
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-white">{sprint.name}</h2>
-                <span
-                  className="text-xs px-3 py-1 rounded-full font-medium"
-                  style={{ backgroundColor: `${colors.primary.rgb.replace(", 1)", ", 0.2)")}`, color: colors.primary.hex }}
-                >
-                  Active
-                </span>
+               <span
+  className="w-[82px] h-[36px] flex items-center justify-center
+             px-[22px] py-[10px] gap-[10px] rounded-[99px]
+             text-xs font-medium bg-[#0CA9F6] text-white"
+>
+  Active
+</span>
               </div>
               <p className="text-sm text-gray-300 mb-4 line-clamp-2">{sprint.description || "No description provided"}</p>
               <div className="space-y-2 text-sm text-gray-300 mb-4">
@@ -115,22 +111,21 @@ const EmployeeSprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName 
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex -space-x-2 cursor-pointer" onClick={() => handleSprintClick(sprint)} title="View sprint tasks">
-                  <img src="https://i.pravatar.cc/40?img=1" alt="user" className="w-8 h-8 rounded-full border-2 border-black" />
-                  <img src="https://i.pravatar.cc/40?img=2" alt="user" className="w-8 h-8 rounded-full border-2 border-black" />
-                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-600 text-white text-xs border-2 border-black">+5</div>
-                </div>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => handleSprintClick(sprint)}
-                    className="inline-flex items-center gap-2 px-3 py-2 rounded-lg hover:opacity-80 transition text-sm font-medium"
-                    style={{ backgroundColor: `${colors.secondary.rgb?.replace(", 1)", ", 0.2)") || `${colors.primary.rgb.replace(", 1)", ", 0.15)")}`}`, color: colors.secondary.hex || colors.primary.hex }}
-                    title="View all tasks in this sprint"
-                  >
-                    <Eye className="w-4 h-4" />
-                    <span>Show Tasks</span>
-                  </button>
-                </div>
+
+                <div className="flex gap-3 w-full">
+  <button
+    onClick={() => handleSprintClick(sprint)}
+    className="w-[337px] h-[36px] flex items-center justify-center gap-[10px]
+               px-[22px] py-[10px] rounded-[99px] text-sm font-medium
+               transition hover:opacity-80
+               bg-[#0000004D] text-white"
+    title="View all tasks in this sprint"
+  >
+
+    <span>View</span>
+  </button>
+</div>
+
               </div>
             </div>
           ))}
