@@ -99,9 +99,8 @@ export default function UserDropdown() {
 
         {/* Dropdown Arrow */}
         <svg
-          className={`stroke-white transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
+          className={`stroke-white transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+            }`}
           width="18"
           height="20"
           viewBox="0 0 18 20"
@@ -128,28 +127,28 @@ export default function UserDropdown() {
         >
           {/* User Info */}
           <div className="flex justify-between items-center">
-          <div className="mb-3">
-            <span className="block text-xs font-semibold text-white">
-              {displayName}
-            </span>
-            <span className="block text-sm text-gray-400">{user.email}</span>
-          </div>
+            <div className="mb-3">
+              <span className="block text-xs font-semibold text-white">
+                {displayName}
+              </span>
+              <span className="block text-sm text-gray-400">{user.email}</span>
+            </div>
 
-          {/* Role + Active Badge Row */}
-          <div className="flex items-center mb-4 gap-1">
-            <span className="px-3 py-0.5  font-bold text-[10px] rounded-[50px] bg-white/10 text-white">
-              {role}
-            </span>
-            <span
-              className="px-3 py-0.5 text-[10px] font-bold rounded-[50px]"
-              style={{
-                backgroundColor: "rgba(50, 213, 131, 0.4)",
-                color: "#fff",
-              }}
-            >
-              Active
-            </span>
-          </div>
+            {/* Role + Active Badge Row */}
+            <div className="flex items-center mb-4 gap-1">
+              <span className="px-3 py-0.5  font-bold text-[10px] rounded-[50px] bg-white/10 text-white">
+                {role}
+              </span>
+              <span
+                className="px-3 py-0.5 text-[10px] font-bold rounded-[50px]"
+                style={{
+                  backgroundColor: "rgba(50, 213, 131, 0.4)",
+                  color: "#fff",
+                }}
+              >
+                Active
+              </span>
+            </div>
           </div>
 
           {/* Profile Option */}
@@ -187,7 +186,7 @@ export default function UserDropdown() {
               setIsOpen(false);
               setIsSupportOpen(true);
             }}
-            className="flex items-center hover:px-3 gap-3 w-full text-left  py-2 rounded-lg text-xs text-white hover:bg-black/10 transition"
+            className="flex items-center hover:px-3 gap-3 w-full text-left  py-2 rounded-lg text-xs text-white hover:bg-white/10 transition"
           >
             <Image
               src="/images/support.svg"
@@ -201,7 +200,7 @@ export default function UserDropdown() {
           {/* Logout Option */}
           <button
             onClick={handleSignOut}
-            className="flex items-center gap-3 hover:px-3 w-full text-left  py-2 rounded-lg text-xs font-medium transition"
+            className="flex items-center gap-3 hover:px-3 w-full text-left hover:bg-white/10 py-2 rounded-lg text-xs font-medium transition"
             style={{
               color: "rgba(240, 68, 56, 0.9)", // darker red text
             }}

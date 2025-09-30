@@ -170,17 +170,17 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
           <p className="text-white/70 mt-1">Manage and track sprints for this project</p>
         </div>
         {!isAdmin && (
-        <button
-  onClick={() => router.push("/dashboard/manager/addsprints")}
-  className="inline-flex items-center gap-2 px-4 py-2 text-white font-medium rounded-full transition shadow-sm hover:shadow-md transform hover:scale-105 active:scale-95 border"
-  style={{
-    backgroundColor: "#0CA9F6",
-    border: "1px solid #57B5E7E5",
-  }}
->
-  <Plus className="w-4 h-4" />
-  Add Sprint
-</button>
+          <button
+            onClick={() => router.push(`/dashboard/manager/addsprints/${projectId}`)}
+            className="inline-flex items-center gap-2 px-4 py-2 text-white font-medium rounded-full transition shadow-sm hover:shadow-md transform hover:scale-105 active:scale-95 border"
+            style={{
+              backgroundColor: "#0CA9F6",
+              border: "1px solid #57B5E7E5",
+            }}
+          >
+            <Plus className="w-4 h-4" />
+            Add Sprint
+          </button>
         )}
       </div>
 
@@ -205,7 +205,7 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
                 <h2 className="text-lg font-bold text-white">{sprint.name}</h2>
                 <span
                   className="text-xs py-2.5 px-5 rounded-full font-medium text-white "
-                  style={{ backgroundColor: `${colors.primary.rgb.replace(", 1)", ", 1)")}`  }}
+                  style={{ backgroundColor: `${colors.primary.rgb.replace(", 1)", ", 1)")}` }}
                 >
                   Active
                 </span>
@@ -245,7 +245,7 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
                 <button
                   onClick={() => handleSprintClick(sprint)}
                   className="flex min-h-9 items-center justify-center w-full gap-2 py-3 rounded-full hover:opacity-80 transition text-xs font-medium bg-black/30 text-white "
-                  
+
                   title="View all tasks in this sprint"
                 >
                   <span>View</span>
