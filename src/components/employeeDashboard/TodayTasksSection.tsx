@@ -23,6 +23,7 @@ interface TodayTasksSectionProps {
   lowCount: number;
   totalCount: number;
   onViewAll: () => void;
+  isLoading?: boolean;
 }
 
 const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({

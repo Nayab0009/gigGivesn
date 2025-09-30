@@ -52,29 +52,105 @@ const NotesCard: React.FC = () => {
 
   return (
     <div
-      className="rounded-3xl p-4 flex flex-col justify-between border border-white/30 bg-black/30 shadow-md w-full h-[230px] mx-auto backdrop-blur-[6px]"
-      style={{ boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)', transition: 'box-shadow 0.2s' ,height: '248px', minHeight: '248px', maxHeight: '248px'}}
+      style={{
+        width: 332,
+        height: 248,
+        borderRadius: '20.33px',
+        borderWidth: '1px',
+        opacity: 1,
+        top: 226,
+        left: 696,
+        padding: 20,
+        gap: 20,
+        background: '#0000004D',
+        backgroundBlendMode: 'luminosity',
+        border: '1px solid #FFFFFF4D',
+        backdropFilter: 'blur(101.66923522949219px)',
+        boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)',
+        // position: 'relative',
+        minHeight: '248px',
+        maxHeight: '248px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+      }}
     >
-      <div className="flex items-center justify-between">
-        <span className="text-lg font-semibold text-white">Notes</span>
-        <Link href="/dashboard/teammember/notes" className="text-xs font-medium text-blue-300 hover:underline focus:outline-none">See All</Link>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{
+          fontFamily: 'Inter',
+          fontWeight: 600,
+          fontSize: '18.3px',
+          lineHeight: '28.47px',
+          color: '#FFFFFF',
+          verticalAlign: 'middle',
+        }}>Notes</span>
+        <Link
+          href="/dashboard/teammember/notes"
+          style={{
+            fontFamily: 'Inter',
+            fontWeight: 500,
+            fontSize: '14.23px',
+            lineHeight: '20.33px',
+            color: '#0CA9F6',
+            textAlign: 'center',
+            verticalAlign: 'middle',
+            textDecoration: 'none',
+            cursor: 'pointer',
+          }}
+        >See All</Link>
       </div>
       
       {/* Single note card with fixed content */}
-      <div className="flex-1 flex items-center justify-center">
-        <div className="bg-black/20 rounded-2xl p-4 w-full h-[140px] flex flex-col justify-between border border-white/20">
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{
+          background: 'rgba(0,0,0,0.12)',
+          borderRadius: '16px',
+          padding: '16px',
+          width: '100%',
+          height: '140px',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          border: '1px solid rgba(255,255,255,0.12)',
+        }}>
           {loading ? (
-            <div className="text-white/70 text-sm text-center py-6">Loading notes...</div>
+            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px', textAlign: 'center', padding: '24px 0' }}>Loading notes...</div>
           ) : notes.length === 0 ? (
-            <div className="text-white/70 text-sm text-center py-6">No notes found</div>
+            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px', textAlign: 'center', padding: '24px 0' }}>No notes found</div>
           ) : (
             <>
-              <div className="text-white text-sm leading-relaxed" dangerouslySetInnerHTML={{ __html: notes[0]?.content || notes[0]?.title || "The beginning of Screen less design: UI Job to be taken over by solution Architect" }} />
-              <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/20">
-                <span className="text-xs text-white">
+              <div
+                style={{
+                  fontFamily: 'Inter',
+                  fontWeight: 300,
+                  fontSize: '12px',
+                  lineHeight: '100%',
+                  color: '#FFFFFF',
+                  verticalAlign: 'middle',
+                  letterSpacing: 0,
+                  display: '-webkit-box',
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  wordBreak: 'break-word',
+                  maxHeight: 'calc(3 * 1em)',
+                }}
+                dangerouslySetInnerHTML={{ __html: notes[0]?.content || notes[0]?.title || "The beginning of Screen less design: UI Job to be taken over by solution Architect" }}
+              />
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '8px', paddingTop: '8px' }}>
+                <span style={{
+                  fontFamily: 'Inter',
+                  fontWeight: 300,
+                  fontSize: '12px',
+                  lineHeight: '100%',
+                  color: '#FFFFFF',
+                  verticalAlign: 'middle',
+                  letterSpacing: 0,
+                }}>
                   {formatDate(notes[0]?.lastModified || notes[0]?.updatedAt || notes[0]?.createdAt || "May/21/2020")}
                 </span>
-                <button className="p-1 text-white hover:text-white">
+                <button style={{ padding: '4px', color: '#FFFFFF', background: 'none', border: 'none', cursor: 'pointer' }}>
                   <Edit3 size={16} />
                 </button>
               </div>

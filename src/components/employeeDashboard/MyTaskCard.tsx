@@ -2,25 +2,26 @@
 import { FC } from "react"
 
 interface MyTaskCardProps {
-  totalProjects: number
-  inProgress: number
+  total: number
   completed: number
   pending: number
+  totalProjects: number
+  inProgress: number
+  // completed: number
+  // pending: number
 }
 
 const MyTaskCard: FC<MyTaskCardProps> = ({
-  totalProjects,
-  inProgress,
+  total,
   completed,
   pending
 }) => {
   // Calculate percentages for the chart
-  const inProgressPercentage = Math.round((inProgress / totalProjects) * 100) || 0
-  const completedPercentage = Math.round((completed / totalProjects) * 100) || 0
-  const pendingPercentage = Math.round((pending / totalProjects) * 100) || 0
+  const completedPercentage = Math.round((completed / total) * 100) || 0
+  const pendingPercentage = Math.round((pending / total) * 100) || 0
   
   return (
-     <div
+    <div
       className="flex flex-col justify-between border border-white/30 bg-black/30  backdrop-blur-[101.67px]   shadow-md w-full mx-auto"
       style={{
         minHeight: '240px',
@@ -61,8 +62,7 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
           color: '#93c5fd', // text-blue-300
         }}
       >
-        {/* Total projects {analytics.totalProjects} */}
-        Total Tasks {totalProjects}
+      Total Tasks {total}
       </span>
     </div>
     <div className="flex items-center gap-2 justify-between space-evenly">
@@ -81,8 +81,7 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
               color: '#fff',
             }}
           >
-            {/* Project Done <span style={{ fontWeight: 600 }}>{analytics.completedProjects}</span> */}
-            Task Done <span style={{ fontWeight: 600 }}>{completed}</span>
+            Completed <span style={{ fontWeight: 600 }}>{completed}</span>
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -99,38 +98,16 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
               color: '#fff',
             }}
           >
-            {/* In Progress <span style={{ fontWeight: 600 }}>{analytics.activeProjects}</span> */}
-            In Progress <span style={{ fontWeight: 600 }}>{inProgress}</span>
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full" style={{ background: '#57B5E7' }}></span>
-          <span
-            style={{
-              fontFamily: 'Inter, sans-serif',
-              fontWeight: 400,
-              fontStyle: 'normal',
-              fontSize: '14.23px',
-              lineHeight: '20.33px',
-              letterSpacing: '0px',
-              verticalAlign: 'middle',
-              color: '#fff',
-            }}
-          >
-            {/* Backlog <span style={{ fontWeight: 600 }}>{analytics.totalProjects - analytics.completedProjects - analytics.activeProjects}</span> */}
-            Backlog <span style={{ fontWeight: 600 }}>{pending}</span>
+            Pending <span style={{ fontWeight: 600 }}>{pending}</span>
           </span>
         </div>
       </div>
       <svg width="175" height="175" viewBox="0 0 36 36" className="mr-2">
         <circle cx="18" cy="18" r="15.9155" fill="none" stroke="white" strokeWidth="3.5" />
         {/* Completed */}
-        {/* <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#A855F7" strokeWidth="3.5" strokeDasharray={`${analytics.completedProjects / (analytics.totalProjects || 1) * 100},100`} strokeDashoffset="25" /> */}
-        <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#A855F7" strokeWidth="3.5" strokeDasharray={`${completed / (totalProjects || 1) * 100},100`} strokeDashoffset="25" />
-        {/* Active */}
-        <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#FBBF72" strokeWidth="3.5" strokeDasharray={`${inProgress / (totalProjects || 1) * 100},100`} strokeDashoffset="75" />
-        {/* Backlog */}
-        <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#57B5E7" strokeWidth="3.5" strokeDasharray={`${(totalProjects - completed - inProgress) / (totalProjects || 1) * 100},100`} strokeDashoffset="100" />
+        <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#A855F7" strokeWidth="3.5" strokeDasharray={`${completedPercentage} ${100 - completedPercentage}`} strokeDashoffset="25" />
+        {/* Pending */}
+        <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#FBBF72" strokeWidth="3.5" strokeDasharray={`${pendingPercentage} ${100 - pendingPercentage}`} strokeDashoffset="75" />
       </svg>
     </div>
   </div>
