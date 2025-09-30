@@ -24,12 +24,14 @@ import {
   Table,
   LayoutGrid,
   ChevronDown,
-  Plus
+  Plus,
+  Filter
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { colors } from "@/colors";
 import { AssignTaskModal } from "../adminDashboard/AssignProjectTicket";
 import type { Task } from "@/types";
+import { useProjectContext } from '@/context/ProjectContext';
 
 interface TaskResponse {
   id: number;
@@ -115,7 +117,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
     dueDate: '',
     estimatedHours: 0,
   });
-
+  
   // Modal states
   // const [isModalOpen, setIsModalOpen] = useState(false);
   // const [selectedTask, setSelectedTask] = useState<TaskResponse | null>(null);
@@ -141,6 +143,7 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
       // fallback: leave projectId/projectName null
     }
   };
+  const { activeTab, setActiveTab } = useProjectContext();
 
   const fetchSprintTasks = async () => {
     if (!sprintId) {
@@ -296,7 +299,7 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
       <div className="mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
+          {/* <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => router.back()}
@@ -318,17 +321,17 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
               />
               Refresh
             </button>
-          </div>
+          </div> */}
           <div className="text-center mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+            {/* <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
               Sprint Tasks
-            </h1>
-            <p className="text-gray-400">
+            </h1> */}
+            {/* <p className="text-gray-400">
               {scope === 'employee' ? 'Browse and work on your sprint tasks' : 'Oversee your sprint and manage tasks effectively'}
-            </p>
+            </p> */}
           </div>
         </div>
-
+             
         {/* Add Task button above toggle */}
         <div className="flex flex-col items-end gap-1 mb-5">
           {showProjectIdError && (
@@ -336,6 +339,49 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
               Project ID is missing. Cannot add task. Please check sprint/project setup.
             </div>
           )}
+          <div className="flex justify-between w-full">
+
+          <div className="flex items-center gap-4">
+            <button className="flex items-center gap-1 text-white/70 hover:text-white px-2 py-1 rounded-full transition-all focus:outline-none">
+              <Filter className="w-4 h-4" />
+              <span className="text-sm font-medium">Filter</span>
+            </button>
+            <div
+              className="flex  rounded-full p-1 gap-1 shadow-inner"
+              style={{ background: "#0000004D" }}
+            >
+              {[
+                { key: "summary", label: "Summary" },
+                // { key: "tasks", label: "Tasks" },
+                 { key: "sprints", label: "Sprints" },
+                { key: "calendar", label: "Calendar" },
+                { key: "members", label: "Members" },
+                // { key: "settings", label: "Settings" },
+              ].map((t) => (
+                <button
+                  key={t.key}
+                  onClick={() => {
+                    
+                    setActiveTab(t.key as any);
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('tab', t.key);
+                    router.replace(url.pathname + url.search);
+                    router.push(`/dashboard/manager/projects/${projectId}?tab=${t.key}`);
+                    
+                    
+                  }}
+                  className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
+                    activeTab === t.key
+                      ? "bg-[#0000004D] text-white shadow "
+                      : "text-white/80  hover:bg-[#0000004D] border-transparent"
+                  }`}
+                  style={{ minWidth: 90 }}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>  
           <button
             onClick={handleAddTask}
             className="inline-flex items-center text-sm py-2.5 gap-2  px-3 text-white font-medium rounded-full transition shadow-sm"
@@ -347,6 +393,8 @@ const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
             <Plus className="w-4 h-4" />
             Add Task
           </button>
+          </div>
+          
         </div>
 
         {/* Error Message */}
