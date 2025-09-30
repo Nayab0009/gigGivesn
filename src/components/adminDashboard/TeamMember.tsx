@@ -71,29 +71,35 @@ export default function TeamListPage() {
     setCurrentPage(1)
   }, [teamMembers])
 
-  const fetchEmployees = async () => {
-    setIsLoading(true)
-    try {
-      const res = await ShowEmployee("employee")
-      let membersData: TeamMember[] = []
-     if (Array.isArray(res.data)) {
-      membersData = res.data.flat()
-    } else {
-      membersData = [res.data]
-    }
-      // Add mock roles for better visualization
-      membersData = membersData.map((member, idx) => ({
-        ...member,
-        role: member.role || ["Employee", "Developer", "Designer", "QA Engineer"][idx % 4],
-      }))
-      setTeamMembers(membersData)
-    } catch (e) {
-      setTeamMembers([])
-    } finally {
-      setIsLoading(false)
-    }
-  }
+ const fetchEmployees = async () => {
+  setIsLoading(true)
+  try {
+    const res = await ShowEmployee("employee")
 
+    let membersData: TeamMember[] = []
+
+    if (Array.isArray(res.data) && Array.isArray(res.data[0])) {
+      // First element = employees array
+      membersData = res.data[0]
+    } else {
+      membersData = []
+    }
+
+    membersData = membersData.map((member, idx) => ({
+      ...member,
+      role:
+        member.role ||
+        ["Employee", "Developer", "Designer", "QA Engineer"][idx % 4],
+    }))
+
+    setTeamMembers(membersData)
+  } catch (e) {
+    console.error("Error fetching employees:", e)
+    setTeamMembers([])
+  } finally {
+    setIsLoading(false)
+  }
+}
   useEffect(() => {
     fetchEmployees()
   }, [])

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar, Clock, Plus, Users, CheckCircle, Circle, Eye } from 'lucide-react';
+import { Calendar, Clock, Plus, Circle } from 'lucide-react';
 import { AssignTaskModal } from '../../adminDashboard/AssignProjectTicket';
 import type { Task } from '@/types';
 import { colors } from "@/colors";
@@ -49,18 +49,10 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
     estimatedHours: 0,
   });
 
-  // Helper function to get user status icon
-  const getUserStatusIcon = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'active':
-        return <CheckCircle className="w-3 h-3" style={{ color: colors.primary.hex }} />;
-      case 'busy':
-        return <Clock className="w-3 h-3 text-yellow-500" />;
-      case 'offline':
-        return <Circle className="w-3 h-3 text-gray-400" />;
-      default:
-        return <Circle className="w-3 h-3 text-gray-400" />;
-    }
+  // Helper: truncate long text to one line with ellipsis
+  const truncateText = (text: string, maxLength = 80) => {
+    if (!text) return "";
+    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
   };
 
   // Helper function to generate project prefix for ticket numbers
@@ -94,7 +86,9 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
   const handleSprintClick = (sprint: Sprint) => {
     const sprintName = encodeURIComponent(sprint.name);
     const projName = encodeURIComponent(projectName);
-    router.push(`/dashboard/manager/showSprinttasks/${sprint.id}?name=${sprintName}&projectId=${projectId}&projectName=${projName}`);
+    router.push(
+      `/dashboard/manager/showSprinttasks/${sprint.id}?name=${sprintName}&projectId=${projectId}&projectName=${projName}`
+    );
   };
 
   // Handle add task button click
@@ -126,7 +120,6 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
     setSelectedSprintId(null);
     setSelectedSprintName('');
 
-    // Update URL to sprints tab without full navigation
     const url = new URL(window.location.href);
     url.searchParams.set('tab', 'sprints');
     router.replace(url.pathname + url.search, { scroll: false });
@@ -135,12 +128,14 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
   // Handle task creation success
   const handleTaskAdd = () => {
     console.log('Tasks created successfully for sprint:', selectedSprintId);
-    // You can add additional logic here like showing a success toast
   };
 
   if (loading) {
     return (
-      <div className="p-12 text-center border border-white/10 rounded-2xl max-w-xl w-full mx-auto" style={{ background: "#0000004D" }}>
+      <div
+        className="p-12 text-center border border-white/10 rounded-2xl max-w-xl w-full mx-auto"
+        style={{ background: "#0000004D" }}
+      >
         <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
           <Clock className="w-6 h-6 text-emerald-600 animate-spin" />
         </div>
@@ -151,7 +146,10 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
 
   if (error) {
     return (
-      <div className="p-6 border border-red-200/40 rounded-2xl text-white max-w-xl w-full mx-auto" style={{ background: "#0000004D" }}>
+      <div
+        className="p-6 border border-red-200/40 rounded-2xl text-white max-w-xl w-full mx-auto"
+        style={{ background: "#0000004D" }}
+      >
         <div className="flex items-center gap-2 mb-1">
           <Circle className="w-5 h-5 text-red-300" />
           <div className="font-semibold">Error loading sprints</div>
@@ -164,23 +162,20 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-white">{projectName} Sprints</h2>
-          <p className="text-white/70 mt-1">Manage and track sprints for this project</p>
-        </div>
+      <div className="flex items-center justify-end">
+
         {!isAdmin && (
-        <button
-  onClick={() => router.push("/dashboard/manager/addsprints")}
-  className="inline-flex items-center gap-2 px-4 py-2 text-white font-medium rounded-full transition shadow-sm hover:shadow-md transform hover:scale-105 active:scale-95 border"
-  style={{
-    backgroundColor: "#0CA9F6",
-    border: "1px solid #57B5E7E5",
-  }}
->
-  <Plus className="w-4 h-4" />
-  Add Sprint
-</button>
+          <button
+            onClick={() => router.push("/dashboard/manager/addsprints")}
+            className="inline-flex items-center gap-2 px-4 py-2 text-white font-medium rounded-full transition shadow-sm hover:shadow-md transform hover:scale-105 active:scale-95 border"
+            style={{
+              backgroundColor: "#0CA9F6",
+              border: "1px solid #57B5E7E5",
+            }}
+          >
+            <Plus className="w-4 h-4" />
+            Add Sprint
+          </button>
         )}
       </div>
 
@@ -190,7 +185,9 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
           <Calendar className="w-16 h-16 text-white/20" />
           <div className="text-center">
             <p className="text-lg font-medium mb-2">No sprints found</p>
-            <p className="text-white/70">Create your first sprint to get started with project management.</p>
+            <p className="text-white/70">
+              Create your first sprint to get started with project management.
+            </p>
           </div>
         </div>
       ) : (
@@ -203,17 +200,14 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
               {/* Header */}
               <div className="flex items-center justify-between mb-0">
                 <h2 className="text-lg font-bold text-white">{sprint.name}</h2>
-                <span
-                  className="text-xs py-2.5 px-5 rounded-full font-medium text-white "
-                  style={{ backgroundColor: `${colors.primary.rgb.replace(", 1)", ", 1)")}`  }}
-                >
+                <span className="text-xs py-2.5 px-5 rounded-full font-medium text-white bg-[#0CA9F6]">
                   Active
                 </span>
               </div>
 
-              {/* Description */}
-              <p className="text-sm text-gray-300 mb-5 line-clamp-2 ">
-                {sprint.description || "No description provided"}
+              {/* Description (truncated to one line with ellipsis) */}
+              <p className="text-sm text-gray-300 mb-5 truncate">
+                {truncateText(sprint.description || "No description provided", 80)}
               </p>
 
               {/* Details */}
@@ -221,13 +215,18 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
                 <div className="flex justify-between">
                   <span className="font-medium ">Timeline</span>
                   <span className="text-white">
-                    {sprint.startDate && new Date(sprint.startDate).toLocaleDateString()} -{" "}
-                    {sprint.endDate && new Date(sprint.endDate).toLocaleDateString()}
+                    {sprint.startDate &&
+                      new Date(sprint.startDate).toLocaleDateString()}{" "}
+                    -{" "}
+                    {sprint.endDate &&
+                      new Date(sprint.endDate).toLocaleDateString()}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium ">Progress</span>
-                  <span className="text-white">{Math.round(sprint.progress || 0)}%</span>
+                  <span className="text-white">
+                    {Math.round(sprint.progress || 0)}%
+                  </span>
                 </div>
               </div>
 
@@ -235,17 +234,18 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
               <div className="w-full bg-gray-700/40 rounded-full h-2 mb-5">
                 <div
                   className="h-2 rounded-full"
-                  style={{ width: `${sprint.progress}%`, backgroundColor: colors.primary.hex }}
+                  style={{
+                    width: `${sprint.progress}%`,
+                    backgroundColor: colors.primary.hex,
+                  }}
                 ></div>
               </div>
 
-              {/* Footer (actions & users) */}
+              {/* Footer (actions) */}
               <div>
-                {/* View Button - full width, matches progress bar */}
                 <button
                   onClick={() => handleSprintClick(sprint)}
                   className="flex min-h-9 items-center justify-center w-full gap-2 py-3 rounded-full hover:opacity-80 transition text-xs font-medium bg-black/30 text-white "
-                  
                   title="View all tasks in this sprint"
                 >
                   <span>View</span>
@@ -257,14 +257,13 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
       )}
 
       {/* Assign Task Modal */}
-      {typeof selectedSprintId === 'number' && (
+      {typeof selectedSprintId === "number" && (
         <AssignTaskModal
           open={isModalOpen}
           onClose={handleModalClose}
           onAdd={handleTaskAdd}
           task={task}
           setTask={setTask}
-          getUserStatusIcon={getUserStatusIcon}
           projectId={projectId}
           sprintId={selectedSprintId}
         />
