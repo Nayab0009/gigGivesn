@@ -15,6 +15,7 @@ type Sprint = {
   startDate: string;
   endDate: string;
   status?: string;
+  progress?: number;
 };
 
 type SprintsTabProps = {
@@ -226,7 +227,7 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium ">Progress</span>
-                  <span className="text-white">68%</span>
+                  <span className="text-white">{Math.round(sprint.progress || 0)}%</span>
                 </div>
               </div>
 
@@ -234,7 +235,7 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
               <div className="w-full bg-gray-700/40 rounded-full h-2 mb-5">
                 <div
                   className="h-2 rounded-full"
-                  style={{ width: "68%", backgroundColor: colors.primary.hex }}
+                  style={{ width: `${sprint.progress}%`, backgroundColor: colors.primary.hex }}
                 ></div>
               </div>
 
