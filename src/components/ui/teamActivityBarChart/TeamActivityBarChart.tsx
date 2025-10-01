@@ -21,10 +21,16 @@ interface TeamActivityBarChartProps {
 }
 
 export default function TeamActivityBarChart({ data }: TeamActivityBarChartProps) {
+  // Transform data to use only first name for x-axis
+  const dataWithFirstNames = data.map(item => ({
+    ...item,
+    team: item.team.split(' ')[0]
+  }));
+
   return (
     <ResponsiveContainer width="100%" height={190}>
       <BarChart 
-        data={data}
+        data={dataWithFirstNames}
         barGap={0}
         barCategoryGap={15}
         margin={{ top: 20, right: 20, left: 20, bottom: 30 }}
@@ -40,7 +46,7 @@ export default function TeamActivityBarChart({ data }: TeamActivityBarChartProps
           width={30}
         />
         
-        {/* X-axis with team names */}
+        {/* X-axis with first names */}
         <XAxis 
           dataKey="team" 
           type="category"

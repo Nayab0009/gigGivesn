@@ -1,4 +1,3 @@
-
   "use client"
   import {getAllProjectsDashboard} from "../../lib/ProjectService"
   import { getAllProjects } from "../../lib/ProjectService"
@@ -152,7 +151,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
         adminStats: {
           totalProjects: projects.length,
           activeProjects: allProjects.filter(project => project.status === "inprogress").length,
-          totalTasks: allProjects.filter(project => project.status === "iscompleted").length,
+          totalTasks: allProjects.filter(project => project.status === "completed").length,
           allTime: projects.length,
           totalUsers: allUsers[1] || 0,
           tasksCompleted: 1075,
@@ -303,7 +302,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
         {/* Stats Cards */}
         <div className="grid space-y-2 py-0">
           {/* Total Projects */}
-          <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-0 rounded-2xl  shadow-md group border border-white/30 justify-between">
+          <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-3 rounded-2xl  shadow-md group border border-white/30 justify-between">
             <div>
               <div className="px-4 py-2">
               <p className="text-gray-200 font-light text-xs tracking-wider">Total Projects</p>
@@ -312,7 +311,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
               <p className="text-lg font-bold text-white">
                {formatNumber(dashboardData.adminStats.totalProjects)}
               </p>
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <div>
                   <p className="text-gray-200 font-light text-xs tracking-wider">Active projects</p>
                 </div>
@@ -321,7 +320,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                 <span className="text-white text-xs ml-3 bg-[rgba(194,65,12,0.3)]  px-4 py-1 rounded-full font-light border-2 border-[#615041]">+{dashboardData.adminStats.activeProjects}</span>
               </div>
                 </div>
-              </div>
+              </div> */}
 
 
             </div>
@@ -338,7 +337,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
           </div>
 
           {/* Total Tasks */}
-          <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-0 rounded-2xl shadow-md group border border-white/30 justify-between">
+          <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-3 rounded-2xl shadow-md group border border-white/30 justify-between">
             <div>
               <div className="px-4 py-2">
                 <p className="text-gray-200 font-light text-xs tracking-wider">Completed projects</p>
@@ -346,7 +345,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                   <p className="text-lg font-bold text-white">
                     {formatNumber(dashboardData.adminStats.totalTasks)}
                   </p>
-                  <div className="flex items-center">
+                  {/* <div className="flex items-center">
                     <div>
                       <p className="text-gray-200 font-light text-xs tracking-wider">All time</p>
                     </div>
@@ -355,7 +354,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                         <span className="text-white text-xs ml-3 bg-[#696032] px-4 py-1 rounded-full border-[#716c4e] font-light border-2">+{dashboardData.adminStats.allTime}</span>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -366,7 +365,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
             </div>
           </div>
           {/* Users */}
-          <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-0 rounded-2xl shadow-md group border border-white/30 justify-between">
+          <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-3 rounded-2xl shadow-md group border border-white/30 justify-between">
             <div>
               <div className="px-4 py-2">
                 <p className="text-gray-200 font-light text-xs tracking-wider">Users</p>
@@ -374,7 +373,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                   <p className="text-lg font-bold text-white">
                     {formatNumber(dashboardData.adminStats.totalUsers)}
                   </p>
-                  <div className="flex items-center">
+                  {/* <div className="flex items-center">
                     <div>
                       <p className="text-gray-200 font-light text-xs tracking-wider">Active members</p>
                     </div>
@@ -383,7 +382,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                         <span className="text-white text-xs font-light ml-3 bg-[#26652D] px-4 py-1 rounded-full border-2 border-[#3D7543]">+4</span>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
@@ -435,7 +434,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
               </div>
               <div>
   <h3 className="text-xl font-medium text-white mb-1 flex items-center">Project Breakdown</h3>
-                <p className="text-gray-300 text-sm ">Open vs completed vs bugs</p>
+                <p className="text-gray-300 text-sm ">Completed vs In Progress</p>
               </div>
                 </div>
 
