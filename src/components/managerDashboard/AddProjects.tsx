@@ -291,12 +291,8 @@ function ViewTeamModal({
               </button>
             </div>
           ) : project ? (
-            <div className="space-y-6">
+            <div className="space-y-3">
               {/* Project Info */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                <h3 className="font-bold text-lg text-white mb-2">{project.name}</h3>
-                <p className="text-gray-300 text-sm">{project.description}</p>
-              </div>
 
               {/* Team Members */}
               <div>
