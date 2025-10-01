@@ -4,6 +4,7 @@ import { getTaskById } from "@/lib/TaskService"
 import { useAuth } from "@/context/AuthContext"
 import { initiateSocket, getSocket } from "@/lib/socket"
 import { sendMessage as sendChatMessage } from "@/lib/chatService"
+import { updateTask } from "@/lib/TaskService"
 import {
   ChevronDown,
   Calendar,
@@ -94,6 +95,8 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [chatInput, setChatInput] = useState("")
   const chatEndRef = useRef<HTMLDivElement>(null)
+  const [statusDropdownOpen, setStatusDropdownOpen] = useState(false)
+const [updatingStatus, setUpdatingStatus] = useState(false)
 
   useEffect(() => {
     async function fetchTask() {
@@ -176,7 +179,24 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [chatMessages])
-
+const statusOptions = [
+  { value: "pending", label: "Pending" },
+  { value: "in_progress", label: "In Progress" },
+  { value: "completed", label: "Completed" },
+]
+const handleStatusUpdate = async (newStatus: string) => {
+  if (!task) return
+  try {
+    setUpdatingStatus(true)
+    await updateTask(String(task.id), { status: newStatus })
+    setTask({ ...task, status: newStatus })
+    setStatusDropdownOpen(false)
+  } catch (error) {
+    console.error("Error updating status:", error)
+  } finally {
+    setUpdatingStatus(false)
+  }
+}
   const handleSendChat = async () => {
     if (!chatInput.trim() || !currentUser) return
     const socket = getSocket()
@@ -253,19 +273,48 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
         {/* Left info column */}
         <div className="flex flex-col text-white/90 w-[330px]">
           {/* Ticket Number */}
-          <div className="mt-2">
-            <div className="text-[12px]  tracking-wide text-[#A4A7AE] font-[400px] mb-1">
-              Ticket Number
-            </div>
-            <div className="flex items-center gap-35">
-              <span className="text-[20px] font-[500px]">
-                {task.ticketNumber ?? `TASK-${task.id}`}
-              </span>
-              <span className="text-[12px] px-3 py-[6px] rounded-full bg-[#0CA9F6] text-white font-[400] shadow-sm">
-                {task.status?.replace(/_/g, " ") || "In progress"}
-              </span>
-            </div>
+         <div className="mt-2">
+  <div className="text-[12px] tracking-wide text-[#A4A7AE] font-[400px] mb-1">
+    Ticket Number
+  </div>
+  <div className="flex items-center gap-3">
+    <span className="text-[20px] font-[500px]">
+      {task.ticketNumber ?? `TASK-${task.id}`}
+    </span>
+
+    {/* Status Dropdown - only editable for employee role */}
+    {currentUser?.role === "employee" ? (
+      <div className="relative">
+        <button
+          onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
+          disabled={updatingStatus}
+          className="text-[12px] px-3 py-[6px] rounded-full bg-[#0CA9F6] text-white font-[400] shadow-sm hover:bg-[#0B8FD1] transition-colors flex items-center gap-1 disabled:opacity-50"
+        >
+          {task.status?.replace(/_/g, " ") || "In progress"}
+          <ChevronDown className={`w-3 h-3 transition-transform ${statusDropdownOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        {statusDropdownOpen && (
+          <div className="absolute top-full left-0 mt-1 w-36 bg-black/90 border border-white/20 rounded-lg shadow-lg overflow-hidden z-10">
+            {statusOptions.map((option) => (
+              <button
+                key={option.value}
+                onClick={() => handleStatusUpdate(option.value)}
+                className="w-full text-left px-3 py-2 text-[12px] text-white hover:bg-white/10 transition-colors"
+              >
+                {option.label}
+              </button>
+            ))}
           </div>
+        )}
+      </div>
+    ) : (
+      <span className="text-[12px] px-3 py-[6px] rounded-full bg-[#0CA9F6] text-white font-[400] shadow-sm">
+        {task.status?.replace(/_/g, " ") || "In progress"}
+      </span>
+    )}
+  </div>
+</div>
 
           {/* Sprint Number */}
           <div className="mt-8">
@@ -296,14 +345,14 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
                   {task.priority
                     ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1)
                     : "High"}
-                  
+
                 </span>
               </div>
 
             <div className="flex items-center">
               <span>Due date</span>
               <span className="ml-auto font-medium flex items-center gap-2">
-               
+
                 {task.taskDate
                   ? new Date(task.taskDate).toLocaleDateString(undefined, {
                       day: "2-digit",

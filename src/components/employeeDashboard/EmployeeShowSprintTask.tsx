@@ -303,7 +303,7 @@ const EmployeeShowSprintTask: React.FC = () => {
                           <th className="px-6 py-3 text-left font-medium">Due Date</th>
                           <th className="px-6 py-3 text-left font-medium">Priority</th>
                           <th className="px-6 py-3 text-left font-medium">Assignee</th>
-                          <th className="px-6 py-3 text-left font-medium">Actions</th>
+                          {/* <th className="px-6 py-3 text-left font-medium">Actions</th> */}
                         </tr>
                       </thead>
                       <tbody className="bg-transparent">
@@ -357,7 +357,7 @@ const EmployeeShowSprintTask: React.FC = () => {
                                   </span>
                                 </span>
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                              {/* <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
                                 {isEmployee() && (
                                   <div className="flex gap-2 justify-center">
                                     <button
@@ -372,11 +372,11 @@ const EmployeeShowSprintTask: React.FC = () => {
                                       className="px-3 py-1.5 text-xs bg-black/40 hover:bg-black/60 text-white font-medium border border-white/20 transition-all duration-200 flex items-center gap-1 rounded-2xl"
                                     >
                                       <Image src="/images/update.svg" alt="Update Status" className="w-7 h-7 border border-white/20 p-2 rounded-full" height={20} width={20} />
-                                      Update Status
+                                      Update Statussss
                                     </button>
                                   </div>
                                 )}
-                              </td>
+                              </td> */}
                             </tr>
                           ))}
                         {tasks.filter((task) => task.status?.toLowerCase() === 'inprogress').length === 0 && (
