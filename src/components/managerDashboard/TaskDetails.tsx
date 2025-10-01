@@ -241,8 +241,14 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
                 fontWeight: 600,
                 fontSize: "22px",
                 lineHeight: "120%",
-                color: "#FFFFFF"
+                color: "#FFFFFF",
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                display: '-webkit-box',
+                WebkitLineClamp: 1,
+                WebkitBoxOrient: 'vertical',
               }}
+              title={task.title || "-"} // Show full title on hover
             >
               {task.title || "-"}
             </h4>
@@ -282,6 +288,7 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
               display: '-webkit-box',
               WebkitLineClamp: 2,
               WebkitBoxOrient: 'vertical',
+              maxHeight: '48px' 
             }}
             title={task.description}
           >

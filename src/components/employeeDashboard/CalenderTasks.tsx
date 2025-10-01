@@ -7,6 +7,8 @@ import { Calendar, Clock, MapPin, User, Bell, Briefcase, Filter, Search, Plus, C
 import { fetchEmployeeAllTasks } from "@/lib/TeamService"
 import { useAuth } from "@/context/AuthContext"
 import { useEffect } from "react"
+import TaskDetailsPopup from "../managerDashboard/TaskDetails"
+import { getTaskById } from "@/lib/TaskService"
 
 // Define Task type for backend response
 interface BackendTask {
@@ -107,6 +109,8 @@ export default function CalendarPage() {
   const [searchTerm, setSearchTerm] = useState("")
   // Week navigation state
   const [weekOffset, setWeekOffset] = useState(0)
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<any>(null);
 
 
   // Calculate mondayDate and week range based on weekOffset
@@ -241,6 +245,21 @@ export default function CalendarPage() {
       }
     }
   });
+
+   const handleTaskClick = async (taskId: string) => {
+      try {
+        const taskDetails = await getTaskById(taskId);
+        setSelectedTask(taskDetails);
+        setIsPopupOpen(true);
+      } catch (error) {
+        console.error("Error fetching task details:", error);
+      }
+    };
+  
+  const closePopup = () => {
+    setIsPopupOpen(false);
+    setSelectedTask(null);
+  };
 
   // Helper to get consistent project colors
   function getProjectColor(projectName: string) {
@@ -530,7 +549,7 @@ export default function CalendarPage() {
                             className="w-7 h-7 flex items-center justify-center rounded-full bg-black/30 border border-white/10 cursor-pointer"
                             onClick={(e) => {
                               e.stopPropagation();
-                              // handleTaskClick(task.id);
+                               handleTaskClick(task.id);
                             }}
                           >
                             <img
@@ -557,6 +576,10 @@ export default function CalendarPage() {
 
         </div>
       </div>
+      {/* Task popup */}
+            {isPopupOpen && selectedTask && (
+              <TaskDetailsPopup task={selectedTask} onClose={closePopup} />
+            )}
     </div>
   );
 }

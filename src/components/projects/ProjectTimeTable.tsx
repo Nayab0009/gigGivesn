@@ -3,7 +3,7 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { getManagerTasksByProjectId, getEmployeeTasksByProjectId } from "@/lib/TaskService";
+import { getManagerTasksByProjectId, getEmployeeTasksByProjectId,getTasksByProjectId } from "@/lib/TaskService";
 import TaskDetailsPopup from "../managerDashboard/TaskDetails";
 import { useEffect, useState } from "react";
 import { interFont } from "@/app/layout";
@@ -68,6 +68,8 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
         if (projectId) {
           if (user?.role === "employee") {
             data = await getEmployeeTasksByProjectId(String(projectId));
+          } else if (user?.role === "admin" ) {
+            data = await getTasksByProjectId(String(projectId));
           } else {
             data = await getManagerTasksByProjectId(String(projectId));
           }
@@ -173,6 +175,12 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
             taskDate: task.taskDate,
             taskFor: task.taskFor,
             createdBy: task.createdBy,
+            // Include the sprint data for the popup
+            sprint: task.sprint || task.taskOf,
+            ticketNumber: task.ticketNumber,
+            status: task.status,
+            // Include the original task data to ensure we have all fields
+            ...task,
           };
           schedule[dayName].push(formattedTask);
         }
