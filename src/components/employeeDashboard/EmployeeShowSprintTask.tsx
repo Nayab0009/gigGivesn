@@ -332,6 +332,7 @@ const EmployeeShowSprintTask: React.FC = () => {
     <span>{task.ticketNumber || "—"}</span>
   </span>
 </td>
+{/* add due date */}
                             <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
                                  {task.taskDate ? new Date(task.taskDate).toLocaleDateString() : "—"}
                               </td>
