@@ -97,6 +97,8 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
   const chatEndRef = useRef<HTMLDivElement>(null)
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false)
 const [updatingStatus, setUpdatingStatus] = useState(false)
+const [currentTaskId, setCurrentTaskId] = useState<string | null>(null)
+const [isTaskChat, setIsTaskChat] = useState(false)
 
   useEffect(() => {
     async function fetchTask() {
@@ -141,23 +143,29 @@ const [updatingStatus, setUpdatingStatus] = useState(false)
   }, [taskId])
 
   // Chat: Initialize socket and join task room
-  useEffect(() => {
-    if (!currentUser) return
-    initiateSocket(currentUser.id.toString())
-    const socket = getSocket()
-    if (!socket) return
+useEffect(() => {
+  initiateSocket()
+  const socket = getSocket()
+  if (!socket) return
+ if (isTaskChat && currentTaskId) {
+    socket.emit("join_task_room", { taskId: currentTaskId })
+  }
 
-    socket.emit("join_task_room", { taskId: String(taskId) })
+  socket.on("connect", () => {
+    console.log("Socket connected:", socket.id)
+  })
+
+    // socket.emit("join_task_room", { taskId: String(taskId) })
 
     const handleTaskMessage = (data: any) => {
       const mappedMessage: ChatMessage = {
         id: data.id,
-        message: data.message || "",
-        timestamp: data.createdAt ? new Date(data.createdAt).getTime() : data.timestamp || Date.now(),
-        userId: data.userId,
-        username: data.username,
-        senderId: data.sendBy?.id?.toString() || data.senderId?.toString(),
-        receiverId: data.receivedBy?.id?.toString() || data.receiverId?.toString(),
+      message: data.message || "",
+      timestamp: data.createdAt ? new Date(data.createdAt).getTime() : data.timestamp || Date.now(),
+      userId: data.userId,
+      username: data.username,
+      senderId: data.sendBy?.id?.toString() || data.senderId?.toString(),
+      receiverId: data.receivedBy?.id?.toString() || data.receiverId?.toString(),
       }
 
       if (
