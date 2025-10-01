@@ -16,12 +16,12 @@ const AddAdmin: React.FC = () => {
     password: "",
     phone: "",
     address: "",
-    organizationId:"",
+    organization:"",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
-//fetc the Organizations 
+//fetc the Organizations
   useEffect(() => {
     const fetchOrganizations = async () => {
       try {
@@ -34,7 +34,7 @@ const AddAdmin: React.FC = () => {
     }
     fetchOrganizations()
   }, [])
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setForm((prev) => ({
@@ -42,7 +42,7 @@ const AddAdmin: React.FC = () => {
       [name]: value,
     }))
   }
-  
+
   // --- API POST handler ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -57,7 +57,7 @@ const AddAdmin: React.FC = () => {
       phone: form.phone,
       address: form.address,
       role: "admin",
-      organizationId: form.organizationId,
+      organization: form.organization,
       industry:form.industry,
     }
 
@@ -69,7 +69,7 @@ const AddAdmin: React.FC = () => {
         password: "",
         phone: "",
         address: "",
-        organizationId: "",
+        organization: "",
         industry:"",
       })
       setSuccess("Admin added successfully!")
@@ -92,7 +92,7 @@ const AddAdmin: React.FC = () => {
       <div className="relative w-full max-w-5xl bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 sm:p-10">
         {/* Header */}
         <div className="text-center mb-10">
-          <div 
+          <div
             className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-6 shadow-lg"
               style={{
                 background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
@@ -100,7 +100,7 @@ const AddAdmin: React.FC = () => {
           >
             <UserPlus className="w-10 h-10 text-white" />
           </div>
-          <h1 
+          <h1
             className="text-4xl font-bold bg-clip-text text-transparent mb-3"
             style={{
               background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
@@ -119,7 +119,7 @@ const AddAdmin: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div 
+                  <div
                     className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
                     style={{
                       background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
@@ -158,7 +158,7 @@ const AddAdmin: React.FC = () => {
 
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div 
+                  <div
                     className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
                     style={{
                       background: `linear-gradient(to right, ${colors.secondary.hex}, ${colors.accent.hex})`,
@@ -200,7 +200,7 @@ const AddAdmin: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div 
+                  <div
                     className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
                     style={{
                       background: `linear-gradient(to right, ${colors.accent.hex}, ${colors.primary.hex})`,
@@ -239,7 +239,7 @@ const AddAdmin: React.FC = () => {
 
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div 
+                  <div
                     className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
                     style={{
                       background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.accent.hex})`,
@@ -281,7 +281,7 @@ const AddAdmin: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <div 
+                  <div
                     className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
                     style={{
                       background: `linear-gradient(to right, ${colors.secondary.hex}, ${colors.primary.hex})`,
@@ -320,7 +320,7 @@ const AddAdmin: React.FC = () => {
 
            <div className="group">
   <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-    <div 
+    <div
       className="flex items-center justify-center w-8 h-8 rounded-lg shadow-sm"
       style={{
         background: `linear-gradient(to right, ${colors.accent.hex}, ${colors.secondary.hex})`,
@@ -332,8 +332,8 @@ const AddAdmin: React.FC = () => {
   </label>
   <div className="relative">
     <select
-      name="organizationId"
-      value={form.organizationId}
+      name="organization"
+      value={form.organization}
       onChange={handleChange}
       required
       className="w-full border-2 border-gray-200 rounded-2xl px-6 py-4 text-lg bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md focus:ring-4 transition-all duration-300"
@@ -360,14 +360,14 @@ const AddAdmin: React.FC = () => {
               </div>
             )}
             {success && (
-              <div 
+              <div
                 className="border-2 rounded-2xl p-4 text-center"
                 style={{
                   backgroundColor: `${colors.accent.hex}1A`,
                   borderColor: `${colors.accent.hex}40`,
                 }}
               >
-                <div 
+                <div
                   className="font-semibold text-lg flex items-center justify-center space-x-2"
                   style={{ color: colors.accent.hex }}
                 >
@@ -397,7 +397,7 @@ const AddAdmin: React.FC = () => {
                   }
                 }}
               >
-                <div 
+                <div
                   className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   style={{
                     background: `linear-gradient(to right, ${colors.primary.hex}33, ${colors.secondary.hex}33, ${colors.accent.hex}33)`,
