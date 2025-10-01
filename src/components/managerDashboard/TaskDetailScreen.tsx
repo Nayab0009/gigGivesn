@@ -375,9 +375,9 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId }: TaskDet
                 )}
               </div>
             </div>
-            <button onClick={handleEditClick} className="p-1 rounded hover:bg-white/10">
+            {currentUser?.role === "manager" ? <button onClick={handleEditClick} className="p-1 rounded hover:bg-white/10">
               <Edit className="w-4 h-4 text-white/60" />
-            </button>
+            </button> : null}
           </div>
 
           {/* Sprint Number */}
