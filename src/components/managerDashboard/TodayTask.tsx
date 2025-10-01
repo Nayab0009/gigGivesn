@@ -4,6 +4,7 @@ import { MoreHorizontal } from "lucide-react"
 import Image from "next/image"
 import { useAuth } from "@/context/AuthContext"
 import { getManagerTasksToday, getEmployeeTasksToday } from "@/lib/TaskService"
+import TaskDetailsPanel from "./TaskDetailScreen"
 
 const TodayTask = () => {
   const { user } = useAuth();
@@ -12,8 +13,9 @@ const TodayTask = () => {
     medium: [] as any[],
     low: [] as any[],
   })
-  const [loading, setLoading] = useState(true)
 
+  const [loading, setLoading] = useState(true)
+  const [openedTaskId, setOpenedTaskId] = useState<number | null>(null)
   useEffect(() => {
     const fetchTasks = async () => {
       try {
@@ -64,7 +66,7 @@ const TodayTask = () => {
             <span className="w-3 h-3 bg-white rounded-full mr-2"></span>
             <h3 className="text-white font-semibold">{title} Priority</h3>
           </div>
-            <div className="mt-2 border-t border-white" />
+          <div className="mt-2 border-t border-white" />
         </div>
       )}
 
@@ -77,8 +79,11 @@ const TodayTask = () => {
         <div className="space-y-3 mt-5">
           {taskList.map((task, idx) => (
             <div
+              className="cursor-pointer"
+              onClick={() => setOpenedTaskId(task.id)}
               key={idx}
               style={{
+                "cursor": "pointer",
                 width: '100%',
                 minHeight: '197px',
                 borderRadius: '15px',
@@ -91,7 +96,7 @@ const TodayTask = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                
+
               }}
             >
               {/* Top Row */}
@@ -178,7 +183,7 @@ const TodayTask = () => {
                     letterSpacing: '0px',
                     verticalAlign: 'middle',
                     color: '#fff',
-                    
+
                   }}
                 >
                   {task.title}
@@ -252,6 +257,16 @@ const TodayTask = () => {
         {renderColumn("Low", tasks.low)}
         {renderColumn("Medium", tasks.medium)}
       </div>
+
+      {openedTaskId && (
+        <div className="fixed h-screen w-screen top-0 left-0 flex items-center justify-center z-10 bg-black/50 backdrop-blur-[300px]">
+          <TaskDetailsPanel
+            // projectId={tasks.find((task) => task.id === openedTaskId)?.taskOf?.id}
+            taskId={openedTaskId}
+            onClose={() => setOpenedTaskId(null)}
+          />
+        </div>
+      )}
     </div>
   )
 }

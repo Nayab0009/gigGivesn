@@ -779,9 +779,10 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
         {/* Task Details Panel Modal */}
         {isTaskDetailOpen && selectedTaskId && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl">
+            <div className="w-full max-w-6xl max-h-[90vh]  rounded-2xl shadow-2xl">
               <TaskDetailsPanel
                 taskId={selectedTaskId}
+                projectId={projectId || ""}
                 onClose={() => {
                   setIsTaskDetailOpen(false);
                   setSelectedTaskId(null);

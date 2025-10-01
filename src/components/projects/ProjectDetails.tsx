@@ -364,7 +364,7 @@ export default function ProjectDetailsPage() {
               </div>
 
             </div>
-            {!isAdmin && (
+            {!isAdmin && activeTab === "sprints" && (
               <button
                 onClick={() => router.push(`/dashboard/manager/addsprints/${project?.id}`)}
                 className="inline-flex items-center gap-2 px-4 py-2 text-white font-medium rounded-full transition shadow-sm hover:shadow-md transform hover:scale-105 active:scale-95 border"

@@ -55,7 +55,7 @@ export function EditTaskModal({
   const [successMessage, setSuccessMessage] = useState('');
 
   const today = new Date().toISOString().split("T")[0];
-
+  console.log("Project id in edit task modal", projectId, sprintId, task)
   // Prevent body scroll when modal is open
   useEffect(() => {
     if (open) {
@@ -196,7 +196,7 @@ export function EditTaskModal({
         .map(member => member.name)
         .join(', ');
 
-      setSuccessMessage(`Task "${task.title}" has been successfully created and assigned to ${assignedMemberNames}.`);
+      setSuccessMessage(`Task "${task.title}" has been successfully updated and assigned to ${assignedMemberNames}.`);
       setShowSuccess(true);
 
       // Auto-hide success message and close modal after 3 seconds
@@ -277,7 +277,7 @@ export function EditTaskModal({
             <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-10 h-10 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-white mb-4">Task Created Successfully!</h2>
+            <h2 className="text-2xl font-bold text-white mb-4">Task Updated Successfully!</h2>
             <p className="text-gray-300 mb-6 leading-relaxed">{successMessage}</p>
             <div className="flex items-center justify-center text-gray-400 text-sm">
               <Clock className="w-4 h-4 mr-2" />
@@ -290,8 +290,8 @@ export function EditTaskModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-[100px] flex items-center justify-center z-[9999] p-4 overflow-hidden">
-      <div className="bg-black/30 backdrop-blur-md rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden border-2 px-4 border-white/30 flex flex-col">
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-[100px] flex items-center justify-center z-[9999] p-4 ">
+      <div className="bg-black/30 backdrop-blur-md rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh]  border-2 px-4 border-white/30 flex flex-col">
 
         {/* Header - Fixed */}
         <div className="p-6 text-center  flex-shrink-0 ">
