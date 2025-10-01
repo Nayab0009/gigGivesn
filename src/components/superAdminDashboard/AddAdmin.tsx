@@ -277,7 +277,7 @@ const AddAdmin: React.FC = () => {
               </div>
             </div>
 
-            {/* Address & Organization */}
+            {/* Address */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
