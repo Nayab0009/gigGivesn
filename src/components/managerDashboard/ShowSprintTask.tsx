@@ -168,8 +168,10 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
       const tasksData = Array.isArray(response.data) ? response.data : [];
       setTasks(tasksData);
 
-      if (tasksData.length > 0 && tasksData[0].sprint) {
-        setSprint(tasksData[0].sprint);
+      const sprintResponse = await axiosInstance.get(`/sprint/${sprintId}`);
+      const sprintData = sprintResponse.data;
+      if (tasksData.length > 0 && sprintData) {
+        setSprint(sprintData);
       }
       // If tasks exist, prefer project info from first task
       if (tasksData.length > 0 && tasksData[0].taskOf) {
@@ -489,9 +491,16 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
             <div className="flex items-center justify-between w-full py-2.5 mb-5">
               {/* Sprint Name at left */}
               {sprintName ? (
-                <span className="text-[20px]  text-white font-semibold   py-2 " style={{ minWidth: '180px' }}>
-                  {sprintName}
-                </span>
+                <div className="flex flex-col my-3 gap-0">
+
+
+                  <span className="text-[20px]  text-white font-semibold  " style={{ minWidth: '180px' }}>
+                    {sprintName}
+                  </span>
+                  <span className="text-xs  text-gray-300 font-semibold   " style={{ minWidth: '180px' }}>
+                    {new Date(sprint?.createdAt).toLocaleDateString()} - {new Date(sprint?.endDate).toLocaleDateString()}
+                  </span>
+                </div>
               ) : <span />}
               <div
                 className="flex  rounded-full p-1 gap-1 shadow-inner bg-black/30"
@@ -779,9 +788,10 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
         {/* Task Details Panel Modal */}
         {isTaskDetailOpen && selectedTaskId && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl">
+            <div className="w-full max-w-6xl max-h-[90vh]  rounded-2xl shadow-2xl">
               <TaskDetailsPanel
                 taskId={selectedTaskId}
+                projectId={projectId || ""}
                 onClose={() => {
                   setIsTaskDetailOpen(false);
                   setSelectedTaskId(null);

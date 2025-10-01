@@ -20,6 +20,8 @@ import {
   Edit,
   X,
 } from "lucide-react"
+import { EditTaskModal, TaskPriority } from "../adminDashboard/EditTaskModal"
+import { Task } from "@/types"
 
 // Chat message type
 type ChatMessage = {
@@ -81,91 +83,117 @@ type TaskLog = {
 
 type TaskDetailsPanelProps = {
   taskId: string | number
+  projectId?: string | number;
   onClose?: () => void
 }
 
-export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelProps) {
+export default function TaskDetailsPanel({ taskId, onClose, projectId }: TaskDetailsPanelProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [task, setTask] = useState<ProjectTask | null>(null)
   const [logs, setLogs] = useState<TaskLog[]>([])
-
+  const [task2, setTask2] = useState<Task>({
+    id: '',
+    title: '',
+    description: '',
+    status: 'pending',
+    priority: 'medium',
+    assignedTo: [],
+    dueDate: '',
+    estimatedHours: 0,
+  });
+  const [showEditModal, setShowEditModal] = useState(false)
   // Chat state
   const { user: currentUser } = useAuth()
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [chatInput, setChatInput] = useState("")
   const chatEndRef = useRef<HTMLDivElement>(null)
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false)
-const [updatingStatus, setUpdatingStatus] = useState(false)
-const [currentTaskId, setCurrentTaskId] = useState<string | null>(null)
-const [isTaskChat, setIsTaskChat] = useState(false)
+  const [updatingStatus, setUpdatingStatus] = useState(false)
+  const [currentTaskId, setCurrentTaskId] = useState<string | null>(null)
+  const [isTaskChat, setIsTaskChat] = useState(false)
+
+  async function fetchTask() {
+    setLoading(true)
+    setError(null)
+    try {
+      const taskObj = await getTaskById(String(taskId))
+      setTask(taskObj)
+      setTask2({
+        id: taskObj.id,
+        // @ts-ignore – modal expects ticketNumber though it's not in Task type
+        ticketNumber: taskObj.tickerNumber,
+        title: taskObj.title || '',
+        description: taskObj.description || '',
+        status: 'pending',
+        priority: taskObj.priority || "medium",
+        assignedTo: [taskObj.taskFor?.id || ''],
+        dueDate: taskObj.taskDate || '',
+        estimatedHours: 0,
+      });
+
+      const syntheticLogs: TaskLog[] = []
+      if (taskObj.createdAt) {
+        syntheticLogs.push({
+          id: `${taskObj.id}-created`,
+          taskId: taskObj.id,
+          action: "created",
+          timestamp: taskObj.createdAt,
+          message: "Task was created",
+          time: taskObj.createdAt,
+          user: { name: taskObj.taskFor?.name || "System" },
+        })
+      }
+      if (taskObj.updatedAt && taskObj.updatedAt !== taskObj.createdAt) {
+        syntheticLogs.push({
+          id: `${taskObj.id}-updated`,
+          taskId: taskObj.id,
+          action: "updated",
+          timestamp: taskObj.updatedAt,
+          message: `Task status updated to ${taskObj.status}`,
+          time: taskObj.updatedAt,
+          user: { name: taskObj.taskFor?.name || "System" },
+        })
+      }
+      setLogs(syntheticLogs)
+    } catch (err) {
+      console.error("Error fetching task:", err)
+      setError("Failed to load task details.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
 
   useEffect(() => {
-    async function fetchTask() {
-      setLoading(true)
-      setError(null)
-      try {
-        const taskObj = await getTaskById(String(taskId))
-        setTask(taskObj)
 
-        const syntheticLogs: TaskLog[] = []
-        if (taskObj.createdAt) {
-          syntheticLogs.push({
-            id: `${taskObj.id}-created`,
-            taskId: taskObj.id,
-            action: "created",
-            timestamp: taskObj.createdAt,
-            message: "Task was created",
-            time: taskObj.createdAt,
-            user: { name: taskObj.taskFor?.name || "System" },
-          })
-        }
-        if (taskObj.updatedAt && taskObj.updatedAt !== taskObj.createdAt) {
-          syntheticLogs.push({
-            id: `${taskObj.id}-updated`,
-            taskId: taskObj.id,
-            action: "updated",
-            timestamp: taskObj.updatedAt,
-            message: `Task status updated to ${taskObj.status}`,
-            time: taskObj.updatedAt,
-            user: { name: taskObj.taskFor?.name || "System" },
-          })
-        }
-        setLogs(syntheticLogs)
-      } catch (err) {
-        console.error("Error fetching task:", err)
-        setError("Failed to load task details.")
-      } finally {
-        setLoading(false)
-      }
-    }
     fetchTask()
   }, [taskId])
 
   // Chat: Initialize socket and join task room
-useEffect(() => {
-  initiateSocket()
-  const socket = getSocket()
-  if (!socket) return
- if (isTaskChat && currentTaskId) {
-    socket.emit("join_task_room", { taskId: currentTaskId })
-  }
+  useEffect(() => {
+    initiateSocket()
+    const socket = getSocket()
+    if (!socket) return
+    if (isTaskChat && currentTaskId) {
+      socket.emit("join_task_room", { taskId: currentTaskId })
+    }
 
-  socket.on("connect", () => {
-    console.log("Socket connected:", socket.id)
-  })
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id)
+    })
 
     // socket.emit("join_task_room", { taskId: String(taskId) })
 
     const handleTaskMessage = (data: any) => {
       const mappedMessage: ChatMessage = {
         id: data.id,
-      message: data.message || "",
-      timestamp: data.createdAt ? new Date(data.createdAt).getTime() : data.timestamp || Date.now(),
-      userId: data.userId,
-      username: data.username,
-      senderId: data.sendBy?.id?.toString() || data.senderId?.toString(),
-      receiverId: data.receivedBy?.id?.toString() || data.receiverId?.toString(),
+        message: data.message || "",
+        timestamp: data.createdAt ? new Date(data.createdAt).getTime() : data.timestamp || Date.now(),
+        userId: data.userId,
+        username: data.username,
+        senderId: data.sendBy?.id?.toString() || data.senderId?.toString(),
+        receiverId: data.receivedBy?.id?.toString() || data.receiverId?.toString(),
       }
 
       if (
@@ -187,24 +215,24 @@ useEffect(() => {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [chatMessages])
-const statusOptions = [
-  { value: "pending", label: "Pending" },
-  { value: "in_progress", label: "In Progress" },
-  { value: "completed", label: "Completed" },
-]
-const handleStatusUpdate = async (newStatus: string) => {
-  if (!task) return
-  try {
-    setUpdatingStatus(true)
-    await updateTask(String(task.id), { status: newStatus })
-    setTask({ ...task, status: newStatus })
-    setStatusDropdownOpen(false)
-  } catch (error) {
-    console.error("Error updating status:", error)
-  } finally {
-    setUpdatingStatus(false)
+  const statusOptions = [
+    { value: "pending", label: "Pending" },
+    { value: "in_progress", label: "In Progress" },
+    { value: "completed", label: "Completed" },
+  ]
+  const handleStatusUpdate = async (newStatus: string) => {
+    if (!task) return
+    try {
+      setUpdatingStatus(true)
+      await updateTask(String(task.id), { status: newStatus })
+      setTask({ ...task, status: newStatus })
+      setStatusDropdownOpen(false)
+    } catch (error) {
+      console.error("Error updating status:", error)
+    } finally {
+      setUpdatingStatus(false)
+    }
   }
-}
   const handleSendChat = async () => {
     if (!chatInput.trim() || !currentUser) return
     const socket = getSocket()
@@ -221,8 +249,14 @@ const handleStatusUpdate = async (newStatus: string) => {
     socket?.emit("task_message", { ...msg, taskId: String(taskId) })
     try {
       await sendChatMessage(currentUser.id, taskId)
-    } catch {}
+    } catch { }
   }
+
+  const handleEditClick = () => {
+    setShowEditModal(true)
+  }
+
+  // Helper: group logs by date (first date badge only)
 
   // Helper: group logs by date (first date badge only)
   const sortedLogs = [...logs].sort(
@@ -231,9 +265,9 @@ const handleStatusUpdate = async (newStatus: string) => {
   const firstLogDateLabel =
     sortedLogs.length > 0
       ? new Date(sortedLogs[0].timestamp).toLocaleDateString(undefined, {
-          day: "numeric",
-          month: "short",
-        })
+        day: "numeric",
+        month: "short",
+      })
       : ""
 
   if (loading) {
@@ -255,7 +289,7 @@ const handleStatusUpdate = async (newStatus: string) => {
     )
   }
   if (!task) return null
-
+  console.log("task from task detail screen", task)
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 py-10"
@@ -263,6 +297,21 @@ const handleStatusUpdate = async (newStatus: string) => {
         if (e.target === e.currentTarget && onClose) onClose();
       }}
     >
+      {showEditModal && (
+        <EditTaskModal
+          task={task2}
+          onClose={() => setShowEditModal(false)}
+          onUpdate={() => fetchTask()}
+          open={showEditModal}
+          setTask={setTask2}
+          getUserStatusIcon={() => <div />}
+          projectId={task.taskOf?.id}
+          sprintId={task?.sprint?.id || ""}
+          ticketNumber={task.ticketNumber}
+
+          priority={task.priority as TaskPriority}
+        />
+      )}
       <div
         className="relative flex border border-white/30 rounded-[22px] shadow-xl overflow-x-auto overflow-y-auto "
         style={{ maxWidth: 1108, maxHeight: 846, width: '100%', height: '100%', padding: 40, gap: 38, background: '#0000004D' }}
@@ -281,48 +330,55 @@ const handleStatusUpdate = async (newStatus: string) => {
         {/* Left info column */}
         <div className="flex flex-col text-white/90 w-[330px]">
           {/* Ticket Number */}
-         <div className="mt-2">
-  <div className="text-[12px] tracking-wide text-[#A4A7AE] font-[400px] mb-1">
-    Ticket Number
-  </div>
-  <div className="flex items-center gap-3">
-    <span className="text-[20px] font-[500px]">
-      {task.ticketNumber ?? `TASK-${task.id}`}
-    </span>
+          <div className="flex w-full justify-between items-center">
 
-    {/* Status Dropdown - only editable for employee role */}
-    {currentUser?.role === "employee" ? (
-      <div className="relative">
-        <button
-          onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
-          disabled={updatingStatus}
-          className="text-[12px] px-3 py-[6px] rounded-full bg-[#0CA9F6] text-white font-[400] shadow-sm hover:bg-[#0B8FD1] transition-colors flex items-center gap-1 disabled:opacity-50"
-        >
-          {task.status?.replace(/_/g, " ") || "In progress"}
-          <ChevronDown className={`w-3 h-3 transition-transform ${statusDropdownOpen ? 'rotate-180' : ''}`} />
-        </button>
 
-        {statusDropdownOpen && (
-          <div className="absolute top-full left-0 mt-1 w-36 bg-black/90 border border-white/20 rounded-lg shadow-lg overflow-hidden z-10">
-            {statusOptions.map((option) => (
-              <button
-                key={option.value}
-                onClick={() => handleStatusUpdate(option.value)}
-                className="w-full text-left px-3 py-2 text-[12px] text-white hover:bg-white/10 transition-colors"
-              >
-                {option.label}
-              </button>
-            ))}
+            <div className="mt-2">
+              <div className="text-[12px] tracking-wide text-[#A4A7AE] font-[400px] mb-1">
+                Ticket Number
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-[20px] font-[500px]">
+                  {task.ticketNumber ?? `TASK-${task.id}`}
+                </span>
+
+                {/* Status Dropdown - only editable for employee role */}
+                {currentUser?.role === "employee" ? (
+                  <div className="relative">
+                    <button
+                      onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
+                      disabled={updatingStatus}
+                      className="text-[12px] px-3 py-[6px] rounded-full bg-[#0CA9F6] text-white font-[400] shadow-sm hover:bg-[#0B8FD1] transition-colors flex items-center gap-1 disabled:opacity-50"
+                    >
+                      {task.status?.replace(/_/g, " ") || "In progress"}
+                      <ChevronDown className={`w-3 h-3 transition-transform ${statusDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {statusDropdownOpen && (
+                      <div className="absolute top-full left-0 mt-1 w-36 bg-black/90 border border-white/20 rounded-lg shadow-lg overflow-hidden z-10">
+                        {statusOptions.map((option) => (
+                          <button
+                            key={option.value}
+                            onClick={() => handleStatusUpdate(option.value)}
+                            className="w-full text-left px-3 py-2 text-[12px] text-white hover:bg-white/10 transition-colors"
+                          >
+                            {option.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <span className="text-[12px] px-3 py-[6px] rounded-full bg-[#0CA9F6] text-white font-[400] shadow-sm">
+                    {task.status?.replace(/_/g, " ") || "In progress"}
+                  </span>
+                )}
+              </div>
+            </div>
+            <button onClick={handleEditClick} className="p-1 rounded hover:bg-white/10">
+              <Edit className="w-4 h-4 text-white/60" />
+            </button>
           </div>
-        )}
-      </div>
-    ) : (
-      <span className="text-[12px] px-3 py-[6px] rounded-full bg-[#0CA9F6] text-white font-[400] shadow-sm">
-        {task.status?.replace(/_/g, " ") || "In progress"}
-      </span>
-    )}
-  </div>
-</div>
 
           {/* Sprint Number */}
           <div className="mt-8">
@@ -346,16 +402,16 @@ const handleStatusUpdate = async (newStatus: string) => {
               </span>
             </div>
 
-              <div className="flex items-center">
-                <span>Priority</span>
-                <span className="ml-auto flex items-center gap-1 font-medium">
-                  <ChevronDown className="w-3 h-3 opacity-70" />
-                  {task.priority
-                    ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1)
-                    : "High"}
+            <div className="flex items-center">
+              <span>Priority</span>
+              <span className="ml-auto flex items-center gap-1 font-medium">
+                <ChevronDown className="w-3 h-3 opacity-70" />
+                {task.priority
+                  ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1)
+                  : "High"}
 
-                </span>
-              </div>
+              </span>
+            </div>
 
             <div className="flex items-center">
               <span>Due date</span>
@@ -363,10 +419,10 @@ const handleStatusUpdate = async (newStatus: string) => {
 
                 {task.taskDate
                   ? new Date(task.taskDate).toLocaleDateString(undefined, {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "2-digit",
-                    })
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "2-digit",
+                  })
                   : "dd/mm/yy"}
               </span>
             </div>
@@ -464,20 +520,19 @@ const handleStatusUpdate = async (newStatus: string) => {
                 chatMessages.map((msg, idx) => (
                   <div
                     key={`chat-${idx}`}
-                    className={`flex items-center text-[12px] ${
-                      msg.userId === currentUser?.id.toString()
-                        ? "text-emerald-300"
-                        : "text-white/70"
-                    }`}
+                    className={`flex items-center text-[12px] ${msg.userId === currentUser?.id.toString()
+                      ? "text-emerald-300"
+                      : "text-white/70"
+                      }`}
                   >
                     <span className="pr-2 font-medium">{msg.username ?? "User"}:</span>
                     <span className="pr-4">{msg.message}</span>
                     <span className="ml-auto text-white/40 tabular-nums">
                       {msg.timestamp
                         ? new Date(msg.timestamp).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })
                         : ""}
                     </span>
                   </div>
