@@ -201,12 +201,7 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
               <div className="flex items-center justify-between mb-0">
 
                 <h2 className="text-lg font-bold text-white">{sprint.title}</h2>
-                <span
-                  className="text-xs py-2.5 px-5 rounded-full font-medium text-white "
-                  style={{ backgroundColor: `${colors.primary.rgb.replace(", 1)", ", 1)")}` }}
-                >
-                  Active
-                </span>
+
               </div>
 
 
