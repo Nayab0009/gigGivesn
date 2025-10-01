@@ -25,7 +25,9 @@ import {
   LayoutGrid,
   ChevronDown,
   Plus,
-  Filter
+  Filter,
+  Trash,
+  Edit
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { colors } from "@/colors";
@@ -33,6 +35,8 @@ import { AssignTaskModal } from "../adminDashboard/AssignProjectTicket";
 import type { Task } from "@/types";
 import { useProjectContext } from '@/context/ProjectContext';
 import { getDuration } from '@/lib/general';
+import { EditTaskModal } from '../adminDashboard/EditTaskModal';
+import { DeleteTaskModal } from '../adminDashboard/DeleteTaskModal';
 
 interface TaskResponse {
   id: number;
@@ -104,6 +108,8 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
   const [taskView, setTaskView] = useState<'table' | 'kanban'>('table');
   // For Assign Task modal
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedSprintId, setSelectedSprintId] = useState<number | null>(null);
   const [selectedSprintName, setSelectedSprintName] = useState<string>('');
   const [projectId, setProjectId] = useState<number | null>(propProjectId ?? null);
@@ -118,6 +124,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
     dueDate: '',
     estimatedHours: 0,
   });
+
 
   // Modal states
   // const [isModalOpen, setIsModalOpen] = useState(false);
@@ -215,6 +222,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
     setIsAssignModalOpen(true);
 
     const prefix = getProjectPrefix(projectName || 'TCK');
+
     setTask({
       id: '',
       // @ts-ignore – modal expects ticketNumber though it's not in Task type
@@ -228,6 +236,43 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
       estimatedHours: 0,
     });
   };
+
+
+  const handleEditTask = (event: React.MouseEvent<HTMLButtonElement>, taskId: number) => {
+    event.stopPropagation();
+    event.preventDefault();
+
+    // Fallback: try to get projectId from first task if missing
+    if (!projectId && tasks.length > 0 && tasks[0].taskOf) {
+      setProjectId(tasks[0].taskOf.id);
+      setProjectName(tasks[0].taskOf.name);
+    }
+    // If still missing, show error and do not open modal
+    if (!projectId) {
+      setShowProjectIdError(true);
+      return;
+    }
+    setShowProjectIdError(false);
+    setSelectedSprintId(Number(sprintId));
+    setSelectedSprintName(sprintName || '');
+    setIsEditModalOpen(true);
+    setIsEditModalOpen(true);
+    const prefix = getProjectPrefix(projectName || 'TCK');
+    const myTask = tasks.find(task => task.id === taskId);
+    setTask({
+      id: myTask?.id,
+      // @ts-ignore – modal expects ticketNumber though it's not in Task type
+      ticketNumber: prefix,
+      title: myTask?.title || '',
+      description: myTask?.description || '',
+      status: 'pending',
+      priority: myTask?.priority || "medium",
+      assignedTo: [myTask?.taskFor?.id || ''],
+      dueDate: myTask?.taskDate || '',
+      estimatedHours: 0,
+    });
+
+  };
   // UI state for projectId error
   const [showProjectIdError, setShowProjectIdError] = useState(false);
 
@@ -236,7 +281,9 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
     setSelectedSprintId(null);
     setSelectedSprintName('');
   };
-
+  const handleUpdateTask = async () => {
+    await refreshData();
+  };
   const handleTaskAdd = async () => {
     // Refresh after successful creation
     await refreshData();
@@ -289,7 +336,27 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
     }
     // eslint-disable-next-line
   }, [sprintId]);
+  // const handleEditTask = (taskId: number) => {
+  //   (taskId);
+  // };
+  const handleDeleteTask = (event: React.MouseEvent<HTMLButtonElement>, taskId: number) => {
+    event.stopPropagation();
+    event.preventDefault();
+    setTask({
+      id: taskId.toString(),
+      title: '',
+      description: '',
+      status: 'pending',
+      priority: 'medium',
+      assignedTo: [],
+      dueDate: '',
+      estimatedHours: 0,
+    });
+    setSelectedTaskId(taskId);
 
+    setIsDeleteModalOpen(true);
+    (taskId);
+  };
   // Debug log for projectId/projectName
   useEffect(() => {
     console.log('ShowSprintTask projectId:', projectId, 'projectName:', projectName);
@@ -473,6 +540,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                           <th className="px-6 py-3 text-white text-left font-normal">Due Date</th>
                           <th className="px-6 py-3 text-white text-left font-normal">Priority</th>
                           <th className="px-6 py-3 text-white text-left font-normal">Assignee</th>
+                          <th className="px-6 py-3 text-white text-left font-normal">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="bg-transparent">
@@ -525,6 +593,14 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                                     {task.taskFor?.name || task.user?.name || "Unassigned"}
                                   </span>
                                 </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/30 flex gap-3">
+                                <button onClick={(e) => handleEditTask(e, task.id)} className="text-white/80 text-sm font-medium p-2 bg-black/30 border border-white/30 rounded-lg">
+                                  <Edit className="w-4 h-4" />
+                                </button>
+                                <button onClick={(e) => handleDeleteTask(e, task.id)} className="text-white/80 text-sm font-medium p-2 bg-black/30 border border-white/30 rounded-lg">
+                                  <Trash color="red" className="w-4 h-4" />
+                                </button>
                               </td>
                             </tr>
                           ))}
@@ -714,7 +790,28 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
             </div>
           </div>
         )}
-
+        {/* Edit Task Modal */}
+        {isDeleteModalOpen && (
+          <DeleteTaskModal
+            task={task}
+            open={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            onDelete={() => refreshData()}
+            taskId={selectedTaskId as number}
+          />
+        )}
+        {isEditModalOpen && (
+          <EditTaskModal
+            task={task}
+            open={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            onUpdate={handleUpdateTask}
+            setTask={setTask}
+            getUserStatusIcon={getUserStatusIcon}
+            projectId={projectId || ''}
+            sprintId={selectedSprintId || ''}
+          />
+        )}
         {/* Assign Task Modal */}
         {typeof selectedSprintId === 'number' && (
           <>

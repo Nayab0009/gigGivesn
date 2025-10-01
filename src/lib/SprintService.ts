@@ -26,3 +26,22 @@ export const deleteSprint = async (sprintId: string) => {
         throw error;
     }
 }
+
+export const deleteTask  = async (taksId : number) => {
+    try {
+        const response = await axiosInstance.delete(`/tasks/${taksId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error Deleting Sprint');
+        throw error;
+    }
+}
+export const updateTask = async (taksId: number) => {
+    try {
+        const response = await axiosInstance.patch(`/tasks/${taksId}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error Deleting Sprint');
+        throw error;
+    }
+}
