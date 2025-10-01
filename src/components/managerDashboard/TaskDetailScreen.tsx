@@ -112,6 +112,7 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId }: TaskDet
   const [updatingStatus, setUpdatingStatus] = useState(false)
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null)
   const [isTaskChat, setIsTaskChat] = useState(false)
+  
 
   async function fetchTask() {
     setLoading(true)
