@@ -200,11 +200,11 @@ const AppHeader: React.FC = () => {
   return (
    <header
   className={`
-    relative top-4 
+    relative top-6 
     mx-[1.875rem] h-[74px]
     shadow-md transition-all duration-500 ease-in-out
     bg-black/40 text-white
-    flex items-center justify-between px-4
+    flex items-center justify-between px-[32px] py-[22px]
     rounded-[16px] border border-white/30
     mb-2
 `}

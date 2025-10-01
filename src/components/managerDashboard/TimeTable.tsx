@@ -42,7 +42,7 @@ const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
 // Colors for different priority levels
 const priorityColors: Record<string, string> = {
   Critical: "#FF8731",
-  High: "#FF4C4C",
+  High: "#BD4242",
   Medium: "#FFBE31",
   Low: "#4C8FFF",
 };
@@ -216,7 +216,7 @@ const TimeTable = () => {
                           >
                             {task.taskCode}
                           </span>
-                          <span className="mt-1 px-2 py-0.5 text-[10px] rounded-full bg-[#0CA9F6] text-white font-semibold"
+                          <span className="mt-1 px-1 py-0.5 text-[10px] rounded-sm bg-[#0CA9F6] text-white font-semibold"
                           style={{
                             fontFamily: "Inter",
                             fontWeight: 600,
@@ -230,7 +230,7 @@ const TimeTable = () => {
                           </span>
                         </div>
                         <span
-                          className="text-xs px-2 py-0.5 rounded-full text-white font-semibold"
+                          className="text-xs px-1 py-0.5 rounded-sm text-white font-semibold"
                           style={{
                             backgroundColor: priorityColors[
                               (task.priority || "Medium").trim().charAt(0).toUpperCase() + (task.priority || "Medium").trim().slice(1).toLowerCase()
