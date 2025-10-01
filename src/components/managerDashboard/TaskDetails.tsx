@@ -23,6 +23,27 @@ const scrollbarStyles = `
   }
 `
 
+// Custom scrollbar styles
+const scrollbarStyles = `
+  .task-description-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .task-description-scrollbar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+  
+  .task-description-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+  }
+  
+  .task-description-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+`
+
 interface TaskDetailsPopupProps {
   onClose: () => void
   task?: any
@@ -66,6 +87,7 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
         backdropFilter: 'blur(30px)',
       }}
     >
+      <style dangerouslySetInnerHTML={{ __html: scrollbarStyles }} />
       <style dangerouslySetInnerHTML={{ __html: scrollbarStyles }} />
 
       <div
@@ -179,6 +201,7 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
 
         {/* Meta Info */}
         <div className="space-y-3 mb-6 text-[#D1D5DB]"
+        <div className="space-y-3 mb-6 text-[#D1D5DB]"
           style={{
             fontFamily: "Inter",
             fontWeight: 500,
@@ -238,8 +261,10 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
             <p>Estimated time</p>
             <div className="flex items-center gap-2">
               <span className="w-4 h-4 rounded-full bg-gray-600 flex items-center justify-center text-xs text-white">
+              <span className="w-4 h-4 rounded-full bg-gray-600 flex items-center justify-center text-xs text-white">
                 ⭘
               </span>
+              <span className="text-white">{taskEstimatedTime || "0.15h (spent 0.15h)"}</span>
               <span className="text-white">{taskEstimatedTime || "0.15h (spent 0.15h)"}</span>
             </div>
           </div>
@@ -248,30 +273,32 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
         {/* Task Card */}
         <div
           className="w-full h-[150px] rounded-[12px] border border-white/30 px-4 py-5 flex flex-col mx-auto"
+          className="w-full h-[150px] rounded-[12px] border border-white/30 px-4 py-5 flex flex-col mx-auto"
           style={{
             gap: "10px",  // Reduced gap slightly to give more space to description
+            gap: "10px",  // Reduced gap slightly to give more space to description
             opacity: 1,
+            background: "linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7))",  // Gradient background for better contrast
+            border: "1px solid rgba(255, 255, 255, 0.3)",
+            boxShadow: "inset 0 1px rgba(255, 255, 255, 0.1)" // Subtle inner shadow for depth
             background: "linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7))",  // Gradient background for better contrast
             border: "1px solid rgba(255, 255, 255, 0.3)",
             boxShadow: "inset 0 1px rgba(255, 255, 255, 0.1)" // Subtle inner shadow for depth
           }}
         >
           <div className="flex justify-between items-start pb-[8px]">
+          <div className="flex justify-between items-start pb-[8px]">
             <h4
               className="flex-1 break-words pr-2 "
               style={{
                 fontFamily: "Inter",
                 fontWeight: 600,
-                fontSize: "22px",
-                lineHeight: "120%",
+                fontSize: "20px", // Reduced from 22px
+                lineHeight: "110%", // Reduced line height
                 color: "#FFFFFF",
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                display: '-webkit-box',
-                WebkitLineClamp: 1,
-                WebkitBoxOrient: 'vertical',
+                textShadow: "0px 0px 2px rgba(0,0,0,0.8)", // Add slight shadow for better readability
+                margin: "0"
               }}
-              title={task.title || "-"} // Show full title on hover
             >
               {task.title || "-"}
             </h4>

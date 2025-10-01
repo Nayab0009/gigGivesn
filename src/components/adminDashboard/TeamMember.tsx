@@ -8,9 +8,6 @@ import { ShowEmployee } from "@/lib/TeamService"
 import { colors } from "@/colors"
 import Pagination from "../pagination"
 import { useAuth } from "@/context/AuthContext"
-import Image from "next/image"
-import TeamMemberModal from "@/components/common/TeamMemberModal"
-
 
 interface TeamMember {
   id?: string | number
@@ -207,27 +204,18 @@ export default function TeamListPage() {
   }
 
   return (
-   <div className="w-full relative top-[30px] max-w-full">
-
-      <div className="mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8">
+      <div className="max-w-7xl mx-auto">
         {/* Header */}
-     <div className="mb-8 md:flex flex-col  md:flex-row items-center justify-between gap-6">
-          {/* Heading Section */}
-
-  <div className="flex flex-col ml-2">
-   <h1
-  className="font-inter font-semibold text-[20px] leading-[28px] tracking-[0px] text-white align-middle"
->
-  Team Members
-</h1>
-
-    <p className="font-inter font-normal text-sm leading-5 tracking-[0px] text-white align-middle">
-  Manage and track all team members
-</p>
+     <div className="mb-8 flex flex-col lg:flex-row items-center justify-between gap-6">
+  {/* Heading Section */}
+  <div className="flex flex-col">
+    <h1 className="text-2xl sm:text-2xl font-bold text-white">Team Members</h1>
+    <p className="text-lg text-white">Manage and track all team members</p>
   </div>
 
   {/* Action Bar */}
-  <div className="md:flex md:flex-1 items-center gap-6 w-full lg:w-auto justify-between mt-5 md:mt-0 md:ml-20 space-y-4">
+  <div className="flex flex-1 items-center gap-6 w-full lg:w-auto justify-end">
     {/* Search Bar */}
   <div className="relative block sm:flex flex-1 w-full max-w-[396px]">
 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-[14px] h-[14px] text-white/60 z-10" />
@@ -235,13 +223,13 @@ export default function TeamListPage() {
 <input
   type="text"
   placeholder="Search employees by name, email or ID..."
-  className="w-full h-[38px] rounded-[16px] border border-[#37415180]
-             bg-[#0000004D] text-white placeholder-white/60
-             placeholder:text-[14px]
-             pt-[9px] pr-[17px] pb-[9px] pl-[41px]
-             focus:ring-2 focus:ring-[#0CA9F6]
-             transition-all duration-300 shadow-lg focus:shadow-xl
-             focus:outline-none backdrop-blur-md"
+  className="w-full pl-10 pr-4 py-3 rounded-full focus:ring-2 transition-all duration-300 shadow-lg focus:shadow-xl text-white placeholder-gray-300"
+  style={{
+    background: "rgba(0, 0, 0, 0.4)", 
+    backdropFilter: "blur(12px)",
+    WebkitBackdropFilter: "blur(12px)",
+    border: "1px solid rgba(255, 255, 255, 0.2)", 
+  }}
   value={searchTerm}
   onChange={(e) => setSearchTerm(e.target.value)}
 />
@@ -251,34 +239,32 @@ export default function TeamListPage() {
 
 
     {/* Stats Badge */}
-   <div
-  className="inline-flex items-center justify-center w-[143px] h-[36px]
-             rounded-[99px] border border-[#0CA9F6]
-             px-[16px] py-[8px] text-sm text-white mr-5 whitespace-nowrap"
->
-  <span className="font-semibold">{filteredMembers.length}</span>
-  &nbsp;of {teamMembers.length} employees
-</div>
+    <div
+      className="text-sm px-4 py-2 rounded-full border text-white border"
+  
+    >
+      <span className="font-semibold " >
+        {filteredMembers.length}
+      </span>{" "}
+      of {teamMembers.length} employees
+    </div>
 
     {/* Add Button (only for managers) */}
-   {(userRole === "manager" || userRole === "admin") && (
-  <button
-    type="button"
-    onClick={() => router.push("/dashboard/admin/addemployee")}
-    className="inline-flex items-center justify-center gap-[10px]
-               w-[155px] h-[44px] px-[12px] py-[12px]
-               rounded-[99px] border border-[#0CA9F6]
-               bg-[#0CA9F6] text-white text-sm font-medium
-               transition-all duration-300 ease-in-out
-               shadow-lg hover:shadow-xl
-               transform hover:scale-105 hover:-translate-y-0.5
-               mt-4 sm:mt-0 whitespace-nowrap"
-  >
-    <Plus className="w-4 h-4" />
-    Add Employee
-  </button>
-)}
-
+    {userRole === "manager" && (
+      <button
+        type="button"
+        className="group inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5"
+        style={{
+          background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
+          color: "#fff",
+          border: `1px solid ${colors.primary.hex}`,
+        }}
+        onClick={() => router.push("/dashboard/admin/addemployee")}
+      >
+        <Plus className="w-4 h-4" style={{ color: colors.highlight.hex }} />
+        Add Employee
+      </button>
+    )}
   </div>
 </div>
 
@@ -462,14 +448,20 @@ export default function TeamListPage() {
 
 {/* Table Container */}
 <div
-  className="rounded-2xl  shadow-2xl overflow-hidden backdrop-blur-xl"
-
+  className="rounded-2xl shadow-2xl border overflow-hidden backdrop-blur-xl"
+  style={{
+    background: "rgba(255, 255, 255, 0.05)",
+    borderColor: "rgba(255, 255, 255, 0.1)",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1)"
+  }}
 >
   {isLoading ? (
     <div className="p-12 text-center">
       <div
-        className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 backdrop-blur-xl "
-        style={{
+        className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 backdrop-blur-xl"
+        style={{ 
           background: "rgba(255, 255, 255, 0.1)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)"
@@ -483,56 +475,37 @@ export default function TeamListPage() {
     </div>
   ) : (
     <div className="overflow-x-auto">
-      <table
-  className="min-w-full  rounded-[20.33px] border-separate border-spacing-y-4 bg-black/40 px-5  border border-[#FFFFFF4D]"
+      <table className="min-w-full">
+        <thead
+  className="backdrop-blur-md bg-black/40 text-white   rounded-t-2xl  h-[32px]"
+  style={{
+    borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+  }}
 >
-        <thead className="text-white rounded-t-2xl h-[32px]">
-          <tr className="h-[60px]">
-          <th
-  className="
-    px-6 text-left
-    font-inter font-semibold
-    text-[18.3px] leading-[28.47px] tracking-[0px]
-    align-middle text-white
-    w-[35%]
-  "
->
-  Employee Details
-</th>
-            <th className="
-    px-6 text-left
-    font-inter font-semibold
-    text-[18.3px] leading-[28.47px] tracking-[0px]
-    align-middle text-white
-    w-[35%]
-  ">
+          <tr className="h-[73px]">
+            <th className="px-6 py-4 text-left text-sm font-medium text-white/90">
+              Employee Details
+            </th>
+            <th className="px-6 py-4 text-left text-sm font-medium text-white/90">
               Role
             </th>
-            <th  className="
-    px-6 text-left
-    font-inter font-semibold
-    text-[18.3px] leading-[28.47px] tracking-[0px]
-    align-middle text-white
-    w-[35%]
-  ">
+            <th className="px-6 py-4 text-left text-sm font-medium text-white/90">
               Contact Info
             </th>
-        {(userRole === "manager" || userRole === "admin") && (
-      <th  className="
-    px-6 text-left
-    font-inter font-semibold
-    text-[18.3px] leading-[28.47px] tracking-[0px]
-    align-middle text-white
-    w-[35%]
-  ">
-        Actions
-      </th>
-    )}
+            {userRole === "manager" && (
+              <th className="px-6 py-4 text-left text-sm font-medium text-white/90">
+                Actions
+              </th>
+            )}
           </tr>
         </thead>
 
-
-<tbody className="text-white rounded-b-2xl">
+    <tbody
+  className="backdrop-blur-md bg-black/40 text-white  rounded-b-2xl "
+  style={{
+    borderTop: "1px solid rgba(255, 255, 255, 0.1)",
+  }}
+>
   {paginatedMembers.length === 0 ? (
     <tr>
       <td colSpan={4} className="px-6 py-12 text-center">
@@ -549,101 +522,70 @@ export default function TeamListPage() {
     </tr>
   ) : (
     paginatedMembers.map((member, index) => (
-
       <tr
         key={member.id || index}
-        className="transition-all duration-30 rounded-[15px]"
-        style={{
-          overflow: "hidden",
-          boxShadow: "0 0 0 1px rgba(255,255,255,0.1)",
-          outline: "none",
-        }}
-
+        className="transition-all duration-300 hover:bg-white/5 border-b border-white/10"
       >
+        <td className="px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm shadow-lg backdrop-blur-xl relative"
+              style={{
+                background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
+                color: "#fff",
+              }}
+            >
+              {member.name.charAt(0).toUpperCase()}
+              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
+            </div>
+            <div>
+              <h3 className="text-base font-semibold text-white">
+                {member.name}
+              </h3>
+              <p className="text-sm text-blue-400">Team Member</p>
+            </div>
+          </div>
+        </td>
 
-        {/* Employee Details Cell */}
-
-
- <td className="px-6 py-5 rounded-l-xl" style={{ background: "transparent", border: "none" }}>
-  <div className="flex items-center gap-3">
-    <div
-      className="w-20 h-20 rounded-full flex items-center justify-center font-semibold text-sm shadow-lg backdrop-blur-xl overflow-hidden"
-      style={{
-        background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
-        color: "#fff",
-      }}
-    >
-      {member.avatar ? (
-        <Image
-          src={member.avatar}
-          alt={member.name}
-          width={80}
-          height={80}
-          className="w-full h-full object-cover rounded-full"
-        />
-      ) : (
-        member.name.charAt(0).toUpperCase()
-      )}
-    </div>
-    <div>
-      <h3 className=" text-[20px]  text-base font-semibold text-white">{member.name}</h3>
-      <p className="text-[20px] text-[#0CA9F6]">Team Member</p>
-    </div>
-  </div>
-</td>
-
-
-
-        {/* Role Cell */}
-
-        <td className="px-6 py-5" style={{ background: "transparent", border: "none" }}>
-          <span className="text-[20px] text-[#A4A7AE] capitalize font-medium">
+        <td className="px-6 py-4">
+          <span className="text-sm text-white/70 capitalize">
             {member.role || "Employee"}
           </span>
         </td>
 
-        {/* Contact Info Cell */}
-
-        <td className={`px-6 py-5 ${userRole !== 'manager' ? 'rounded-r-xl' : ''}`} style={{ background: "transparent", border: "none" }}>
+        <td className="px-6 py-4">
           <div className="space-y-1">
             <div className="text-[20px] text-[#A4A7AE] font-medium">{member.email}</div>
 
           </div>
         </td>
 
-        {/* Actions Cell (Manager Only) */}
-       {(userRole === "manager" || userRole === "admin") && (
-  <td className="px-6 py-5 rounded-r-xl" style={{ background: "transparent", border: "none" }}>
-    <div className="flex items-center justify-end gap-2">
-      <button
-        onClick={() => handleOpenDetails(member)}
-        className="inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 hover:bg-blue-500/20 backdrop-blur-xl"
-        style={{
-          border: "1px solid rgba(255, 255, 255, 0.2)",
-        }}
-      >
-        <Image
-          src="/images/Eye.svg"
-          alt="View"
-          width={16}
-          height={16}
-          className="text-white"
-        />
-      </button>
-
-      <button
-        onClick={() => handleEmployeeDelete(String(member.id))}
-        className="inline-flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 hover:bg-red-500/20 backdrop-blur-xl"
-        style={{
-          border: "1px solid rgba(255, 255, 255, 0.2)",
-        }}
-      >
-        <Trash2 className="w-4 h-4 text-white" />
-      </button>
-    </div>
-  </td>
-)}
-
+        {userRole === "manager" && (
+          <td className="px-6 py-4">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleEditStart(member)}
+                className="inline-flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:bg-white/10 backdrop-blur-xl"
+                style={{
+                  background: "rgba(255, 255, 255, 0.05)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                }}
+              >
+                <Edit className="w-4 h-4 text-white/70" />
+              </button>
+              <button
+                onClick={() => handleEmployeeDelete(String(member.id))}
+                className="inline-flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:bg-red-500/20 backdrop-blur-xl"
+                style={{
+                  background: "rgba(239, 68, 68, 0.1)",
+                  border: "1px solid rgba(239, 68, 68, 0.2)",
+                }}
+              >
+                <Trash2 className="w-4 h-4 text-red-400" />
+              </button>
+            </div>
+          </td>
+        )}
       </tr>
     ))
   )}

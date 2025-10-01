@@ -62,7 +62,7 @@ const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs,
         }}
       >
        <button
-        className="text-xs font-medium text-blue-300 hover:underline focus:outline-none"
+        className="text-xs font-medium text-[#0CA9F6] hover:underline focus:outline-none"
         onClick={onSeeAll}
       >
         See All
@@ -107,7 +107,7 @@ const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs,
               <div className="flex flex-col">
                 <span className="text-sm font-medium text-white">{log.name}</span>
                 <span
-                  className="text-xs text-blue-300 truncate max-w-[120px]"
+                  className="text-xs text-[#0CA9F6] truncate max-w-[120px]"
                   title={log.lastMessage}
                 >
                   {log.lastMessage && log.lastMessage.length > 30
