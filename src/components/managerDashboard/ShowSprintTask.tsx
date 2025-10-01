@@ -469,7 +469,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                             </div>
                           </th>
                           <th className="px-6 py-3 text-white text-left font-normal">Status</th>
-                          <th className="px-6 py-3 text-white text-left font-normal">Type</th>
+                          <th className="px-6 py-3 text-white text-left font-normal">Ticket No.</th>
                           <th className="px-6 py-3 text-white text-left font-normal">Due Date</th>
                           <th className="px-6 py-3 text-white text-left font-normal">Priority</th>
                           <th className="px-6 py-3 text-white text-left font-normal">Assignee</th>
@@ -497,7 +497,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                               <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
                                 <span className="inline-flex items-center gap-2">
                                   <span className="w-2 h-2 rounded-full bg-sky-400"></span>
-                                  <span>{task.description ? "Task" : "—"}</span>
+                                  <span>{task.ticketNumber ? task.ticketNumber : "—"}</span>
                                 </span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap border-l border-white/30">
