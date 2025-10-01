@@ -196,6 +196,18 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
     } catch {}
   }
 
+  // Helper: group logs by date (first date badge only)
+  const sortedLogs = [...logs].sort(
+    (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+  )
+  const firstLogDateLabel =
+    sortedLogs.length > 0
+      ? new Date(sortedLogs[0].timestamp).toLocaleDateString(undefined, {
+          day: "numeric",
+          month: "short",
+        })
+      : ""
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[500px]">
@@ -217,153 +229,238 @@ export default function TaskDetailsPanel({ taskId, onClose }: TaskDetailsPanelPr
   if (!task) return null
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[350px_1fr] gap-4 bg-black/30 backdrop-blur-[100px] border border-white/10 rounded-2xl shadow-xl overflow-hidden min-h-[560px]">
-
-      {/* Left: Task Details */}
-      <div className="p-6 flex flex-col gap-4 border-r border-white/10 backdrop-blur-md" style={{ minWidth: 320 }}>
-        {/* Top: Breadcrumb + Edit */}
-        <div className="flex items-center justify-between mb-2">
-          <div className="text-xs text-white/60">
-            {task.taskOf ? `${task.taskOf.name} / ` : ""}
-            {task.title}
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="p-1 rounded hover:bg-white/10">
-              <Edit className="w-4 h-4 text-white/60" />
-            </button>
-            {onClose && (
-              <button onClick={onClose} className="p-1 rounded hover:bg-white/10">
-                <X className="w-4 h-4 text-white/60" />
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Ticket + status */}
-        <div className="flex items-center gap-2">
-          <span className="text-lg font-bold text-white">{task.ticketNumber ?? `TASK-${task.id}`}</span>
-          <span
-            className="flex items-center text-xs px-2 py-1 rounded-full border bg-white/10 border-white/20 font-semibold capitalize"
-            style={{ color: "#0CA9F6" }}
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 py-10"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && onClose) onClose();
+      }}
+    >
+      <div
+        className="relative flex border border-white/30 rounded-[22px] shadow-xl overflow-x-auto overflow-y-auto "
+        style={{ maxWidth: 1108, maxHeight: 846, width: '100%', height: '100%', padding: 40, gap: 38, background: '#0000004D' }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Cross Button Above Ticket Number */}
+        <div className="absolute left-6 top-2 z-10">
+          <button
+            className="w-7 h-7 flex items-center justify-center rounded-full bg-black/60 border border-white/10 text-white/80 hover:bg-black/80"
+            onClick={onClose}
+            aria-label="Close"
           >
-            {task.status ?? "New Task"}
-            <ChevronDown className="w-3 h-3 ml-1" />
-          </span>
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+        {/* Left info column */}
+        <div className="flex flex-col text-white/90 w-[330px]">
+          {/* Ticket Number */}
+          <div className="mt-2">
+            <div className="text-[12px]  tracking-wide text-[#A4A7AE] font-[400px] mb-1">
+              Ticket Number
+            </div>
+            <div className="flex items-center gap-35">
+              <span className="text-[20px] font-[500px]">
+                {task.ticketNumber ?? `TASK-${task.id}`}
+              </span>
+              <span className="text-[12px] px-3 py-[6px] rounded-full bg-[#0CA9F6] text-white font-[400] shadow-sm">
+                {task.status?.replace(/_/g, " ") || "In progress"}
+              </span>
+            </div>
+          </div>
+
+          {/* Sprint Number */}
+          <div className="mt-8">
+            <div className="text-[12px] tracking-wide text-[#A4A7AE] font-[400px] mb-1">
+              Sprint Number
+            </div>
+            <div className="text-[20px] font-[500px]">
+              {task.taskOf?.name ? `SP1-${task.ticketNumber ?? task.id}` : "—"}
+            </div>
+          </div>
+
+          {/* Fields */}
+          <div className="mt-10 space-y-5 text-sm">
+            <div className="flex items-center">
+              <div className="flex items-center gap-2">
+                <span>Status</span>
+              </div>
+              <span className="ml-auto font-medium flex items-center gap-2">
+                <span className="h-4 w-4 rounded-full bg-white/80" />
+                {task.status ?? "New Task"}
+              </span>
+            </div>
+
+              <div className="flex items-center">
+                <span>Priority</span>
+                <span className="ml-auto flex items-center gap-1 font-medium">
+                  <ChevronDown className="w-3 h-3 opacity-70" />
+                  {task.priority
+                    ? task.priority.charAt(0).toUpperCase() + task.priority.slice(1)
+                    : "High"}
+                  
+                </span>
+              </div>
+
+            <div className="flex items-center">
+              <span>Due date</span>
+              <span className="ml-auto font-medium flex items-center gap-2">
+               
+                {task.taskDate
+                  ? new Date(task.taskDate).toLocaleDateString(undefined, {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "2-digit",
+                    })
+                  : "dd/mm/yy"}
+              </span>
+            </div>
+
+            <div className="flex items-center">
+              <span className="flex items-center gap-2">
+                Assignee
+              </span>
+              <span className="ml-auto font-medium flex items-center gap-2">
+                {task.taskFor?.avatar ? (
+                  <img
+                    src={task.taskFor.avatar}
+                    alt={task.taskFor.name || "A"}
+                    className="w-5 h-5 rounded-full object-cover border border-white/20 bg-white/15"
+                  />
+                ) : (
+                  <span className="w-5 h-5 rounded-full bg-white/15 border border-white/20 flex items-center justify-center text-[10px] uppercase text-white/80">
+                    {(task.taskFor?.name || "?")
+                      .split(" ")
+                      .map((n) => n[0])
+                      .slice(0, 2)
+                      .join("")}
+                  </span>
+                )}
+                {task.taskFor?.name ?? "Unassigned"}
+              </span>
+            </div>
+
+            {/* <div className="flex items-center">
+              <span>Reporter</span>
+              <span className="ml-auto font-medium">Me</span>
+            </div> */}
+
+            <div className="flex items-center">
+              <span>Estimated time</span>
+              <span className="ml-auto font-medium">
+                <span className="h-4 w-4 rounded-full bg-white/80" />
+                {task.estimatedTime
+                  ? `${task.estimatedTime}h (spent 0.15h)`
+                  : "0.15h (spent 0.15h)"}
+              </span>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="mt-8 mb-6 h-px bg-white/30 w-full" />
+
+          {/* Description */}
+          <div>
+            <div className="flex items-center gap-2 text-sm font-medium mb-3">
+              <Circle className="w-3 h-3 text-white/60" />
+              <span>Description</span>
+            </div>
+            <div className="text-sm leading-relaxed tracking-wide">
+              {task.description || <span className="text-white/40">Hallow</span>}
+            </div>
+            <div className="mt-8 h-px bg-white/30 w-full" />
+          </div>
         </div>
 
-        {/* Meta fields */}
-        <div className="space-y-2 text-sm text-white/80">
-          <div className="flex items-center gap-2">
-            <Circle className="w-3 h-3 text-blue-400" />
-            <span className="capitalize">{task.status ?? "New Task"}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4" />
-            <span>Due date</span>
-            <span className="ml-auto font-semibold">
-              {task.taskDate ? new Date(task.taskDate).toLocaleDateString() : "—"}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <User className="w-4 h-4" />
-            <span>Assignee</span>
-            <span className="ml-auto font-semibold">{task.taskFor?.name ?? "Unassigned"}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <User className="w-4 h-4" />
-            <span>Project</span>
-            <span className="ml-auto font-semibold">{task.taskOf?.name ?? "—"}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4" />
-            <span>Created at</span>
-            <span className="ml-auto font-semibold">
-              {task.createdAt ? new Date(task.createdAt).toLocaleString() : "—"}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4" />
-            <span>Priority</span>
-            <span
-              className={`ml-auto font-semibold capitalize ${
-                task.priority === "high"
-                  ? "text-red-400"
-                  : task.priority === "medium"
-                  ? "text-yellow-300"
-                  : "text-emerald-400"
-              }`}
-            >
-              {task.priority ?? "—"}
-            </span>
-          </div>
-        </div>
+        {/* Inner right panel flush right */}
+        <div className="h-[742px] w-[594px] ml-auto">
+          <div className="h-full flex flex-col border border-white/30 rounded-[22px] px-8 pt-8 pb-6"
+            style={{ background: "#0000004D" }}>
+            {/* Date Chip */}
+            {firstLogDateLabel && (
+              <div className="flex justify-center mb-10">
+                <span className="text-[10px] px-3 py-[6px] rounded-full bg-black/50 border border-white/10 text-white/70">
+                  {firstLogDateLabel}
+                </span>
+              </div>
+            )}
 
-        {/* Action buttons */}
-
-        {/* Description */}
-        <div className="mt-4">
-          <div className="text-white/70 text-xs mb-1">Description</div>
-          <div className="text-white/90 text-sm font-medium">
-            {task.description || <span className="text-white/40">No description provided</span>}
-          </div>
-        </div>
-      </div>
-
-      {/* Right: Task Chat */}
-      <div className="flex flex-col h-full bg-black/30">
-        {/* Chat header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
-          <div className="font-semibold text-white/80">Task Chat</div>
-        </div>
-        {/* Chat area */}
-        <div className="flex-1 overflow-y-auto px-6 py-4">
-          <div className="space-y-3">
-            {chatMessages.length === 0 ? (
-              <div className="text-white/40 text-sm text-center mt-12">No messages yet</div>
-            ) : (
-              chatMessages.map((msg, idx) => (
+            {/* Activity / Logs */}
+            <div className="flex-1 overflow-y-auto space-y-4 pr-1">
+              {sortedLogs.map((log) => (
                 <div
-                  key={idx}
-                  className={`flex items-center gap-2 text-xs ${
-                    msg.userId === currentUser?.id.toString() ? "text-emerald-300" : "text-white/70"
-                  }`}
+                  key={log.id}
+                  className="flex items-center text-[12px] text-white/75"
                 >
-                  <span className="font-semibold">{msg.username ?? "User"}:</span>
-                  <span>{msg.message}</span>
-                  <span className="ml-auto text-white/40">
-                    {msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : ""}
+                  <span className="pr-4">
+                    {log.user?.name || log.userName} {log.message || log.action}
+                  </span>
+                  <span className="ml-auto text-white/40 tabular-nums">
+                    {new Date(log.timestamp).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </span>
                 </div>
-              ))
-            )}
-            <div ref={chatEndRef} />
-          </div>
-        </div>
-        {/* Chat input */}
-        <div className="border-t border-white/10 px-6 py-4">
-          <form
-            className="flex gap-2"
-            onSubmit={(e) => {
-              e.preventDefault()
-              handleSendChat()
-            }}
-          >
-            <input
-              type="text"
-              className="flex-1 px-4 py-2 rounded-lg bg-white/10 text-white focus:outline-none"
-              placeholder="Type a message…"
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-            />
-            <button
-              type="submit"
-              className="bg-emerald-600 text-white px-4 py-2 rounded-lg font-bold flex items-center gap-1"
-              disabled={!chatInput.trim()}
+              ))}
+
+              {/* Chat messages after logs (if any) */}
+              {chatMessages.length > 0 &&
+                chatMessages.map((msg, idx) => (
+                  <div
+                    key={`chat-${idx}`}
+                    className={`flex items-center text-[12px] ${
+                      msg.userId === currentUser?.id.toString()
+                        ? "text-emerald-300"
+                        : "text-white/70"
+                    }`}
+                  >
+                    <span className="pr-2 font-medium">{msg.username ?? "User"}:</span>
+                    <span className="pr-4">{msg.message}</span>
+                    <span className="ml-auto text-white/40 tabular-nums">
+                      {msg.timestamp
+                        ? new Date(msg.timestamp).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : ""}
+                    </span>
+                  </div>
+                ))}
+              <div ref={chatEndRef} />
+            </div>
+
+            {/* Chat Input */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                handleSendChat()
+              }}
+              className="mt-8"
             >
-              <MessageCircle className="w-4 h-4" />
-              Send
-            </button>
-          </form>
+              <div className="flex items-center gap-3 border border-white/10 rounded-full px-4 py-2"
+                style={{ background: "#0000004D" }}>
+                <div className="w-8 h-8 rounded-full bg-black/60 border border-white/10 flex items-center justify-center text-[11px] text-white/60 uppercase">
+                  {(currentUser?.name || "C")
+                    .split(" ")
+                    .map((n) => n[0])
+                    .slice(0, 2)
+                    .join("")}
+                </div>
+                <input
+                  className="flex-1 bg-transparent text-sm text-white placeholder:text-white/30 focus:outline-none"
+                  placeholder="Type a message..."
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  disabled={!chatInput.trim()}
+                  className="w-9 h-9 rounded-full bg-black/60 border border-white/10 flex items-center justify-center text-white/70 hover:bg-black/50 disabled:opacity-40"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
