@@ -6,11 +6,12 @@ export const deleteEmployee = async (teamId: string) => {
 }
     export const ShowEmployee = async (role: string): Promise<any> => {
         try {
-            const response = axiosInstance.get('/user', { params: { role: role } });
+            const response = await axiosInstance.get('/user', { params: { role: role } });
             return response;
         }
         catch (error){
             console.log("Error fetching users",error)
+            return { data: [] }; // Return empty data on error
         }
         
     }

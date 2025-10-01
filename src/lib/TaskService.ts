@@ -182,3 +182,13 @@ export const getEmployeeTasksByProjectId = async (projectId: string): Promise<an
         throw error;
     }
 }
+
+export const getTaskAnalytics= async (): Promise<any> => {
+    try{
+        const response = await axiosInstance.get('/tasks/member/task/count');
+        return response.data;
+    } catch (error) {
+        console.log("Error fetching task analytics", error);
+        throw error;
+    }
+}
