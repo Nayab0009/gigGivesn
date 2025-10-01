@@ -1,52 +1,74 @@
 "use client"
 import React, { useState, useEffect } from "react"
-import { Edit3 } from "lucide-react"
-import { getNotes } from "@/lib/notesService"
-import { useAuth } from "@/context/AuthContext"
+import { Edit3, Check, X } from "lucide-react"
+import { getNotes, updateNote } from "@/lib/notesService"
 import Link from "next/link"
 
 const NotesCard: React.FC = () => {
-  const { user } = useAuth()
   const [notes, setNotes] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [editing, setEditing] = useState(false)
+  const [editContent, setEditContent] = useState("")
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     const fetchNotes = async () => {
       try {
         setLoading(true)
         const fetchedNotes = await getNotes()
-        setNotes(fetchedNotes.slice(0, 1)) // Just take the first note for card display
+        setNotes(fetchedNotes.slice(0, 1)) // only show first note
       } catch (error) {
         console.error("Error fetching notes:", error)
-        // Fallback to demo note
-        setNotes([{
-          id: 1,
-          title: "UI Design",
-          content: "The beginning of Screen less design: UI Job to be taken over by solution Architect",
-          lastModified: "May/21/2020"
-        }])
       } finally {
         setLoading(false)
       }
     }
-
     fetchNotes()
   }, [])
 
-  // Format date string
   const formatDate = (dateString: string) => {
+    if (!dateString) return "Never"
+    const date = new Date(dateString)
+    if (isNaN(date.getTime())) return dateString
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })
+  }
+
+  const handleEdit = () => {
+    if (notes[0]) {
+      // keep HTML content so user edits properly
+      setEditContent(notes[0].content || "")
+      setEditing(true)
+    }
+  }
+
+  const handleCancel = () => {
+    setEditing(false)
+    setEditContent("")
+  }
+
+   const handleSave = async () => {
+    if (!notes[0]) return
     try {
-      const date = new Date(dateString)
-      if (isNaN(date.getTime())) {
-        return dateString
-      }
-      return date.toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
+      setSaving(true)
+      const updated = await updateNote(notes[0].id, {
+        title: notes[0].title,
+        content: editContent, // send updated content
       })
-    } catch {
-      return dateString
+      // Update with the editContent we just saved, ensuring it's available immediately
+      setNotes([{
+        ...notes[0],
+        content: editContent,
+        updatedAt: updated.updatedAt || new Date().toISOString()
+      }])
+      setEditing(false)
+    } catch (err) {
+      console.error("Error updating note:", err)
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -55,115 +77,82 @@ const NotesCard: React.FC = () => {
       style={{
         width: 332,
         height: 248,
-        borderRadius: '20.33px',
-        borderWidth: '1px',
-        opacity: 1,
-        top: 226,
-        left: 696,
+        borderRadius: "20px",
+        borderWidth: "1px",
         padding: 20,
-        gap: 20,
-        background: '#0000004D',
-        backgroundBlendMode: 'luminosity',
-        border: '1px solid #FFFFFF4D',
-        backdropFilter: 'blur(101.66923522949219px)',
-        boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)',
-        // position: 'relative',
-        minHeight: '248px',
-        maxHeight: '248px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
+        background: "#0000004D",
+        border: "1px solid #FFFFFF4D",
+        backdropFilter: "blur(100px)",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{
-          fontFamily: 'Inter',
-          fontWeight: 600,
-          fontSize: '18.3px',
-          lineHeight: '28.47px',
-          color: '#FFFFFF',
-          verticalAlign: 'middle',
-        }}>Notes</span>
-        <Link
-          href="/dashboard/teammember/notes"
-          style={{
-            fontFamily: 'Inter',
-            fontWeight: 500,
-            fontSize: '14.23px',
-            lineHeight: '20.33px',
-            color: '#0CA9F6',
-            textAlign: 'center',
-            verticalAlign: 'middle',
-            textDecoration: 'none',
-            cursor: 'pointer',
-          }}
-        >See All</Link>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <span className="text-white text-lg font-semibold">Notes</span>
+        <Link href="/dashboard/teammember/notes" className="text-sm text-sky-400">
+          See All
+        </Link>
       </div>
-      
-      {/* Single note card with fixed content */}
-      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{
-          background: 'rgba(0,0,0,0.12)',
-          borderRadius: '16px',
-          padding: '16px',
-          width: '100%',
-          height: '140px',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          border: '1px solid rgba(255,255,255,0.12)',
-        }}>
+
+      {/* Body */}
+      <div className="flex-1 flex items-center justify-center">
+        <div className="bg-black/20 border border-white/20 rounded-xl p-4 w-full h-[140px] flex flex-col justify-between">
           {loading ? (
-            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px', textAlign: 'center', padding: '24px 0' }}>Loading notes...</div>
+            <p className="text-white/70 text-sm text-center">Loading notes...</p>
           ) : notes.length === 0 ? (
-            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px', textAlign: 'center', padding: '24px 0' }}>No notes found</div>
+            <p className="text-white/70 text-sm text-center">No notes found</p>
           ) : (
             <>
-              <div
-                style={{
-                  fontFamily: 'Inter',
-                  fontWeight: 300,
-                  fontSize: '12px',
-                  lineHeight: '100%',
-                  color: '#FFFFFF',
-                  verticalAlign: 'middle',
-                  letterSpacing: 0,
-                  display: '-webkit-box',
-                  WebkitLineClamp: 3,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  wordBreak: 'break-word',
-                  maxHeight: 'calc(3 * 1em)',
-                }}
-                dangerouslySetInnerHTML={{ __html: notes[0]?.content || notes[0]?.title || "The beginning of Screen less design: UI Job to be taken over by solution Architect" }}
-              />
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '8px', paddingTop: '8px' }}>
-                <span style={{
-                  fontFamily: 'Inter',
-                  fontWeight: 300,
-                  fontSize: '12px',
-                  lineHeight: '100%',
-                  color: '#FFFFFF',
-                  verticalAlign: 'middle',
-                  letterSpacing: 0,
-                }}>
-                  {formatDate(notes[0]?.lastModified || notes[0]?.updatedAt || notes[0]?.createdAt || "May/21/2020")}
+              {editing ? (
+                <textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  className="flex-1 bg-transparent border border-white/30 rounded-lg text-white text-xs p-2 resize-none h-full"
+                />
+              ) : (
+                <p
+                  className="text-white text-xs font-light overflow-hidden line-clamp-3"
+                  // render as HTML preview
+                  dangerouslySetInnerHTML={{
+                    __html: notes[0]?.content || "No content available",
+                  }}
+                />
+              )}
+
+              {/* Footer */}
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-xs text-white/70">
+                  {formatDate(notes[0]?.updatedAt || notes[0]?.createdAt)}
                 </span>
-                <div className="bg-[#0000004D] rounded-full w-[28px] h-[28px]">
-                  <button style={{ padding: '6px', color: '#FFFFFF', background: 'none', border: 'none', cursor: 'pointer' }}>
-                  <Edit3 size={16} />
-                </button>
+                <div className="flex gap-2">
+                  {editing ? (
+                    <>
+                      <button
+                        onClick={handleSave}
+                        disabled={saving}
+                        className="text-sky-400"
+                      >
+                        <Check size={16} />
+                      </button>
+                      <button onClick={handleCancel} className="text-red-400">
+                        <X size={16} />
+                      </button>
+                    </>
+                  ) : (
+                    <button onClick={handleEdit} className="text-white">
+                      <Edit3 size={16} />
+                    </button>
+                  )}
                 </div>
-                
               </div>
             </>
           )}
         </div>
       </div>
-      </div>
+    </div>
   )
 }
 
 export default NotesCard
-

@@ -504,7 +504,9 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                     {filteredProjects.map((project, index) => (
                       <tr
                         key={project.id}
-                        className="transition-colors duration-300 bg-transparent hover:bg-white/5"
+                         onClick={() =>
+    router.push(`/dashboard/teammember/projects/${project.id}?tab=sprints`)}
+                        className="transition-colors duration-300 bg-transparent cursor-pointer hover:bg-white/5"
                       >
                         <td className="px-6 py-6">
                           <div className="space-y-2 flex items-center gap-3">

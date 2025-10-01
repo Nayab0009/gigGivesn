@@ -21,36 +21,48 @@ useEffect(() => {
 }, []);
 
 
-  const statusCounts = projects.reduce(
-    (acc, project) => {
-      const status = project.status?.toLowerCase(); // normalize status
-      if (status === "iscompleted") acc.completed += 1;
-      else if (status === "inprogress") acc.open += 1;
-      else if (status === "bugs") acc.bugs += 1;
-      return acc;
-    },
-    { completed: 0, open: 0, bugs: 0 }
-  );
-
-
+  // Calculate dynamic percentages for completed and in progress
+  const [selected, setSelected] = React.useState<number|null>(null);
+  const total = projects.length;
+  const completed = projects.filter(p => p.status?.toLowerCase() === "completed").length;
+  const inProgress = projects.filter(p => p.status?.toLowerCase() === "inprogress").length;
+  // Ensure both segments are always visible, even if one is very small
+  const minVisible = 0.15; // Minimum 15% for a visible segment
+  let completedValue = completed;
+  let inProgressValue = inProgress;
+  if (completed > 0 && inProgress > 0) {
+    // If both are nonzero, ensure neither is visually zero
+    const completedPercent = completed / total;
+    const inProgressPercent = inProgress / total;
+    if (completedPercent < minVisible) {
+      completedValue = Math.max(1, Math.round(total * minVisible));
+      inProgressValue = total - completedValue;
+    }
+    if (inProgressPercent < minVisible) {
+      inProgressValue = Math.max(1, Math.round(total * minVisible));
+      completedValue = total - inProgressValue;
+    }
+  }
   const data = [
-    { name: 'Completed', value: statusCounts.completed, color: '#68B6E3' },
-    { name: 'Open', value: statusCounts.open, color: '#F8B57D' },
-    { name: 'Bugs', value: statusCounts.bugs, color: '#F38C6D' },
+    { name: 'Completed', value: completedValue, count: completed, color: '#57b5e7', dim: 'rgba(87,181,231,0.3)' },
+    { name: 'In Progress', value: inProgressValue, count: inProgress, color: '#fbbf72', dim: 'rgba(251,191,114,0.3)' },
   ];
 
   const chartTitle = 'Project Breakdown';
 
   interface CustomTooltipProps {
     active?: boolean;
-    payload?: Array<{ payload: { name: string; value: number } }>;
+    payload?: Array<{ payload: { name: string; value: number; count: number } }>;
   }
   const CustomTooltip = ({ active, payload }: CustomTooltipProps) => {
     if (active && payload && payload.length) {
-      const data = payload[0].payload;
+      const d = payload[0].payload;
+      // Calculate percentage for tooltip
+      const percent = total ? Math.round((d.value / total) * 100) : 0;
       return (
-        <div className=" rounded-md shadow-lg">
-          <p className="font-semibold text-gray-200">{`${data.name}: ${data.value}%`}</p>
+        <div className="rounded-md shadow-lg bg-black/80 px-3 py-2">
+          <p className="font-semibold text-gray-200">{`${d.name}: ${percent}%`}</p>
+          <p className="text-gray-300 text-xs">Count: {d.count}</p>
         </div>
       );
     }
@@ -121,9 +133,15 @@ useEffect(() => {
                   cornerRadius={5}
                   startAngle={90}
                   endAngle={-270}
+                  onClick={(_, idx) => setSelected(idx)}
                 >
                   {data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} strokeWidth={0} />
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={selected === null ? entry.color : (selected === index ? entry.color : entry.dim)}
+                      strokeWidth={selected === index ? 3 : 0}
+                      cursor="pointer"
+                    />
                   ))}
                 </Pie>
                 <Tooltip content={<CustomTooltip />} />
@@ -133,12 +151,21 @@ useEffect(() => {
           
           <div className="w-1/2 flex flex-col justify-center items-start">
             {data.map((entry, index) => (
-              <div key={`legend-${index}`} className="flex items-center mb-3">
+              <div
+                key={`legend-${index}`}
+                className="flex items-center mb-3 cursor-pointer"
+                onClick={() => setSelected(index)}
+              >
                 <div
                   className="w-7 h-4 rounded-sm mr-4"
-                  style={{ backgroundColor: entry.color }}
+                  style={{ backgroundColor: selected === null ? entry.color : (selected === index ? entry.color : entry.dim) }}
                 ></div>
-                <span className="text-white text-sm font-medium">{entry.name}</span>
+                <span className={`text-white text-sm font-medium ${selected === index ? '' : 'opacity-60'}`}>
+                  {entry.name}
+                  {selected === index && (
+                    <span className="ml-2 text-xs text-gray-300">({entry.count})</span>
+                  )}
+                </span>
               </div>
             ))}
           </div>

@@ -40,24 +40,29 @@ export default function EnhancedManagersTable() {
   const router = useRouter()
 
   useEffect(() => {
-    const fetchManagers = async () => {
-      setIsLoading(true)
-      try {
-        const res = await axiosInstance.get("/user?role=admin")
-        let managersData: Manager[] = []
-        if (Array.isArray(res.data)) {
-          managersData = res.data
-        } else {
-          managersData = [res.data]
-        }
-        setManagers(managersData)
-      } catch (e) {
-        console.error("Error fetching managers:", e)
-        setManagers([])
-      } finally {
-        setIsLoading(false)
-      }
+   const fetchManagers = async () => {
+  setIsLoading(true);
+  try {
+    const res = await axiosInstance.get("/user?role=admin");
+    let managersData: Manager[] = [];
+
+    if (Array.isArray(res.data) && Array.isArray(res.data[0])) {
+      managersData = res.data[0]; // actual admins array
+    } else if (Array.isArray(res.data)) {
+      managersData = res.data;
+    } else {
+      managersData = [res.data];
     }
+
+    setManagers(managersData);
+  } catch (e) {
+    console.error("Error fetching managers:", e);
+    setManagers([]);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
     fetchManagers()
   }, [])
@@ -198,7 +203,7 @@ export default function EnhancedManagersTable() {
               color: 'transparent',
             }}
           >
-            Manage and track all admins 
+            Manage and track all admins
           </p>
         </div>
 
@@ -334,7 +339,7 @@ export default function EnhancedManagersTable() {
                               <div>
                                 <h3 className="text-lg font-semibold leading-tight" style={{ color: colors.primary.hex }}>{manager.name}</h3>
                                 <div className="flex items-center gap-2 mt-1">
-                                
+
                                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium" style={{ background: colors.highlight.hex, color: colors.primary.hex }}>
                                     Admin
                                   </span>
@@ -363,7 +368,7 @@ export default function EnhancedManagersTable() {
                         </td>
                         <td className="px-6 py-6">
                           <div className="flex items-center gap-2">
-                        
+
                             <button
                               onClick={() => handleEditClick(manager)}
                               className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1"

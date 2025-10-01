@@ -108,26 +108,26 @@ export default function Dashboard() {
         console.log('Contact role to fetch:', contactRole);
         const response = await ShowEmployee(contactRole);
         console.log('ShowEmployee raw response:', response);
-        
+
         // First try the structure from manager dashboard
         let contacts = [];
         if (Array.isArray(response?.data?.[0])) {
           contacts = response.data[0].slice(0, 2);
           console.log('Found nested array structure, extracted contacts:', contacts);
-        } 
+        }
         // If that doesn't work, try the direct array
         else if (Array.isArray(response?.data)) {
           contacts = response.data.slice(0, 2);
           console.log('Found direct array structure, extracted contacts:', contacts);
-        } 
+        }
         // If both fail, log the actual structure
         else {
-          console.log('Could not extract contacts. Response data structure:', 
-                     typeof response?.data, 
+          console.log('Could not extract contacts. Response data structure:',
+                     typeof response?.data,
                      JSON.stringify(response?.data).substring(0, 200) + '...');
           contacts = [];
         }
-        
+
         console.log('Final contacts to process:', contacts);
         const logs = await Promise.all(
           contacts.map(async (contact: any) => {
@@ -203,7 +203,7 @@ export default function Dashboard() {
    const handleViewAllClick = () => setIsPopupOpen(true);
 
   return (
-    <div className="min-h-screen pb-12 text-white rounded-2xl">
+    <div className="min-h-screen pb-12 text-white rounded-2xl mt-0 pt-0">
       {/* Header */}
       <HeaderSection userName={user?.name} error={error} />
 
@@ -290,7 +290,7 @@ export default function Dashboard() {
           </div>
         </div>
       )}
-      
+
     </div>
   )
 }

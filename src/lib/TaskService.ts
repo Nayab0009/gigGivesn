@@ -1,7 +1,7 @@
 import { error } from "console";
 import axiosInstance from "./axios";
 
-//get all the tasks 
+//get all the tasks
 export const getAllTasks = async (): Promise<any> => {
     try {
         const response = await axiosInstance.get('/tasks');
@@ -54,16 +54,16 @@ export const createTask = async (taskData: any): Promise<any> => {
         console.log("Error creating task", error);
         throw error;
     }
-}   
+}
 
 
- 
+
 
 //get tasks created by manager
 export const getManagerTasks = async (): Promise<any> => {
     try {
         console.log("Calling GET /tasks/created/manager API endpoint");
-        
+
         // First try the specific manager endpoint
         try {
             const response = await axiosInstance.get('/tasks/created/manager');
@@ -71,7 +71,7 @@ export const getManagerTasks = async (): Promise<any> => {
             return response.data;
         } catch (managerError: any) {
             console.error("Error with /tasks/created/manager:", managerError);
-            
+
             // If that fails, try the general tasks endpoint as fallback
             // console.log("Trying fallback to GET /tasks");
             const fallbackResponse = await axiosInstance.get('/tasks');
@@ -96,7 +96,7 @@ export const getManagerTasks = async (): Promise<any> => {
 //update a task
 export const updateTask = async (taskId: string, taskData: any): Promise<any> => {
     try {
-        const response = await axiosInstance.put(`/tasks/${taskId}`, taskData);
+        const response = await axiosInstance.patch(`/tasks/${taskId}`, taskData);
         return response.data;
     } catch (error) {
         console.log("Error updating task", error);
@@ -128,7 +128,7 @@ export const getTasksByProjectId = async (projectId: string): Promise<any> => {
 }
 
 
-//get tasks created by manager today 
+//get tasks created by manager today
 export const getManagerTasksToday = async (): Promise<any> => {
     try {
         const response = await axiosInstance.get('/tasks/manager/today');
@@ -137,9 +137,9 @@ export const getManagerTasksToday = async (): Promise<any> => {
         console.log("Error fetching today's tasks", error);
         throw error;
     }
-}   
+}
 
-//get tasks created by employee today 
+//get tasks created by employee today
 export const getEmployeeTasksToday = async (): Promise<any> => {
     try {
         const response = await axiosInstance.get('/tasks/employe/today');
@@ -148,8 +148,8 @@ export const getEmployeeTasksToday = async (): Promise<any> => {
         console.log("Error fetching today's tasks", error);
         throw error;
     }
-}  
-  
+}
+
 export const getManagerTasksGraphData = async (): Promise<any> => {
     try {
         const response = await axiosInstance.get('/tasks/manager/graphs');

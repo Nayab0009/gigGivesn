@@ -787,11 +787,10 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
 
         {/* Table Container - match Manager cards background and screenshot */}
         <div
-          className="relative rounded-2xl overflow-hidden border shadow-2xl backdrop-blur-md"
+          className="relative rounded-2xl overflow-hidden border backdrop-blur-md"
           style={{
             background: "#0000005D",
             borderColor: "#FFFFFF4D",
-            boxShadow: "0 16px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05)",
           }}
         >
           {isLoading ? (
@@ -803,7 +802,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
             </div>
           ) : (
             <div className="overflow-x-hidden">
-              <table className="min-w-full table-fixed divide-y divide-white/10">
+              <table className="min-w-full table-fixed divide-y ">
                 <thead className="backdrop-blur-md bg-white/5" style={{height: '73px', borderBottom: '5px solid #FFFFFF1A'}}>
                   <tr className="h-[56px]">
                     <th className="px-4 sm:px-6 py-4 text-left w-[180px] border-b-2 border-[#4A6A65]">
@@ -860,7 +859,8 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                     paginatedProjects.map((project, index) => (
                       <tr
                         key={project.id}
-                        className="transition-colors duration-300 bg-transparent hover:bg-white/5"
+                         onClick={() => router.push(`/dashboard/manager/projects/${project.id}`)}
+                        className="transition-colors duration-300 cursor-pointer bg-transparent hover:bg-white/5"
                       >
                         <td className="px-6 py-6">
                           <div className="space-y-2 flex items-center gap-3">
