@@ -54,6 +54,8 @@ const VideoCallScreen = memo(({
     roomID,
     onToggleScreenShare,
     isSharingScreen,
+    isAudioOnly, // ADDED: Receive the new prop
+
 }) => {
     // State management for local user's media controls
     const localUser = participants.find(p => p.name === localUserName);
@@ -199,24 +201,30 @@ const VideoCallScreen = memo(({
                 </Button>
               </UniversalTooltip>
 
-              <UniversalTooltip content={isVideoEnabled ? "Stop video" : "Start video"}>
-                <Button variant="ghost" size="icon" onClick={() => toggleMedia("video")} className="rounded-full w-12 h-12 bg-gray-700 hover:bg-gray-600">
-                  {isVideoEnabled ? <Video className="h-6 w-6" /> : <VideoOff className="h-6 w-6" />}
-                </Button>
-              </UniversalTooltip>
-
-              <UniversalTooltip content={isSharingScreen ? "Stop sharing" : (screenSharer ? `${screenSharer.name} is sharing` : "Share screen")}>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={onToggleScreenShare}
-                  disabled={!!screenSharer && !isSharingScreen}
-                  className="rounded-full w-12 h-12 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed data-[sharing=true]:bg-blue-600"
-                  data-sharing={isSharingScreen}
-                >
-                  <ScreenShare className="h-6 w-6" />
-                </Button>
-              </UniversalTooltip>
+              {/* CHANGED: Conditionally render the video button */}
+              {!isAudioOnly && (
+                <UniversalTooltip content={isVideoEnabled ? "Stop video" : "Start video"}>
+                  <Button variant="ghost" size="icon" onClick={() => toggleMedia("video")} className="rounded-full w-12 h-12 bg-gray-700 hover:bg-gray-600">
+                    {isVideoEnabled ? <Video className="h-6 w-6" /> : <VideoOff className="h-6 w-6" />}
+                  </Button>
+                </UniversalTooltip>
+              )}
+              
+              {/* CHANGED: Conditionally render the screen share button */}
+              {!isAudioOnly && (
+                <UniversalTooltip content={isSharingScreen ? "Stop sharing" : (screenSharer ? `${screenSharer.name} is sharing` : "Share screen")}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={onToggleScreenShare}
+                    disabled={!!screenSharer && !isSharingScreen}
+                    className="rounded-full w-12 h-12 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed data-[sharing=true]:bg-blue-600"
+                    data-sharing={isSharingScreen}
+                  >
+                    <ScreenShare className="h-6 w-6" />
+                  </Button>
+                </UniversalTooltip>
+              )}
             </div>
 
             {/* Right-aligned placeholder for balance */}

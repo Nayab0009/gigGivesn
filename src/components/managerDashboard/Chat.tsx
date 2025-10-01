@@ -1,13 +1,14 @@
 "use client"
 import type React from "react"
 import { useState, useEffect, useRef } from "react"
-import { Send, MessageCircle, Search, Paperclip, Video, Trash2, Loader2 } from "lucide-react"
+import { Send, MessageCircle, Search, Paperclip, Video, Phone, Trash2, Loader2 } from "lucide-react"
 import { colors } from "@/colors" // Assuming this file exists and exports colors
 import { ShowEmployee } from "@/lib/TeamService" // Assuming this service exists
 import { useAuth } from "@/context/AuthContext" // Assuming this context exists
 import { initiateSocket, getSocket } from "@/lib/socket" // Assuming these socket functions exist
 import { sendMessage as fetchChatHistoryAPI } from "@/lib/chatService" // Use the chatService sendMessage for fetching history
 import { deletemessage, uploadfile } from "@/lib/chatService"
+import { set } from "date-fns"
 // Removed: import { toast } from "@/hooks/use-toast";
 // Removed: import { v4 as uuidv4 } from "uuid";
 export default function ChatPage({ userId }: { userId?: string }) {
@@ -54,6 +55,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
   const audioRef = useRef<HTMLAudioElement>(null) // Ref for the audio element
   const [generatedLink, setGeneratedLink] = useState("")
   const [showMeetingDialog, setShowMeetingDialog] = useState(false)
+  const [isAudioCall, setIsAudioCall] = useState(false)
   const [isUploadingFile, setIsUploadingFile] = useState(false)
   const [showUserProfile, setShowUserProfile] = useState(false)
   const [fullScreenImageUrl, setFullScreenImageUrl] = useState<string | null>(null)
@@ -147,7 +149,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
   // Generate a unique room ID and link for the call
   const generateRoom = async () => {
     const roomId = generateUniqueId()
-    const link = `${window.location.origin}/call?roomId=${roomId}`
+    const link = `${window.location.origin}/call?roomId=${roomId}${isAudioCall ? "&isAudioCall=true" : ""}`
     setGeneratedLink(link)
 
     // Create the message data
@@ -1089,6 +1091,18 @@ export default function ChatPage({ userId }: { userId?: string }) {
                 )}
                 {/* End CHANGE */}
 
+                {/* Audio Button */}
+                <button
+                  onClick={()=>{
+                    setShowMeetingDialog(true);
+                    setIsAudioCall(true);
+                  }}
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0000004D] hover:bg-white/20 transition"
+                  aria-label="Start meeting"
+                  type="button"
+                >
+                  <Phone className="w-6 h-6 text-white" />
+                </button>
                 {/* Video Button */}
                 <button
                   onClick={() => setShowMeetingDialog(true)}
@@ -1132,23 +1146,36 @@ export default function ChatPage({ userId }: { userId?: string }) {
                       {/* Blurred backdrop overlay */}
                       <div
                         className="absolute inset-0 bg-black/50 backdrop-blur-md"
-                        onClick={() => setShowMeetingDialog(false)}
+                        onClick={() => {
+                          setShowMeetingDialog(false);
+                          setIsAudioCall(false);
+                        }}
                       ></div>
 
                       {/* Modal content */}
                       <div className="relative bg-black/30 rounded-2xl shadow-2xl p-8 w-96 border border-white/20">
                         <div className="text-center">
-                          {/* Video call icon */}
+                          {/* Conditional Call icon */}
+                        
                           <div
                             className="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center"
                             style={{
                               background: `linear-gradient(to right, ${colors.primary.hex}, ${colors.secondary.hex})`,
                             }}
                           >
+                            {isAudioCall ? (
+                            <Phone className="w-8 h-8 text-white" />
+                            ) : (
                             <Video className="w-8 h-8 text-white" />
-                          </div>
-
-                          <h3 className="text-xl font-semibold mb-2 text-white">Start Video Call</h3>
+                            )}
+                        </div>
+                          
+                          {isAudioCall ? (
+                            <h3 className="text-xl font-semibold mb-2 text-white">Start Audio Call</h3>
+                            ) : (
+                            <h3 className="text-xl font-semibold mb-2 text-white">Start Video Call</h3>
+                            )}
+                          
                           <p className="text-white/70 text-sm mb-8">Ready to start a meeting with {selectedUser}?</p>
 
                           {/* Action buttons */}
@@ -1165,6 +1192,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
                                   window.open(link, "_blank")
                                 }
                                 setShowMeetingDialog(false)
+                                setIsAudioCall(false);
                               }}
                             >
                               Start Meeting
@@ -1172,7 +1200,10 @@ export default function ChatPage({ userId }: { userId?: string }) {
 
                             <button
                               className="w-full py-3 bg-white/10 backdrop-blur-sm text-white rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20"
-                              onClick={() => setShowMeetingDialog(false)}
+                              onClick={() => {
+                                setShowMeetingDialog(false);
+                                setIsAudioCall(false);
+                              }}
                             >
                               Cancel
                             </button>

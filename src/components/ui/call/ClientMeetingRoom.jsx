@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/call/button";
 import { Input } from "@/components/ui/call/input";
 import { toast } from "@/hooks/use-toast";
 import { Alert, AlertTitle } from "@/components/ui/call/alert";
-import { Camera, Loader2, RefreshCw } from "lucide-react";
+import { Camera, Loader2, RefreshCw, Mic } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { io } from "socket.io-client";
 import VideoCallScreen from "@/components/ui/call/CallingUi";
@@ -29,6 +29,8 @@ export default function IndividualMeetingRoom() {
   const [isInCall, setIsInCall] = useState(false);
   const [loadingForJoiningCall, setLoadingForJoiningCall] = useState(false);
   const [participants, setParticipants] = useState([]);
+  const [isAudioOnly, setIsAudioOnly] = useState(false); // ADDED: State for audio-only call
+
   
   const socketRef = useRef(null);
   const localVideoRef = useRef(null);
@@ -45,6 +47,10 @@ export default function IndividualMeetingRoom() {
   useEffect(() => {
     const room = searchParams.get("roomId");
     if (room) setRoomID(room);
+    // ADDED: Check for isAudioCall parameter
+    const audioCallParam = searchParams.get("isAudioCall") === "true";
+    setIsAudioOnly(audioCallParam);
+    
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       try {
@@ -82,7 +88,7 @@ export default function IndividualMeetingRoom() {
           return prev.map((p) => p.name === remoteUserName ? { ...p, stream: event.streams[0] } : p);
         }
         // If new, add them to the list
-        return [...prev, { name: remoteUserName, stream: event.streams[0], micOn: true, videoOn: true, screenStream: null }];
+        return [...prev, { name: remoteUserName, stream: event.streams[0], micOn: true, videoOn: !isAudioOnly, screenStream: null }];
       });
     };
 
@@ -93,7 +99,7 @@ export default function IndividualMeetingRoom() {
     };
     peerConnectionsRef.current[remoteUserName] = pc;
     return pc;
-  }, [roomID, userName]);
+  }, [roomID, userName, isAudioOnly]); // MODIFIED: Added isAudioOnly dependency
 
   const createAndSendOffer = useCallback(async (targetName) => {
     try {
@@ -353,8 +359,9 @@ export default function IndividualMeetingRoom() {
 
       if (!hasCamera && !hasMic) throw new Error("No camera or microphone found");
 
+      // CHANGED: Conditionally request video based on isAudioOnly state
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: hasCamera,
+        video: isAudioOnly ? false : hasCamera,
         audio: hasMic
       });
 
@@ -381,7 +388,8 @@ export default function IndividualMeetingRoom() {
         return toast({ title: ack.error, variant: "destructive" });
       }
 
-      setParticipants([{ name: userName.trim(), stream: stream, micOn: true, videoOn: true, screenStream: null }]);
+      // CHANGED: Set videoOn to false if it's an audio-only call
+      setParticipants([{ name: userName.trim(), stream: stream, micOn: true, videoOn: !isAudioOnly, screenStream: null }]);
       setIsInCall(true);
     });
   };
@@ -397,6 +405,7 @@ export default function IndividualMeetingRoom() {
           roomID={roomID}
           onToggleScreenShare={handleToggleScreenShare}
           isSharingScreen={!!screenStream} // True if screenStream is not null
+          isAudioOnly={isAudioOnly} // ADDED: Pass the prop to the UI component
         />
       ) : (
         <div className="container mx-auto px-4 lg:px-20 py-8">
@@ -405,12 +414,22 @@ export default function IndividualMeetingRoom() {
               {!stream && !permissionDenied && (
                 <div className="text-center">
                   <h2 className="text-xl mb-4">Ready to join?</h2>
-                  <p className="text-sm text-gray-500 mb-6">Grant camera and mic access to continue.</p>
+                   {/* CHANGED: Text updates based on call type */}
+                  <p className="text-sm text-gray-500 mb-6">
+                    Grant {isAudioOnly ? "microphone" : "camera and mic"} access to continue.
+                  </p>
                   <Button onClick={requestMediaPermissions} className="rounded-full px-7">Grant Access</Button>
                 </div>
               )}
-              {permissionDenied && <PermissionDenied />}
-              <video ref={localVideoRef} autoPlay playsInline muted className={`rounded-lg w-full h-full object-cover ${stream ? 'block' : 'hidden'}`} />
+              {permissionDenied && <PermissionDenied isAudioOnly={isAudioOnly} />}
+              {/* If it's an audio call, we don't need the video element, show an icon instead */}
+              {isAudioOnly && stream && (
+                 <div className="span-full flex flex-col items-center">
+                   <Mic className="h-24 w-24 text-green-500 mb-4" />
+                   <p className="text-lg">Microphone is active.</p>
+                 </div>
+              )}
+              <video ref={localVideoRef} autoPlay playsInline muted className={`rounded-lg w-full h-full object-cover ${stream && !isAudioOnly ? 'block' : 'hidden'}`} />
             </div>
             {stream && (
               <div className="self-center p-6 rounded-lg flex flex-col space-y-6">
@@ -422,7 +441,7 @@ export default function IndividualMeetingRoom() {
                   className="!border-gray-700 bg-gray-900 text-white border"
                 />
                 <Button disabled={loadingForJoiningCall || !socketRef.current?.connected} onClick={handleJoin} className="rounded-full py-3 text-lg">
-                  {loadingForJoiningCall ? <Loader2 className="animate-spin w-5 h-5" /> : "Join Call"}
+                  {loadingForJoiningCall ? <Loader2 className="animate-spin w-5 h-5" /> : `Join ${isAudioOnly ? "Audio Call" : "Video Call"}`}
                 </Button>
               </div>
             )}
@@ -433,7 +452,8 @@ export default function IndividualMeetingRoom() {
   );
 }
 
-const PermissionDenied = memo(() => (
+// MODIFIED: Accept isAudioOnly prop to show relevant message
+const PermissionDenied = memo(({ isAudioOnly }) => (
     <div className="max-w-md mx-auto p-4 space-y-4 bg-gray-950 rounded-xl">
     <Alert variant="destructive" className="border-red-900/50 bg-red-950/50 border-2">
       <div className="flex text-white items-center gap-4 justify-center">
@@ -442,7 +462,9 @@ const PermissionDenied = memo(() => (
       </div>
     </Alert>
     <div className="p-2">
-      <h3 className="text-lg font-medium text-gray-100 mb-4">Please enable camera and microphone access in your browser settings to continue.</h3>
+      <h3 className="text-lg font-medium text-gray-100 mb-4">
+        Please enable {isAudioOnly ? "microphone" : "camera and microphone"} access in your browser settings to continue.
+      </h3>
       <Button onClick={() => window.location.reload()} className="mt-4 w-full rounded-full">
         <RefreshCw className="h-4 w-4 mr-2" />
         Refresh and Try Again
