@@ -791,7 +791,6 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
           style={{
             background: "#0000005D",
             borderColor: "#FFFFFF4D",
-x
           }}
         >
           {isLoading ? (
