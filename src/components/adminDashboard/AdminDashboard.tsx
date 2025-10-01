@@ -24,7 +24,6 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
     adminStats: {
       totalProjects: number
       activeProjects: number
-        completedProjects: number
       totalTasks: number
       allTime: number
       totalUsers: number
@@ -134,7 +133,6 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
         totalProjects: 0,
         activeProjects: 0,
         totalTasks: 0,
-          completedProjects: 0,
         allTime: 0,
         totalUsers: 0,
         tasksCompleted: 0,
@@ -145,28 +143,21 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
       recentActivities: [],
     })
 
-   useEffect(() => {
-  // Skip running this effect if data is not yet loaded
-  if (!projects.length || !allUsers.length || !allProjects.length) return;
- const completedCount = allProjects.filter(p => p.status === "completed").length;
-  const activeCount = allProjects.filter(p => p.status === "inprogress").length;
+    useEffect(() => {
+      // Skip running this effect if data is not yet loaded
+      if (!projects.length || !allUsers.length) return;
 
-  console.log("All Projects:", allProjects);
-  console.log("Completed Projects Count:", completedCount);
-  console.log("Active Projects Count:", activeCount);
-  console.log("Completed Projects:", allProjects.filter(p => p.status === "completed"));
-  // Update dashboard data with fetched data
-  setDashboardData({
-    adminStats: {
-      totalProjects: projects.length,
-      activeProjects: allProjects.filter(p => p.status === "inprogress").length,
-      completedProjects: allProjects.filter(p => p.status === "completed").length,
-      allTime: projects.length,
-      totalUsers: allUsers.length,
-      totalTasks: allProjects.reduce((sum, p) => sum + (p.totalTasks || 0), 0),
-      tasksCompleted: allProjects.reduce((sum, p) => sum + (p.completedTask || 0), 0),
-      openBugs: 16,
-    },
+      // Update dashboard data with fetched data
+      setDashboardData({
+        adminStats: {
+          totalProjects: projects.length,
+          activeProjects: allProjects.filter(project => project.status === "inprogress").length,
+          totalTasks: allProjects.filter(project => project.status === "iscompleted").length,
+          allTime: projects.length,
+          totalUsers: allUsers[1] || 0,
+          tasksCompleted: 1075,
+          openBugs: 16,
+        },
         projectProgress: [
           { month: "Jan", completedTasks: 88, createdTasks: 110, year: 2024 },
           { month: "Feb", completedTasks: 94, createdTasks: 115, year: 2024 },
@@ -238,7 +229,11 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
       setIsLoading(false);
     // Using a custom dependency array check to avoid unnecessary rerenders
     // This will only run when the length of these arrays changes, not their contents
-    },[projects, allProjects, allUsers, allManagerTasksData]);
+    }, [
+      projects.length,
+      allProjects.length,
+      allUsers.length
+    ])
 
     const formatNumber = (num: number) => new Intl.NumberFormat("en-US").format(num)
 
@@ -298,21 +293,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
             <h1 className="text-2xl font-extrabold text-white tracking-tight">Admin Dashboard</h1>
             <p className="text-md font-extralight text-gray-200">Welcome back! See your latest project insights below.</p>
           </div>
-          <div className="mt-4 sm:mt-0 flex items-center space-x-3">
 
-            <Link href="/dashboard/admin/addemployee" className="px-5 py-2 text-white rounded-full hover:text-gray-200 transition-all font-semibold text-sm inline-flex gap-x-1 md:gap-x-2  bg-black-600  items-center border border-white/30">
-              <Plus className="w-5 h-4 text-white font-light" /> <p className="text-white font-medium">Add Employee</p>
-            </Link>
-
-
-            <Link href="/dashboard/admin/addmanager" className="px-5 py-2 text-white rounded-full hover:text-gray-200 shadow transition-all font-semibold text-sm inline-flex gap-x-1 md:gap-x-2  bg-black-600 bg-black/30 items-center">
-              <Plus className="w-5 h-4 text-white font-light" /> <p className="text-white font-medium">Add Manager</p>
-            </Link>
-
-            <Link href="/dashboard/admin/addProject" className="px-5 py-2 text-white rounded-full transition-all shadow font-semibold text-sm inline-flex bg-blur-green bg-sky-400 gap-x-1 md:gap-x-2 items-center">
-            <Plus className="w-4 h-4 text-white " /> <p className="text-white font-medium">New Project</p>
-            </Link>
-          </div>
         </div>
 
 
@@ -363,7 +344,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                 <p className="text-gray-200 font-light text-xs tracking-wider">Completed projects</p>
                 <div>
                   <p className="text-lg font-bold text-white">
-                  {formatNumber(dashboardData.adminStats.completedProjects)}
+                    {formatNumber(dashboardData.adminStats.totalTasks)}
                   </p>
                   <div className="flex items-center">
                     <div>
@@ -507,43 +488,55 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                   </tr>
                 </thead>
                 <tbody className="">
-              {allProjects.map((project, idx) => {
-  const totalTasks = project.totalTasks || 0;
-  const completedTask = project.completedTask || 0;
-  const pendingTask = totalTasks - completedTask;
-  const progress = Math.floor((completedTask / totalTasks) * 100) || 0;
+                  {projects.map((project, idx) => {
+                    // Calculate random progress for demo purposes (replace with actual data)
+                    const totalTasks = project.totalTasks;
+                    const completedTask = project.completedTask;
+                    const pendingTask = totalTasks - completedTask;
+                    const progress = Math.floor(completedTask / totalTasks * 100) || 0;
+
                     return (
                       <tr key={project.id} className="hover:bg-gray-800/20 transition-colors">
-      <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-2/12">
-        <span className="text-sm text-white">{project.name}</span>
-      </td>
-      <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-2/12">
-        <span className="text-sm text-white">{project.managername}</span>
-      </td>
-      <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-1/12">
-        <span className="text-sm text-white">{formatDate(project.startDate)}</span>
-      </td>
-      <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-1/12">
-        <span className="text-sm text-white">{formatDate(project.endDate)}</span>
-      </td>
-      <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-1/12">
-        <div className="flex items-center">
-          <div className="w-24 mr-2">
-            <ProgressBar percentage={progress} />
-          </div>
-          <span className="text-xs text-white">{progress}%</span>
-        </div>
-      </td>
-      <td className="px-4 py-3 whitespace-nowrap text-center border-r border-white/30 w-1/12">
-        <span className="text-sm text-white">{totalTasks}</span>
-      </td>
-      <td className="px-4 py-3 whitespace-nowrap text-center border-r border-white/30 w-2/12">
-        <span className="text-sm text-white">{pendingTask}</span>
-      </td>
-      <td className="px-4 py-3 whitespace-nowrap text-center w-4/12">
-        <span className="text-sm text-white">{completedTask}</span>
-      </td>
-    </tr>
+                        <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-2/12">
+                          <span className="text-sm text-white"><span></span>
+                          {project.name}
+                          </span>
+                        </td>
+                        <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-2/12">
+                          <span className="text-sm text-white">
+                            {project.managername}
+                            </span>
+                        </td>
+                        <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-1/12">
+                          <span className="text-sm text-white">
+                            {formatDate(project.startDate)}
+                            </span>
+                        </td>
+                        <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-1/12">
+                          <span className="text-sm text-white">
+                            {formatDate(project.endDate)}
+                            </span>
+                        </td>
+                        <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-1/12">
+                          <div className="flex items-center">
+                            <div className="w-24 mr-2">
+                              <ProgressBar percentage={progress} />
+                            </div>
+                            <span className="text-xs text-white">{progress}%</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-center border-r border-white/30 w-1/12">
+                          <span className="text-sm text-white">
+                            {totalTasks}
+                            </span>
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-center border-r border-white/30 w-2/12">
+                          <span className="text-sm text-white">{pendingTask}</span>
+                        </td>
+                        <td className="px-4 py-3 whitespace-nowrap text-center w-4/12">
+                          <span className="text-sm text-white">{completedTask}</span>
+                        </td>
+                      </tr>
                     );
                   })}
                 </tbody>
