@@ -262,16 +262,12 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
               style={{
                 fontFamily: "Inter",
                 fontWeight: 600,
-                fontSize: "22px",
-                lineHeight: "120%",
+                fontSize: "20px", // Reduced from 22px
+                lineHeight: "110%", // Reduced line height
                 color: "#FFFFFF",
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                display: '-webkit-box',
-                WebkitLineClamp: 1,
-                WebkitBoxOrient: 'vertical',
+                textShadow: "0px 0px 2px rgba(0,0,0,0.8)", // Add slight shadow for better readability
+                margin: "0"
               }}
-              title={task.title || "-"} // Show full title on hover
             >
               {task.title || "-"}
             </h4>
@@ -295,21 +291,36 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task }) =>
             </span>
           </div>
 
-          <p 
+          <div 
             className="flex-grow overflow-y-auto task-description-scrollbar"
             style={{
               maxHeight: "60px",  // Fixed height for scrollable area
-              marginBottom: "12px",
-              // overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
+              // marginBottom: "px",
+              scrollbarWidth: "thin",
+              scrollbarColor: "rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.1)",
+              msOverflowStyle: "none", /* Internet Explorer 10+ */
+              padding: "4px 2px",
+              backgroundColor: "rgba(0, 0, 0, 0.3)", // Add slight background for better text contrast
+              borderRadius: "4px",
             }}
-            title={task.description}
           >
-            {task.description || "-"}
-          </p>
+            <p
+              style={{
+                fontFamily: "Inter",
+                fontWeight: 500,  // Increased from 400 to 500 for better visibility
+                fontSize: "13px",  // Increased from 12px to 13px
+                lineHeight: "160%",  // Increased line height for better readability
+                letterSpacing: "0.2px", // Slight letter spacing for better readability
+                color: "#FFFFFF",
+                textShadow: "0px 0px 1px rgba(0,0,0,0.5)", // Subtle text shadow for better visibility
+                marginBottom: "4px", // Add some space between paragraphs if there are multiple
+                whiteSpace: "pre-line", // Preserve line breaks in the description
+              }}
+              title={task.description}
+            >
+              {task.description || "-"}
+            </p>
+          </div>
           <div className="flex items-center justify-between">
             <div className="flex -space-x-2">
               {task.taskFor?.avatar ? (

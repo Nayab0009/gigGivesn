@@ -57,7 +57,7 @@ const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs,
           lineHeight: '20.33px',
           letterSpacing: '0px',
           verticalAlign: 'middle',
-          color: '#93c5fd', // text-blue-300
+          // color: '#93c5fd', // text-blue-300
         }}
       >
        <button
