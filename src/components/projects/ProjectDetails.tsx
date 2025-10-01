@@ -25,7 +25,8 @@ import {
   Users,
   Clock,
   ChevronDown,
-  MoreHorizontal
+  MoreHorizontal,
+  Plus
 } from "lucide-react"
 import TimeTable from "./ProjectTimeTable"
 import {
@@ -37,6 +38,7 @@ import {
   SprintsTab
 } from "./tabs"
 import { useProjectContext } from "@/context/ProjectContext"
+import { useAuth } from "@/context/AuthContext"
 
 type TeamMember = {
   id: string
@@ -101,6 +103,8 @@ export default function ProjectDetailsPage() {
   const [settingsSaving, setSettingsSaving] = useState(false)
   const [settingsSuccess, setSettingsSuccess] = useState(false)
   const [settingsError, setSettingsError] = useState<string | null>(null)
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
   console.log("activeTab:", activeTab);
   // Fetch summary data (except for members tab)
   useEffect(() => {
@@ -139,7 +143,9 @@ export default function ProjectDetailsPage() {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, activeTab])
-
+  const handleAddSprint = () => {
+    router.push(`/projects/${id}/sprints/add`)
+  }
   // Fetch only members list for members tab
   useEffect(() => {
     let isMounted = true
@@ -195,7 +201,7 @@ export default function ProjectDetailsPage() {
       const params = new URLSearchParams(window.location.search);
       const tabParam = params.get('tab');
       if (tabParam && (tabParam === "summary" || tabParam === "tasks" || tabParam === "sprints" ||
-          tabParam === "calendar" || tabParam === "notes" || tabParam === "members" || tabParam === "settings")) {
+        tabParam === "calendar" || tabParam === "notes" || tabParam === "members" || tabParam === "settings")) {
         setActiveTab(tabParam);
       }
     };
@@ -212,7 +218,7 @@ export default function ProjectDetailsPage() {
       const params = new URLSearchParams(window.location.search);
       const tab = params.get('tab');
       if (tab === 'sprints' || tab === 'calendar' || tab === 'members' ||
-          tab === 'tasks' || tab === 'settings' || tab === 'summary') {
+        tab === 'tasks' || tab === 'settings' || tab === 'summary') {
         setActiveTab(tab as any);
       }
     };
@@ -296,14 +302,14 @@ export default function ProjectDetailsPage() {
   ]
 
   return (
-   <div className="w-full relative top-[1.875rem] max-w-full mb-3.5">
+    <div className="w-full relative top-[1.875rem] max-w-full mb-3.5">
       <div className="mx-auto">
         {/* Top bar */}
         <div className="flex items-center justify-between">
           <div>
             {/* <div className="text-white/70 text-sm">Project</div> */}
             <h1
-              className="text-[20px] font-semibold text-white mt-1"
+              className="text-[20px] font-semibold text-white mt-1 mb-8"
               style={{
                 fontFamily: 'Roboto, sans-serif',
                 fontWeight: 600,
@@ -318,44 +324,59 @@ export default function ProjectDetailsPage() {
           </div>
         </div>
 
-  {/* Tabs + view toggles */}
-  <div className="flex items-center justify-between mt-2 mb-6">
-          <div className="flex items-center gap-4">
-            <button className="flex items-center gap-1 text-white/70 hover:text-white px-2 py-1 rounded-full transition-all focus:outline-none">
-              <Filter className="w-4 h-4" />
-              <span className="text-sm font-medium">Filter</span>
-            </button>
-            <div
-              className="flex  rounded-full p-1 gap-1 shadow-inner"
-              style={{ background: "#0000004D" }}
-            >
-              {[
-                { key: "summary", label: "Summary" },
-                // { key: "tasks", label: "Tasks" },
-                 { key: "sprints", label: "Sprints" },
-                { key: "calendar", label: "Calendar" },
-                { key: "members", label: "Members" },
-                // { key: "settings", label: "Settings" },
-              ].map((t) => (
-                <button
-                  key={t.key}
-                  onClick={() => {
-                    setActiveTab(t.key as any);
-                    const url = new URL(window.location.href);
-                    url.searchParams.set('tab', t.key);
-                    router.replace(url.pathname + url.search);
-                  }}
-                  className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
-                    activeTab === t.key
+        {/* Tabs + view toggles */}
+        <div className="flex items-center justify-between mt-2 mb-6">
+          <div className="flex justify-between w-full">
+            <div className="flex items-center gap-4 ">
+              <button className="flex items-center gap-2 text-white/70 hover:text-white px-2 py-1 rounded-full transition-all focus:outline-none">
+                <Filter className="w-4 h-4" />
+                <span className="text-sm font-medium">Filter</span>
+              </button>
+              <div
+                className="flex  rounded-full p-1 gap-1 shadow-inner"
+                style={{ background: "#0000004D" }}
+              >
+                {[
+                  { key: "summary", label: "Summary" },
+                  // { key: "tasks", label: "Tasks" },
+                  { key: "sprints", label: "Sprints" },
+                  { key: "calendar", label: "Calendar" },
+                  { key: "members", label: "Members" },
+                  // { key: "settings", label: "Settings" },
+                ].map((t) => (
+                  <button
+                    key={t.key}
+                    onClick={() => {
+                      setActiveTab(t.key as any);
+                      const url = new URL(window.location.href);
+                      url.searchParams.set('tab', t.key);
+                      router.replace(url.pathname + url.search);
+                    }}
+                    className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${activeTab === t.key
                       ? "bg-[#0000004D] text-white shadow "
                       : "text-white/80  hover:bg-[#0000004D] border-transparent"
-                  }`}
-                  style={{ minWidth: 90 }}
-                >
-                  {t.label}
-                </button>
-              ))}
+                      }`}
+                    style={{ minWidth: 90 }}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+
             </div>
+            {!isAdmin && (
+              <button
+                onClick={() => router.push(`/dashboard/manager/addsprints/${project?.id}`)}
+                className="inline-flex items-center gap-2 px-4 py-2 text-white font-medium rounded-full transition shadow-sm hover:shadow-md transform hover:scale-105 active:scale-95 border"
+                style={{
+                  backgroundColor: "#0CA9F6",
+                  border: "1px solid #57B5E7E5",
+                }}
+              >
+                <Plus className="w-4 h-4" />
+                Add Sprint
+              </button>
+            )}
           </div>
 
           {activeTab === "tasks" && (
@@ -365,60 +386,58 @@ export default function ProjectDetailsPage() {
             >
               <button
                 onClick={() => setTaskView("table")}
-                className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
-                  taskView === "table"
-                    ? "bg-white/10 text-white border border-white/20"
-                    : "text-white/90 hover:text-white hover:bg-white/10 border border-transparent"
-                }`}
+                className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${taskView === "table"
+                  ? "bg-white/10 text-white border border-white/20"
+                  : "text-white/90 hover:text-white hover:bg-white/10 border border-transparent"
+                  }`}
               >
                 <Table className="w-4 h-4" /> Table View
               </button>
               <button
                 onClick={() => setTaskView("kanban")}
-                className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
-                  taskView === "kanban"
-                    ? "bg-white/10 text-white border border-white/20"
-                    : "text-white/90 hover:text-white hover:bg-white/10 border border-transparent"
-                }`}
+                className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${taskView === "kanban"
+                  ? "bg-white/10 text-white border border-white/20"
+                  : "text-white/90 hover:text-white hover:bg-white/10 border border-transparent"
+                  }`}
               >
                 <LayoutGrid className="w-4 h-4" /> Kanban Board
               </button>
             </div>
           )}
-  </div>
+        </div>
 
         {/* Content */}
-      {isLoading && activeTab !== "members" && activeTab !== "settings" ? (
-  <div className="p-12 text-center border border-white/10 rounded-2xl max-w-xl w-full mx-auto" style={{ background: "#0000004D" }}>
-    <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
-      <RefreshCw className="w-6 h-6 text-emerald-600 animate-spin" />
-    </div>
-    <p className="text-white/80">Loading project…</p>
-  </div>
-) : error && activeTab !== "members" && activeTab !== "settings" ? (
-  <div className="p-6 border border-red-200/40 rounded-2xl text-white max-w-xl w-full mx-auto" style={{ background: "#0000004D" }}>
-    <div className="flex items-center gap-2 mb-1">
-      <AlertCircle className="w-5 h-5 text-red-300" />
-      <div className="font-semibold">Error loading project</div>
-    </div>
-    <div className="text-white/80 text-sm">{error}</div>
-  </div>
-) : activeTab === "settings" ? (
-  <SettingsTab
-    project={project}
-    settingsProjectName={settingsProjectName}
-    setSettingsProjectName={setSettingsProjectName}
-    settingsSaving={settingsSaving}
-    settingsSuccess={settingsSuccess}
-    settingsError={settingsError}
-    handleProjectNameSave={handleProjectNameSave}
-  />
+        {isLoading && activeTab !== "members" && activeTab !== "settings" ? (
+          <div className="p-12 text-center border border-white/10 rounded-2xl max-w-xl w-full mx-auto" style={{ background: "#0000004D" }}>
+            <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
+              <RefreshCw className="w-6 h-6 text-emerald-600 animate-spin" />
+            </div>
+            <p className="text-white/80">Loading project…</p>
+          </div>
+        ) : error && activeTab !== "members" && activeTab !== "settings" ? (
+          <div className="p-6 border border-red-200/40 rounded-2xl text-white max-w-xl w-full mx-auto" style={{ background: "#0000004D" }}>
+            <div className="flex items-center gap-2 mb-1">
+              <AlertCircle className="w-5 h-5 text-red-300" />
+              <div className="font-semibold">Error loading project</div>
+            </div>
+            <div className="text-white/80 text-sm">{error}</div>
+          </div>
+        ) : activeTab === "settings" ? (
+          <SettingsTab
+            project={project}
+            settingsProjectName={settingsProjectName}
+            setSettingsProjectName={setSettingsProjectName}
+            settingsSaving={settingsSaving}
+            settingsSuccess={settingsSuccess}
+            settingsError={settingsError}
+            handleProjectNameSave={handleProjectNameSave}
+          />
         ) : activeTab === "members" ? (
-  <MembersTab
-    project={project}
-    membersLoading={membersLoading}
-    members={members}
-  />
+          <MembersTab
+            project={project}
+            membersLoading={membersLoading}
+            members={members}
+          />
         ) : project ? (
           <div className="space-y-6">
 

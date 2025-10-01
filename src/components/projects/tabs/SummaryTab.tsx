@@ -28,12 +28,12 @@ type SummaryTabProps = {
   }>
 }
 
-const SummaryTab = ({ 
-  project, 
-  taskCounts, 
-  taskPriorities, 
+const SummaryTab = ({
+  project,
+  taskCounts,
+  taskPriorities,
   memberTaskCounts,
-  statCards 
+  statCards
 }: SummaryTabProps) => {
   return (
     <div className="space-y-6 px-24">
@@ -71,7 +71,7 @@ const SummaryTab = ({
               </>
             )}
           </div>
-          <div className="text-center mt-18 text-4xl">{taskCounts.totalTask}</div>
+          <div className="text-center mt-18 text-6xl font-light font-roboto">{taskCounts.totalTask}</div>
           <div className="text-center text-white/60 text-sm">Total work items</div>
         </div>
         <div
