@@ -4,6 +4,8 @@ import axiosInstance from "@/lib/axios";
 import type { Project, Task, User, Team } from "@/types";
 import { useAuth } from "@/context/AuthContext";
 import { colors } from "@/colors";
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
 
 export enum TaskPriority {
   HIGH = 'high',
@@ -380,16 +382,27 @@ export function AssignTaskModal({
             {/* Due Date */}
             <div>
               <label className="block text-sm font-medium text-white mb-2">Task Due Date*</label>
-              <input
-                type="date"
-                min={today}
-                max={maxDate ? new Date(maxDate).toISOString().split("T")[0] : ''}
-                value={task.dueDate ? task.dueDate.substring(0, 10) : ""}
-                onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
-
-                disabled={isCreating}
-                className="w-full px-4 py-3 rounded-xl bg-black/70 text-white focus:outline-none"
-              />
+              <div className="relative w-full full-width-datepicker">
+                <DatePicker
+                  selected={task.dueDate ? new Date(task.dueDate) : null}
+                  onChange={(date) => setTask({ ...task, dueDate: date?.toISOString().split("T")[0] })}
+                  className="w-full rounded-xl bg-black/70 px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
+                  placeholderText="Select due date"
+                  dateFormat="MMM dd, yyyy"
+                  isClearable
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  maxDate={new Date(maxDate || '')}
+                  minDate={new Date(today)}
+                  popperClassName="react-datepicker-dark"
+                  calendarClassName="react-datepicker-dark-calendar"
+                  dayClassName={(date) => "react-datepicker-dark-day"}
+                  weekDayClassName={() => "react-datepicker-dark-weekday"}
+                  monthClassName={() => "react-datepicker-dark-month"}
+                  yearClassName={() => "react-datepicker-dark-year"}
+                />
+              </div>
             </div>
 
             {/* Task Priority */}
