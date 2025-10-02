@@ -176,9 +176,8 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId }: TaskDet
     initiateSocket()
     const socket = getSocket()
     if (!socket) return
-    if (isTaskChat && currentTaskId) {
-      socket.emit("join_task_room", { taskId: currentTaskId })
-    }
+   setIsTaskChat(true)
+setCurrentTaskId(String(taskId))
 
     socket.on("connect", () => {
       console.log("Socket connected:", socket.id)
@@ -205,10 +204,10 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId }: TaskDet
       }
     }
 
-    socket.on("task_message", handleTaskMessage)
+    socket.on("taskmessage", handleTaskMessage)
 
     return () => {
-      socket.off("task_message", handleTaskMessage)
+      socket.off("taskmessage", handleTaskMessage)
       socket.emit("leave_task_room", { taskId: String(taskId) })
     }
   }, [currentUser, taskId])
@@ -242,12 +241,12 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId }: TaskDet
       userId: currentUser.id.toString(),
       username: currentUser.name,
       senderId: currentUser.id.toString(),
-      receiverId: String(taskId),
+ receiverId: task?.taskFor?.id?.toString() || "",
       timestamp: Date.now(),
     }
     setChatMessages((prev) => [...prev, msg])
     setChatInput("")
-    socket?.emit("task_message", { ...msg, taskId: String(taskId) })
+    socket?.emit("taskmessage", { ...msg, taskId: String(taskId) })
     try {
       await sendChatMessage(currentUser.id, taskId)
     } catch { }
