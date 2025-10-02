@@ -200,7 +200,7 @@ const AppHeader: React.FC = () => {
   return (
    <header
   className={`
-    relative top-6 
+    relative top-6
     mx-[1.875rem] h-[74px]
     shadow-md transition-all duration-500 ease-in-out
     bg-black/40 text-white
@@ -225,7 +225,8 @@ const AppHeader: React.FC = () => {
       </div>
 
       <nav className="hidden lg:flex flex-1 ml-6 mr-12">
-        <ul className="flex items-center justify-center gap-10 text-sm font-medium flex-wrap">
+       <ul className="flex items-center justify-center gap-8 text-sm font-medium flex-nowrap lg:flex-wrap">
+
           {navItems.map((item, index) => (
             <li key={item.name}>
               {item.path ? (
