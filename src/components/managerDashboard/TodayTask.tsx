@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useAuth } from "@/context/AuthContext"
 import { getManagerTasksToday, getEmployeeTasksToday } from "@/lib/TaskService"
 import TaskDetailsPanel from "./TaskDetailScreen"
+import { interFont, robotoFont } from "@/app/layout"
 
 const TodayTask = () => {
   const { user } = useAuth();
@@ -50,6 +51,7 @@ const TodayTask = () => {
       style={{
         maxWidth: '385px',
         minHeight: '661px',
+        maxHeight: '661px',
         borderRadius: '22px',
         border: '1px solid rgba(255, 255, 255, 0.3)',
         padding: '12px',
@@ -57,8 +59,16 @@ const TodayTask = () => {
         opacity: 1,
         background: 'rgba(0, 0, 0, 0.3)',
         boxSizing: 'border-box',
+        overflowY: 'auto',
+        scrollbarWidth: 'none', // Firefox
+        msOverflowStyle: 'none', // IE 10+
       }}
     >
+      <style>{`
+        .flex-col::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
       {/* Only show column header if data is loaded */}
       {!loading && (
         <div>

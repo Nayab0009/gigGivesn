@@ -3,7 +3,7 @@ import Providers from "@/components/common/Providers";
 import { Metadata } from "next";
 import ProtectedRoute from "@/components/protectedRoutes/ProtectedRoute";
 import Image from "next/image";
-import { Inter, Montserrat } from "next/font/google";
+import { Inter, Montserrat, Roboto } from "next/font/google";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -14,7 +14,10 @@ export const interFont = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600"], // choose weights you need
 });
-
+export const robotoFont = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"], // choose weights you need
+});
 const metadata: Metadata = {
   title: "GiGgives",
   description: "Project Management App",
