@@ -302,7 +302,7 @@ export default function ProjectDetailsPage() {
   ]
 
   return (
-    <div className="w-full relative top-[1.875rem] max-w-full mb-3.5">
+    <div className="w-full relative  max-w-full mb-3.5">
       <div className="mx-auto">
         {/* Top bar */}
         <div className="flex items-center justify-between">

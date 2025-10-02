@@ -184,63 +184,70 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
           {sprints.map((sprint) => (
             <div
               key={sprint.id}
-              className="rounded-2xl bg-black/40 backdrop-blur-md border border-white/30 shadow-lg p-6 hover:shadow-2xl transition cursor-pointer transform hover:scale-105 group"
+              className="rounded-2xl bg-black/40 backdrop-blur-md border flex flex-col w-full justify-between h-full border-white/30 shadow-lg p-6 hover:shadow-2xl transition cursor-pointer transform hover:scale-105 group"
             >
-              {/* Header */}
-              <div className="flex items-center justify-between mb-0">
 
-                <h2 className="text-lg font-bold text-white">{sprint.title}</h2>
+              <div className="flex flex-col w-full">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-0">
+                  <h2 className="text-lg font-bold text-white">{sprint.title || "-"}</h2>
+                </div>
 
+                {/* Description */}
+                <p className="text-sm text-gray-300 mb-5 line-clamp-2 ">
+                  {sprint.name || "No description provided"}
+
+                </p>
+
+                {/* Details */}
+                <div className="space-y-2 text-sm text-gray-300 mb-5">
+                  <div className="flex justify-between">
+                    <span className="font-medium ">Timeline</span>
+                    <span className="text-white">
+                      {sprint.startDate &&
+                        new Date(sprint.startDate).toLocaleDateString()}{" "}
+                      -{" "}
+                      {sprint.endDate &&
+                        new Date(sprint.endDate).toLocaleDateString()}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-medium ">Progress</span>
+                    <span className="text-white">
+                      {Math.round(sprint.progress || 0)}%
+                    </span>
+                  </div>
+                </div>
               </div>
 
-
-              {/* Description */}
-              <p className="text-sm text-gray-300 mb-5 line-clamp-2 ">
-                {sprint.name || "No description provided"}
-
-              </p>
-
-              {/* Details */}
-              <div className="space-y-2 text-sm text-gray-300 mb-5">
-                <div className="flex justify-between">
-                  <span className="font-medium ">Timeline</span>
-                  <span className="text-white">
-                    {sprint.startDate &&
-                      new Date(sprint.startDate).toLocaleDateString()}{" "}
-                    -{" "}
-                    {sprint.endDate &&
-                      new Date(sprint.endDate).toLocaleDateString()}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium ">Progress</span>
-                  <span className="text-white">
-                    {Math.round(sprint.progress || 0)}%
-                  </span>
-                </div>
-              </div>
 
               {/* Progress bar */}
-              <div className="w-full bg-gray-700/40 rounded-full h-2 mb-5">
-                <div
-                  className="h-2 rounded-full"
-                  style={{
-                    width: `${sprint.progress}%`,
-                    backgroundColor: colors.primary.hex,
-                  }}
-                ></div>
+              <div className="flex flex-col gap-5">
+
+                <div className="w-full bg-black/30 rounded-full h-2">
+                  <div
+                    className="h-2 rounded-full"
+                    style={{
+                      width: `${sprint.progress}%`,
+                      backgroundColor: colors.primary.hex,
+                    }}
+                  ></div>
+                </div>
+                {/* <div className="flex justifty-end w-full">
+                    <button className="flex items-center justify-center"></button>
+                </div> */}
+                {/* Footer (actions) */}
+                <div>
+                  <button
+                    onClick={() => handleSprintClick(sprint)}
+                    className="flex min-h-9 items-center justify-center w-full gap-2 py-3 rounded-full hover:opacity-80 transition text-xs font-medium bg-black/30 text-white "
+                    title="View all tasks in this sprint"
+                  >
+                    <span>View</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Footer (actions) */}
-              <div>
-                <button
-                  onClick={() => handleSprintClick(sprint)}
-                  className="flex min-h-9 items-center justify-center w-full gap-2 py-3 rounded-full hover:opacity-80 transition text-xs font-medium bg-black/30 text-white "
-                  title="View all tasks in this sprint"
-                >
-                  <span>View</span>
-                </button>
-              </div>
             </div>
           ))}
         </div>

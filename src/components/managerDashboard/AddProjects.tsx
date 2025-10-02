@@ -31,7 +31,7 @@ interface BackendProject {
   startDate: string
   endDate: string
   status?: string
-   logo?: string
+  logo?: string
 }
 
 // Interface for project team members
@@ -139,76 +139,76 @@ function EditStatusModal({
   if (!open || !project) return null
 
   return (
-<div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-  <div className="bg-black/20 rounded-2xl border border-white/20 shadow-2xl w-full max-w-md overflow-hidden hover:bg-black/40 transition-all duration-200">
-    {/* Header */}
-    <div className="p-6 text-white border-b border-white/10 bg-black/20 backdrop-blur-sm">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold mb-1 text-white">Update Project Status</h2>
-          <p className="text-gray-300 text-sm">{project.name}</p>
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-black/20 rounded-2xl border border-white/20 shadow-2xl w-full max-w-md overflow-hidden hover:bg-black/40 transition-all duration-200">
+        {/* Header */}
+        <div className="p-6 text-white border-b border-white/10 bg-black/20 backdrop-blur-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold mb-1 text-white">Update Project Status</h2>
+              <p className="text-gray-300 text-sm">{project.name}</p>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-full hover:bg-white/20 transition-colors"
+            >
+              <X className="w-5 h-5 text-white" />
+            </button>
+          </div>
         </div>
-        <button
-          onClick={onClose}
-          className="p-2 rounded-full hover:bg-white/20 transition-colors"
-        >
-          <X className="w-5 h-5 text-white" />
-        </button>
-      </div>
-    </div>
 
-    {/* Content */}
-    <div className="p-6 overflow-y-auto max-h-[calc(85vh-120px)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-black/20 backdrop-blur-sm">
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-200 mb-3">
-            Select New Status
-          </label>
-          <div className="space-y-2">
-            {Object.values(ProjectStatus).map((status) => (
-              <label
-                key={status}
-                className="flex items-center p-3 border border-white/20 rounded-lg hover:bg-black/40 cursor-pointer transition-all duration-200 bg-black/30 backdrop-blur-sm"
-              >
-                <input
-                  type="radio"
-                  name="status"
-                  value={status}
-                  checked={selectedStatus === status}
-                  onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="w-4 h-4 text-white border-white/20 focus:ring-white/30 bg-white/10"
-                />
-                <span className="ml-3 text-sm font-medium text-white capitalize">
-                  {status === ProjectStatus.INPROGRESS ? "In Progress" : status}
-                </span>
+        {/* Content */}
+        <div className="p-6 overflow-y-auto max-h-[calc(85vh-120px)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-black/20 backdrop-blur-sm">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-200 mb-3">
+                Select New Status
               </label>
-            ))}
+              <div className="space-y-2">
+                {Object.values(ProjectStatus).map((status) => (
+                  <label
+                    key={status}
+                    className="flex items-center p-3 border border-white/20 rounded-lg hover:bg-black/40 cursor-pointer transition-all duration-200 bg-black/30 backdrop-blur-sm"
+                  >
+                    <input
+                      type="radio"
+                      name="status"
+                      value={status}
+                      checked={selectedStatus === status}
+                      onChange={(e) => setSelectedStatus(e.target.value)}
+                      className="w-4 h-4 text-white border-white/20 focus:ring-white/30 bg-white/10"
+                    />
+                    <span className="ml-3 text-sm font-medium text-white capitalize">
+                      {status === ProjectStatus.INPROGRESS ? "In Progress" : status}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="border-t border-white/10 bg-black/30 backdrop-blur-sm px-6 py-4">
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 border border-white/20 rounded-lg text-white font-medium hover:bg-black/40 transition-all duration-200 bg-black/30 backdrop-blur-sm"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleUpdate}
+              disabled={isUpdating || selectedStatus === project.status}
+              className="px-4 py-2 text-white rounded-lg font-medium hover:bg-black/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bg-black/30 backdrop-blur-sm border border-white/20"
+            >
+              {isUpdating && <Loader2 className="w-4 h-4 animate-spin text-white" />}
+              Update Status
+            </button>
           </div>
         </div>
       </div>
     </div>
-
-    {/* Footer */}
-    <div className="border-t border-white/10 bg-black/30 backdrop-blur-sm px-6 py-4">
-      <div className="flex justify-end gap-3">
-        <button
-          onClick={onClose}
-          className="px-4 py-2 border border-white/20 rounded-lg text-white font-medium hover:bg-black/40 transition-all duration-200 bg-black/30 backdrop-blur-sm"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleUpdate}
-          disabled={isUpdating || selectedStatus === project.status}
-          className="px-4 py-2 text-white rounded-lg font-medium hover:bg-black/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bg-black/30 backdrop-blur-sm border border-white/20"
-        >
-          {isUpdating && <Loader2 className="w-4 h-4 animate-spin text-white" />}
-          Update Status
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
 
 
   )
@@ -270,7 +270,7 @@ function ViewTeamModal({
         </div>
 
         {/* Content */}
-    <div className="p-6 overflow-y-auto max-h-[calc(85vh-120px)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="p-6 overflow-y-auto max-h-[calc(85vh-120px)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
 
           {isLoading ? (
             <div className="text-center py-12">
@@ -303,33 +303,33 @@ function ViewTeamModal({
                     {project.teamMembers?.length || 0} member{(project.teamMembers?.length || 0) !== 1 ? "s" : ""}
                   </span>
                 </div>
-{project.teamMembers && project.teamMembers.length > 0 ? (
-  <div className="grid gap-3">
-    {project.teamMembers.map((member, index) => (
-      <div
-        key={member.id}
-       className="flex items-center space-x-4 p-4 bg-black/30 rounded-xl border border-white/20 hover:bg-black/40 hover:shadow-md transition-all duration-200"
-      >
-        <div className="relative flex-shrink-0">
-          <img
-            src={member.avatar || generateAvatar(member.name, index)}
-            alt={member.name}
-            className="w-12 h-12 rounded-full border-2 border-white/20 shadow-sm"
-          />
-          {member.status && (
-            <div className="absolute -bottom-0.5 -right-0.5 p-0.5 bg-black/50 backdrop-blur-sm rounded-full shadow-sm">
-              {getUserStatusIcon(member.status)}
-            </div>
-          )}
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="font-semibold text-white truncate">{member.name}</div>
-          <div className="text-sm text-gray-300 truncate">{member.role}</div>
-          <div className="text-xs text-gray-400 truncate">{member.email}</div>
-        </div>
-      </div>
-    ))}
-  </div>
+                {project.teamMembers && project.teamMembers.length > 0 ? (
+                  <div className="grid gap-3">
+                    {project.teamMembers.map((member, index) => (
+                      <div
+                        key={member.id}
+                        className="flex items-center space-x-4 p-4 bg-black/30 rounded-xl border border-white/20 hover:bg-black/40 hover:shadow-md transition-all duration-200"
+                      >
+                        <div className="relative flex-shrink-0">
+                          <img
+                            src={member.avatar || generateAvatar(member.name, index)}
+                            alt={member.name}
+                            className="w-12 h-12 rounded-full border-2 border-white/20 shadow-sm"
+                          />
+                          {member.status && (
+                            <div className="absolute -bottom-0.5 -right-0.5 p-0.5 bg-black/50 backdrop-blur-sm rounded-full shadow-sm">
+                              {getUserStatusIcon(member.status)}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-semibold text-white truncate">{member.name}</div>
+                          <div className="text-sm text-gray-300 truncate">{member.role}</div>
+                          <div className="text-xs text-gray-400 truncate">{member.email}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
                   <div className="text-center py-12">
                     <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
@@ -396,7 +396,7 @@ export default function ProjectDashboard() {
 
     try {
       console.log("Fetching projects for manager:", user.id)
-  const projectsData = await getProjectsForManagers(String(user.id))
+      const projectsData = await getProjectsForManagers(String(user.id))
       setProjects(Array.isArray(projectsData) ? projectsData : [])
     } catch (error) {
       console.error("Error fetching manager projects:", error)
@@ -483,18 +483,18 @@ export default function ProjectDashboard() {
       window.location.href = "/dashboard/manager/projectkanbanview"
     }
   }
-const truncateByWords = (text: string, maxLength: number = 100) => {
-  if (!text || text.length <= maxLength) return text;
+  const truncateByWords = (text: string, maxLength: number = 100) => {
+    if (!text || text.length <= maxLength) return text;
 
-  const truncated = text.substring(0, maxLength);
-  const lastSpaceIndex = truncated.lastIndexOf(' ');
+    const truncated = text.substring(0, maxLength);
+    const lastSpaceIndex = truncated.lastIndexOf(' ');
 
-  if (lastSpaceIndex > 0) {
-    return truncated.substring(0, lastSpaceIndex) + '...';
-  }
+    if (lastSpaceIndex > 0) {
+      return truncated.substring(0, lastSpaceIndex) + '...';
+    }
 
-  return truncated + '...';
-};
+    return truncated + '...';
+  };
   // --- Assign Team Logic ---
   const assignTeam = (projectId: string, team: Team) => {
     setAssignTeamProjectId(null)
@@ -537,13 +537,13 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
 
   // --- RENDER ---
   return (
-    <div className="w-full relative top-[30px] max-w-full">
+    <div className="w-full relative  max-w-full">
 
       <div className="max-w-full">
         {/* Header */}
         <div className="mb-8 ml-2">
           <h1
-  className="
+            className="
     font-roboto
     font-semibold
     text-[20px]
@@ -553,12 +553,12 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
     text-white
     mb-2
   "
->
-  Project Dashboard
-</h1>
+          >
+            Project Dashboard
+          </h1>
 
           <p
-  className="
+            className="
     font-roboto
     font-normal
     text-[14px]
@@ -567,9 +567,9 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
     align-middle
     text-white
   "
->
-  Welcome back, {user.name || user.email}! Manage and track your assigned projects
-</p>
+          >
+            Welcome back, {user.name || user.email}! Manage and track your assigned projects
+          </p>
         </div>
 
         {/* Error Message */}
@@ -604,13 +604,13 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
             {/* Search Bar and View Toggle Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 items-center flex-1 w-full">
               {/* Search Bar */}
-  <div className="relative flex-1 w-full h-[44px]">
-  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 z-10" />
-  <input
-    type="text"
-    placeholder="Search projects by name, ID, or description..."
-    style={{ backgroundColor: colors.black.transparent40 }}
-    className="
+              <div className="relative flex-1 w-full h-[44px]">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 z-10" />
+                <input
+                  type="text"
+                  placeholder="Search projects by name, ID, or description..."
+                  style={{ backgroundColor: colors.black.transparent40 }}
+                  className="
       w-full h-[44px]
       pl-[48px] pr-[16px] py-[12px]
       rounded-[16px]
@@ -628,18 +628,18 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
       placeholder:align-middle
       placeholder:text-gray-400
     "
-    value={searchTerm}
-    onChange={(e) => setSearchTerm(e.target.value)}
-  />
-</div>
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
 
             </div>
 
             {/* Refresh Button */}
-        <button
-  onClick={refreshData}
-  disabled={isLoading}
-  className="
+            <button
+              onClick={refreshData}
+              disabled={isLoading}
+              className="
     group inline-flex items-center justify-center gap-2
     w-[122.52px] h-[46px]
     px-[25px] py-[13px]
@@ -652,14 +652,13 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
     transform hover:scale-105 hover:-translate-y-0.5
     disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
   "
->
-  <RefreshCw
-    className={`w-4 h-4 transition-transform duration-300 ${
-      isLoading ? "animate-spin" : "group-hover:rotate-180"
-    }`}
-  />
-  Refresh
-</button>
+            >
+              <RefreshCw
+                className={`w-4 h-4 transition-transform duration-300 ${isLoading ? "animate-spin" : "group-hover:rotate-180"
+                  }`}
+              />
+              Refresh
+            </button>
 
 
           </div>
@@ -685,8 +684,8 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
           ) : (
             <div className="overflow-x-auto ">
               <table className="min-w-full divide-y divide-emerald-200 ">
-<thead
-  className="
+                <thead
+                  className="
     bg-black/50
     rounded-tl-[20px] rounded-tr-[20px]
     shadow-lg
@@ -694,38 +693,38 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
     overflow-hidden
     p-[1px]
   "
->
-  <tr className="h-[73px]">
-    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
-      Name
-    </th>
-    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
-      Description
-    </th>
-    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
-      Start Date
-    </th>
-    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
-      End Date
-    </th>
-    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] min-w-[120px] uppercase">
-      Status
-    </th>
-    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] min-w-[200px] uppercase">
-      Actions
-    </th>
-    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
-      View Team
-    </th>
-    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
-      Settings
-    </th>
-  </tr>
-</thead>
+                >
+                  <tr className="h-[73px]">
+                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
+                      Name
+                    </th>
+                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
+                      Description
+                    </th>
+                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
+                      Start Date
+                    </th>
+                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
+                      End Date
+                    </th>
+                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] min-w-[120px] uppercase">
+                      Status
+                    </th>
+                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] min-w-[200px] uppercase">
+                      Actions
+                    </th>
+                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
+                      View Team
+                    </th>
+                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
+                      Settings
+                    </th>
+                  </tr>
+                </thead>
 
 
-<tbody
-  className="
+                <tbody
+                  className="
     bg-black/30
     rounded-b-2xl
     shadow-lg
@@ -733,7 +732,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
     divide-y divide-white/10
     backdrop-blur-xl
   "
->
+                >
                   {filteredProjects.length === 0 ? (
                     <tr>
                       <td colSpan={8} className="px-6 py-12 text-center">
@@ -755,72 +754,72 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                   ) : (
                     paginatedProjects.map((project) => (
                       <tr key={project.id.toString()} className="transition-all duration-300  cursor-pointer "
-                           onClick={(e) => {
-      // Prevent navigation if clicking on buttons or interactive elements
-      const target = e.target as HTMLElement;
-      const isButton = target.closest('button') || target.closest('a');
+                        onClick={(e) => {
+                          // Prevent navigation if clicking on buttons or interactive elements
+                          const target = e.target as HTMLElement;
+                          const isButton = target.closest('button') || target.closest('a');
 
-      if (!isButton) {
-        window.location.href = `/dashboard/manager/projects/${project.id}`;
-      }
-    }}>
+                          if (!isButton) {
+                            window.location.href = `/dashboard/manager/projects/${project.id}`;
+                          }
+                        }}>
                         {/* Project Name */}
-                    <td className="px-6 py-6">
-      <div className="flex items-center gap-3">
-        {/* Project Logo */}
-        {project.logo ? (
-          <img
-            src={project.logo}
-            alt={`${project.name} logo`}
-            className="w-12 h-12 rounded-lg object-cover"
+                        <td className="px-6 py-6">
+                          <div className="flex items-center gap-3">
+                            {/* Project Logo */}
+                            {project.logo ? (
+                              <img
+                                src={project.logo}
+                                alt={`${project.name} logo`}
+                                className="w-12 h-12 rounded-lg object-cover"
 
-            onError={(e) => {
+                                onError={(e) => {
 
-              e.currentTarget.src = `https://api.dicebear.com/7.x/initials/svg?seed=${project.name}&backgroundColor=3b82f6,8b5cf6,10b981,f59e0b,ef4444`
-            }}
-          />
-        ) : (
-          // Default avatar if no logo
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center border border-white/20 shadow-sm">
-            <span className="text-white font-semibold text-sm">
-              {project.name.charAt(0).toUpperCase()}
-            </span>
-          </div>
-        )}
+                                  e.currentTarget.src = `https://api.dicebear.com/7.x/initials/svg?seed=${project.name}&backgroundColor=3b82f6,8b5cf6,10b981,f59e0b,ef4444`
+                                }}
+                              />
+                            ) : (
+                              // Default avatar if no logo
+                              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center border border-white/20 shadow-sm">
+                                <span className="text-white font-semibold text-sm">
+                                  {project.name.charAt(0).toUpperCase()}
+                                </span>
+                              </div>
+                            )}
 
-        {/* Project Name */}
-        <span className="text-lg font-semibold text-white leading-tight hover:underline decoration-white/60">
-          {project.name}
-        </span>
-      </div>
-    </td>
+                            {/* Project Name */}
+                            <span className="text-lg font-semibold text-white leading-tight hover:underline decoration-white/60">
+                              {project.name}
+                            </span>
+                          </div>
+                        </td>
 
                         {/* Description */}
-                       <td className="px-6 py-6">
-  <p className="font-roboto font-normal text-[14px] leading-[20px] text-[rgba(164,167,174,1)] max-w-xs">
-    {truncateByWords(project.description, 30)}
-  </p>
-</td>
+                        <td className="px-6 py-6">
+                          <p className="font-roboto font-normal text-[14px] leading-[20px] text-[rgba(164,167,174,1)] max-w-xs">
+                            {truncateByWords(project.description, 30)}
+                          </p>
+                        </td>
 
                         {/* Start Date */}
-                       <td className="px-6 py-6">
-  <span className="font-roboto font-normal text-[14px] leading-[20px] text-[rgba(164,167,174,1)]">
-    {new Date(project.startDate).toLocaleDateString()}
-  </span>
-</td>
+                        <td className="px-6 py-6">
+                          <span className="font-roboto font-normal text-[14px] leading-[20px] text-[rgba(164,167,174,1)]">
+                            {new Date(project.startDate).toLocaleDateString()}
+                          </span>
+                        </td>
 
                         {/* End Date */}
-                    <td className="px-6 py-6">
-  <span className="font-roboto font-normal text-[14px] leading-[20px] text-[rgba(164,167,174,1)]">
-    {new Date(project.endDate).toLocaleDateString()}
-  </span>
-</td>
+                        <td className="px-6 py-6">
+                          <span className="font-roboto font-normal text-[14px] leading-[20px] text-[rgba(164,167,174,1)]">
+                            {new Date(project.endDate).toLocaleDateString()}
+                          </span>
+                        </td>
 
                         {/* Status */}
-<td className="px-6 py-4 align-middle">
-  {project.status ? (
-    <span
-      className={`inline-flex items-center justify-center
+                        <td className="px-6 py-4 align-middle">
+                          {project.status ? (
+                            <span
+                              className={`inline-flex items-center justify-center
         min-w-[88px] h-[26px]
         px-[9px] py-[5px]
         rounded-full border border-white/20
@@ -829,17 +828,17 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
         font-montserrat font-semibold
         whitespace-nowrap align-middle
         text-[#15803D]`}
-    >
-      {project.status === "inprogress"
-        ? "In Progress"
-        : project.status
-            .replace(/([A-Z])/g, " $1")
-            .replace(/^./, (str) => str.toUpperCase())
-            .trim()}
-    </span>
-  ) : (
-    <span
-      className={`inline-flex items-center justify-center
+                            >
+                              {project.status === "inprogress"
+                                ? "In Progress"
+                                : project.status
+                                  .replace(/([A-Z])/g, " $1")
+                                  .replace(/^./, (str) => str.toUpperCase())
+                                  .trim()}
+                            </span>
+                          ) : (
+                            <span
+                              className={`inline-flex items-center justify-center
         min-w-[88px] h-[26px]
         px-[9px] py-[5px]
         rounded-full border border-white/20
@@ -848,79 +847,79 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
         font-montserrat font-semibold
         whitespace-nowrap align-middle
         text-white`}
-    >
-      {project.isActive ? "Active" : "Inactive"}
-    </span>
-  )}
-</td>
+                            >
+                              {project.isActive ? "Active" : "Inactive"}
+                            </span>
+                          )}
+                        </td>
 
 
                         {/* Actions - Assign Team */}
                         <td className="px-6 py-6">
                           <div className="flex flex-row gap-2">
-                 <button
-  className="px-4 py-2 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105 bg-[#0CA9F6] border border-[#57B5E7E5]"
-  onClick={() => setAssignTeamProjectId(String(project.id))}
->
-  Assign Team
-</button>
+                            <button
+                              className="px-4 py-2 text-white rounded-full text-sm font-medium transition-all duration-300 ease-in-out shadow-md hover:shadow-lg transform hover:scale-105 bg-[#0CA9F6] border border-[#57B5E7E5]"
+                              onClick={() => setAssignTeamProjectId(String(project.id))}
+                            >
+                              Assign Team
+                            </button>
                           </div>
                         </td>
 
                         {/* Actions - View Team */}
-  <td className="px-6 py-6">
-  <div className="flex items-center gap-2">
-    <button
-      className="group inline-flex items-center justify-center text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110"
-      style={{
-        width: "32px",
-        height: "32px",
-        borderRadius: "16px",
-        border: "1px solid rgba(255, 255, 255, 0.4)",
-        padding: "1px",
-      }}
-      onClick={() => setViewTeamProjectId(project.id)}
-    >
-      <Users style={{ width: "14.58px", height: "14px" }} />
-    </button>
-  </div>
-</td>
+                        <td className="px-6 py-6">
+                          <div className="flex items-center gap-2">
+                            <button
+                              className="group inline-flex items-center justify-center text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110"
+                              style={{
+                                width: "32px",
+                                height: "32px",
+                                borderRadius: "16px",
+                                border: "1px solid rgba(255, 255, 255, 0.4)",
+                                padding: "1px",
+                              }}
+                              onClick={() => setViewTeamProjectId(project.id)}
+                            >
+                              <Users style={{ width: "14.58px", height: "14px" }} />
+                            </button>
+                          </div>
+                        </td>
 
 
 
                         {/* Actions - Edit / Delete */}
-                       <td className="px-6 py-6">
-  <div className="flex items-center gap-2">
-    {/* Edit */}
-    <button
-  className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 border"
-  style={{ borderColor: "rgba(255, 255, 255, 0.4)", borderWidth: "1px" }}
-  onClick={() => setEditStatusProjectId(project.id)}
->
-  <img
-    src="/images/I-169.svg"
-    alt="Edit"
-    style={{ width: "17.58px", height: "17px" }}
-  />
-</button>
+                        <td className="px-6 py-6">
+                          <div className="flex items-center gap-2">
+                            {/* Edit */}
+                            <button
+                              className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 border"
+                              style={{ borderColor: "rgba(255, 255, 255, 0.4)", borderWidth: "1px" }}
+                              onClick={() => setEditStatusProjectId(project.id)}
+                            >
+                              <img
+                                src="/images/I-169.svg"
+                                alt="Edit"
+                                style={{ width: "17.58px", height: "17px" }}
+                              />
+                            </button>
 
 
-    {/*View */}
-<button
-  className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 border"
-  style={{ borderColor: "rgba(255, 255, 255, 0.4)", borderWidth: "1px" }}
-  onClick={() => window.location.href = `/dashboard/manager/projects/${project.id}`}
-  title="View project details"
->
-  <img
-    src="/images/Eye.svg"
-    alt="View Details"
-    style={{ width: "17.58px", height: "17px" }}
-  />
-</button>
+                            {/*View */}
+                            <button
+                              className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 border"
+                              style={{ borderColor: "rgba(255, 255, 255, 0.4)", borderWidth: "1px" }}
+                              onClick={() => window.location.href = `/dashboard/manager/projects/${project.id}`}
+                              title="View project details"
+                            >
+                              <img
+                                src="/images/Eye.svg"
+                                alt="View Details"
+                                style={{ width: "17.58px", height: "17px" }}
+                              />
+                            </button>
 
-  </div>
-</td>
+                          </div>
+                        </td>
 
                       </tr>
                     ))
@@ -951,17 +950,17 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
           project={
             currentProject
               ? {
-                  id: currentProject.id.toString(),
-                  title: currentProject.name,
-                  description: currentProject.description,
-                  startDate: currentProject.startDate,
-                  endDate: currentProject.endDate,
-                  status: currentProject.isActive ? "active" : "on-hold",
-                  budget: 0,
-                  completion: 0,
-                  tasks: [],
-                  priority: "medium",
-                }
+                id: currentProject.id.toString(),
+                title: currentProject.name,
+                description: currentProject.description,
+                startDate: currentProject.startDate,
+                endDate: currentProject.endDate,
+                status: currentProject.isActive ? "active" : "on-hold",
+                budget: 0,
+                completion: 0,
+                tasks: [],
+                priority: "medium",
+              }
               : null
           }
           teams={[]}

@@ -90,7 +90,7 @@ const managerNavItems: NavItem[] = [
     name: "Discussions",
     path: "/dashboard/teammember/discussions",
   },
-   {
+  {
     name: "Notes",
     path: "/dashboard/teammember/notes",
   },
@@ -198,9 +198,11 @@ const AppHeader: React.FC = () => {
   const isActive = useCallback((path: string) => path === pathname, [pathname])
 
   return (
-   <header
-  className={`
-    relative top-6
+    <header
+      className={`
+    relative top-[1.875rem] 
+
+
     mx-[1.875rem] h-[74px]
     shadow-md transition-all duration-500 ease-in-out
     bg-black/40 text-white
@@ -208,11 +210,11 @@ const AppHeader: React.FC = () => {
     rounded-[16px] border border-white/30
     mb-2
 `}
-  style={{
-    fontFamily:
-      "'Inter', 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
-  }}
->
+      style={{
+        fontFamily:
+          "'Inter', 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+      }}
+    >
       {/* Left - Logo */}
       <div className="flex items-center gap-2 flex-shrink-0">
         <Image
@@ -232,11 +234,10 @@ const AppHeader: React.FC = () => {
               {item.path ? (
                 <Link
                   href={item.path}
-                  className={`transition-all duration-200 ease-in-out hover:scale-105 whitespace-nowrap ${
-                    isActive(item.path)
-                      ? "bg-[#0CA9F6] text-white px-4 py-1.5 rounded-full shadow-lg"
-                      : "hover:text-[#0CA9F6] cursor-pointer"
-                  }`}
+                  className={`transition-all duration-200 ease-in-out hover:scale-105 whitespace-nowrap ${isActive(item.path)
+                    ? "bg-[#0CA9F6] text-white px-4 py-1.5 rounded-full shadow-lg"
+                    : "hover:text-[#0CA9F6] cursor-pointer"
+                    }`}
 
                 >
                   {item.name}
@@ -268,9 +269,8 @@ const AppHeader: React.FC = () => {
                   {item.path ? (
                     <Link
                       href={item.path}
-                      className={`block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors duration-200 ${
-                        isActive(item.path) ? "bg-blue-50 text-blue-600 border-r-2 border-blue-500" : ""
-                      }`}
+                      className={`block px-4 py-2 text-gray-800 hover:bg-gray-100 transition-colors duration-200 ${isActive(item.path) ? "bg-blue-50 text-blue-600 border-r-2 border-blue-500" : ""
+                        }`}
                     >
                       {item.name}
                     </Link>
@@ -287,45 +287,43 @@ const AppHeader: React.FC = () => {
       </nav>
 
       {/* Right - Search, Notifications, User */}
-     <div
-  className={`flex items-center flex-shrink-0 transition-all duration-500 ease-in-out ${
-    hasMoreSpace ? "gap-4 md:gap-5" : "gap-2 md:gap-3"
-  }`}
->
-  {/* <button className="hover:scale-110 transition-transform duration-200 p-2 hover:bg-white/10 rounded-lg">
+      <div
+        className={`flex items-center flex-shrink-0 transition-all duration-500 ease-in-out ${hasMoreSpace ? "gap-4 md:gap-5" : "gap-2 md:gap-3"
+          }`}
+      >
+        {/* <button className="hover:scale-110 transition-transform duration-200 p-2 hover:bg-white/10 rounded-lg">
     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
     </svg>
   </button> */}
 
-  {/* Rectangle 105 instead of notification icon */}
-  {/* Notification Dropdown with image trigger */}
-  <NotificationDropdown
-    trigger={
-      <Image
-        src="/images/notification.png"
-        alt="Notifications"
-        width={40}
-        height={40}
-        className="object-contain cursor-pointer"
-      />
-    }
-  />
+        {/* Rectangle 105 instead of notification icon */}
+        {/* Notification Dropdown with image trigger */}
+        <NotificationDropdown
+          trigger={
+            <Image
+              src="/images/notification.png"
+              alt="Notifications"
+              width={40}
+              height={40}
+              className="object-contain cursor-pointer"
+            />
+          }
+        />
 
-  {/* User Dropdown with white username */}
-  <div
-  className={`flex items-center gap-2 transition-all duration-500 ease-in-out ${
-    hasMoreSpace ? "scale-110" : "scale-100"
-  }`}
->
+        {/* User Dropdown with white username */}
+        <div
+          className={`flex items-center gap-2 transition-all duration-500 ease-in-out ${hasMoreSpace ? "scale-110" : "scale-100"
+            }`}
+        >
 
 
-  {/* User Dropdown forced to white */}
-  <div className="text-white">
-    <UserDropdown />
-  </div>
-        </div>
+          {/* User Dropdown forced to white */}
+          <div className="text-white">
+            <UserDropdown />
           </div>
+        </div>
+      </div>
     </header>
   )
 }

@@ -24,7 +24,7 @@ const TasksTab = ({ project, tasks, taskCounts, taskView, setTaskView }: TasksTa
   const router = useRouter()
 
   return (
-    <div className="space-y-6 ">
+    <div className="space-y-6">
       {/* View toggle buttons (moved from main component) */}
       <div className="flex justify-end">
         <div
@@ -33,21 +33,19 @@ const TasksTab = ({ project, tasks, taskCounts, taskView, setTaskView }: TasksTa
         >
           <button
             onClick={() => setTaskView("table")}
-            className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
-              taskView === "table"
-                ? "bg-white/10 text-white border border-white/20"
-                : "text-white/90 hover:text-white hover:bg-white/10 border border-transparent"
-            }`}
+            className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${taskView === "table"
+              ? "bg-white/10 text-white border border-white/20"
+              : "text-white/90 hover:text-white hover:bg-white/10 border border-transparent"
+              }`}
           >
             <Table className="w-4 h-4" /> Table View
           </button>
           <button
             onClick={() => setTaskView("kanban")}
-            className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${
-              taskView === "kanban"
-                ? "bg-white/10 text-white border border-white/20"
-                : "text-white/90 hover:text-white hover:bg-white/10 border border-transparent"
-            }`}
+            className={`flex items-center gap-2 px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${taskView === "kanban"
+              ? "bg-white/10 text-white border border-white/20"
+              : "text-white/90 hover:text-white hover:bg-white/10 border border-transparent"
+              }`}
           >
             <LayoutGrid className="w-4 h-4" /> Kanban Board
           </button>
@@ -82,8 +80,8 @@ const TasksTab = ({ project, tasks, taskCounts, taskView, setTaskView }: TasksTa
                   {tasks
                     .filter((t) => t.status?.toLowerCase() === "inprogress")
                     .map((t) => (
-                      <tr 
-                        key={t.id} 
+                      <tr
+                        key={t.id}
                         className="text-white text-sm border-b border-white/10 last:border-b-0 cursor-pointer hover:bg-white/5"
                         onClick={() => router.push(`/dashboard/manager/tasks/${t.id}`)}
                       >
@@ -109,13 +107,12 @@ const TasksTab = ({ project, tasks, taskCounts, taskView, setTaskView }: TasksTa
                         <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
                           <span className="inline-flex items-center gap-2">
                             <ChevronDown
-                              className={`w-4 h-4 ${
-                                t.priority === "high"
-                                  ? "text-red-400"
-                                  : t.priority === "medium"
+                              className={`w-4 h-4 ${t.priority === "high"
+                                ? "text-red-400"
+                                : t.priority === "medium"
                                   ? "text-yellow-300"
                                   : "text-emerald-400"
-                              }`}
+                                }`}
                             />
                             <span className="capitalize">{t.priority}</span>
                           </span>
@@ -175,8 +172,8 @@ const TasksTab = ({ project, tasks, taskCounts, taskView, setTaskView }: TasksTa
                   {tasks
                     .filter((t) => t.status?.toLowerCase() === "completed")
                     .map((t) => (
-                      <tr 
-                        key={t.id} 
+                      <tr
+                        key={t.id}
                         className="text-white text-sm border-b border-white/10 last:border-b-0 cursor-pointer hover:bg-white/5"
                         onClick={() => router.push(`/dashboard/manager/tasks/${t.id}`)}
                       >
@@ -202,13 +199,12 @@ const TasksTab = ({ project, tasks, taskCounts, taskView, setTaskView }: TasksTa
                         <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
                           <span className="inline-flex items-center gap-2">
                             <ChevronDown
-                              className={`w-4 h-4 ${
-                                t.priority === "high"
-                                  ? "text-red-400"
-                                  : t.priority === "medium"
+                              className={`w-4 h-4 ${t.priority === "high"
+                                ? "text-red-400"
+                                : t.priority === "medium"
                                   ? "text-yellow-300"
                                   : "text-emerald-400"
-                              }`}
+                                }`}
                             />
                             <span className="capitalize">{t.priority}</span>
                           </span>
