@@ -541,9 +541,11 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task: init
               letterSpacing: 0,
               verticalAlign: 'middle',
               color: '#A4A7AE',
-              // display: 'flex',
-              // flexDirection: 'column',
-              // gap: 22,
+              maxHeight: 120,
+              overflowY: 'auto',
+              scrollbarWidth: 'none', 
+              msOverflowStyle: 'none',
+           
             }}
               >Description</span>
             </div>
@@ -557,14 +559,17 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task: init
               letterSpacing: 0,
               verticalAlign: 'middle',
               color: '#A4A7AE',
-              // display: 'flex',
-              // flexDirection: 'column',
-              // gap: 22,
+           
             }}
             >
+              <style>{`
+              .text-sm::-webkit-scrollbar {
+                display: none;
+              }
+            `}</style>
               {displayTask.description || "No description available"}
             </div>
-            {/* <div className="mt-8 h-px bg-white/30 w-full" /> */}
+           
           </div>
         </div>
 
