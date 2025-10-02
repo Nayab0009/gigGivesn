@@ -176,7 +176,13 @@ const fetchTaskMessages = async () => {
       message: m.messageBody || m.message,
       senderId: m.sendBy?.id?.toString(),
       receiverId: m.receivedBy?.id?.toString(),
-      senderName: m.sendBy?.name,
+   senderName:
+  m.sendBy?.name ||
+  m.senderName ||
+  (m.sendBy?.id?.toString() === currentUser?.id.toString()
+    ? currentUser?.name
+    : task?.taskFor?.name) ||
+  "Unknown",
       receiverName: m.receivedBy?.name,
       senderAvatar: m.sendBy?.avatar || null,
       timestamp: new Date(m.createdAt).getTime(),
@@ -213,8 +219,18 @@ const handleTaskMessage = (data: any) => {
     message: data.message,
     senderId: data.sendBy?.id?.toString() || data.senderId?.toString(),
     receiverId: data.receivedBy?.id?.toString() || data.receiverId?.toString(),
-    senderName: data.sendBy?.name || data.senderName,
-    receiverName: data.receivedBy?.name,
+    senderName:
+      data.sendBy?.name ||
+      data.senderName ||
+      (data.senderId?.toString() === currentUser?.id.toString()
+        ? currentUser?.name
+        : task?.taskFor?.name) || "Unknown",
+    receiverName:
+      data.receivedBy?.name ||
+      data.receiverName ||
+      (data.receiverId?.toString() === currentUser?.id.toString()
+        ? currentUser?.name
+        : task?.taskFor?.name) || "Unknown",
     senderAvatar: data.sendBy?.avatar || null,
     timestamp: data.timestamp ? new Date(data.timestamp).getTime() : Date.now(),
   }
@@ -257,14 +273,15 @@ const handleTaskMessage = (data: any) => {
   const socket = getSocket()
 
   // Local UI message (with extra fields)
-  const localMsg: ChatMessage = {
-    message: chatInput,
-    userId: currentUser.id.toString(),
-    username: currentUser.name,
-    senderId: currentUser.id.toString(),
-    receiverId: task?.taskFor?.id?.toString() || "",
-    timestamp: Date.now(),
-  }
+const localMsg: ChatMessage = {
+  id: Date.now().toString(),
+  message: chatInput,
+  senderId: currentUser.id.toString(),
+  senderName: currentUser.name,
+  receiverId: task?.taskFor?.id?.toString() || "",
+  receiverName: task?.taskFor?.name || "", // optional
+  timestamp: Date.now(),
+}
 
   // Update UI immediately
   setChatMessages((prev) => [...prev, localMsg])
@@ -560,7 +577,7 @@ const handleTaskMessage = (data: any) => {
                 chatMessages.map((msg, idx) => (
                   <div
                     key={`chat-${idx}`}
-                    className={`flex items-center text-[12px] ${msg.userId === currentUser?.id.toString()
+                    className={`flex items-center text-[12px] ${msg.senderId === currentUser?.id.toString()
                       ? "text-emerald-300"
                       : "text-white/70"
                       }`}
@@ -568,7 +585,10 @@ const handleTaskMessage = (data: any) => {
                      <span className="w-5 h-5 rounded-full bg-white/15 border border-white/20 flex items-center justify-center text-[10px] uppercase text-white/80 mr-2">
         {(msg.senderName || "U").split(" ").map((n) => n[0]).slice(0, 2).join("")}
       </span>
-                      <span className="pr-2 font-medium">{msg.senderName ?? "User"}:</span>
+ <span className="pr-2 font-medium">
+  {msg.senderId === currentUser?.id.toString() ? "You" : msg.senderName}
+  :
+</span>
     <span className="pr-4">{msg.message}</span>
 
                     <span className="ml-auto text-white/40 tabular-nums">
