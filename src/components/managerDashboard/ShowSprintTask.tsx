@@ -848,6 +848,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                 getUserStatusIcon={getUserStatusIcon}
                 projectId={projectId}
                 sprintId={selectedSprintId}
+                maxDate={sprint?.endDate || ''}
               />
             )}
           </>
