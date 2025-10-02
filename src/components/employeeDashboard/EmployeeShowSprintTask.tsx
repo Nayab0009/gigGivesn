@@ -326,15 +326,15 @@ const EmployeeShowSprintTask: React.FC = () => {
                                   In Progress
                                 </span>
                               </td>
-                             <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
-  <span className="inline-flex items-center gap-2">
-    <span className="w-2 h-2 rounded-full bg-sky-400"></span>
-    <span>{task.ticketNumber || "—"}</span>
-  </span>
-</td>
-{/* add due date */}
-                            <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
-                                 {task.taskDate ? new Date(task.taskDate).toLocaleDateString() : "—"}
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                <span className="inline-flex items-center gap-2">
+                                  <span className="w-2 h-2 rounded-full bg-sky-400"></span>
+                                  <span>{task.ticketNumber || "—"}</span>
+                                </span>
+                              </td>
+                              {/* add due date */}
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                {task.taskDate ? new Date(task.taskDate).toLocaleDateString() : "—"}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
                                 <span className="inline-flex items-center gap-2">
@@ -435,14 +435,14 @@ const EmployeeShowSprintTask: React.FC = () => {
                                   Completed
                                 </span>
                               </td>
-                                                       <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
-  <span className="inline-flex items-center gap-2">
-    <span className="w-2 h-2 rounded-full bg-sky-400"></span>
-    <span>{task.ticketNumber || "—"}</span>
-  </span>
-</td>
                               <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
-                                 {task.taskDate ? new Date(task.taskDate).toLocaleDateString() : "—"}
+                                <span className="inline-flex items-center gap-2">
+                                  <span className="w-2 h-2 rounded-full bg-sky-400"></span>
+                                  <span>{task.ticketNumber || "—"}</span>
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
+                                {task.taskDate ? new Date(task.taskDate).toLocaleDateString() : "—"}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
                                 <span className="inline-flex items-center gap-2">
@@ -560,6 +560,7 @@ const EmployeeShowSprintTask: React.FC = () => {
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl">
               <TaskDetailsPanel
+                onDelete={() => refreshData()}
                 taskId={selectedTaskId}
                 userRole="employee"
                 onClose={() => {

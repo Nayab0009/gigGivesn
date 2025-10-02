@@ -794,6 +794,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
             <div className="w-full max-w-6xl max-h-[90vh]  rounded-2xl shadow-2xl">
               <TaskDetailsPanel
                 taskId={selectedTaskId}
+                onDelete={() => refreshData()}
                 projectId={projectId || ""}
                 onClose={() => {
                   setIsTaskDetailOpen(false);

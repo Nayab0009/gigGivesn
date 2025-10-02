@@ -17,33 +17,34 @@ const TodayTask = () => {
 
   const [loading, setLoading] = useState(true)
   const [openedTaskId, setOpenedTaskId] = useState<number | null>(null)
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        let res;
-        if (user?.role === "employee") {
-          res = await getEmployeeTasksToday();
-        } else {
-          res = await getManagerTasksToday();
-        }
-        if (res && Array.isArray(res)) {
-          const grouped = { high: [] as any[], medium: [] as any[], low: [] as any[] }
-          res.forEach((task: any) => {
-            const priority = task.priority?.toLowerCase()
-            if (priority === "high") grouped.high.push(task)
-            else if (priority === "medium") grouped.medium.push(task)
-            else if (priority === "low") grouped.low.push(task)
-          })
-          setTasks(grouped)
-        }
-      } catch (err) {
-        console.error("Error fetching tasks:", err)
-      } finally {
-        setLoading(false)
+  const fetchTasks = async () => {
+    try {
+      let res;
+      if (user?.role === "employee") {
+        res = await getEmployeeTasksToday();
+      } else {
+        res = await getManagerTasksToday();
       }
+      if (res && Array.isArray(res)) {
+        const grouped = { high: [] as any[], medium: [] as any[], low: [] as any[] }
+        res.forEach((task: any) => {
+          const priority = task.priority?.toLowerCase()
+          if (priority === "high") grouped.high.push(task)
+          else if (priority === "medium") grouped.medium.push(task)
+          else if (priority === "low") grouped.low.push(task)
+        })
+        setTasks(grouped)
+      }
+    } catch (err) {
+      console.error("Error fetching tasks:", err)
+    } finally {
+      setLoading(false)
     }
+  }
+  useEffect(() => {
+
     fetchTasks()
-  }, [user?.role])
+  }, [user?.role, fetchTasks])
 
   const renderColumn = (title: string, taskList: any[]) => (
     <div
@@ -273,6 +274,7 @@ const TodayTask = () => {
           <TaskDetailsPanel
             // projectId={tasks.find((task) => task.id === openedTaskId)?.taskOf?.id}
             taskId={openedTaskId}
+            onDelete={() => fetchTasks()}
             onClose={() => setOpenedTaskId(null)}
           />
         </div>

@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState, useRef } from "react"
-import { getTaskById } from "@/lib/TaskService"
+import { deleteTask, getTaskById } from "@/lib/TaskService"
 import { useAuth } from "@/context/AuthContext"
 import { initiateSocket, getSocket } from "@/lib/socket"
 import { getMessagesByTask } from "@/lib/chatService"
@@ -20,6 +20,7 @@ import {
   MessageCircle,
   Edit,
   X,
+  Trash,
 } from "lucide-react"
 import { EditTaskModal, TaskPriority } from "../adminDashboard/EditTaskModal"
 import { Task } from "@/types"
@@ -87,9 +88,10 @@ type TaskDetailsPanelProps = {
   taskId: string | number
   projectId?: string | number;
   onClose?: () => void
+  onDelete?: () => void
 }
 
-export default function TaskDetailsPanel({ taskId, onClose, projectId }: TaskDetailsPanelProps) {
+export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete }: TaskDetailsPanelProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [task, setTask] = useState<ProjectTask | null>(null)
@@ -167,36 +169,36 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId }: TaskDet
     }
   }
 
-const fetchTaskMessages = async () => {
-  try {
-    const messages = await getMessagesByTask(String(taskId))
+  const fetchTaskMessages = async () => {
+    try {
+      const messages = await getMessagesByTask(String(taskId))
 
-    const mappedMessages: ChatMessage[] = messages.map((m: any) => ({
-      id: m.id,
-      message: m.messageBody || m.message,
-      senderId: m.sendBy?.id?.toString(),
-      receiverId: m.receivedBy?.id?.toString(),
-   senderName:
-  m.sendBy?.name ||
-  m.senderName ||
-  (m.sendBy?.id?.toString() === currentUser?.id.toString()
-    ? currentUser?.name
-    : task?.taskFor?.name) ||
-  "Unknown",
-      receiverName: m.receivedBy?.name,
-      senderAvatar: m.sendBy?.avatar || null,
-      timestamp: new Date(m.createdAt).getTime(),
-    }))
+      const mappedMessages: ChatMessage[] = messages.map((m: any) => ({
+        id: m.id,
+        message: m.messageBody || m.message,
+        senderId: m.sendBy?.id?.toString(),
+        receiverId: m.receivedBy?.id?.toString(),
+        senderName:
+          m.sendBy?.name ||
+          m.senderName ||
+          (m.sendBy?.id?.toString() === currentUser?.id.toString()
+            ? currentUser?.name
+            : task?.taskFor?.name) ||
+          "Unknown",
+        receiverName: m.receivedBy?.name,
+        senderAvatar: m.sendBy?.avatar || null,
+        timestamp: new Date(m.createdAt).getTime(),
+      }))
 
-    setChatMessages(mappedMessages)
-  } catch (err) {
-    console.error("Error fetching task messages:", err)
+      setChatMessages(mappedMessages)
+    } catch (err) {
+      console.error("Error fetching task messages:", err)
+    }
   }
-}
   useEffect(() => {
 
     fetchTask()
-     fetchTaskMessages()
+    fetchTaskMessages()
   }, [taskId])
 
   // Chat: Initialize socket and join task room
@@ -204,8 +206,8 @@ const fetchTaskMessages = async () => {
     initiateSocket()
     const socket = getSocket()
     if (!socket) return
-   setIsTaskChat(true)
-setCurrentTaskId(String(taskId))
+    setIsTaskChat(true)
+    setCurrentTaskId(String(taskId))
 
     socket.on("connect", () => {
       console.log("Socket connected:", socket.id)
@@ -213,30 +215,30 @@ setCurrentTaskId(String(taskId))
 
     // socket.emit("join_task_room", { taskId: String(taskId) })
 
-const handleTaskMessage = (data: any) => {
-  const mappedMessage: ChatMessage = {
-    id: data.id || Date.now().toString(),
-    message: data.message,
-    senderId: data.sendBy?.id?.toString() || data.senderId?.toString(),
-    receiverId: data.receivedBy?.id?.toString() || data.receiverId?.toString(),
-    senderName:
-      data.sendBy?.name ||
-      data.senderName ||
-      (data.senderId?.toString() === currentUser?.id.toString()
-        ? currentUser?.name
-        : task?.taskFor?.name) || "Unknown",
-    receiverName:
-      data.receivedBy?.name ||
-      data.receiverName ||
-      (data.receiverId?.toString() === currentUser?.id.toString()
-        ? currentUser?.name
-        : task?.taskFor?.name) || "Unknown",
-    senderAvatar: data.sendBy?.avatar || null,
-    timestamp: data.timestamp ? new Date(data.timestamp).getTime() : Date.now(),
-  }
+    const handleTaskMessage = (data: any) => {
+      const mappedMessage: ChatMessage = {
+        id: data.id || Date.now().toString(),
+        message: data.message,
+        senderId: data.sendBy?.id?.toString() || data.senderId?.toString(),
+        receiverId: data.receivedBy?.id?.toString() || data.receiverId?.toString(),
+        senderName:
+          data.sendBy?.name ||
+          data.senderName ||
+          (data.senderId?.toString() === currentUser?.id.toString()
+            ? currentUser?.name
+            : task?.taskFor?.name) || "Unknown",
+        receiverName:
+          data.receivedBy?.name ||
+          data.receiverName ||
+          (data.receiverId?.toString() === currentUser?.id.toString()
+            ? currentUser?.name
+            : task?.taskFor?.name) || "Unknown",
+        senderAvatar: data.sendBy?.avatar || null,
+        timestamp: data.timestamp ? new Date(data.timestamp).getTime() : Date.now(),
+      }
 
-  setChatMessages((prev) => [...prev, mappedMessage])
-}
+      setChatMessages((prev) => [...prev, mappedMessage])
+    }
 
     socket.on("message", handleTaskMessage)
 
@@ -268,41 +270,51 @@ const handleTaskMessage = (data: any) => {
     }
   }
   const handleSendChat = async () => {
-  if (!chatInput.trim() || !currentUser) return
+    if (!chatInput.trim() || !currentUser) return
 
-  const socket = getSocket()
+    const socket = getSocket()
 
-  // Local UI message (with extra fields)
-const localMsg: ChatMessage = {
-  id: Date.now().toString(),
-  message: chatInput,
-  senderId: currentUser.id.toString(),
-  senderName: currentUser.name,
-  receiverId: task?.taskFor?.id?.toString() || "",
-  receiverName: task?.taskFor?.name || "", // optional
-  timestamp: Date.now(),
-}
+    // Local UI message (with extra fields)
+    const localMsg: ChatMessage = {
+      id: Date.now().toString(),
+      message: chatInput,
+      senderId: currentUser.id.toString(),
+      senderName: currentUser.name,
+      receiverId: task?.taskFor?.id?.toString() || "",
+      receiverName: task?.taskFor?.name || "", // optional
+      timestamp: Date.now(),
+    }
 
-  // Update UI immediately
-  setChatMessages((prev) => [...prev, localMsg])
-  setChatInput("")
+    // Update UI immediately
+    setChatMessages((prev) => [...prev, localMsg])
+    setChatInput("")
 
-  // Payload only with fields backend expects
-  const payload = {
-    message: chatInput,
-    senderId: currentUser.id.toString(),
-    receiverId: task?.taskFor?.id?.toString() || "",
-    taskId: String(taskId),
+    // Payload only with fields backend expects
+    const payload = {
+      message: chatInput,
+      senderId: currentUser.id.toString(),
+      receiverId: task?.taskFor?.id?.toString() || "",
+      taskId: String(taskId),
+    }
+
+    socket?.emit("message", payload)
   }
-
-  socket?.emit("message", payload)
-}
 
 
   const handleEditClick = () => {
     setShowEditModal(true)
   }
-
+  const handleDeleteTask = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    const shouldDelete = window.confirm("Are you sure you want to delete this task?")
+    if (shouldDelete) {
+      deleteTask(task?.id as string).then(() => {
+        onClose?.()
+        onDelete?.()
+      })
+    }
+  }
   // Helper: group logs by date (first date badge only)
 
   // Helper: group logs by date (first date badge only)
@@ -377,63 +389,70 @@ const localMsg: ChatMessage = {
         {/* Left info column */}
         <div className="flex flex-col text-white/90 w-[330px]">
           {/* Ticket Number */}
-  <div className="flex w-full justify-between items-center mt-2">
-  {/* Ticket Number */}
-  <div>
-    <div className="text-[12px] tracking-wide text-[#A4A7AE] font-[400] mb-1">
-      Ticket Number
-    </div>
-    <span className="text-[20px] font-[500]">
-      {task.ticketNumber ?? `TASK-${task.id}`}
-    </span>
-  </div>
+          <div className="flex w-full justify-between items-center mt-2">
+            {/* Ticket Number */}
+            <div>
+              <div className="text-[12px] tracking-wide text-[#A4A7AE] font-[400] mb-1">
+                Ticket Number
+              </div>
+              <span className="text-[20px] font-[500]">
+                {task.ticketNumber ?? `TASK-${task.id}`}
+              </span>
+            </div>
 
-  {/* Status Dropdown - aligned right */}
-  {currentUser?.role === "employee" ? (
-    <div className="relative">
-      <button
-        onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
-        disabled={updatingStatus}
-        className="text-[12px] px-3 py-[6px] rounded-full bg-[#0CA9F6] text-white font-[400] shadow-sm hover:bg-[#0B8FD1] transition-colors flex items-center gap-1 disabled:opacity-50"
-      >
-        {task.status?.replace(/_/g, " ") || "In progress"}
-        <ChevronDown
-          className={`w-3 h-3 transition-transform ${
-            statusDropdownOpen ? "rotate-180" : ""
-          }`}
-        />
-      </button>
+            {/* Status Dropdown - aligned right */}
+            {currentUser?.role === "employee" ? (
+              <div className="relative">
+                <button
+                  onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
+                  disabled={updatingStatus}
+                  className="text-[12px] px-3 py-[6px] rounded-full bg-[#0CA9F6] text-white font-[400] shadow-sm hover:bg-[#0B8FD1] transition-colors flex items-center gap-1 disabled:opacity-50"
+                >
+                  {task.status?.replace(/_/g, " ") || "In progress"}
+                  <ChevronDown
+                    className={`w-3 h-3 transition-transform ${statusDropdownOpen ? "rotate-180" : ""
+                      }`}
+                  />
+                </button>
 
-      {statusDropdownOpen && (
-        <div className="absolute top-full right-0 mt-1 w-36 bg-black/90 border border-white/20 rounded-lg shadow-lg overflow-hidden z-10">
-          {statusOptions.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => handleStatusUpdate(option.value)}
-              className="w-full text-left px-3 py-2 text-[12px] text-white hover:bg-white/10 transition-colors"
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
-  ) : (
-    <span className="text-[12px] px-3 py-[6px] rounded-full bg-[#0CA9F6] text-white font-[400] shadow-sm">
-      {task.status?.replace(/_/g, " ") || "In progress"}
-    </span>
-  )}
+                {statusDropdownOpen && (
+                  <div className="absolute top-full right-0 mt-1 w-36 bg-black/90 border border-white/20 rounded-lg shadow-lg overflow-hidden z-10">
+                    {statusOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        onClick={() => handleStatusUpdate(option.value)}
+                        className="w-full text-left px-3 py-2 text-[12px] text-white hover:bg-white/10 transition-colors"
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <span className="text-[12px] px-3 py-[6px] rounded-full bg-[#0CA9F6] text-white font-[400] shadow-sm">
+                {task.status?.replace(/_/g, " ") || "In progress"}
+              </span>
+            )}
 
 
-  {currentUser?.role === "manager" ? (
-    <button
-      onClick={handleEditClick}
-      className="p-1 rounded hover:bg-white/10 ml-2"
-    >
-      <Edit className="w-4 h-4 text-white/60" />
-    </button>
-  ) : null}
-</div>
+            {currentUser?.role === "manager" ? (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleEditClick}
+                  className="p-1 rounded hover:bg-white/10 ml-2"
+                >
+                  <Edit className="w-4 h-4 text-white/60" />
+                </button>
+                <button
+                  onClick={handleDeleteTask}
+                  className="p-1 rounded hover:bg-white/10 ml-2"
+                >
+                  <Trash className="w-4 h-4 text-white/60" />
+                </button>
+              </div>
+            ) : null}
+          </div>
 
 
 
@@ -582,14 +601,14 @@ const localMsg: ChatMessage = {
                       : "text-white/70"
                       }`}
                   >
-                     <span className="w-5 h-5 rounded-full bg-white/15 border border-white/20 flex items-center justify-center text-[10px] uppercase text-white/80 mr-2">
-        {(msg.senderName || "U").split(" ").map((n) => n[0]).slice(0, 2).join("")}
-      </span>
- <span className="pr-2 font-medium">
-  {msg.senderId === currentUser?.id.toString() ? "You" : msg.senderName}
-  :
-</span>
-    <span className="pr-4">{msg.message}</span>
+                    <span className="w-5 h-5 rounded-full bg-white/15 border border-white/20 flex items-center justify-center text-[10px] uppercase text-white/80 mr-2">
+                      {(msg.senderName || "U").split(" ").map((n) => n[0]).slice(0, 2).join("")}
+                    </span>
+                    <span className="pr-2 font-medium">
+                      {msg.senderId === currentUser?.id.toString() ? "You" : msg.senderName}
+                      :
+                    </span>
+                    <span className="pr-4">{msg.message}</span>
 
                     <span className="ml-auto text-white/40 tabular-nums">
                       {msg.timestamp
