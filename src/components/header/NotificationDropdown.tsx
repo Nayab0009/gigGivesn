@@ -17,7 +17,9 @@ export default function NotificationDropdown({ trigger }: NotificationDropdownPr
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-
+  function toggleDropdown() {
+    setIsOpen((prev) => !prev);
+  }
 
   function closeDropdown() {
     setIsOpen(false);
@@ -28,6 +30,30 @@ export default function NotificationDropdown({ trigger }: NotificationDropdownPr
     setNotifying(false);
   };
   
+  // Format notification text by removing timestamps
+  const formatNotificationText = (text: string) => {
+    // Remove GMT timestamps like "Fri Oct 03 2025 00:00:00 GMT+0000 (Coordinated Universal Time)"
+    return text.replace(/\w{3} \w{3} \d{2} \d{4} \d{2}:\d{2}:\d{2} GMT[+\-]\d{4} \([^)]+\)/g, (match) => {
+      // Extract just the date part
+      const date = new Date(match);
+      return date.toLocaleDateString();
+    });
+  };
+
+  // Format relative time (e.g., "2 hours ago")
+  const getRelativeTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+    
+    if (diffInSeconds < 60) return 'just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} min ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hr ago`;
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)} days ago`;
+    
+    return date.toLocaleDateString();
+  };
+
   // Fetch notifications when dropdown is opened
   const fetchNotifications = async () => {
     setLoading(true);
@@ -54,10 +80,7 @@ export default function NotificationDropdown({ trigger }: NotificationDropdownPr
       fetchNotifications();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);  function toggleDropdown() {
-    setIsOpen((prev) => !prev);
-  }
-
+  }, [isOpen]);
 
   return (
     <div className="relative">
@@ -124,14 +147,38 @@ export default function NotificationDropdown({ trigger }: NotificationDropdownPr
             <li className="text-center text-gray-400">No notifications found.</li>
           ) : (
             notifications.map((n, idx) => (
-              <li key={n.id || idx} className="border-b border-white/5 pb-3 last:border-0 flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  {!n.seen && <span className="inline-block w-2 h-2 rounded-full bg-orange-400" title="Unseen"></span>}
-                  <span className="text-xs text-gray-400">{new Date(n.createdAt).toLocaleString()}</span>
+              <li 
+                key={n.id || idx} 
+                className={`border-b border-white/5 pb-4 last:border-0 flex flex-col gap-1 p-3 rounded-lg transition-all ${!n.seen ? 'bg-white/5' : ''}`}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    {!n.seen && (
+                      <span className="inline-block w-2 h-2 rounded-full bg-orange-400 animate-pulse" title="Unseen"></span>
+                    )}
+                    <span className="text-xs font-medium text-blue-400">{n.id ? `#${n.id}` : ''}</span>
+                  </div>
+                  <span className="text-xs text-gray-400">{getRelativeTime(n.createdAt)}</span>
                 </div>
-                <p className="text-gray-200 text-sm">{n.text}</p>
+                
+                <p className="text-gray-200 text-sm mt-1 leading-relaxed">
+                  {formatNotificationText(n.text)}
+                </p>
+                
                 {n.link && n.link !== '' && (
-                  <a href={n.link} className="text-blue-400 text-xs underline" target="_blank" rel="noopener noreferrer">View</a>
+                  <div className="mt-2">
+                    <a 
+                      href={n.link} 
+                      className="px-3 py-1 text-xs bg-blue-500/20 text-blue-400 rounded-full hover:bg-blue-500/30 transition-colors inline-flex items-center gap-1"
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                      </svg>
+                      View
+                    </a>
+                  </div>
                 )}
               </li>
             ))
