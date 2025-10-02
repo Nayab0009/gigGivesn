@@ -119,30 +119,7 @@ export function DeleteTaskModal({
           <p className="text-gray-300 text-sm">Are you sure you want to delete this task?</p>
         </div>
 
-        {/* Task Info */}
-        {/* <div className="bg-black/40 rounded-xl p-4 mb-6 border border-white/20">
-          <div className="text-center">
-            <h3 className="text-white font-semibold text-lg mb-1">{task.title}</h3>
-            {(task as any).ticketNumber && (
-              <p className="text-gray-400 text-sm mb-2">#{(task as any).ticketNumber}</p>
-            )}
-            {task.description && (
-              <p className="text-gray-300 text-sm">{task.description}</p>
-            )}
-          </div>
-        </div> */}
 
-        {/* Warning Message */}
-        {/* <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-4 mb-6">
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0" />
-            <p className="text-red-300 text-sm">
-              This action cannot be undone. The task will be permanently deleted.
-            </p>
-          </div>
-        </div> */}
-
-        {/* Error Message */}
         {error && (
           <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-4 mb-6">
             <div className="flex items-center gap-2">

@@ -50,3 +50,13 @@ export interface Project {
   team?: Team;
   tasks: Task[];
 }
+export type Sprint = {
+  id: number;
+  name: string;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  status?: string;
+  progress?: number;
+};
