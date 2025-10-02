@@ -5,23 +5,21 @@ import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { getTaskById, updateTask } from "@/lib/TaskService"
 import { initiateSocket, getSocket } from "@/lib/socket"
-import { sendMessage as sendChatMessage } from "@/lib/chatService"
+import { getMessagesByTask } from "@/lib/chatService"
 import { Task } from "@/types"
-import { interFont, robotoFont } from "@/app/layout"
-
-
 
 
 
 // Chat message type
 type ChatMessage = {
-  id?: string
+  id?: string | number
   message: string
   timestamp?: number
-  userId?: string
-  username?: string
   senderId?: string
   receiverId?: string
+  senderName?: string
+  receiverName?: string
+  senderAvatar?: string | null
 }
 
 // Define custom types needed for the component
@@ -104,6 +102,8 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task: init
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [chatInput, setChatInput] = useState("")
   const chatEndRef = useRef<HTMLDivElement>(null)
+  const [currentTaskId, setCurrentTaskId] = useState<string | null>(null)
+  const [isTaskChat, setIsTaskChat] = useState(false)
 
 
 
@@ -159,59 +159,67 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task: init
     }
   }
 
+  // Fetch chat messages for this task
+  const fetchTaskMessages = async () => {
+    try {
+      const messages = await getMessagesByTask(String(taskId || task?.id))
+      const mappedMessages: ChatMessage[] = messages.map((m: any) => ({
+        id: m.id,
+        message: m.messageBody || m.message,
+        senderId: m.sendBy?.id?.toString(),
+        receiverId: m.receivedBy?.id?.toString(),
+        senderName: m.sendBy?.name,
+        receiverName: m.receivedBy?.name,
+        senderAvatar: m.sendBy?.avatar || null,
+        timestamp: new Date(m.createdAt).getTime(),
+      }))
+      setChatMessages(mappedMessages)
+    } catch (err) {
+      console.error("Error fetching task messages:", err)
+    }
+  }
+
 
   useEffect(() => {
-    if (taskId) {
-      fetchTask()
-    }
-  }, [taskId, task?.id])
+    fetchTask()
+    fetchTaskMessages()
+  }, [taskId])
 
   // Chat: Initialize socket and join task room
   useEffect(() => {
-    if (!task?.id) return;
-    
     initiateSocket()
     const socket = getSocket()
     if (!socket) return
-    
-    const currentTaskId = String(taskId || task?.id);
-    if (currentTaskId) {
-      socket.emit("join_task_room", { taskId: currentTaskId })
-    }
+    setIsTaskChat(true)
+    setCurrentTaskId(String(taskId))
 
     socket.on("connect", () => {
       console.log("Socket connected:", socket.id)
     })
 
+    // socket.emit("join_task_room", { taskId: String(taskId) })
+
     const handleTaskMessage = (data: any) => {
       const mappedMessage: ChatMessage = {
-        id: data.id,
-        message: data.message || "",
-        timestamp: data.createdAt ? new Date(data.createdAt).getTime() : data.timestamp || Date.now(),
-        userId: data.userId,
-        username: data.username,
+        id: data.id || Date.now().toString(),
+        message: data.message,
         senderId: data.sendBy?.id?.toString() || data.senderId?.toString(),
         receiverId: data.receivedBy?.id?.toString() || data.receiverId?.toString(),
+        senderName: data.sendBy?.name || data.senderName,
+        receiverName: data.receivedBy?.name,
+        senderAvatar: data.sendBy?.avatar || null,
+        timestamp: data.timestamp ? new Date(data.timestamp).getTime() : Date.now(),
       }
-
-      if (
-        mappedMessage.senderId === currentUser.id.toString() ||
-        mappedMessage.receiverId === currentUser.id.toString()
-      ) {
-        setChatMessages((prev) => [...prev, mappedMessage])
-      }
+      setChatMessages((prev) => [...prev, mappedMessage])
     }
 
-    socket.on("task_message", handleTaskMessage)
+    socket.on("message", handleTaskMessage)
 
     return () => {
-      socket.off("task_message", handleTaskMessage)
-      const currentTaskId = String(taskId || task?.id);
-      if (currentTaskId) {
-        socket.emit("leave_task_room", { taskId: currentTaskId })
-      }
+      socket.off("message", handleTaskMessage)
+      socket.emit("leave_task_room", { taskId: String(taskId) })
     }
-  }, [currentUser, taskId, task?.id])
+  }, [currentUser, taskId])
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -219,23 +227,31 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task: init
 
 
   const handleSendChat = async () => {
-    if (!chatInput.trim() || !currentUser || !task?.id) return
+    if (!chatInput.trim() || !currentUser) return
+
     const socket = getSocket()
-    const currentTaskId = String(taskId || task?.id);
-    const msg: ChatMessage = {
+
+    // Local UI message (with extra fields)
+    const localMsg: ChatMessage = {
       message: chatInput,
-      userId: currentUser.id.toString(),
-      username: currentUser.name,
       senderId: currentUser.id.toString(),
-      receiverId: currentTaskId,
+      receiverId: task?.taskFor?.id?.toString() || "",
       timestamp: Date.now(),
     }
-    setChatMessages((prev) => [...prev, msg])
+
+    // Update UI immediately
+    setChatMessages((prev) => [...prev, localMsg])
     setChatInput("")
-    socket?.emit("task_message", { ...msg, taskId: currentTaskId })
-    try {
-      await sendChatMessage(currentUser.id, currentTaskId)
-    } catch { }
+
+    // Payload only with fields backend expects
+    const payload = {
+      message: chatInput,
+      senderId: currentUser.id.toString(),
+      receiverId: task?.taskFor?.id?.toString() || "",
+      taskId: String(taskId),
+    }
+
+    socket?.emit("message", payload)
   }
 
 
@@ -644,12 +660,15 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task: init
                 chatMessages.map((msg, idx) => (
                   <div
                     key={`chat-${idx}`}
-                    className={`flex items-center text-[12px] ${msg.userId === currentUser?.id.toString()
+                    className={`flex items-center text-[12px] ${msg.senderId === currentUser?.id.toString()
                       ? "text-emerald-300"
                       : "text-white/70"
                       }`}
                   >
-                    <span className="pr-2 font-medium">{msg.username ?? "User"}:</span>
+                    <span className="w-5 h-5 rounded-full bg-white/15 border border-white/20 flex items-center justify-center text-[10px] uppercase text-white/80 mr-2">
+                      {(msg.senderName || "U").split(" ").map((n) => n[0]).slice(0, 2).join("")}
+                    </span>
+                    <span className="pr-2 font-medium">{msg.senderName ?? "User"}:</span>
                     <span className="pr-4">{msg.message}</span>
                     <span className="ml-auto text-white/40 tabular-nums">
                       {msg.timestamp

@@ -16,7 +16,7 @@ interface Manager {
   email: string
   phone: string
   address: string
-  team?: { name: string; role?: string; avatar?: string }[]
+  // team?: { name: string; role?: string; avatar?: string }[]
 }
 
 const generateAvatar = (name: string, index: number) => {
@@ -239,7 +239,7 @@ export default function EnhancedManagersTable() {
                 verticalAlign: 'middle',
               }}
             >
-              Managers Dashboard
+              Managers Details 
             </h1>
             <p
               className="font-normal align-middle text-white font-sans not-italic text-sm leading-5 tracking-normal [font-family:Montserrat,sans-serif] [font-weight:400] [background-clip:text]"
@@ -340,7 +340,7 @@ export default function EnhancedManagersTable() {
                   .join('')
                   .slice(0, 2)
                   .toUpperCase();
-                const teamSize = manager.team?.length || 0;
+                // const teamSize = manager.team?.length || 0;
                 return (
                   <div
                     key={manager.id || index}
@@ -382,8 +382,8 @@ export default function EnhancedManagersTable() {
                       <div className="text-right text-slate-200 font-medium truncate" title={manager.phone}>{manager.phone}</div>
                       <div className="text-[#A8A8A8] [font-family:Montserrat,sans-serif] font-normal not-italic text-sm leading-5 tracking-normal align-middle">Location:</div>
                       <div className="text-right text-slate-200 font-medium truncate" title={manager.address}>{manager.address}</div>
-                      <div className="text-[#A8A8A8] [font-family:Montserrat,sans-serif] font-normal not-italic text-sm leading-5 tracking-normal align-middle">Team Size:</div>
-                      <div className="text-right text-white font-medium">{teamSize} members</div>
+                      {/* <div className="text-[#A8A8A8] [font-family:Montserrat,sans-serif] font-normal not-italic text-sm leading-5 tracking-normal align-middle">Team Size:</div> */}
+                      {/* <div className="text-right text-white font-medium">{teamSize} members</div> */}
                     </div>
 
                     <div className="relative mt-5 flex items-center justify-between">
