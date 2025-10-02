@@ -26,13 +26,14 @@ import { Task } from "@/types"
 
 // Chat message type
 type ChatMessage = {
-  id?: string
+  id?: string | number
   message: string
   timestamp?: number
-  userId?: string
-  username?: string
   senderId?: string
   receiverId?: string
+  senderName?: string
+  receiverName?: string
+  senderAvatar?: string | null
 }
 
 // Define custom types needed for the component
@@ -169,14 +170,18 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId }: TaskDet
 const fetchTaskMessages = async () => {
   try {
     const messages = await getMessagesByTask(String(taskId))
+
     const mappedMessages: ChatMessage[] = messages.map((m: any) => ({
       id: m.id,
-      message: m.messageBody || m.message,   // backend may use messageBody
-      senderId: m.sendBy?.toString(),
-      receiverId: m.recievedBy?.toString(),
-      username: m.senderName || m.sender?.name || "User",
+      message: m.messageBody || m.message,
+      senderId: m.sendBy?.id?.toString(),
+      receiverId: m.receivedBy?.id?.toString(),
+      senderName: m.sendBy?.name,
+      receiverName: m.receivedBy?.name,
+      senderAvatar: m.sendBy?.avatar || null,
       timestamp: new Date(m.createdAt).getTime(),
     }))
+
     setChatMessages(mappedMessages)
   } catch (err) {
     console.error("Error fetching task messages:", err)
@@ -202,15 +207,20 @@ setCurrentTaskId(String(taskId))
 
     // socket.emit("join_task_room", { taskId: String(taskId) })
 
-   const handleTaskMessage = (data: any) => {
+const handleTaskMessage = (data: any) => {
   const mappedMessage: ChatMessage = {
+    id: data.id || Date.now().toString(),
     message: data.message,
-    senderId: data.senderId?.toString(),
-    receiverId: data.receiverId?.toString(),
-    timestamp: Date.now()
-  };
-  setChatMessages(prev => [...prev, mappedMessage]);
-};
+    senderId: data.sendBy?.id?.toString() || data.senderId?.toString(),
+    receiverId: data.receivedBy?.id?.toString() || data.receiverId?.toString(),
+    senderName: data.sendBy?.name || data.senderName,
+    receiverName: data.receivedBy?.name,
+    senderAvatar: data.sendBy?.avatar || null,
+    timestamp: data.timestamp ? new Date(data.timestamp).getTime() : Date.now(),
+  }
+
+  setChatMessages((prev) => [...prev, mappedMessage])
+}
 
     socket.on("message", handleTaskMessage)
 
@@ -268,7 +278,7 @@ setCurrentTaskId(String(taskId))
     taskId: String(taskId),
   }
 
-  socket?.emit("taskmessage", payload)
+  socket?.emit("message", payload)
 }
 
 
@@ -555,8 +565,12 @@ setCurrentTaskId(String(taskId))
                       : "text-white/70"
                       }`}
                   >
-                    <span className="pr-2 font-medium">{msg.username ?? "User"}:</span>
-                    <span className="pr-4">{msg.message}</span>
+                     <span className="w-5 h-5 rounded-full bg-white/15 border border-white/20 flex items-center justify-center text-[10px] uppercase text-white/80 mr-2">
+        {(msg.senderName || "U").split(" ").map((n) => n[0]).slice(0, 2).join("")}
+      </span>
+                      <span className="pr-2 font-medium">{msg.senderName ?? "User"}:</span>
+    <span className="pr-4">{msg.message}</span>
+
                     <span className="ml-auto text-white/40 tabular-nums">
                       {msg.timestamp
                         ? new Date(msg.timestamp).toLocaleTimeString([], {
