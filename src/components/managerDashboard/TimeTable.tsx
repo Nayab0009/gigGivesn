@@ -52,8 +52,8 @@ function isSameWeek(date1: Date, date2: Date) {
   const d1 = new Date(date1);
   const d2 = new Date(date2);
   // Set to nearest Monday
-  d1.setHours(0,0,0,0);
-  d2.setHours(0,0,0,0);
+  d1.setHours(0, 0, 0, 0);
+  d2.setHours(0, 0, 0, 0);
   d1.setDate(d1.getDate() - ((d1.getDay() + 6) % 7));
   d2.setDate(d2.getDate() - ((d2.getDay() + 6) % 7));
   return d1.getTime() === d2.getTime();
@@ -158,7 +158,7 @@ const TimeTable = () => {
   return (
     <>
       <div
-        className="w-full p-4 rounded-3xl overflow-x-auto"
+        className="w-full p-4 rounded-3xl border border-white/30 overflow-x-auto"
         style={{
           scrollbarWidth: "none",
           opacity: 1,
@@ -168,7 +168,7 @@ const TimeTable = () => {
           backgroundBlendMode: "luminosity",
         }}
       >
-        <div className="flex flex-row gap-2 w-max">
+        <div className="flex flex-row  w-max">
           {days.map((day, idx) => {
             const tasks = schedule[day];
             const isLast = idx === days.length - 1;
@@ -206,25 +206,25 @@ const TimeTable = () => {
                             className={`font-semibold text-[#0CA9F6] ${taskCodeColor}`}
 
                             style={{
-                            fontFamily: "Inter",
-                            fontWeight: 600,
-                            fontSize: "10px",
-                            lineHeight: "100%",
-                            letterSpacing: "0px",
-                            verticalAlign: "middle",
-                          }}
+                              fontFamily: "Inter",
+                              fontWeight: 600,
+                              fontSize: "10px",
+                              lineHeight: "100%",
+                              letterSpacing: "0px",
+                              verticalAlign: "middle",
+                            }}
                           >
                             {task.taskCode}
                           </span>
                           <span className="mt-1 px-1 py-0.5 text-[10px] rounded-sm bg-[#0CA9F6] text-white font-semibold"
-                          style={{
-                            fontFamily: "Inter",
-                            fontWeight: 600,
-                            fontSize: "8px",
-                            lineHeight: "100%",
-                            letterSpacing: "0px",
-                            verticalAlign: "middle",
-                          }}
+                            style={{
+                              fontFamily: "Inter",
+                              fontWeight: 600,
+                              fontSize: "8px",
+                              lineHeight: "100%",
+                              letterSpacing: "0px",
+                              verticalAlign: "middle",
+                            }}
                           >
                             Done
                           </span>
@@ -267,7 +267,7 @@ const TimeTable = () => {
                           {task.title}
                         </div>
                         <div className="text-xs text-[#FFFFFF] mt-1 overflow-hidden"
-                        style={{
+                          style={{
                             fontFamily: "Inter",
                             fontWeight: 400,
                             fontSize: "12px",
