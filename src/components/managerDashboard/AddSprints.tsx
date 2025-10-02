@@ -7,6 +7,8 @@ import { createSprint } from '@/lib/SprintService';
 import { useAuth } from "@/context/AuthContext"
 import { colors } from "@/colors";
 import { Project } from '@/types';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
   const { user } = useAuth();
@@ -63,7 +65,7 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
           {/* Header */}
           <div className="text-center mb-8">
 
-            <h1 className="text-[32px] font-semibold font-[600] mb-2 text-white">Create New Sprint</h1>
+            <h1 className="text-[32px] font-semibold mb-2 text-white">Create New Sprint</h1>
             <p className="text-[12px] font-semibold  text-white">Plan and organize your next development sprint</p>
           </div>
 
@@ -88,12 +90,9 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
                       value={form.title}
                       onChange={e => setForm(prev => ({ ...prev, title: e.target.value }))}
                       placeholder="e.g., Sprint 24 - User Authentication & Dashboard"
-                      className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none
+                      className="w-full px-4 py-4 rounded-xl focus:ring-2 outline-none
                        bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
                         focus:border-white/40"
-                      style={{
-                        focusRingColor: colors.primary.hex,
-                      }}
                     />
                   </div>
 
@@ -107,12 +106,9 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
                       value={form.title2}
                       onChange={e => setForm(prev => ({ ...prev, title2: e.target.value }))}
                       placeholder="e.g., Sprint 24 - User Authentication & Dashboard"
-                      className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none
+                      className="w-full px-4 py-4 rounded-xl focus:ring-2 outline-none
                        bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
                         focus:border-white/40"
-                      style={{
-                        focusRingColor: colors.primary.hex,
-                      }}
                     />
                   </div>
 
@@ -123,12 +119,9 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
                       onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
                       rows={4}
                       placeholder="Describe the main objectives, scope, and expected outcomes for this sprint..."
-                      className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none
+                      className="w-full px-4 py-4 rounded-xl focus:ring-2 outline-none
                                  bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
                                   focus:border-white/40"
-                      style={{
-                        focusRingColor: colors.primary.hex,
-                      }}
                     />
                   </div>
 
@@ -166,46 +159,58 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
               <div className="space-y-6">
                 <div className="flex items-center gap-3 pb-4" style={{ borderColor: colors.primary.hex }}>
 
-                  <h2 className="text-[18px] font-[600] font-semibold text-white">Timeline & Duration</h2>
+                  <h2 className="text-[18px] font-semibold text-white">Timeline & Duration</h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-[14px] font-semibold mb-3 text-white">
                       Start Date <span style={{ color: colors.warning.hex }}>*</span>
                     </label>
-                    <input
-                      type="date"
-                      min={today}
-                      required
-                      value={form.startDate}
-                      onChange={e => setForm(prev => ({ ...prev, startDate: e.target.value }))}
-                      className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none
-                                 bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
-                                  focus:border-white/40"
-                      style={{
-                        focusRingColor: colors.primary.hex,
-                        colorScheme: 'dark'
-                      }}
-                    />
+                    <div className="relative w-full full-width-datepicker">
+                      <DatePicker
+                        selected={form.startDate ? new Date(form.startDate) : null}
+                        onChange={(date) => setForm(prev => ({ ...prev, startDate: date?.toISOString().split("T")[0] || '' }))}
+                        className="w-full rounded-xl bg-black/80 px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
+                        placeholderText="Select start date"
+                        dateFormat="MMM dd, yyyy"
+                        isClearable
+                        showMonthDropdown
+                        showYearDropdown
+                        dropdownMode="select"
+                        minDate={new Date(today)}
+                        popperClassName="react-datepicker-dark"
+                        calendarClassName="react-datepicker-dark-calendar"
+                        dayClassName={(date) => "react-datepicker-dark-day"}
+                        weekDayClassName={() => "react-datepicker-dark-weekday"}
+                        monthClassName={() => "react-datepicker-dark-month"}
+                        yearClassName={() => "react-datepicker-dark-year"}
+                      />
+                    </div>
                   </div>
                   <div>
                     <label className="block text-[14px] font-semibold mb-3 text-white">
                       End Date <span style={{ color: colors.warning.hex }}>*</span>
                     </label>
-                    <input
-                      type="date"
-                      min={form.startDate || today}
-                      required
-                      value={form.endDate}
-                      onChange={e => setForm(prev => ({ ...prev, endDate: e.target.value }))}
-                      className="w-full px-4 py-4 rounded-xl focus:ring-2 focus:border-transparent outline-none
-                                 bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
-                                  focus:border-white/40"
-                      style={{
-                        focusRingColor: colors.primary.hex,
-                        colorScheme: 'dark'
-                      }}
-                    />
+                    <div className="relative w-full full-width-datepicker">
+                      <DatePicker
+                        selected={form.endDate ? new Date(form.endDate) : null}
+                        onChange={(date) => setForm(prev => ({ ...prev, endDate: date?.toISOString().split("T")[0] || '' }))}
+                        className="w-full rounded-xl bg-black/80 px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
+                        placeholderText="Select end date"
+                        dateFormat="MMM dd, yyyy"
+                        isClearable
+                        showMonthDropdown
+                        showYearDropdown
+                        dropdownMode="select"
+                        minDate={form.startDate ? new Date(form.startDate) : new Date(today)}
+                        popperClassName="react-datepicker-dark"
+                        calendarClassName="react-datepicker-dark-calendar"
+                        dayClassName={(date) => "react-datepicker-dark-day"}
+                        weekDayClassName={() => "react-datepicker-dark-weekday"}
+                        monthClassName={() => "react-datepicker-dark-month"}
+                        yearClassName={() => "react-datepicker-dark-year"}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -221,7 +226,7 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
                   disabled={
                     submitting || !form.title || !form.startDate || !form.endDate
                   }
-                  className="text-[12px] font-[500] inline-flex items-center gap-3 px-8 py-4 font-semibold rounded-full transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 text-white bg-[#0CA9F6]"
+                  className="text-[12px] font-semibold inline-flex items-center gap-3 px-8 py-4 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 text-white bg-[#0CA9F6]"
                 >
                   {submitting ? (
                     <>
