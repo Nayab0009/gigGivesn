@@ -5,7 +5,7 @@ import Image from "next/image"
 import { useAuth } from "@/context/AuthContext"
 import { getManagerTasksToday, getEmployeeTasksToday } from "@/lib/TaskService"
 import TaskDetailsPanel from "./TaskDetailScreen"
-import { interFont, robotoFont } from "@/app/layout"
+// import { interFont, robotoFont } from "@/app/layout"
 
 const TodayTask = () => {
   const { user } = useAuth();
