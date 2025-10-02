@@ -235,6 +235,7 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete 
     timestamp: data.timestamp ? new Date(data.timestamp).getTime() : Date.now(),
   };
 
+
   setChatMessages((prev) => [...prev, mappedMessage]);
 };
 
@@ -298,7 +299,7 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete 
         : task.sprint?.createdBy?.name || "Manager",
     timestamp: Date.now(),
   };
-
+ console.log("Local chat message object:", localMsg);
   setChatMessages((prev) => [...prev, localMsg]);
   setChatInput("");
 
@@ -309,6 +310,7 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete 
     taskId: String(task.id),
   };
 
+  console.log("Payload sent to socket:", payload);
   socket?.emit("taskmessage", payload);
 };
 

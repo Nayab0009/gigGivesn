@@ -859,7 +859,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                     paginatedProjects.map((project, index) => (
                       <tr
                         key={project.id}
-                         onClick={() => router.push(`/dashboard/manager/projects/${project.id}`)}
+
                         className="transition-colors duration-300 cursor-pointer bg-transparent hover:bg-white/5"
                       >
                         <td className="px-6 py-6">
@@ -885,6 +885,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                             <div>
                               <h3
                                 className="text-xs sm:text-sm  leading-tight break-words whitespace-normal"
+                                onClick={() => router.push(`/dashboard/manager/projects/${project.id}`)}
                                 style={{ color: "#FFFFFF", fontWeight: 500, wordBreak: 'break-word', fontSize: '16px' }}
                               >
                                 {(() => {
