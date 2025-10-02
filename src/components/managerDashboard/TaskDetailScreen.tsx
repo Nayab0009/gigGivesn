@@ -3,8 +3,9 @@ import { useEffect, useState, useRef } from "react"
 import { getTaskById } from "@/lib/TaskService"
 import { useAuth } from "@/context/AuthContext"
 import { initiateSocket, getSocket } from "@/lib/socket"
-import { sendMessage as sendChatMessage } from "@/lib/chatService"
+import { getMessagesByTask } from "@/lib/chatService"
 import { updateTask } from "@/lib/TaskService"
+
 import {
   ChevronDown,
   Calendar,
@@ -165,10 +166,26 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId }: TaskDet
     }
   }
 
-
+const fetchTaskMessages = async () => {
+  try {
+    const messages = await getMessagesByTask(String(taskId))
+    const mappedMessages: ChatMessage[] = messages.map((m: any) => ({
+      id: m.id,
+      message: m.messageBody || m.message,   // backend may use messageBody
+      senderId: m.sendBy?.toString(),
+      receiverId: m.recievedBy?.toString(),
+      username: m.senderName || m.sender?.name || "User",
+      timestamp: new Date(m.createdAt).getTime(),
+    }))
+    setChatMessages(mappedMessages)
+  } catch (err) {
+    console.error("Error fetching task messages:", err)
+  }
+}
   useEffect(() => {
 
     fetchTask()
+     fetchTaskMessages()
   }, [taskId])
 
   // Chat: Initialize socket and join task room
@@ -185,29 +202,20 @@ setCurrentTaskId(String(taskId))
 
     // socket.emit("join_task_room", { taskId: String(taskId) })
 
-    const handleTaskMessage = (data: any) => {
-      const mappedMessage: ChatMessage = {
-        id: data.id,
-        message: data.message || "",
-        timestamp: data.createdAt ? new Date(data.createdAt).getTime() : data.timestamp || Date.now(),
-        userId: data.userId,
-        username: data.username,
-        senderId: data.sendBy?.id?.toString() || data.senderId?.toString(),
-        receiverId: data.receivedBy?.id?.toString() || data.receiverId?.toString(),
-      }
+   const handleTaskMessage = (data: any) => {
+  const mappedMessage: ChatMessage = {
+    message: data.message,
+    senderId: data.senderId?.toString(),
+    receiverId: data.receiverId?.toString(),
+    timestamp: Date.now()
+  };
+  setChatMessages(prev => [...prev, mappedMessage]);
+};
 
-      if (
-        mappedMessage.senderId === currentUser.id.toString() ||
-        mappedMessage.receiverId === currentUser.id.toString()
-      ) {
-        setChatMessages((prev) => [...prev, mappedMessage])
-      }
-    }
-
-    socket.on("taskmessage", handleTaskMessage)
+    socket.on("message", handleTaskMessage)
 
     return () => {
-      socket.off("taskmessage", handleTaskMessage)
+      socket.off("message", handleTaskMessage)
       socket.emit("leave_task_room", { taskId: String(taskId) })
     }
   }, [currentUser, taskId])
@@ -234,23 +242,35 @@ setCurrentTaskId(String(taskId))
     }
   }
   const handleSendChat = async () => {
-    if (!chatInput.trim() || !currentUser) return
-    const socket = getSocket()
-    const msg: ChatMessage = {
-      message: chatInput,
-      userId: currentUser.id.toString(),
-      username: currentUser.name,
-      senderId: currentUser.id.toString(),
- receiverId: task?.taskFor?.id?.toString() || "",
-      timestamp: Date.now(),
-    }
-    setChatMessages((prev) => [...prev, msg])
-    setChatInput("")
-    socket?.emit("taskmessage", { ...msg, taskId: String(taskId) })
-    try {
-      await sendChatMessage(currentUser.id, taskId)
-    } catch { }
+  if (!chatInput.trim() || !currentUser) return
+
+  const socket = getSocket()
+
+  // Local UI message (with extra fields)
+  const localMsg: ChatMessage = {
+    message: chatInput,
+    userId: currentUser.id.toString(),
+    username: currentUser.name,
+    senderId: currentUser.id.toString(),
+    receiverId: task?.taskFor?.id?.toString() || "",
+    timestamp: Date.now(),
   }
+
+  // Update UI immediately
+  setChatMessages((prev) => [...prev, localMsg])
+  setChatInput("")
+
+  // Payload only with fields backend expects
+  const payload = {
+    message: chatInput,
+    senderId: currentUser.id.toString(),
+    receiverId: task?.taskFor?.id?.toString() || "",
+    taskId: String(taskId),
+  }
+
+  socket?.emit("taskmessage", payload)
+}
+
 
   const handleEditClick = () => {
     setShowEditModal(true)

@@ -52,3 +52,12 @@ export const deletemessage = async (id:string) => {
         console.error("Error deleting message:", error);
     }
 }
+export const getMessagesByTask = async (taskId: string) => {
+    try {
+        const response = await axiosInstance.get(`/messages/task/${taskId}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Error fetching messages for task ${taskId}:`, error);
+        throw error;
+    }
+};
