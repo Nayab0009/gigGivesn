@@ -74,34 +74,48 @@ export default function ForumPage() {
   }, [selectedThreadId])
 
   // Handler for adding new thread
-  const handleAddThread = async () => {
-    if (!newThreadTitle.trim() || !newThreadContent.trim()) return
-    if (!isAuthenticated || !user?.id) {
-      alert("You must be logged in to post a discussion.")
-      return
-    }
-    setIsLoading(true)
-    try {
-      const discussionData = {
-        title: newThreadTitle,
-        description: newThreadContent,
-      }
-      console.log("Creating discussion:", discussionData) // Debug log
-      const newDiscussion = await createDiscussion(discussionData)
-      console.log("New discussion created:", newDiscussion) // Debug log
-      // Add the new discussion to the top of the list
-      setThreads([newDiscussion, ...threads])
-      // Reset form
-      setNewThreadTitle("")
-      setNewThreadContent("")
-      setShowNewThreadForm(false)
-    } catch (error) {
-      console.error("Failed to create discussion:", error)
-      alert("Failed to create discussion. Please try again.")
-    } finally {
-      setIsLoading(false)
-    }
+ const handleAddThread = async () => {
+  if (!newThreadTitle.trim() || !newThreadContent.trim()) return
+  if (!isAuthenticated || !user?.id) {
+    alert("You must be logged in to post a discussion.")
+    return
   }
+  setIsLoading(true)
+  try {
+    const discussionData = {
+      title: newThreadTitle,
+      description: newThreadContent,
+    }
+    console.log("Creating discussion:", discussionData)
+
+    const newDiscussion = await createDiscussion(discussionData)
+
+    // Enrich the object with local user + timestamp
+    const enrichedDiscussion = {
+      ...newDiscussion,
+      discussionBy: {
+        id: user.id,
+        name: user.name,
+        avatar: user.avatar || "/images/user.svg",
+      },
+      createdAt: new Date().toISOString(),
+    }
+
+    // Add to state instantly
+    setThreads([enrichedDiscussion, ...threads])
+
+    // Reset form
+    setNewThreadTitle("")
+    setNewThreadContent("")
+    setShowNewThreadForm(false)
+  } catch (error) {
+    console.error("Failed to create discussion:", error)
+    alert("Failed to create discussion. Please try again.")
+  } finally {
+    setIsLoading(false)
+  }
+}
+
 
   // Post comment to backend
   const handleAddComment = async (threadId: number) => {
