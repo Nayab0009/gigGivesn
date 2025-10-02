@@ -218,7 +218,7 @@ const SummaryTab = ({
           </div>
         </div>
         <div
-          className="rounded-2xl border border-white/30 p-6 text-white/90 backdrop-blur-xl  max-h-[500px] overflow-auto flex flex-col justify-center"
+          className="rounded-2xl border border-white/30 p-6 text-white/90 backdrop-blur-xl  max-h-[450px] overflow-auto flex flex-col "
           style={{ background: "#0000004D" }}
         >
           <div className="text-lg font-semibold mb-2">Members Task Breakdown</div>

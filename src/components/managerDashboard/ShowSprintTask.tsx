@@ -361,6 +361,9 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
   };
   // Debug log for projectId/projectName
   useEffect(() => {
+    setActiveTab("sprints")
+  }, [isDeleteModalOpen]);
+  useEffect(() => {
     console.log('ShowSprintTask projectId:', projectId, 'projectName:', projectName);
   }, [projectId, projectName]);
 

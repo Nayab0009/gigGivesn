@@ -45,7 +45,7 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
       }
       const createdSprint = await createSprint(payload);
       console.log('Sprint Created:', createdSprint);
-      setForm({ title: '', description: '', startDate: '', endDate: '', });
+      setForm({ title: '', description: '', startDate: '', endDate: '', title2: '' });
 
       // Navigate to showsprints page after successful creation
       router.push(`/dashboard/manager/projects/${createdSprint.project.id}`)
@@ -57,7 +57,7 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-[100px] flex items-center justify-center z-[9999] p-4">
+    <div className="fixed  inset-0 bg-black/30 backdrop-blur-[100px] flex items-center justify-center z-[9999] p-4">
       <div className="rounded-3xl shadow-2xl w-full max-w-3xl max-h-[95vh] overflow-y-auto border-2 border-white/30 scrollbar-hide">
         <div className="p-4 sm:p-6 bg-black/30 backdrop-blur-md relative">
           {/* Header */}
