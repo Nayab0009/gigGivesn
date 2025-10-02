@@ -424,7 +424,7 @@ const localMsg: ChatMessage = {
     </span>
   )}
 
-  {/* Edit button - stays at far right */}
+
   {currentUser?.role === "manager" ? (
     <button
       onClick={handleEditClick}
