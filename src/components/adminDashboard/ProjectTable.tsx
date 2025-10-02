@@ -884,7 +884,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                             </div>
                             <div>
                               <h3
-                                className="text-xs sm:text-sm  leading-tight break-words whitespace-normal"
+                                className="text-xs sm:text-sm  leading-tight break-words whitespace-normal cursor-pointer"
                                 onClick={() => router.push(`/dashboard/manager/projects/${project.id}`)}
                                 style={{ color: "#FFFFFF", fontWeight: 500, wordBreak: 'break-word', fontSize: '16px' }}
                               >
