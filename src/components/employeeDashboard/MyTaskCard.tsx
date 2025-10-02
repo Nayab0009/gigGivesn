@@ -30,9 +30,9 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
         padding: '16px',
         opacity: 1,
         boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)',
-        background: '#0000004D',
-        backdropFilter: 'blur(101.67px)',
-        backgroundBlendMode: 'luminosity',
+        // background: '#0000004D',
+        // backdropFilter: 'blur(101.67px)',
+        // backgroundBlendMode: 'luminosity',
       }}
     >
     <div className="flex items-center justify-between mb-2">
@@ -59,7 +59,7 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
           lineHeight: '20.33px',
           letterSpacing: '0px',
           verticalAlign: 'middle',
-          color: '#93c5fd', // text-blue-300
+          color: '#0CA9F6', // text-blue-300
         }}
       >
       Total Tasks {total}

@@ -112,12 +112,12 @@ export default function Dashboard() {
         // First try the structure from manager dashboard
         let contacts = [];
         if (Array.isArray(response?.data?.[0])) {
-          contacts = response.data[0].slice(0, 2);
+          contacts = response.data[0].slice(0, 4);
           console.log('Found nested array structure, extracted contacts:', contacts);
         }
         // If that doesn't work, try the direct array
         else if (Array.isArray(response?.data)) {
-          contacts = response.data.slice(0, 2);
+          contacts = response.data.slice(0, 4);
           console.log('Found direct array structure, extracted contacts:', contacts);
         }
         // If both fail, log the actual structure
@@ -203,75 +203,61 @@ export default function Dashboard() {
    const handleViewAllClick = () => setIsPopupOpen(true);
 
   return (
-    <div className="min-h-screen pb-12 text-white rounded-2xl mt-0 pt-0">
+    <div className="min-h-screen pb-12 text-white rounded-2xl">
       {/* Header */}
       <HeaderSection userName={user?.name} error={error} />
 
-      {/* Main Content */}
-      <div className="mx-auto px-6 mb-10">
-        {/* Top Row */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          {/* Left Side */}
-          <div className="md:col-span-3 flex gap-6">
-            <div className="h-[230px] w-[1000px]">
-              <TodayTasksSection
-                tasks={todayTasks}
-                tasksLoading={tasksLoading}
-                isLoading={tasksLoading}
-                onViewAll={handleViewAllClick}
-                highCount={todayTasks.filter(t => t.priority?.toLowerCase() === "high").length}
-                mediumCount={todayTasks.filter(t => t.priority?.toLowerCase() === "medium").length}
-                lowCount={todayTasks.filter(t => t.priority?.toLowerCase() === "low").length}
-                totalCount={todayTasks.length}
-              />
+      {/* Today Task Section and main content */}
+      <div className="w-full mx-auto mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {/* Left Column: Today Tasks + Notes + Timetable */}
+          <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-8 w-full">
+            {/* Top Section with TodayTasks and Notes side by side */}
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex-grow md:w-8.5/12">
+                <TodayTasksSection
+                  tasks={todayTasks}
+                  tasksLoading={tasksLoading}
+                  isLoading={tasksLoading}
+                  onViewAll={handleViewAllClick}
+                  highCount={todayTasks.filter(t => t.priority?.toLowerCase() === "high").length}
+                  mediumCount={todayTasks.filter(t => t.priority?.toLowerCase() === "medium").length}
+                  lowCount={todayTasks.filter(t => t.priority?.toLowerCase() === "low").length}
+                  totalCount={todayTasks.length}
+                />
+              </div>
+              <div className="md:w-3.5/12">
+                <NotesCard />
+              </div>
             </div>
 
-            <div className="h-[230px] w-[332px]">
-              <NotesCard />
-            </div>
-          </div>
-
-          {/* Right Side */}
-          <div className="flex flex-col gap-6 w-full max-w-[340px] mx-auto">
-            <div className="flex-1">
-              <MyTaskCard
-                total={myTasksData.totalProjects}
-                totalProjects={myTasksData.totalProjects}
-                inProgress={myTasksData.inProgress}
-                completed={myTasksData.completed}
-                pending={myTasksData.pending}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Row */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {/* Left: Timetable + Filters */}
-          <div className="md:col-span-3 flex flex-col gap-6">
-            <div>
-              <ProjectFilters onFilterChange={setActiveTimeFilter} />
-            </div>
-            {/* Timetable grows to match Reminder */}
-            <div >
+            {/* Timetable directly below Today Tasks and Notes, matching manager dashboard styling */}
+            <div
+              className="rounded-2xl border border-blue-200/30 bg-black/30 overflow-auto scrollbar-none"
+              style={{ minHeight: '300px', maxHeight: '420px', scrollbarWidth: 'none' }}
+            >
               <TimeTable employeeId={user?.id} />
             </div>
           </div>
 
-          {/* Right Column: CommunicationLogs + Reminder (define total height) */}
-         <div className="flex flex-col gap-6 w-full max-w-[340px] mx-auto">
-          <div>
+          {/* Right Column: MyTaskCard + CommunicationLogs stacked */}
+          <div className="lg:col-span-4 xl:col-span-3 flex flex-col gap-8 w-full">
+            <MyTaskCard
+              total={myTasksData.totalProjects}
+              totalProjects={myTasksData.totalProjects}
+              inProgress={myTasksData.inProgress}
+              completed={myTasksData.completed}
+              pending={myTasksData.pending}
+            />
+            
             <CommunicationLogsCard
               commLogs={commLogs}
               commLoading={commLoading}
               onSeeAll={() => router.push('/dashboard/manager/chat')}
             />
-          </div>
-          <div>
+            
             {/* <Remainder /> */}
           </div>
-        </div>
-
         </div>
       </div>
 

@@ -253,11 +253,11 @@ export default function SupportModal({ isOpen, onClose, onSubmit, user }: Props)
             type="button"
             disabled={!canSubmit}
             onClick={submit}
-            className="px-5 py-2 rounded-lg text-white font-semibold shadow disabled:opacity-60"
-            style={{
-              background: `linear-gradient(180deg, ${colors.primary.hex}, ${colors.accent.hex})`,
-              boxShadow: "0 16px 40px rgba(0,0,0,0.45)",
-            }}
+            className="px-5 py-2 rounded-lg text-white font-semibold shadow disabled:opacity-60 bg-[#0CA9F6]"
+            // style={{
+            //   background: `linear-gradient(180deg, ${colors.primary.hex}, ${colors.accent.hex})`,
+            //   boxShadow: "0 16px 40px rgba(0,0,0,0.45)",
+            // }}
           >
             {submitting ? "Saving..." : "Save"}
           </button>

@@ -145,9 +145,15 @@ export default function ForumPage() {
               onClick={() => setShowNewThreadForm(!showNewThreadForm)}
               disabled={isLoading}
             >
-              <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-              <span className="relative z-10 font-inter font-medium text-[14px] leading-[20px] text-center align-middle">{showNewThreadForm ? "Cancel" : "Start New"}</span>
-              <Plus size={24} className="relative z-10" />
+             <div className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+<span className="relative z-10 font-inter font-medium text-[14px] leading-[20px] text-center align-middle">
+  {showNewThreadForm ? "Cancel" : "Start New"}
+</span>
+
+{/* Only show Plus icon if not in Cancel mode */}
+{!showNewThreadForm && (
+  <Plus size={24} className="relative z-10" />
+)}
             </button>
           )}
         </div>

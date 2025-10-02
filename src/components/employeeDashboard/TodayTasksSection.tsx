@@ -47,16 +47,13 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
 
   return (
     <div
-      className="rounded-3xl w-full h-full border border-white/20 shadow-md"
+      className="rounded-3xl w-full h-full border border-white/20 shadow-md bg-black/30"
       style={{
         minHeight: '248px',
         padding: '16px',
         borderRadius: '20px',
         borderWidth: '1px',
-        opacity: 1,
-        background: '#0000004D',
-        backdropFilter: 'blur(101.66923522949219px)',
-        backgroundBlendMode: 'luminosity',
+
       }}
     >
       <div className="flex items-center justify-between mb-4">

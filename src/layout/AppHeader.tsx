@@ -201,10 +201,12 @@ const AppHeader: React.FC = () => {
     <header
       className={`
     relative top-[1.875rem] 
+
+
     mx-[1.875rem] h-[74px]
     shadow-md transition-all duration-500 ease-in-out
     bg-black/40 text-white
-    flex items-center justify-between px-4
+    flex items-center justify-between px-[32px] py-[22px]
     rounded-[16px] border border-white/30
     mb-2
 `}
@@ -225,7 +227,8 @@ const AppHeader: React.FC = () => {
       </div>
 
       <nav className="hidden lg:flex flex-1 ml-6 mr-12">
-        <ul className="flex items-center justify-center gap-10 text-sm font-medium flex-wrap">
+       <ul className="flex items-center justify-center gap-8 text-sm font-medium flex-nowrap lg:flex-wrap">
+
           {navItems.map((item, index) => (
             <li key={item.name}>
               {item.path ? (

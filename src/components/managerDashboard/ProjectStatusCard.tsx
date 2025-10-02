@@ -48,7 +48,7 @@ const ProjectStatusCard: React.FC<ProjectStatusCardProps> = ({ analytics }) => (
           lineHeight: '20.33px',
           letterSpacing: '0px',
           verticalAlign: 'middle',
-          color: '#93c5fd', // text-blue-300
+          color: '#0CA9F6', // text-blue-300
         }}
       >
         Total projects {analytics.totalProjects}

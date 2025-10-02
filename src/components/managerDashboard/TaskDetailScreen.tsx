@@ -113,6 +113,7 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId }: TaskDet
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null)
   const [isTaskChat, setIsTaskChat] = useState(false)
 
+
   async function fetchTask() {
     setLoading(true)
     setError(null)
@@ -175,9 +176,8 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId }: TaskDet
     initiateSocket()
     const socket = getSocket()
     if (!socket) return
-    if (isTaskChat && currentTaskId) {
-      socket.emit("join_task_room", { taskId: currentTaskId })
-    }
+   setIsTaskChat(true)
+setCurrentTaskId(String(taskId))
 
     socket.on("connect", () => {
       console.log("Socket connected:", socket.id)
@@ -204,10 +204,10 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId }: TaskDet
       }
     }
 
-    socket.on("task_message", handleTaskMessage)
+    socket.on("taskmessage", handleTaskMessage)
 
     return () => {
-      socket.off("task_message", handleTaskMessage)
+      socket.off("taskmessage", handleTaskMessage)
       socket.emit("leave_task_room", { taskId: String(taskId) })
     }
   }, [currentUser, taskId])
@@ -241,12 +241,12 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId }: TaskDet
       userId: currentUser.id.toString(),
       username: currentUser.name,
       senderId: currentUser.id.toString(),
-      receiverId: String(taskId),
+ receiverId: task?.taskFor?.id?.toString() || "",
       timestamp: Date.now(),
     }
     setChatMessages((prev) => [...prev, msg])
     setChatInput("")
-    socket?.emit("task_message", { ...msg, taskId: String(taskId) })
+    socket?.emit("taskmessage", { ...msg, taskId: String(taskId) })
     try {
       await sendChatMessage(currentUser.id, taskId)
     } catch { }
@@ -330,55 +330,65 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId }: TaskDet
         {/* Left info column */}
         <div className="flex flex-col text-white/90 w-[330px]">
           {/* Ticket Number */}
-          <div className="flex w-full justify-between items-center">
+  <div className="flex w-full justify-between items-center mt-2">
+  {/* Ticket Number */}
+  <div>
+    <div className="text-[12px] tracking-wide text-[#A4A7AE] font-[400] mb-1">
+      Ticket Number
+    </div>
+    <span className="text-[20px] font-[500]">
+      {task.ticketNumber ?? `TASK-${task.id}`}
+    </span>
+  </div>
+
+  {/* Status Dropdown - aligned right */}
+  {currentUser?.role === "employee" ? (
+    <div className="relative">
+      <button
+        onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
+        disabled={updatingStatus}
+        className="text-[12px] px-3 py-[6px] rounded-full bg-[#0CA9F6] text-white font-[400] shadow-sm hover:bg-[#0B8FD1] transition-colors flex items-center gap-1 disabled:opacity-50"
+      >
+        {task.status?.replace(/_/g, " ") || "In progress"}
+        <ChevronDown
+          className={`w-3 h-3 transition-transform ${
+            statusDropdownOpen ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+
+      {statusDropdownOpen && (
+        <div className="absolute top-full right-0 mt-1 w-36 bg-black/90 border border-white/20 rounded-lg shadow-lg overflow-hidden z-10">
+          {statusOptions.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => handleStatusUpdate(option.value)}
+              className="w-full text-left px-3 py-2 text-[12px] text-white hover:bg-white/10 transition-colors"
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  ) : (
+    <span className="text-[12px] px-3 py-[6px] rounded-full bg-[#0CA9F6] text-white font-[400] shadow-sm">
+      {task.status?.replace(/_/g, " ") || "In progress"}
+    </span>
+  )}
+
+  {/* Edit button - stays at far right */}
+  {currentUser?.role === "manager" ? (
+    <button
+      onClick={handleEditClick}
+      className="p-1 rounded hover:bg-white/10 ml-2"
+    >
+      <Edit className="w-4 h-4 text-white/60" />
+    </button>
+  ) : null}
+</div>
 
 
-            <div className="mt-2">
-              <div className="text-[12px] tracking-wide text-[#A4A7AE] font-[400px] mb-1">
-                Ticket Number
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-[20px] font-[500px]">
-                  {task.ticketNumber ?? `TASK-${task.id}`}
-                </span>
-
-                {/* Status Dropdown - only editable for employee role */}
-                {currentUser?.role === "employee" ? (
-                  <div className="relative">
-                    <button
-                      onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
-                      disabled={updatingStatus}
-                      className="text-[12px] px-3 py-[6px] rounded-full bg-[#0CA9F6] text-white font-[400] shadow-sm hover:bg-[#0B8FD1] transition-colors flex items-center gap-1 disabled:opacity-50"
-                    >
-                      {task.status?.replace(/_/g, " ") || "In progress"}
-                      <ChevronDown className={`w-3 h-3 transition-transform ${statusDropdownOpen ? 'rotate-180' : ''}`} />
-                    </button>
-
-                    {statusDropdownOpen && (
-                      <div className="absolute top-full left-0 mt-1 w-36 bg-black/90 border border-white/20 rounded-lg shadow-lg overflow-hidden z-10">
-                        {statusOptions.map((option) => (
-                          <button
-                            key={option.value}
-                            onClick={() => handleStatusUpdate(option.value)}
-                            className="w-full text-left px-3 py-2 text-[12px] text-white hover:bg-white/10 transition-colors"
-                          >
-                            {option.label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <span className="text-[12px] px-3 py-[6px] rounded-full bg-[#0CA9F6] text-white font-[400] shadow-sm">
-                    {task.status?.replace(/_/g, " ") || "In progress"}
-                  </span>
-                )}
-              </div>
-            </div>
-            {currentUser?.role === "manager" ? <button onClick={handleEditClick} className="p-1 rounded hover:bg-white/10">
-              <Edit className="w-4 h-4 text-white/60" />
-            </button> : null}
-          </div>
 
           {/* Sprint Number */}
           <div className="mt-8">
