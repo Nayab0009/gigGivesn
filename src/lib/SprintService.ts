@@ -13,6 +13,16 @@ export const createSprint = async (sprintData:any) => {
         throw error;
     }
 }
+export const updateSprint = async (sprintData:any, sprintId:string) => {
+    try {
+        const response = await axiosInstance.patch(`/sprint/${sprintId}`, sprintData);
+        return response.data;
+    }
+    catch (error) { 
+        console.error('Error Updating Sprint');
+        throw error;
+    }
+}
 export  const  getSprintsForManagers=async (managerId:string)=> {
     const { data } = await axiosInstance.get(`/sprint/manager/all?managerId=${managerId}`)
     return data

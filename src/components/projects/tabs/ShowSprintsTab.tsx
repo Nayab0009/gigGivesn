@@ -1,22 +1,19 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Calendar, Clock, Plus, Circle } from 'lucide-react';
+import { Calendar, Clock, Plus, Circle, Pencil, Trash } from 'lucide-react';
 import { AssignTaskModal } from '../../adminDashboard/AssignProjectTicket';
-import type { Task } from '@/types';
+import type { Sprint, Task } from '@/types';
 import { colors } from "@/colors";
 import axiosInstance from '@/lib/axios';
 import { useAuth } from '@/context/AuthContext';
+import { EditTaskModal } from '@/components/adminDashboard/EditTaskModal';
+import EditSprintModal from '@/components/managerDashboard/EditSprintModal';
+import classnames from 'classnames';
+import classNames from 'classnames';
+import { deleteSprint } from '@/lib/SprintService';
 
-type Sprint = {
-  id: number;
-  name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  status?: string;
-  progress?: number;
-};
+
 
 type SprintsTabProps = {
   projectId: number;
@@ -37,48 +34,33 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSprintId, setSelectedSprintId] = useState<number | null>(null);
   const [selectedSprintName, setSelectedSprintName] = useState<string>('');
+  const [isEditSprintModalOpen, setIsEditSprintModalOpen] = useState(false);
+  const [isDeleteSprintModalOpen, setIsDeleteSprintModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Task state for the modal
-  const [task, setTask] = useState<Task>({
-    id: '',
-    title: '',
-    description: '',
-    status: 'pending',
-    priority: 'medium',
-    assignedTo: [],
-    dueDate: '',
-    estimatedHours: 0,
-  });
 
-  // Helper: truncate long text to one line with ellipsis
-  const truncateText = (text: string, maxLength = 80) => {
-    if (!text) return "";
-    return text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
-  };
 
-  // Helper function to generate project prefix for ticket numbers
-  const getProjectPrefix = (name: string) => {
-    return name.slice(0, 3).toUpperCase();
+  const fetchSprints = async () => {
+    if (!projectId) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data } = await axiosInstance.get(`/sprint/project/${projectId}`);
+      setSprints(data);
+    } catch (err) {
+      setError('Failed to load sprints.');
+      setSprints([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Fetch sprints for the specific project
   useEffect(() => {
-    const fetchSprints = async () => {
-      if (!projectId) return;
 
-      setLoading(true);
-      setError(null);
-
-      try {
-        const { data } = await axiosInstance.get(`/sprint/project/${projectId}`);
-        setSprints(data);
-      } catch (err) {
-        setError('Failed to load sprints.');
-        setSprints([]);
-      } finally {
-        setLoading(false);
-      }
-    };
 
     fetchSprints();
   }, [projectId]);
@@ -92,28 +74,7 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
     );
   };
 
-  // Handle add task button click
-  const handleAddTask = (sprint: Sprint) => {
-    setSelectedSprintId(sprint.id);
-    setSelectedSprintName(sprint.name);
-    setIsModalOpen(true);
 
-    // Generate ticket prefix from project name
-    const prefix = getProjectPrefix(projectName);
-
-    // Reset task state with prefix
-    setTask({
-      id: '',
-      ticketNumber: prefix,
-      title: '',
-      description: '',
-      status: 'pending',
-      priority: 'medium',
-      assignedTo: [],
-      dueDate: '',
-      estimatedHours: 0,
-    });
-  };
 
   // Handle modal close
   const handleModalClose = () => {
@@ -121,27 +82,63 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
     setSelectedSprintId(null);
     setSelectedSprintName('');
 
-    const url = new URL(window.location.href);
-    url.searchParams.set('tab', 'sprints');
-    router.replace(url.pathname + url.search, { scroll: false });
+    // const url = new URL(window.location.href);
+    // url.searchParams.set('tab', 'sprints');
+    // router.replace(url.pathname + url.search, { scroll: false });
+  };
+
+  const handleEditSprint = (e: React.MouseEvent<HTMLButtonElement>, sprint: Sprint) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setIsModalOpen(true);
+    setSelectedSprintId(sprint.id);
+    // setSelectedSprintName(sprint.name);
+    setIsEditSprintModalOpen(true);
   };
 
   // Handle task creation success
-  const handleTaskAdd = () => {
-    console.log('Tasks created successfully for sprint:', selectedSprintId);
+  const handleDeleteSprint = (e: React.MouseEvent<HTMLButtonElement>, sprint: Sprint) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const shouldDelete = window.confirm("Are you sure you want to delete this sprint?")
+    if (!shouldDelete) return;
+    setIsDeleting(true);
+    deleteSprint(sprint.id.toString()).then(() => {
+      fetchSprints();
+      setIsDeleting(false);
+    });
+    // setSelectedSprintId(sprint.id);
+    // // setSelectedSprintName(sprint.name);
+    // setIsDeleteSprintModalOpen(true);
   };
+
 
   if (loading) {
     return (
       <div
-        className="p-12 text-center border border-white/10 rounded-2xl max-w-xl w-full mx-auto"
-        style={{ background: "#0000004D" }}
+        className={classNames("p-12 text-center border border-white/10 rounded-2xl max-w-xl w-full mx-auto", { "overflow-hidden": isModalOpen })}
+        style={{ background: "#0000004D" }
+        }
       >
         <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
           <Clock className="w-6 h-6 text-emerald-600 animate-spin" />
         </div>
         <p className="text-white/80">Loading sprints...</p>
-      </div>
+      </div >
+    );
+  }
+  if (isDeleting) {
+    return (
+      <div
+        className={classNames("p-12 text-center border border-white/10 rounded-2xl max-w-xl w-full mx-auto", { "overflow-hidden": isModalOpen })}
+        style={{ background: "#0000004D" }
+        }
+      >
+        <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
+          <Clock className="w-6 h-6 text-emerald-600 animate-spin" />
+        </div>
+        <p className="text-white/80">Deleting sprint...</p>
+      </div >
     );
   }
 
@@ -233,9 +230,14 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
                     }}
                   ></div>
                 </div>
-                {/* <div className="flex justifty-end w-full">
-                    <button className="flex items-center justify-center"></button>
-                </div> */}
+                <div className="flex justify-end w-full gap-2">
+                  <button onClick={(e) => handleEditSprint(e, sprint)} className="flex items-center text-white bg-black/30 rounded-lg h-8 w-8  border border-white/30 justify-center">
+                    <Pencil className="w-3.5 h-3.5" />
+                  </button>
+                  <button onClick={(e) => handleDeleteSprint(e, sprint)} className="flex items-center text-white bg-black/30 rounded-lg h-8 w-8  border border-white/30 justify-center">
+                    <Trash className="w-3.5 h-3.5" />
+                  </button>
+                </div>
                 {/* Footer (actions) */}
                 <div>
                   <button
@@ -252,19 +254,21 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
           ))}
         </div>
       )}
-
-      {/* Assign Task Modal */}
-      {typeof selectedSprintId === "number" && (
-        <AssignTaskModal
+      {isModalOpen && (
+        <EditSprintModal
           open={isModalOpen}
           onClose={handleModalClose}
-          onAdd={handleTaskAdd}
-          task={task}
-          setTask={setTask}
+          onUpdate={() => {
+            setIsModalOpen(false);
+            fetchSprints()
+          }}
+          sprint={sprints.find(sprint => sprint.id === selectedSprintId) as Sprint}
           projectId={projectId}
-          sprintId={selectedSprintId}
         />
       )}
+
+      {/* Assign Task Modal */}
+
     </div>
   );
 };
