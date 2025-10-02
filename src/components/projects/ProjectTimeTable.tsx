@@ -3,7 +3,7 @@
 
 import { useAuth } from "@/context/AuthContext";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { getManagerTasksByProjectId, getEmployeeTasksByProjectId,getTasksByProjectId } from "@/lib/TaskService";
+import { getManagerTasksByProjectId, getEmployeeTasksByProjectId, getTasksByProjectId } from "@/lib/TaskService";
 import TaskDetailsPopup from "../managerDashboard/TaskDetails";
 import { useEffect, useState } from "react";
 import { interFont } from "@/app/layout";
@@ -68,7 +68,7 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
         if (projectId) {
           if (user?.role === "employee") {
             data = await getEmployeeTasksByProjectId(String(projectId));
-          } else if (user?.role === "admin" ) {
+          } else if (user?.role === "admin") {
             data = await getTasksByProjectId(String(projectId));
           } else {
             data = await getManagerTasksByProjectId(String(projectId));
@@ -90,8 +90,8 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
   function isSameWeek(date1: Date, date2: Date) {
     const d1 = new Date(date1);
     const d2 = new Date(date2);
-    d1.setHours(0,0,0,0);
-    d2.setHours(0,0,0,0);
+    d1.setHours(0, 0, 0, 0);
+    d2.setHours(0, 0, 0, 0);
     d1.setDate(d1.getDate() - ((d1.getDay() + 6) % 7));
     d2.setDate(d2.getDate() - ((d2.getDay() + 6) % 7));
     return d1.getTime() === d2.getTime();
@@ -123,7 +123,7 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
     date.setDate(mondayDate.getDate() + index);
     dayNumbers[day] = date.getDate().toString();
   });
-  
+
   // Map tasks to days of the week
   const schedule: Record<string, any[]> = {};
   days.forEach((day) => (schedule[day] = []));
@@ -200,7 +200,7 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
 
   return (
     <>
-      <div className="flex items-center justify-between mb-2 px-4">
+      <div className="flex items-center justify-between mb-2`">
         <div className="text-white/60 text-sm font-medium">{weekRange}</div>
         <div className="flex gap-2">
           <button
@@ -220,11 +220,10 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
         </div>
       </div>
       <div
-        className={`w-full p-4 rounded-3xl overflow-x-auto`}
+        className={`w-full p-4 rounded-3xl border border-white/30 overflow-x-auto`}
         style={{
           scrollbarWidth: "none",
           opacity: 1,
-          borderRadius: "12px",
           background: "#0000004D",
           backdropFilter: "blur(101.67px)",
           backgroundBlendMode: "luminosity",
@@ -256,7 +255,7 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
                   return (
                     <div
                       key={`${day}-${task.id || idx}`}
-                      className="flex flex-col justify-between bg-black/30 text-[#0CA9F6] relative overflow-hidden shadow-lg h-[240px] p-4 rounded-[15px] border border-white/10 gap-y-[12px]"
+                      className="flex flex-col justify-between bg-black/30 text-[#0CA9F6] relative overflow-hidden shadow-lg h-[240px] p-4 rounded-[15px] border border-white/30 gap-y-[12px]"
                       style={{
                         opacity: 1,
                         boxShadow: "0 2px 12px 0 rgba(0,0,0,0.10)",
@@ -309,7 +308,7 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
                           {task.priority}
                         </span>
                       </div>
-                      <div className="mt-2 gap-[12px]">
+                      <div className="mt-2 gap-3 flex flex-col">
                         <div
                           className="text-white font-semibold overflow-hidden"
                           style={{
@@ -422,13 +421,15 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
               </div>
             );
           })}
-        </div>
-      </div>
+        </div >
+      </div >
 
       {/* Task popup */}
-      {isPopupOpen && selectedTask && (
-        <TaskDetailsPopup task={selectedTask} onClose={closePopup} />
-      )}
+      {
+        isPopupOpen && selectedTask && (
+          <TaskDetailsPopup task={selectedTask} onClose={closePopup} />
+        )
+      }
     </>
   );
 };
