@@ -1,19 +1,23 @@
+
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
+import { getNotifications } from "@/lib/notifications";
+import { useAuth } from "@/context/AuthContext";
 
 type NotificationDropdownProps = {
   trigger?: React.ReactNode;
 };
 
 export default function NotificationDropdown({ trigger }: NotificationDropdownProps) {
+  const { token } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [notifying, setNotifying] = useState(true);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  function toggleDropdown() {
-    setIsOpen((prev) => !prev);
-  }
+
 
   function closeDropdown() {
     setIsOpen(false);
@@ -23,13 +27,37 @@ export default function NotificationDropdown({ trigger }: NotificationDropdownPr
     toggleDropdown();
     setNotifying(false);
   };
+  
+  // Fetch notifications when dropdown is opened
+  const fetchNotifications = async () => {
+    setLoading(true);
+    try {
+      // Use token from AuthContext instead of sessionStorage
+      if (!token) {
+        console.log('No token available in AuthContext');
+        return;
+      }
+      console.log('Using token from AuthContext');
+      const data = await getNotifications(token);
+      console.log('Notifications data:', data);
+      setNotifications(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error('Error fetching notifications:', err);
+      setNotifications([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Example notifications (replace with API later)
-  const notifications = [
-    { code: "AER-001", message: "Adil khan changed the task status to completed", time: "2 minutes ago" },
-    { code: "FAZ-034", message: "Asfand changed the task status to completed", time: "1 hour ago" },
-    { code: "AER-019", message: "Task deadline is near", time: "3 hour ago" },
-  ];
+  useEffect(() => {
+    if (isOpen) {
+      fetchNotifications();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);  function toggleDropdown() {
+    setIsOpen((prev) => !prev);
+  }
+
 
   return (
     <div className="relative">
@@ -90,13 +118,24 @@ export default function NotificationDropdown({ trigger }: NotificationDropdownPr
 
         {/* Notification items */}
         <ul className="flex flex-col gap-4">
-          {notifications.map((n, idx) => (
-            <li key={idx} className="border-b border-white/5 pb-3 last:border-0">
-              <p className="font-semibold text-sky-400">{n.code}</p>
-              <p className="text-gray-200 text-sm">{n.message}</p>
-              <span className="text-xs text-gray-400">{n.time}</span>
-            </li>
-          ))}
+          {loading ? (
+            <li className="text-center text-gray-400">Loading notifications...</li>
+          ) : notifications.length === 0 ? (
+            <li className="text-center text-gray-400">No notifications found.</li>
+          ) : (
+            notifications.map((n, idx) => (
+              <li key={n.id || idx} className="border-b border-white/5 pb-3 last:border-0 flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  {!n.seen && <span className="inline-block w-2 h-2 rounded-full bg-orange-400" title="Unseen"></span>}
+                  <span className="text-xs text-gray-400">{new Date(n.createdAt).toLocaleString()}</span>
+                </div>
+                <p className="text-gray-200 text-sm">{n.text}</p>
+                {n.link && n.link !== '' && (
+                  <a href={n.link} className="text-blue-400 text-xs underline" target="_blank" rel="noopener noreferrer">View</a>
+                )}
+              </li>
+            ))
+          )}
         </ul>
       </Dropdown>
     </div>
