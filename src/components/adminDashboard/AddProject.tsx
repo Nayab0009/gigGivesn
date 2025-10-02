@@ -1,7 +1,7 @@
 "use client"
 import type React from "react"
 import { useState } from "react"
-import { Loader2, CalendarDays, FileText, Plus, Sparkles,X } from "lucide-react"
+import { Loader2, CalendarDays, FileText, Plus, Sparkles, X } from "lucide-react"
 import { createProject } from "@/lib/ProjectService"
 import { colors } from "@/colors"
 // You can install and use react-datepicker for a better UX:
@@ -31,17 +31,17 @@ const AddProject: React.FC = () => {
       [name]: value,
     }))
   }
-const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0]
-  if (file) {
-    setLogoFile(file) // store file for backend upload
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      setLogoPreview(reader.result as string)
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setLogoFile(file) // store file for backend upload
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setLogoPreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
     }
-    reader.readAsDataURL(file)
   }
-}
   const handleDateChange = (date: Date | null, field: "startDate" | "endDate") => {
     setForm((prev) => ({
       ...prev,
@@ -50,34 +50,34 @@ const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   }
 
   // --- API POST handler ---
- const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault()
-  setIsSubmitting(true)
-  setError(null)
-  setSuccess(null)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    setError(null)
+    setSuccess(null)
 
-  try {
-    const formData = new FormData()
-    formData.append("name", form.title)
-    formData.append("description", form.description)
-    if (form.startDate) formData.append("startDate", form.startDate.toISOString())
-    if (form.endDate) formData.append("endDate", form.endDate.toISOString())
-    if (logoFile) formData.append("logo", logoFile) // 👈 backend expects `logo`
+    try {
+      const formData = new FormData()
+      formData.append("name", form.title)
+      formData.append("description", form.description)
+      if (form.startDate) formData.append("startDate", form.startDate.toISOString())
+      if (form.endDate) formData.append("endDate", form.endDate.toISOString())
+      if (logoFile) formData.append("logo", logoFile) // 👈 backend expects `logo`
 
-    await createProject(formData)
+      await createProject(formData)
 
-    setForm({ title: "", description: "", startDate: null, endDate: null })
-    setLogoPreview(null)
-    setLogoFile(null)
+      setForm({ title: "", description: "", startDate: null, endDate: null })
+      setLogoPreview(null)
+      setLogoFile(null)
 
-    setSuccess("Project added successfully!")
-    setTimeout(() => router.push("/dashboard/admin/projects"), 1200)
-  } catch (err: any) {
-    setError(err?.response?.data?.message || "Failed to add project")
-  } finally {
-    setIsSubmitting(false)
+      setSuccess("Project added successfully!")
+      setTimeout(() => router.push("/dashboard/admin/projects"), 1200)
+    } catch (err: any) {
+      setError(err?.response?.data?.message || "Failed to add project")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
-}
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6">
@@ -100,14 +100,14 @@ const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
       <div className="relative w-full max-w-5xl bg-black/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 sm:p-10">
 
-       <button
-  type="button"
-  onClick={() => router.push("/dashboard/admin/projects")}
+        <button
+          type="button"
+          onClick={() => router.push("/dashboard/admin/projects")}
 
-  className="absolute top-4 right-4 p-2 rounded-full bg-black/50 hover:bg-black/70 transition"
->
-  <X className="w-4 h-4 text-white" />
-</button>{/* Header */}
+          className="absolute top-4 right-4 p-2 rounded-full bg-black/50 hover:bg-black/70 transition"
+        >
+          <X className="w-4 h-4 text-white" />
+        </button>{/* Header */}
         <div className="text-center mb-10">
           <h1 className="text-2xl font-bold mb-3" style={{ color: colors.white.hex }}>
             Add New Project
@@ -117,30 +117,30 @@ const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
         <form onSubmit={handleSubmit}>
           {/* Project Logo Upload */}
-<div className="flex justify-center mb-8">
-  <label className="relative cursor-pointer group">
-    <input
-      type="file"
-      accept="image/*"
-      onChange={handleLogoChange} // 👈 you’ll define this function
-      className="hidden"
-    />
-    <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-2 border-dashed border-white/30 flex items-center justify-center overflow-hidden bg-black/50 group-hover:border-[#0CA9F6] transition-all duration-300">
-      {logoPreview ? (
-        <img
-          src={logoPreview}
-          alt="Project Logo Preview"
-          className="object-cover w-full h-full"
-        />
-      ) : (
-        <div className="flex flex-col items-center justify-center text-gray-400">
-          <FileText className="w-6 h-6 mb-1" />
-          <span className="text-xs">Upload Logo</span>
-        </div>
-      )}
-    </div>
-  </label>
-</div>
+          <div className="flex justify-center mb-8">
+            <label className="relative cursor-pointer group">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleLogoChange} // 👈 you’ll define this function
+                className="hidden"
+              />
+              <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-2 border-dashed border-white/30 flex items-center justify-center overflow-hidden bg-black/50 group-hover:border-[#0CA9F6] transition-all duration-300">
+                {logoPreview ? (
+                  <img
+                    src={logoPreview}
+                    alt="Project Logo Preview"
+                    className="object-cover w-full h-full"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center text-gray-400">
+                    <FileText className="w-6 h-6 mb-1" />
+                    <span className="text-xs">Upload Logo</span>
+                  </div>
+                )}
+              </div>
+            </label>
+          </div>
 
           <div className="space-y-8">
             {/* Project Title */}
@@ -199,6 +199,12 @@ const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                     showMonthDropdown
                     showYearDropdown
                     dropdownMode="select"
+                    popperClassName="react-datepicker-dark"
+                    calendarClassName="react-datepicker-dark-calendar"
+                    dayClassName={(date) => "react-datepicker-dark-day"}
+                    weekDayClassName={() => "react-datepicker-dark-weekday"}
+                    monthClassName={() => "react-datepicker-dark-month"}
+                    yearClassName={() => "react-datepicker-dark-year"}
                   />
                   {/* Calendar Icon inside input */}
                   <CalendarDays className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
@@ -223,6 +229,12 @@ const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                     showMonthDropdown
                     showYearDropdown
                     dropdownMode="select"
+                    popperClassName="react-datepicker-dark"
+                    calendarClassName="react-datepicker-dark-calendar"
+                    dayClassName={(date) => "react-datepicker-dark-day"}
+                    weekDayClassName={() => "react-datepicker-dark-weekday"}
+                    monthClassName={() => "react-datepicker-dark-month"}
+                    yearClassName={() => "react-datepicker-dark-year"}
                   />
                   {/* Calendar Icon inside input */}
                   <CalendarDays className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
@@ -248,33 +260,33 @@ const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
             {/* Submit Button */}
             <div className="pt-6 flex justify-center">
-            <button
-  type="submit"
-  disabled={isSubmitting}
-  className="group relative overflow-hidden text-white font-bold py-4 px-12 rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed text-lg transform hover:scale-105 active:scale-95 min-w-[200px] border"
-  style={{
-    backgroundColor: "#0CA9F6",
-    border: "1px solid #57B5E7E5",
-  }}
->
-  <div className="absolute inset-0" style={{ background: colors.accent.rgb, opacity: 0.2 }}></div>
-  <div className="relative flex items-center justify-center">
-    {isSubmitting ? (
-      <>
-        <Loader2
-          className="animate-spin w-6 h-6 mr-3"
-          style={{ color: colors.highlight.hex }}
-        />
-        <span>Creating...</span>
-      </>
-    ) : (
-      <>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="group relative overflow-hidden text-white font-bold py-4 px-12 rounded-full transition-all duration-300 shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed text-lg transform hover:scale-105 active:scale-95 min-w-[200px] border"
+                style={{
+                  backgroundColor: "#0CA9F6",
+                  border: "1px solid #57B5E7E5",
+                }}
+              >
+                <div className="absolute inset-0" style={{ background: colors.accent.rgb, opacity: 0.2 }}></div>
+                <div className="relative flex items-center justify-center">
+                  {isSubmitting ? (
+                    <>
+                      <Loader2
+                        className="animate-spin w-6 h-6 mr-3"
+                        style={{ color: colors.highlight.hex }}
+                      />
+                      <span>Creating...</span>
+                    </>
+                  ) : (
+                    <>
 
-        <span>Create Project</span>
-      </>
-    )}
-  </div>
-</button>
+                      <span>Create Project</span>
+                    </>
+                  )}
+                </div>
+              </button>
 
             </div>
           </div>

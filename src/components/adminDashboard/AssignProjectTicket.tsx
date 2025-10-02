@@ -4,6 +4,8 @@ import axiosInstance from "@/lib/axios";
 import type { Project, Task, User, Team } from "@/types";
 import { useAuth } from "@/context/AuthContext";
 import { colors } from "@/colors";
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
 
 export enum TaskPriority {
   HIGH = 'high',
@@ -21,6 +23,7 @@ interface AssignTaskModalProps {
   projectId?: string | number;
   sprintId?: string | number;
   ticketNumber?: string | number;
+  maxDate?: string | number;
   priority?: TaskPriority;
 }
 
@@ -44,6 +47,7 @@ export function AssignTaskModal({
   getUserStatusIcon,
   projectId,
   sprintId,
+  maxDate,
 }: AssignTaskModalProps) {
   const { user, isAuthenticated } = useAuth();
   const [teams, setTeams] = useState<Team[]>([]);
@@ -160,7 +164,10 @@ export function AssignTaskModal({
       setError('You are not authorized to assign tasks. Only admins and managers can assign tasks.');
       return;
     }
-
+    if (task.dueDate && new Date(task.dueDate) > new Date(maxDate || '')) {
+      setError('Task due date cannot be greater than the sprint end date.');
+      return;
+    }
     if (!task.title.trim() || task.assignedTo.length === 0) {
       return;
     }
@@ -170,6 +177,7 @@ export function AssignTaskModal({
 
     try {
       const createTaskPromises = task.assignedTo.map(async (userId: string) => {
+
         const taskData = {
           ticketNumber: task.ticketNumber?.trim(),
           title: task.title.trim(),
@@ -290,7 +298,7 @@ export function AssignTaskModal({
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-[100px] flex items-center justify-center z-[9999] p-4 overflow-hidden">
       <div className="bg-black/30 backdrop-blur-md rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden border-2 px-4 border-white/30 flex flex-col">
-        
+
         {/* Header - Fixed */}
         <div className="p-6 text-center  flex-shrink-0 ">
           <div className="flex items-center justify-between">
@@ -374,14 +382,27 @@ export function AssignTaskModal({
             {/* Due Date */}
             <div>
               <label className="block text-sm font-medium text-white mb-2">Task Due Date*</label>
-              <input
-                type="date"
-                min={today}
-                value={task.dueDate ? task.dueDate.substring(0, 10) : ""}
-                onChange={(e) => setTask({ ...task, dueDate: e.target.value })}
-                disabled={isCreating}
-                className="w-full px-4 py-3 rounded-xl bg-black/70 text-white focus:outline-none"
-              />
+              <div className="relative w-full full-width-datepicker">
+                <DatePicker
+                  selected={task.dueDate ? new Date(task.dueDate) : null}
+                  onChange={(date) => setTask({ ...task, dueDate: date?.toISOString().split("T")[0] })}
+                  className="w-full rounded-xl bg-black/70 px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
+                  placeholderText="Select due date"
+                  dateFormat="MMM dd, yyyy"
+                  isClearable
+                  showMonthDropdown
+                  showYearDropdown
+                  dropdownMode="select"
+                  maxDate={new Date(maxDate || '')}
+                  minDate={new Date(today)}
+                  popperClassName="react-datepicker-dark"
+                  calendarClassName="react-datepicker-dark-calendar"
+                  dayClassName={(date) => "react-datepicker-dark-day"}
+                  weekDayClassName={() => "react-datepicker-dark-weekday"}
+                  monthClassName={() => "react-datepicker-dark-month"}
+                  yearClassName={() => "react-datepicker-dark-year"}
+                />
+              </div>
             </div>
 
             {/* Task Priority */}
@@ -410,11 +431,10 @@ export function AssignTaskModal({
                       <div
                         key={member.id}
                         onClick={() => !isCreating && toggleAssignment(member.id)}
-                        className={`p-3 rounded-xl border flex items-center space-x-3 cursor-pointer transition-all ${
-                          task.assignedTo[0] === member.id
-                            ? "bg-white/20 border-white/40"
-                            : "bg-black/30 border-white/20 hover:bg-black/40"
-                        }`}
+                        className={`p-3 rounded-xl border flex items-center space-x-3 cursor-pointer transition-all ${task.assignedTo[0] === member.id
+                          ? "bg-white/20 border-white/40"
+                          : "bg-black/30 border-white/20 hover:bg-black/40"
+                          }`}
                       >
                         <img src={member.avatar} alt={member.name} className="w-10 h-10 rounded-full border flex-shrink-0" />
                         <div className="flex-1 min-w-0">
@@ -453,7 +473,7 @@ export function AssignTaskModal({
           </button>
         </div>
       </div>
-      </div>
-    
+    </div>
+
   );
 }
