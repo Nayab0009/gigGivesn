@@ -48,7 +48,7 @@ export default function RootLayout({
           {/* Centered main image */}
           <div className="absolute inset-0 flex items-center justify-center">
             <Image
-              src="/images/Image (2).jpg"
+              src="/images/final7.jpg"
               alt="Main Background"
               width={1920}   // replace with your image's actual width
               height={1080}  // replace with your image's actual height
@@ -59,7 +59,7 @@ export default function RootLayout({
         </div>
 
         {/* Dark overlay */}
-        <div className="fixed inset-0 -z-10 bg-black/30 backdrop-blur-[35px]" />
+        <div className="fixed inset-0 -z-10 bg-black/30 backdrop-blur-[15px] " />
 
         <Providers>
           <ProtectedRoute>{children}</ProtectedRoute>
