@@ -188,7 +188,7 @@ if (isAuthenticated) {
       {/* Background image */}
       <div className="absolute inset-0 -z-10">
         <Image
-          src="/images/Rectangle%20105.png"
+          src="/images/bgbluee (2).jpg"
           alt="Background"
           fill
           priority
