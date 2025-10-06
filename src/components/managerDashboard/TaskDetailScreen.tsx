@@ -240,10 +240,10 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete 
 };
 
 
-    socket.on("message", handleTaskMessage)
+    socket.on("taskmessage", handleTaskMessage)
 
     return () => {
-      socket.off("message", handleTaskMessage)
+      socket.off("taskmessage", handleTaskMessage)
       socket.emit("leave_task_room", { taskId: String(taskId) })
     }
   }, [currentUser, taskId])
