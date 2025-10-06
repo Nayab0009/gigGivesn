@@ -222,15 +222,17 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete 
     senderId: data.sendBy?.id?.toString() || data.senderId?.toString(),
     receiverId: data.receivedBy?.id?.toString() || data.receiverId?.toString(),
     senderName:
-      data.sendBy?.name ||
+      data.senderName ||
       (data.senderId?.toString() === currentUser?.id.toString()
         ? currentUser?.name
-        : task?.taskFor?.name || task?.sprint?.createdBy?.name) || "Unknown",
+        : task?.taskFor?.name || task?.sprint?.createdBy?.name) ||
+      "Unknown",
     receiverName:
-      data.receivedBy?.name ||
+      data.receiverName ||
       (data.receiverId?.toString() === currentUser?.id.toString()
         ? currentUser?.name
-        : task?.taskFor?.name || task?.sprint?.createdBy?.name) || "Unknown",
+        : task?.taskFor?.name || task?.sprint?.createdBy?.name) ||
+      "Unknown",
     senderAvatar: data.sendBy?.avatar || null,
     timestamp: data.timestamp ? new Date(data.timestamp).getTime() : Date.now(),
   };
