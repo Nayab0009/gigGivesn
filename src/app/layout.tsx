@@ -38,7 +38,7 @@ export default function RootLayout({
         <div className="fixed inset-0 -z-20">
           {/* Blurred full background */}
           <Image
-            src="/images/bgbluee (2).jpg"
+            src="/images/final7.jpg"
             alt="Blurred Background"
             fill
             priority

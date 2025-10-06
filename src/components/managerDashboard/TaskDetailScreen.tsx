@@ -307,6 +307,11 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete 
     message: chatInput,
     senderId,
     receiverId,
+      senderName: currentUser.name,
+       receiverName:
+    currentUser.role === "manager"
+      ? task.taskFor?.name || "Unknown"
+      : task.sprint?.createdBy?.name || "Manager",
     taskId: String(task.id),
   };
 
