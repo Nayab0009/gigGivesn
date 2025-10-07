@@ -9,7 +9,7 @@ import { deleteManager } from "@/lib/ManagerService"
 import { updateManager } from "@/lib/ManagerService"
 import Pagination from "../pagination"
 import Image from "next/image"
-
+import { useConfirmation } from "@/context/ConfirmationContext"
 interface Manager {
   id?: string
   name: string
@@ -53,6 +53,7 @@ export default function EnhancedManagersTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
   const router = useRouter()
+  const { showConfirmation } = useConfirmation()
 
   useEffect(() => {
     const fetchManagers = async () => {
@@ -206,19 +207,29 @@ export default function EnhancedManagersTable() {
     }
   };
 
-  const handleDelete = async (managerId: string|undefined) => {
-    if (!managerId) return;
-    const confirmDelete = window.confirm("Are you sure you want to delete this manager?");
-    if (!confirmDelete) return;
-    try {
-      await deleteManager(managerId);
-      setManagers((prev) => prev.filter((manager) => manager.id !== managerId));
-    } catch (error) {
-      console.error("Error deleting manager:", error);
-      alert("Failed to delete manager. Please try again.");
-    }
-  }
-
+ const handleDelete = async (managerId: string | undefined) => {
+  if (!managerId) return;
+  
+  const manager = managers.find(m => m.id === managerId);
+  
+  showConfirmation({
+    type: 'delete',
+    title: 'Delete Manager',
+    message: 'Are you sure you want to delete this manager? This action cannot be undone.',
+    itemName: manager?.name,
+    confirmText: 'Yes, Delete',
+    cancelText: 'No, Cancel',
+    onConfirm: async () => {
+      try {
+        await deleteManager(managerId);
+        setManagers((prev) => prev.filter((manager) => manager.id !== managerId));
+      } catch (error) {
+        console.error("Error deleting manager:", error);
+        alert("Failed to delete manager. Please try again.");
+      }
+    },
+  });
+}
   return (
   <div className="w-[100%] px-2">
       <div className="mx-auto">
