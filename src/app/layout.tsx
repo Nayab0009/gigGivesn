@@ -4,6 +4,7 @@ import { Metadata } from "next";
 import ProtectedRoute from "@/components/protectedRoutes/ProtectedRoute";
 import Image from "next/image";
 import { Inter, Montserrat, Roboto } from "next/font/google";
+import { ConfirmationProvider } from "@/context/ConfirmationContext";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -62,7 +63,9 @@ export default function RootLayout({
         <div className="fixed inset-0 -z-10 bg-black/30 backdrop-blur-[15px] " />
 
         <Providers>
-          <ProtectedRoute>{children}</ProtectedRoute>
+          <ConfirmationProvider>
+            <ProtectedRoute>{children}</ProtectedRoute>
+          </ConfirmationProvider>
         </Providers>
       </body>
     </html>

@@ -8,7 +8,7 @@ import { ShowEmployee } from "@/lib/TeamService"
 import { colors } from "@/colors"
 import Pagination from "../pagination"
 import { useAuth } from "@/context/AuthContext"
-
+import { useConfirmation } from "@/context/ConfirmationContext"
 interface TeamMember {
   id?: string | number
   name: string
@@ -58,6 +58,7 @@ export default function TeamListPage() {
 
   const router = useRouter()
   const { user } = useAuth()
+  const { showConfirmation } = useConfirmation()
   const userRole = user?.role?.toLowerCase()
 
   // Pagination logic
@@ -134,26 +135,35 @@ export default function TeamListPage() {
   setIsDetailsOpen(false)
 }
   const handleEmployeeDelete = async (teamId: string | number) => {
-    if (!teamId) return
-    const confirmDelete = window.confirm("Are you sure you want to delete this employee?")
-    if (!confirmDelete) return
-
-    try {
-      await deleteEmployee(String(teamId))
-      setTeamMembers((prev) => {
-        const updated = prev.filter((team) => String(team.id) !== String(teamId))
-        // If the current page is now empty, go to the previous page (if not on page 1)
-        if ((currentPage - 1) * itemsPerPage >= updated.length && currentPage > 1) {
-          setCurrentPage(currentPage - 1)
-        }
-        return updated
-      })
-    } catch (error) {
-      console.error("Error deleting employee:", error)
-      alert("Failed to delete employee. Please try again.")
-    }
-  }
-
+  if (!teamId) return
+  
+  // Find the member to get their name
+  const member = teamMembers.find(m => String(m.id) === String(teamId))
+  
+  showConfirmation({
+    type: 'delete',
+    title: 'Delete Team Member',
+    message: 'Are you sure you want to delete this employee? This action cannot be undone.',
+    itemName: member?.name,
+    confirmText: 'Yes, Delete',
+    cancelText: 'No, Cancel',
+    onConfirm: async () => {
+      try {
+        await deleteEmployee(String(teamId))
+        setTeamMembers((prev) => {
+          const updated = prev.filter((team) => String(team.id) !== String(teamId))
+          if ((currentPage - 1) * itemsPerPage >= updated.length && currentPage > 1) {
+            setCurrentPage(currentPage - 1)
+          }
+          return updated
+        })
+      } catch (error) {
+        console.error("Error deleting employee:", error)
+        alert("Failed to delete employee. Please try again.")
+      }
+    },
+  })
+}
   const handleEditStart = (member: TeamMember) => {
     setEditingMember({
       ...member,
@@ -270,26 +280,23 @@ export default function TeamListPage() {
 
         {/* Edit Modal */}
        {editingMember && (
-  <div className="fixed inset-0 bg-[#0000004D] backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div className="fixed inset-0 bg-[#0000004D] backdrop-blur-[100px] flex items-center justify-center z-50 p-4">
     <div
       className="rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto scrollbar-hide transform transition-all duration-300 scale-100"
       style={{
         background: "rgba(255, 255, 255, 0.08)", // glassy modal bg
-        border: `2px solid ${colors.primary.hex}40`,
+  
       }}
     >
       {/* Header */}
       <div
         className="px-8 py-6  relative overflow-hidden rounded-t-3xl"
-        style={{
-          background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
-          color: "#fff",
-        }}
+    
       >
         <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
         <div className="relative flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold mb-1">Edit Team Member</h2>
+            <h2 className="text-2xl font-bold mb-1 text-white">Edit Team Member</h2>
             <p className="text-white/80 text-sm">Update employee information</p>
           </div>
           <button
@@ -406,10 +413,7 @@ export default function TeamListPage() {
       {/* Footer */}
       <div
         className="px-8 py-6  rounded-b-3xl flex gap-4"
-        style={{
-          background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
-          borderColor: `${colors.primary.hex}40`,
-        }}
+    
       >
         <button
           onClick={handleEditCancel}
