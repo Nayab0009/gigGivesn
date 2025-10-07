@@ -215,7 +215,7 @@ export default function TeamListPage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-full mx-auto">
         {/* Header */}
      <div className="mb-8 flex flex-col lg:flex-row items-center justify-between gap-6">
   {/* Heading Section */}
