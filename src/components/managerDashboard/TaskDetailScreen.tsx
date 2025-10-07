@@ -69,6 +69,14 @@ type ProjectTask = {
   createdBy?: { name: string }
   estimatedTime?: string
   logs?: TaskLog[]
+  sprint?: {
+    id?: string | number
+    createdBy?: {
+      id?: string | number
+      name?: string
+    }
+    // Add other sprint properties as needed
+  }
 }
 
 type TaskLog = {
