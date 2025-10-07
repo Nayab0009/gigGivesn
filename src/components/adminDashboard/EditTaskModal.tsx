@@ -56,6 +56,7 @@ export function EditTaskModal({
   const [showSuccess, setShowSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
+
   const today = new Date().toISOString().split("T")[0];
   console.log("Project id in edit task modal", projectId, sprintId, task)
   // Prevent body scroll when modal is open
@@ -333,7 +334,7 @@ export function EditTaskModal({
                 </span>
                 <input
                   type="text"
-                  value={(task as any).ticketNumber?.split('-')[1] ?? ''}
+                  value={(task as any).ticketNumber?.split('-')[1].replace('-', '') ?? ''}
                   onChange={(e) => {
                     const prefix = (task as any).ticketNumber?.split('-')[0] || '';
                     setTask({
