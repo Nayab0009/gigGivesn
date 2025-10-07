@@ -264,7 +264,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
     setTask({
       id: myTask?.id,
       // @ts-ignore – modal expects ticketNumber though it's not in Task type
-      ticketNumber: prefix,
+      ticketNumber: myTask.ticketNumber,
       title: myTask?.title || '',
       description: myTask?.description || '',
       status: 'pending',

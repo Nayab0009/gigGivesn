@@ -132,10 +132,11 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete 
     try {
       const taskObj = await getTaskById(String(taskId))
       setTask(taskObj)
+      console.log("task obj in task details screen")
       setTask2({
         id: taskObj.id,
         // @ts-ignore – modal expects ticketNumber though it's not in Task type
-        ticketNumber: taskObj.tickerNumber,
+        ticketNumber: taskObj.ticketNumber,
         title: taskObj.title || '',
         description: taskObj.description || '',
         status: 'pending',
@@ -223,31 +224,31 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete 
 
     // socket.emit("join_task_room", { taskId: String(taskId) })
 
- const handleTaskMessage = (data: any) => {
-  const mappedMessage: ChatMessage = {
-    id: data.id || Date.now().toString(),
-    message: data.message,
-    senderId: data.sendBy?.id?.toString() || data.senderId?.toString(),
-    receiverId: data.receivedBy?.id?.toString() || data.receiverId?.toString(),
-    senderName:
-      data.senderName ||
-      (data.senderId?.toString() === currentUser?.id.toString()
-        ? currentUser?.name
-        : task?.taskFor?.name || task?.sprint?.createdBy?.name) ||
-      "Unknown",
-    receiverName:
-      data.receiverName ||
-      (data.receiverId?.toString() === currentUser?.id.toString()
-        ? currentUser?.name
-        : task?.taskFor?.name || task?.sprint?.createdBy?.name) ||
-      "Unknown",
-    senderAvatar: data.sendBy?.avatar || null,
-    timestamp: data.timestamp ? new Date(data.timestamp).getTime() : Date.now(),
-  };
+    const handleTaskMessage = (data: any) => {
+      const mappedMessage: ChatMessage = {
+        id: data.id || Date.now().toString(),
+        message: data.message,
+        senderId: data.sendBy?.id?.toString() || data.senderId?.toString(),
+        receiverId: data.receivedBy?.id?.toString() || data.receiverId?.toString(),
+        senderName:
+          data.senderName ||
+          (data.senderId?.toString() === currentUser?.id.toString()
+            ? currentUser?.name
+            : task?.taskFor?.name || task?.sprint?.createdBy?.name) ||
+          "Unknown",
+        receiverName:
+          data.receiverName ||
+          (data.receiverId?.toString() === currentUser?.id.toString()
+            ? currentUser?.name
+            : task?.taskFor?.name || task?.sprint?.createdBy?.name) ||
+          "Unknown",
+        senderAvatar: data.sendBy?.avatar || null,
+        timestamp: data.timestamp ? new Date(data.timestamp).getTime() : Date.now(),
+      };
 
 
-  setChatMessages((prev) => [...prev, mappedMessage]);
-};
+      setChatMessages((prev) => [...prev, mappedMessage]);
+    };
 
 
     socket.on("taskmessage", handleTaskMessage)
@@ -279,55 +280,55 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete 
       setUpdatingStatus(false)
     }
   }
- const handleSendChat = async () => {
-  if (!chatInput.trim() || !currentUser || !task) return;
+  const handleSendChat = async () => {
+    if (!chatInput.trim() || !currentUser || !task) return;
 
-  const socket = getSocket();
+    const socket = getSocket();
 
-  // Determine sender and receiver based on role
-  let senderId = currentUser.id.toString();
-  let receiverId = "";
+    // Determine sender and receiver based on role
+    let senderId = currentUser.id.toString();
+    let receiverId = "";
 
-  if (currentUser.role === "manager") {
-    senderId = task.sprint?.createdBy?.id?.toString() || senderId; // manager's id from sprint
-    receiverId = task.taskFor?.id?.toString() || "";
-  } else if (currentUser.role === "employee") {
-    senderId = currentUser.id.toString();
-    receiverId = task.sprint?.createdBy?.id?.toString() || "";
-  }
+    if (currentUser.role === "manager") {
+      senderId = task.sprint?.createdBy?.id?.toString() || senderId; // manager's id from sprint
+      receiverId = task.taskFor?.id?.toString() || "";
+    } else if (currentUser.role === "employee") {
+      senderId = currentUser.id.toString();
+      receiverId = task.sprint?.createdBy?.id?.toString() || "";
+    }
 
-  // Local UI message
-  const localMsg: ChatMessage = {
-    id: Date.now().toString(),
-    message: chatInput,
-    senderId,
-    senderName: currentUser.name,
-    receiverId,
-    receiverName:
-      currentUser.role === "manager"
-        ? task.taskFor?.name || "Unknown"
-        : task.sprint?.createdBy?.name || "Manager",
-    timestamp: Date.now(),
-  };
- console.log("Local chat message object:", localMsg);
-  setChatMessages((prev) => [...prev, localMsg]);
-  setChatInput("");
-
-  const payload = {
-    message: chatInput,
-    senderId,
-    receiverId,
+    // Local UI message
+    const localMsg: ChatMessage = {
+      id: Date.now().toString(),
+      message: chatInput,
+      senderId,
       senderName: currentUser.name,
-       receiverName:
-    currentUser.role === "manager"
-      ? task.taskFor?.name || "Unknown"
-      : task.sprint?.createdBy?.name || "Manager",
-    taskId: String(task.id),
-  };
+      receiverId,
+      receiverName:
+        currentUser.role === "manager"
+          ? task.taskFor?.name || "Unknown"
+          : task.sprint?.createdBy?.name || "Manager",
+      timestamp: Date.now(),
+    };
+    console.log("Local chat message object:", localMsg);
+    setChatMessages((prev) => [...prev, localMsg]);
+    setChatInput("");
 
-  console.log("Payload sent to socket:", payload);
-  socket?.emit("taskmessage", payload);
-};
+    const payload = {
+      message: chatInput,
+      senderId,
+      receiverId,
+      senderName: currentUser.name,
+      receiverName:
+        currentUser.role === "manager"
+          ? task.taskFor?.name || "Unknown"
+          : task.sprint?.createdBy?.name || "Manager",
+      taskId: String(task.id),
+    };
+
+    console.log("Payload sent to socket:", payload);
+    socket?.emit("taskmessage", payload);
+  };
 
 
   const handleEditClick = () => {
