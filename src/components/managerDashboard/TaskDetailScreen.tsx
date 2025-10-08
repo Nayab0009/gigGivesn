@@ -264,7 +264,7 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete 
   }, [chatMessages])
   const statusOptions = [
     { value: "pending", label: "Pending" },
-    { value: "in_progress", label: "In Progress" },
+    { value: "inprogress", label: "In Progress" },
     { value: "completed", label: "Completed" },
   ]
   const handleStatusUpdate = async (newStatus: string) => {
