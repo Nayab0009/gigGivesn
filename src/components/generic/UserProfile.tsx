@@ -70,6 +70,7 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
             email: res.email || "",
             phone: res.phone || "",
             address: res.address || "",
+          
           })
           if (res.avatar) {
             setImagePreview(res.avatar)
@@ -137,7 +138,9 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
       formData.append('phone', form.phone)
       formData.append('address', form.address)
       formData.append('email', form.email)
-      formData.append('password', form.password)
+       if (form.password && form.password.trim() !== "") {
+      formData.append("password", form.password)
+    }
 
       // Add avatar if selected
       if (selectedFile) {
@@ -256,8 +259,8 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
                     name="email"
                     type="email"
                     value={form.email}
-                    readOnly
-                    className="w-full rounded-lg border border-white/20 bg-black/40 px-4 py-3 text-gray-400 cursor-not-allowed"
+              
+                    className="w-full rounded-lg border border-white/20 bg-black/40 px-4 py-3 text-gray-400 "
                   />
                 </div>
               </div>
