@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
 import Pagination from "../pagination"
-
+import { useConfirmation } from "@/context/ConfirmationContext"
 interface Manager {
   id: string
   name: string
@@ -493,6 +493,7 @@ function AssignManagerModal({
 // --- Main Component ---
 export default function ProjectDashboard() {
   const router = useRouter()
+    const { showConfirmation } = useConfirmation()
   const [isLoading, setIsLoading] = useState(true)
   const [isAssigning, setIsAssigning] = useState(false)
   const [isUpdating, setIsUpdating] = useState(false)
@@ -603,26 +604,34 @@ export default function ProjectDashboard() {
   }
 
   // Delete project with API call
-  const deleteProject = async (projectId: string) => {
-    if (!confirm("Are you sure you want to delete this project? This action cannot be undone.")) {
-      return
-    }
-    setIsDeleting(projectId)
-    try {
-      // Make DELETE request to delete project
-      await axiosInstance.delete(`/projects/${projectId}`)
-      // Remove project from local state on success
-      setProjects((prev) => prev.filter((p) => p.id !== projectId))
-      // You could add a success notification here
-      console.log(`Project deleted successfully!`)
-    } catch (error) {
-      console.error("Error deleting project:", error)
-      // You could add an error notification here
-      alert("Failed to delete project. Please try again.")
-    } finally {
-      setIsDeleting(null)
-    }
-  }
+ const deleteProject = async (projectId: string) => {
+  if (!projectId) return;
+
+  const project = projects.find((p) => p.id === projectId);
+
+  showConfirmation({
+    type: 'delete',
+    title: 'Delete Project',
+    message: 'Are you sure you want to delete this project? This action cannot be undone.',
+    itemName: project?.name,
+    confirmText: 'Yes, Delete',
+    cancelText: 'No, Cancel',
+    onConfirm: async () => {
+      setIsDeleting(projectId);
+      try {
+        await axiosInstance.delete(`/projects/${projectId}`);
+        setProjects((prev) => prev.filter((p) => p.id !== projectId));
+        console.log("Project deleted successfully!");
+      } catch (error) {
+        console.error("Error deleting project:", error);
+        alert("Failed to delete project. Please try again.");
+      } finally {
+        setIsDeleting(null);
+      }
+    },
+  });
+};
+
 
   const currentProject = assignManagerProjectId ? projects.find((p) => p.id === assignManagerProjectId) : null
   const editProject = editProjectId ? projects.find((p) => p.id === editProjectId) : null
