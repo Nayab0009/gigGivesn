@@ -89,9 +89,10 @@ type TaskDetailsPanelProps = {
   projectId?: string | number;
   onClose?: () => void
   onDelete?: () => void
+  refreshData?: () => void
 }
 
-export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete }: TaskDetailsPanelProps) {
+export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete, refreshData }: TaskDetailsPanelProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [task, setTask] = useState<ProjectTask | null>(null)
@@ -266,6 +267,9 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete 
       await updateTask(String(task.id), { status: newStatus })
       setTask({ ...task, status: newStatus })
       setStatusDropdownOpen(false)
+      if (refreshData) {
+        refreshData()
+      }
     } catch (error) {
       console.error("Error updating status:", error)
     } finally {

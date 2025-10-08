@@ -272,6 +272,7 @@ const TodayTask = () => {
       {openedTaskId && (
         <div className="fixed h-screen w-screen top-0 left-0 flex items-center justify-center z-10 bg-black/50 backdrop-blur-[300px]">
           <TaskDetailsPanel
+            refreshData={() => fetchTasks()}
             // projectId={tasks.find((task) => task.id === openedTaskId)?.taskOf?.id}
             taskId={openedTaskId}
             onDelete={() => fetchTasks()}

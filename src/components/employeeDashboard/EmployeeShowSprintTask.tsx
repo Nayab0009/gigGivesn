@@ -560,6 +560,7 @@ const EmployeeShowSprintTask: React.FC = () => {
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div className="w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl">
               <TaskDetailsPanel
+                refreshData={() => refreshData()}
                 onDelete={() => refreshData()}
                 taskId={selectedTaskId}
                 userRole="employee"
