@@ -264,7 +264,7 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete,
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [chatMessages])
   const statusOptions = [
-    { value: "pending", label: "Pending" },
+    { value: "cancelled", label: "Cancelled" },
     { value: "inprogress", label: "In Progress" },
     { value: "completed", label: "Completed" },
   ]
