@@ -165,9 +165,9 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
     if (!open || !project) return null
 
     return (
-      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="fixed inset-0 bg-black/30 backdrop-blur-[100px] flex items-center justify-center z-50 p-4 border border">
         <div
-          className="rounded-3xl shadow-2xl bg-[#000000] max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 no-scrollbar"
+          className="rounded-3xl  bg-black/30  border border-white/30  max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 no-scrollbar"
           style={{
             // background: "black/40",
 
@@ -186,7 +186,7 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
             //   color: "#fff",
             // }}
           >
-            <div className="absolute inset-0 bg-[#000000]"></div>
+            <div className="absolute inset-0 bg-black/30"></div>
             <div className="relative flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold mb-1 text-white">Edit Project</h2>
@@ -203,7 +203,7 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="flex flex-col h-full bg-[#000000]">
+          <form onSubmit={handleSubmit} className="flex flex-col h-full bg-black/30">
             <div className="px-8 py-6 space-y-6 text-white">
               {/* Project Name */}
               <div className="space-y-2">
