@@ -49,6 +49,7 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
     email: "",
     phone: "",
     address: "",
+    password:"",
   })
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -136,6 +137,7 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
       formData.append('phone', form.phone)
       formData.append('address', form.address)
       formData.append('email', form.email)
+      formData.append('password', form.password)
 
       // Add avatar if selected
       if (selectedFile) {
@@ -289,7 +291,20 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
                   className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
                 />
               </div>
-
+{/* Password */}
+  <div className="group">
+    <label className="block mb-2 text-[14px] font-[400] text-[#D1D5DB]">
+      Password
+    </label>
+    <input
+      name="password"
+      type="password"
+      value={form.password || ""}
+      onChange={handleChange}
+      placeholder="Change password"
+      className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
+    />
+  </div>
               {/* Success/Error Messages */}
               {success && (
                 <div className="text-green-400 text-center">{success}</div>
