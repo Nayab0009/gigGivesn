@@ -180,7 +180,7 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
 `}</style> */}
           {/* Header */}
           <div
-            className="px-8 py-6 border-b relative overflow-hidden rounded-t-3xl"
+            className="px-8 py-6 relative overflow-hidden rounded-t-3xl"
             // style={{
             //   background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
             //   color: "#fff",
