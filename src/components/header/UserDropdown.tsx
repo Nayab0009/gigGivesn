@@ -6,10 +6,13 @@ import { colors } from "@/colors";
 import Image from "next/image";
 import UserProfile from "../generic/UserProfile";
 import SupportModal from "@/components/generic/SupportModal";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function UserDropdown() {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { user, signout } = useAuth();
+  const { theme, setTheme } = useTheme();
+    const [showDropdown, setShowDropdown] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isSupportOpen, setIsSupportOpen] = useState(false);
@@ -168,18 +171,51 @@ export default function UserDropdown() {
             Profile
           </button>
 
-          {/* Theme Option */}
-          <button
-            onClick={() => {
-              setIsOpen(false);
-              console.log("Theme toggle clicked");
-            }}
-            className="flex items-center hover:px-3 gap-3 w-full text-left  py-2 rounded-lg text-xs text-white hover:bg-white/10 transition"
-          >
-            <Image src="/images/theme.svg" alt="Theme" width={16} height={16} />
-            Theme
-          </button>
+{/* Theme Option with submenu */}
+<div className="relative">
+      {/* Toggle button */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          setShowDropdown((prev) => !prev);
+        }}
+        className="flex items-center hover:px-3 gap-3 w-full text-left py-2 rounded-lg text-xs text-white hover:bg-white/10 transition"
+      >
+        <Image src="/images/theme.svg" alt="Theme" width={16} height={16} />
+        Theme
+        <svg
+          className={`ml-auto w-3 h-3 transition-transform ${showDropdown ? "rotate-180" : ""}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
 
+      {/* Dropdown submenu on click */}
+      {showDropdown && (
+        <div className="absolute right-0 top-full mt-2 flex flex-col bg-black/40 backdrop-blur-xl border border-gray-600 rounded-xl w-[150px] shadow-lg z-50">
+          {(["light", "dark", "glass"] as const).map((mode) => {
+            const isActive = theme === mode;
+            return (
+              <button
+                key={mode}
+                onClick={() => {
+                  setTheme(mode);
+                  setShowDropdown(false);
+                }}
+                className={`text-left px-4 py-2 text-xs text-white hover:bg-white/10 rounded-lg capitalize transition ${
+                  isActive ? "bg-white/20 font-semibold" : ""
+                }`}
+              >
+                {mode}
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
           {/* Support Option */}
           <button
             onClick={() => {
