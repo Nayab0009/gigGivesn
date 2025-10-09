@@ -24,18 +24,24 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Update theme class and localStorage
+  // Update theme data attribute and localStorage
   useEffect(() => {
     if (!mounted) return;
 
     const root = document.documentElement;
-    
-    // Remove all theme classes
+
+    // Remove all theme classes (for backwards compatibility)
     root.classList.remove('light', 'dark', 'glass');
-    
-    // Add current theme class
-    root.classList.add(theme);
-    
+
+    // Handle data-theme attribute
+    if (theme === 'glass') {
+      // Glass is default - no data-theme attribute
+      root.removeAttribute('data-theme');
+    } else {
+      // Apply data-theme for light and dark
+      root.setAttribute('data-theme', theme);
+    }
+
     // Save to localStorage
     localStorage.setItem('app-theme', theme);
   }, [theme, mounted]);

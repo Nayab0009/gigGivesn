@@ -32,11 +32,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`relative font-outfit dark:bg-gray-900 min-h-screen  ${montserrat.className} `}
+        className={`relative font-outfit dark:bg-gray-900 min-h-screen   ${montserrat.className} `}
+
         suppressHydrationWarning={true}
       >
-        {/* Background Wrapper */}
-        <div className="fixed inset-0 -z-20">
+        {/* Background Wrapper - Only shown for glass theme */}
+        <div className="fixed inset-0 -z-20 glass-bg-only">
           {/* Blurred full background */}
           <Image
             src="/images/final7.jpg"
@@ -59,8 +60,11 @@ export default function RootLayout({
           </div>
         </div>
 
-        {/* Dark overlay */}
-        <div className="fixed inset-0 -z-10 bg-black/30 backdrop-blur-[15px] " />
+        {/* Dark overlay - Only shown for glass theme */}
+        <div className="fixed inset-0 -z-10 bg-black/30 backdrop-blur-[15px] glass-bg-only" />
+
+        {/* Solid backgrounds for light/dark themes */}
+        <div className="fixed inset-0 -z-20 theme-solid-bg" />
 
         <Providers>
           <ConfirmationProvider>
