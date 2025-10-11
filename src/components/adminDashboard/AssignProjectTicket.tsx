@@ -296,7 +296,7 @@ export function AssignTaskModal({
   }
 
   return (
-    <div className="fixed inset-0 [background:var(--form-bg)] backdrop-blur-[100px] flex items-center justify-center z-[9999] p-4 overflow-hidden">
+    <div className="fixed inset-0  backdrop-blur-xl flex items-center justify-center z-[9999] p-4 overflow-hidden">
       <div className="[background:var(--form-bg)] backdrop-blur-md rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden border-2 px-4 border-white/30 flex flex-col">
 
         {/* Header - Fixed */}
