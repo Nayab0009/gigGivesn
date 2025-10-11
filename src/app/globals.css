@@ -15,7 +15,7 @@ body {
    --border-style: 1px solid rgba(255, 255, 255, 0.3);
    --team-bg: rgba(0, 0, 0, 0.4);
    --container-bg:rgba(0, 0, 0, 0.4);
-   --thead-bg:rgba(0, 0, 0, 0.616);
+   --thead-bg:#00000066;
     --btn-bg: #0000004D;
     --dropdown-bg: #0000004D;
     --form-bg:rgba(0, 0, 0, 0.4);

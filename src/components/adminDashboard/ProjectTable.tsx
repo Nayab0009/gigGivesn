@@ -812,7 +812,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
           ) : (
             <div className="overflow-x-hidden">
               <table className="min-w-full table-fixed divide-y ">
-                <thead className="backdrop-blur-md bg-white/5" style={{height: '73px', borderBottom: '5px solid #FFFFFF1A'}}>
+                <thead className="backdrop-blur-md  bg-[var(--thead-bg)] " style={{height: '73px', borderBottom: '5px solid #FFFFFF1A'}}>
                   <tr className="h-[56px]">
                     <th className="px-4 sm:px-6 py-4 text-left w-[180px] border-b-2 border-[#4A6A65]">
                       <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>

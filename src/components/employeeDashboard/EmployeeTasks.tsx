@@ -361,8 +361,8 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                 <input
                   type="text"
                   placeholder={viewMode === "projects" ? "Search projects by name, ID, or description..." : "Search tasks by title, ID, or description..."}
-                  style={{ backgroundColor: colors.black.transparent40 }}
-                  className="w-full h-[44px] pl-[48px] pr-[16px] py-[12px] rounded-[16px] backdrop-blur-[100px] text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 shadow-sm focus:shadow-md placeholder:font-inter placeholder:font-medium placeholder:text-[14px] placeholder:leading-[20px] placeholder:tracking-[0px] placeholder:align-middle placeholder:text-gray-400"
+                 
+                  className=" bg-[var(--thead-bg)] w-full h-[44px] pl-[48px] pr-[16px] py-[12px] rounded-[16px] backdrop-blur-[100px] text-white focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-300 shadow-sm focus:shadow-md placeholder:font-inter placeholder:font-medium placeholder:text-[14px] placeholder:leading-[20px] placeholder:tracking-[0px] placeholder:align-middle placeholder:text-gray-400"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -471,7 +471,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
             ) : (
               <div className="overflow-x-hidden">
                 <table className="min-w-full  divide-y divide-white/10">
-                  <thead className="backdrop-blur-md bg-white/5" style={{height: '73px', borderBottom: '5px solid #FFFFFF1A'}}>
+                  <thead className="backdrop-blur-md bg-[var(--thead-bg)]" style={{height: '73px', borderBottom: '5px solid #FFFFFF1A'}}>
                     <tr className="h-[56px]">
                       <th className="px-4 sm:px-6 py-4 text-left w-[180px] border-b-2 border-[#4A6A65]">
                         <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
