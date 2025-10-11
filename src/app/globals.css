@@ -19,6 +19,8 @@ body {
     --btn-bg: #0000004D;
     --dropdown-bg: #0000004D;
     --form-bg:rgba(0, 0, 0, 0.4);
+    --field-bg:rgba(0, 0, 0, 0.4);
+
 }
 
 /* Dark Theme */
@@ -34,10 +36,11 @@ body {
    --border-style: none;
     --team-bg: #2E2E2E;
      --container-bg:#2E2E2E;
-     --thead-bg:rgba(0, 0, 0, 0.616);
+     --thead-bg:#00000066;
      --btn-bg: #262525;
      --dropdown-bg: #262525;
       --form-bg:#2E2E2E;
+      --field-bg:#262525;
       
 }
 
@@ -57,7 +60,7 @@ body {
  --btn-bg: #E0E3E7;
  --dropdown-bg: #E0E3E7;
  --form-bg: #E0E3E7;
-;
+ --field-bg:#0000001A;
 }
 
 /* Hide glass background for dark/light themes */
@@ -98,6 +101,8 @@ body {
       --dropdown-bg: var(--dropdown-bg);
       --container-bg: var(--container-bg);
       --form-bg: var(--form-bg);
+      --thead-bg:var(--thead-bg);
+      --field-bg:var(--field-bg);
 }
 
 

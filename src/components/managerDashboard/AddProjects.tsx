@@ -139,8 +139,8 @@ function EditStatusModal({
   if (!open || !project) return null
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-black/20 rounded-2xl border border-white/20 shadow-2xl w-full max-w-md overflow-hidden hover:bg-black/40 transition-all duration-200">
+    <div className="fixed inset-0 bg-[background:var(--form-bg)] backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="[background:var(--form-bg)]  rounded-2xl [border:var(--border-style)] [box-shadow:var(--shadow-combined)] border border-white/20 shadow-2xl w-full max-w-md overflow-hidden transition-all duration-200">
         {/* Header */}
         <div className="p-6 text-white border-b border-white/10 bg-black/20 backdrop-blur-sm">
           <div className="flex items-center justify-between">
@@ -168,7 +168,7 @@ function EditStatusModal({
                 {Object.values(ProjectStatus).map((status) => (
                   <label
                     key={status}
-                    className="flex items-center p-3 border border-white/20 rounded-lg hover:bg-black/40 cursor-pointer transition-all duration-200 bg-black/30 backdrop-blur-sm"
+                    className="flex items-center p-3 border [border:var(--border-style)] rounded-lg hover:bg-black/40 cursor-pointer transition-all duration-200 bg-black/30 backdrop-blur-sm"
                   >
                     <input
                       type="radio"
@@ -254,8 +254,8 @@ function ViewTeamModal({
   if (!open || !projectId) return null
 
   return (
-    <div className="fixed inset-0  bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="  rounded-2xl  bg-black/30 backdrop-blur-sm shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden border border-white/10">
+    <div className="fixed inset-0 [background:var(--form-bg)] backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="  rounded-2xl  [background:var(--form-bg)] backdrop-blur-sm shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden [border:var(--border-style)] [box-shadow:var(--shadow-combined)]  ">
         {/* Header */}
         <div className="p-6 text-whitebackdrop-blur-sm border-white/10">
           <div className="flex items-center justify-between">
@@ -308,7 +308,7 @@ function ViewTeamModal({
                     {project.teamMembers.map((member, index) => (
                       <div
                         key={member.id}
-                        className="flex items-center space-x-4 p-4 bg-black/30 rounded-xl border border-white/20 hover:bg-black/40 hover:shadow-md transition-all duration-200"
+                        className="flex items-center space-x-4 p-4 [border:var(--border-style)] [box-shadow:var(--shadow-combined)]  rounded-xl border border-white/20 hover:bg-black/40 hover:shadow-md transition-all duration-200"
                       >
                         <div className="relative flex-shrink-0">
                           <img
@@ -690,7 +690,7 @@ export default function ProjectDashboard() {
               <table className="min-w-full divide-y divide-emerald-200 ">
                 <thead
                   className="
-  bg-thead-bg
+   bg-[var(--thead-bg)]
     rounded-tl-[20px] rounded-tr-[20px]
     shadow-lg
     border-b border-b-white/20
