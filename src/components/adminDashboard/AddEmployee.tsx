@@ -107,7 +107,8 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         ></div>
       </div>
 
-     <div className="relative w-full max-w-5xl bg-black/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 sm:p-10">
+     <div className="relative w-full max-w-5xl [background:var(--form-bg)] backdrop-blur-xl rounded-3xl [border:var(--border-style)]
+    mb-2 [box-shadow:var(--shadow-combined)] p-8 sm:p-10">
    <button
           type="button"
           onClick={() => router.push("/dashboard/admin/team/list")}

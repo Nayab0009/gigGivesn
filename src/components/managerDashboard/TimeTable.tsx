@@ -157,17 +157,15 @@ const TimeTable = () => {
 
   return (
     <>
-      <div
-        className="w-full p-4 rounded-3xl border border-white/30 overflow-x-auto"
-        style={{
-          scrollbarWidth: "none",
-          opacity: 1,
-          borderRadius: "12px",
-          background: "#0000004D",
-          backdropFilter: "blur(101.67px)",
-          backgroundBlendMode: "luminosity",
-        }}
-      >
+    <div
+  className="w-full p-4 rounded-3xl overflow-x-auto [background:var(--container-bg)] "
+  style={{
+    boxShadow: "var(--shadow-combined)",
+    border: "var(--border-style)",
+  
+    backdropFilter: "blur(101.67px)",
+  }}
+>
         <div className="flex flex-row  w-max">
           {days.map((day, idx) => {
             const tasks = schedule[day];

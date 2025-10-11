@@ -11,15 +11,14 @@ interface ProjectStatusCardProps {
 const ProjectStatusCard: React.FC<ProjectStatusCardProps> = ({ analytics }) => (
 
     <div
-      className="flex flex-col justify-between border border-white/30 bg-black/30  backdrop-blur-[101.67px]   shadow-md w-full mx-auto"
+      className="flex flex-col justify-between  [border:var(--border-style)] [box-shadow:var(--shadow-combined)] [background:var(--container-bg)] backdrop-blur-[101.67px]   shadow-md w-full mx-auto"
       style={{
         minHeight: '240px',
         borderRadius: '20px',
         borderWidth: '1px',
         padding: '16px',
         opacity: 1,
-        boxShadow: '0 2px 12px 0 rgba(0,0,0,0.10)',
-        background: '#0000004D',
+
         backdropFilter: 'blur(101.67px)',
         backgroundBlendMode: 'luminosity',
       }}

@@ -285,7 +285,7 @@ const EmployeeShowSprintTask: React.FC = () => {
             {taskView === "table" ? (
               <div className="space-y-6">
                 {/* Active Tasks Table */}
-                <div className="rounded-2xl border border-white/10 backdrop-blur-xl" style={{ background: "#0000004D" }}>
+                <div className="rounded-2xl [border:var(--border-style)]  [box-shadow:var(--shadow-combined)] ml-2 backdrop-blur-xl" style={{ background: "#0000004D" }}>
                   <div className="overflow-x-auto">
                     <table className="min-w-full">
                       <thead>
@@ -395,7 +395,7 @@ const EmployeeShowSprintTask: React.FC = () => {
 
 
                 {/* Completed Tasks Table */}
-                <div className="rounded-2xl border border-white/10 backdrop-blur-xl" style={{ background: "#0000004D" }}>
+                <div className="rounded-2xl [box-shadow:var(--shadow-combined)] [border:var(--border-style)] ml-2 backdrop-blur-xl" style={{ background: "#0000004D" }}>
                   <div className="overflow-x-auto">
                     <table className="min-w-full">
                       <thead>

@@ -41,8 +41,9 @@ const SummaryTab = ({
         {statCards.map((c) => (
           <div
             key={c.label}
-            className="rounded-2xl border border-white/30 p-4 text-white/90 backdrop-blur-xl flex flex-col gap-2"
-            style={{ background: "#0000004D" }}
+            className="rounded-2xl border:var(--border-style)]
+    mb-2 [box-shadow:var(--shadow-combined)] [background:var(--container-bg)]  p-4 text-white/90 backdrop-blur-xl flex flex-col gap-2"
+          
           >
             <div className="flex items-center gap-2 mb-1">
               <span className="inline-flex items-center justify-center w-6 h-6 rounded-md">{c.icon}</span>
@@ -57,8 +58,9 @@ const SummaryTab = ({
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div
-          className="rounded-2xl border border-white/30 p-6 text-white/90 backdrop-blur-xl min-h-[320px] max-h-[380px] overflow-auto"
-          style={{ background: "#0000004D" }}
+          className="rounded-2xl [border:var(--border-style)]
+    [box-shadow:var(--shadow-combined)] [background:var(--container-bg)] p-6 text-white/90 backdrop-blur-xl min-h-[320px] max-h-[380px] overflow-auto"
+          
         >
           <div className="text-lg font-semibold mb-2">Status overview</div>
           <div className="text-white/70 text-sm mb-6">
@@ -75,8 +77,9 @@ const SummaryTab = ({
           <div className="text-center text-white/60 text-sm">Total work items</div>
         </div>
         <div
-          className="rounded-2xl border border-white/30 p-6 text-white/90 backdrop-blur-xl min-h-[320px] max-h-[380px] overflow-auto"
-          style={{ background: "#0000004D" }}
+          className="rounded-2xl  [border:var(--border-style)]
+    [box-shadow:var(--shadow-combined)] [background:var(--container-bg)] p-6 text-white/90 backdrop-blur-xl min-h-[320px] max-h-[380px] overflow-auto"
+        
         >
           <div className="text-lg font-semibold mb-2">Description</div>
           {project?.description ? (
@@ -90,8 +93,9 @@ const SummaryTab = ({
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div
-          className="rounded-2xl border border-white/30 p-6 text-white/90 backdrop-blur-xl min-h-[320px] "
-          style={{ background: "#0000004D" }}
+          className="rounded-2xl  [border:var(--border-style)]
+    [box-shadow:var(--shadow-combined)]  [background:var(--container-bg)] p-6 text-white/90 backdrop-blur-xl min-h-[320px] "
+         
         >
           <div className="text-lg font-semibold mb-2">Priority breakdown</div>
           <div className="text-white/70 text-sm mb-6">
@@ -218,8 +222,9 @@ const SummaryTab = ({
           </div>
         </div>
         <div
-          className="rounded-2xl border border-white/30 p-6 text-white/90 backdrop-blur-xl  max-h-[450px] overflow-auto flex flex-col "
-          style={{ background: "#0000004D" }}
+          className="rounded-2xl  [border:var(--border-style)]
+    [box-shadow:var(--shadow-combined)] p-6 text-white/90 backdrop-blur-xl  [background:var(--container-bg)] max-h-[450px] overflow-auto flex flex-col "
+        
         >
           <div className="text-lg font-semibold mb-2">Members Task Breakdown</div>
           <div className="text-white/70 text-base font-semibold mb-4">Member</div>

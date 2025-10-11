@@ -123,10 +123,11 @@ export default function UserDropdown() {
       {/* Dropdown */}
       {isOpen && (
         <div
-          className="absolute bg-black/30 right-0 backdrop-blur-[100px] mt-[17px] flex w-[280px] flex-col rounded-2xl p-[1.375rem] shadow-lg "
-          style={{
-            border: "0.5px solid #A4A7AE",
-          }}
+          className="[border:var(--border-style)]
+     [box-shadow:var(--shadow-combined)] absolute bg-[var(--dropdown-bg)] right-0 backdrop-blur-[100px] mt-[17px] flex w-[280px] flex-col rounded-2xl p-[1.375rem] shadow-lg "
+          // style={{
+          //   border: "0.5px solid #A4A7AE",
+          // }}
         >
           {/* User Info */}
           <div className="flex justify-between items-center">
@@ -195,13 +196,13 @@ export default function UserDropdown() {
 
       {/* Dropdown submenu on click */}
       {showDropdown && (
-        <div className="absolute right-0 top-full mt-2 flex flex-col bg-black/40 backdrop-blur-xl border border-gray-600 rounded-xl w-[150px] shadow-lg z-50">
-          {(["light", "dark", "glass"] as const).map((mode) => {
+        <div className="absolute right-0 top-full mt-2 flex flex-col bg-[var(--dropdown-bg)]  backdrop-blur-xl border border-gray-600 rounded-xl w-[150px] shadow-lg z-50">
+          {(["", "dark", "glass"] as const).map((mode) => {
             const isActive = theme === mode;
             return (
               <button
                 key={mode}
-                onClick={() => {
+                onClick={() => {  
                   setTheme(mode);
                   setShowDropdown(false);
                 }}

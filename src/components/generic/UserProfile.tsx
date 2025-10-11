@@ -175,11 +175,8 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
       ) : (
        <div
   onMouseDown={(e) => e.stopPropagation()}
-  className="relative w-full bg-black/30 backdrop-blur-[101px] max-w-3xl max-h-[80vh] rounded-3xl border overflow-y-auto hide-scrollbar shadow-2xl p-8"
-  style={{
-    borderColor: "#FFFFFF26",
-    boxShadow: "0 16px 40px rgba(0,0,0,0.45)",
-  }}
+  className="relative w-full bg-black/30 backdrop-blur-[101px] max-w-3xl max-h-[80vh] rounded-3xl [border:var(--border-style)] [box-shadow:var(--shadow-combined)] overflow-y-auto hide-scrollbar shadow-2xl p-8"
+
 >
           <style>{`
             .custom-scrollbar::-webkit-scrollbar { width: 8px; background: transparent; }
@@ -299,7 +296,7 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
     <label className="block mb-2 text-[14px] font-[400] text-[#D1D5DB]">
       Password
     </label>
-    <input
+    <input  
       name="password"
       type="password"
       value={form.password || ""}

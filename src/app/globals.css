@@ -7,47 +7,57 @@ body {
 
 
 :root {
-  --navbar-bg: rgba(0, 0, 0, 0.4)
-  --text-main: #ffffff;
-
+  --navbar-bg: rgba(0, 0, 0, 0.4);
+ --text-main: #ffffff;
+--text-secondary:#E5E5E5;
   --background: #000000;
-  --inner-background: #272a2c;
-  --foreground: #ededed;
-  --secondary: #1f2937;
-  --card-meta-text: #ffffff;
-  --card-date-text: #ffffff;
-  --card-title-text: #001dfc;
-  --card-description-text: #ffffff;
   --card-bg-color: #48484899;
+   --border-style: 1px solid rgba(255, 255, 255, 0.3);
+   --team-bg: rgba(0, 0, 0, 0.4);
+   --container-bg:rgba(0, 0, 0, 0.4);
+   --thead-bg:rgba(0, 0, 0, 0.616);
+    --btn-bg: #0000004D;
+    --dropdown-bg: #0000004D;
+    --form-bg:rgba(0, 0, 0, 0.4);
 }
 
 /* Dark Theme */
 [data-theme="dark"] {
-  --navbar-bg: rgba(0, 0, 0, 1);
+  --navbar-bg: #2E2E2E;
+  --container-bg:#2E2E2E;
   --text-main: #ffffff;
-  --background: #000000;
-  --inner-background: #1a1a1a;
-  --foreground: #ededed;
-  --secondary: #1f2937;
-  --card-meta-text: #ffffff;
-  --card-date-text: #ffffff;
-  --card-title-text: #1366e3;
-  --card-description-text: #ffffff;
-  --card-bg-color: #2a2a2a;
+  --text-secondary:#A1A1A1;
+  --background: #2E2E2E;
+   --shadow-dark: -8px -8px 16px 0px #0CA9F633;
+  --shadow-light: -4px -4px 8px 0px #0CA9F633;
+  --shadow-combined: var(--shadow-dark), var(--shadow-light);
+   --border-style: none;
+    --team-bg: #2E2E2E;
+     --container-bg:#2E2E2E;
+     --thead-bg:rgba(0, 0, 0, 0.616);
+     --btn-bg: #262525;
+     --dropdown-bg: #262525;
+      --form-bg:#2E2E2E;
+      
 }
 
 [data-theme="light"] {
-  --navbar-bg: white;
+  --navbar-bg: #E0E3E7;
+ --shadow-dark: -8px -8px 16px 0px #0000001A;
+  --shadow-light: -4px -4px 8px 0px #FFFFFF80;
+  --shadow-combined: var(--shadow-dark), var(--shadow-light);
+  --text-secondary:#A1A1A1;
   --text-main: black;
   --background: #ffffff;
   --inner-background: #f5f5f5;
-  --foreground: #1a1a1a;
-  --secondary: #e5e5e5;
-  --card-meta-text: #1a1a1a;
-  --card-date-text: #4a4a4a;
-  --card-title-text: #1366e3;
-  --card-description-text: #333333;
-  --card-bg-color: #ffffff;
+   --border-style: none;
+    --team-bg: #E0E3E7;
+      --container-bg:#E0E3E7;
+ --thead-bg:rgba(0, 0, 0, 0.616);
+ --btn-bg: #E0E3E7;
+ --dropdown-bg: #E0E3E7;
+ --form-bg: #E0E3E7;
+;
 }
 
 /* Hide glass background for dark/light themes */
@@ -74,17 +84,20 @@ body {
 
 
 @theme inline {
+  
   --color-text-main: var(--text-main);
+  --shadow-combined: var(--shadow-combined);
+  --color-text-secondary: var(--text-secondary);
   --color-navbar-bg: var(--navbar-bg);
   --color-background: var(--background);
-  --color-inner-background: var(--inner-background);
-  --color-foreground: var(--foreground);
-  --color-secondary: var(--secondary);
-  --color-card-meta-text: var(--card-meta-text);
-  --color-card-date-text: var(--card-date-text);
-  --color-card-title-text: var(--card-title-text);
-  --color-card-description-text: var(--card-description-text);
-  --color-card-bg-color: var(--card-bg-color);
+    --shadow-combined: var(--shadow-combined);
+     --border-style: var(--border-style);
+   --team-bg: var(--team-bg); 
+    --thead-bg:var(--thead-bg);
+      --btn-bg: var(--btn-bg);
+      --dropdown-bg: var(--dropdown-bg);
+      --container-bg: var(--container-bg);
+      --form-bg: var(--form-bg);
 }
 
 

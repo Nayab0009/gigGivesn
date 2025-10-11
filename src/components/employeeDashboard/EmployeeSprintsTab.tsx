@@ -89,7 +89,8 @@ const EmployeeSprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName 
           {sprints.map((sprint) => (
             <div
               key={sprint.id}
-              className="rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 shadow-lg p-6 hover:shadow-2xl transition cursor-pointer transform hover:scale-105 group"
+              className="rounded-2xl bg-team-bg backdrop-blur-md [border:var(--border-style)]
+ [box-shadow:var(--shadow-combined)] ml-2 p-6 transition cursor-pointer transform group"
             >
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-bold text-white">{sprint.name}</h2>
@@ -118,7 +119,7 @@ const EmployeeSprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName 
                     className=" h-[36px] flex items-center justify-center gap-[10px]
                px-[22px] py-[10px] rounded-[99px] text-sm font-medium
                transition hover:opacity-80 w-full
-               bg-[#0000004D] text-white"
+              bg-[var(--btn-bg)] text-white"
                     title="View all tasks in this sprint"
                   >
 

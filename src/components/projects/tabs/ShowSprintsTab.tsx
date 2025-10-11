@@ -181,7 +181,8 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
           {sprints.map((sprint) => (
             <div
               key={sprint.id}
-              className="rounded-2xl bg-black/40 backdrop-blur-md border flex flex-col w-full justify-between h-full border-white/30 shadow-lg p-6 hover:shadow-2xl transition cursor-pointer transform hover:scale-105 group"
+              className="rounded-2xl  [background:var(--container-bg)]  [border:var(--border-style)]
+   [box-shadow:var(--shadow-combined)] backdrop-blur-md border flex flex-col w-full justify-between h-full  p-6 transition cursor-pointer transform  group"
             >
 
               <div className="flex flex-col w-full">
@@ -242,7 +243,7 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
                 <div>
                   <button
                     onClick={() => handleSprintClick(sprint)}
-                    className="flex min-h-9 items-center justify-center w-full gap-2 py-3 rounded-full hover:opacity-80 transition text-xs font-medium bg-black/30 text-white "
+                    className="flex min-h-9 items-center justify-center w-full gap-2 py-3 rounded-full hover:opacity-80 transition text-xs font-medium bg-[var(--btn-bg)] text-white "
                     title="View all tasks in this sprint"
                   >
                     <span>View</span>

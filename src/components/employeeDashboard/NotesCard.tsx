@@ -73,20 +73,19 @@ const NotesCard: React.FC = () => {
   }
 
   return (
-    <div
+    <div 
       style={{
         width: 332,
         height: 248,
         borderRadius: "20px",
         borderWidth: "1px",
         padding: 20,
-        // background: "#0000004D",
-        border: "1px solid #FFFFFF4D",
-        // backdropFilter: "blur(100px)",
+
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-      }} className="bg-black/30"
+      }} className="bg-black/30 [border:var(--border-style)]
+     [box-shadow:var(--shadow-combined)]"
     >
       {/* Header */}
       <div className="flex items-center justify-between">

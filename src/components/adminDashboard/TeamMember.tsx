@@ -452,13 +452,10 @@ export default function TeamListPage() {
 
 {/* Table Container */}
 <div
-  className="rounded-2xl shadow-2xl border overflow-hidden backdrop-blur-xl"
+  className="rounded-2xl shadow-2xl border overflow-hidden backdrop-blur-xl [box-shadow:var(--shadow-combined)] [border:var(--border-style)]"
   style={{
-    background: "rgba(255, 255, 255, 0.05)",
-    borderColor: "rgba(255, 255, 255, 0.1)",
     backdropFilter: "blur(20px)",
     WebkitBackdropFilter: "blur(20px)",
-    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1)"
   }}
 >
   {isLoading ? (
@@ -481,7 +478,7 @@ export default function TeamListPage() {
     <div className="overflow-x-auto">
       <table className="min-w-full">
         <thead
-  className="backdrop-blur-md bg-black/40 text-white   rounded-t-2xl  h-[32px]"
+  className="backdrop-blur-md  [background:var(--container-bg)] text-white   rounded-t-2xl  h-[32px]"
   style={{
     borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
   }}
@@ -505,7 +502,7 @@ export default function TeamListPage() {
         </thead>
 
     <tbody
-  className="backdrop-blur-md bg-black/40 text-white  rounded-b-2xl "
+  className="backdrop-blur-md  [background:var(--container-bg)] text-white  rounded-b-2xl "
   style={{
     borderTop: "1px solid rgba(255, 255, 255, 0.1)",
   }}

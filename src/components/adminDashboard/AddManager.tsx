@@ -110,7 +110,8 @@
           ></div>
         </div>
 
-      <div className="relative w-full max-w-5xl bg-black/40 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 sm:p-10">
+      <div className="relative w-full max-w-5xl [background:var(--form-bg)]  backdrop-blur-xl rounded-3xl shadow-2xl border:var(--border-style)]
+    [box-shadow:var(--shadow-combined)] p-8 sm:p-10">
 
           {/* Header */}
           <div className="text-center mb-10">

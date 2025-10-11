@@ -289,8 +289,8 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between -mt-6 mb-4 ">
           <div>
-            <h1 className="text-2xl font-extrabold text-white tracking-tight">Admin Dashboard</h1>
-            <p className="text-md font-extralight text-gray-200">Welcome back! See your latest project insights below.</p>
+            <h1 className="text-2xl font-extrabold text-text-main tracking-tight">Admin Dashboard</h1>
+            <p className="text-md font-extralight text-text-secondary">Welcome back! See your latest project insights below.</p>
           </div>
 
         </div>
@@ -302,7 +302,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
         {/* Stats Cards */}
         <div className="grid space-y-2 py-0">
           {/* Total Projects */}
-          <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-3 rounded-2xl  shadow-md group border border-white/30 justify-between">
+          <div className="flex flex-cols-2 [background:var(--container-bg)] items-center py-3 rounded-2xl  shadow-md group [border:var(--border-style)] [box-shadow:var(--shadow-combined)] justify-between">
             <div>
               <div className="px-4 py-2">
               <p className="text-gray-200 font-light text-xs tracking-wider">Total Projects</p>
@@ -330,14 +330,14 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
 
             </div>
             <div>
-              <div className="w-16 h-16 bg-[rgba(0,0,0,0.3)] items-center justify-center justify-items-center rounded-2xl flex mr-7">
+              <div className="w-16 h-16 [background:var(--container-bg)] items-center justify-center justify-items-center rounded-2xl flex mr-7">
                 <Image src="/images/bag.svg" alt="bag" width={30} height={30} className="text-white p-1" />
               </div>
               </div>
           </div>
 
           {/* Total Tasks */}
-          <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-3 rounded-2xl shadow-md group border border-white/30 justify-between">
+          <div className="flex flex-cols-2 [background:var(--container-bg)] items-center py-3 rounded-2xl shadow-md group [border:var(--border-style)] [box-shadow:var(--shadow-combined)]  justify-between">
             <div>
               <div className="px-4 py-2">
                 <p className="text-gray-200 font-light text-xs tracking-wider">Completed projects</p>
@@ -359,13 +359,13 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
               </div>
             </div>
             <div>
-              <div className="w-16 h-16 bg-[rgba(0,0,0,0.3)] items-center justify-center justify-items-center rounded-2xl flex mr-7">
+              <div className="w-16 h-16 [background:var(--container-bg)]  items-center justify-center justify-items-center rounded-2xl flex mr-7">
                 <Image src="/images/tick.svg" alt="bag" width={30} height={30} className="text-white p-1" />
               </div>
             </div>
           </div>
           {/* Users */}
-          <div className="flex flex-cols-2 bg-[rgba(0,0,0,0.3)] items-center py-3 rounded-2xl shadow-md group border border-white/30 justify-between">
+          <div className="flex flex-cols-2 [background:var(--container-bg)]  items-center py-3 rounded-2xl shadow-md group [border:var(--border-style)] [box-shadow:var(--shadow-combined)] justify-between">
             <div>
               <div className="px-4 py-2">
                 <p className="text-gray-200 font-light text-xs tracking-wider">Users</p>
@@ -400,7 +400,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
 
     <div className="flex-1">
   {/* Team Activity Section - Updated to match screenshot */}
-        <div className="bg-[rgba(0,0,0,0.3)] rounded-2xl py-3 px-4 shadow border border-white/30">
+        <div className="[background:var(--container-bg)] rounded-2xl py-3 px-4 shadow [border:var(--border-style)] [box-shadow:var(--shadow-combined)] ">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
             <div className="flex items-center gap-4 w-full justify-between">
 
@@ -424,7 +424,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
 
     <div className="flex-1">
       {/* Task Status Breakdown */}
-          <div className="bg-[rgba(0,0,0,0.3)] rounded-2xl py-3 px-4 shadow border border-white/30">
+          <div className="[background:var(--container-bg)] rounded-2xl py-3 px-4 shadow [border:var(--border-style)] [box-shadow:var(--shadow-combined)] ">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
               {/* <Clock className="w-5 h-5 text-white" /> */}
               <div>
@@ -462,7 +462,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
         <div className="space-y-4">
 
           {/* Desktop Table Layout */}
-          <div className="lg:block border-y border-white/30 rounded-lg overflow-hidden p-4 text-center bg-black/30">
+          <div className="lg:block [border:var(--border-style)] [box-shadow:var(--shadow-combined)]  rounded-lg overflow-hidden p-4 text-center [background:var(--container-bg)] ">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>

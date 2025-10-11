@@ -44,7 +44,8 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
 
   return (
     <div
-      className="rounded-3xl w-full border border-white/20 shadow-md bg-black/30"
+      className="rounded-3xl w-full [border:var(--border-style)]
+     [box-shadow:var(--shadow-combined)] shadow-md  [background:var(--container-bg)]"
       style={{
          minHeight: '248px',
         padding: '16px',
@@ -69,7 +70,7 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
           }}
         >
           
-          Today Task
+          Today Tasks
         </h4>
         <button className="text-sm text-blue-400 hover:text-blue-300" onClick={onViewAll}>
           See All

@@ -349,7 +349,8 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
 
         {/* Action Bar */}
         <div
-          className="mb-8 bg-black/30 rounded-[24px] shadow-lg border border-[#FFFFFF4D] p-[25px]"
+          className="mb-8 bg-black/30 rounded-[24px] shadow-lg    [border:var(--border-style)]
+  [box-shadow:var(--shadow-combined)] p-[25px]"
         >
           <div className="flex flex-col sm:flex-row gap-4 items-center">
             {/* Search Bar and View Toggle Buttons */}
@@ -431,11 +432,11 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
         {/* Content Container */}
         {/* Table Container - mirror ProjectTable UI */}
         <div
-          className="relative rounded-3xl overflow-hidden border shadow-2xl backdrop-blur-xl"
+          className="relative rounded-3xl overflow-hidden [border:var(--border-style)]
+    mb-2 [box-shadow:var(--shadow-combined)] shadow-2xl backdrop-blur-xl"
           style={{
             background: "#0000005D",
-            borderColor: "#FFFFFF4D",
-            boxShadow: "0 16px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05)",
+           
           }}
         >
           {isLoading ? (

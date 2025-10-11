@@ -306,7 +306,8 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task: init
       }}
     >
       <div
-        className="relative flex overflow-x-auto overflow-y-auto"
+        className="relative flex overflow-x-auto overflow-y-auto  border [border:var(--border-style)] [box-shadow:var(--shadow-combined)] 
+ [background:var(--container-bg)]"
         style={{
           width: 'min(1108px, 100%)',
           height: '100%',
@@ -315,10 +316,10 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task: init
           borderTopLeftRadius: 22,
           borderBottomLeftRadius: 22,
           borderWidth: 1,
-          borderStyle: 'solid',
-          borderColor: '#FFFFFF4D',
+         
+        
           opacity: 1,
-          background: '#0000004D',
+        
           backdropFilter: 'blur(100px)',
           WebkitBackdropFilter: 'blur(100px)',
           boxSizing: 'border-box',
@@ -338,7 +339,7 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task: init
         </div>
         {/* Left info column */}
         <div
-          className="flex flex-col text-white/90"
+          className="flex flex-col text-white/90 "
           style={{
             width: 'min(351px, 100%)',
             maxWidth: '100%',
@@ -593,7 +594,8 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task: init
         </div>
 
         {/* Inner right panel flush right */}
-        <div className="h-full ml-auto" style={{ maxWidth: '100%' }}>
+        <div className="h-full ml-auto border [border:var(--border-style)] [box-shadow:var(--shadow-combined)] 
+ [background:var(--container-bg)]" style={{ maxWidth: '100%' }}>
           <div
             className="h-full flex flex-col"
             style={{
@@ -604,13 +606,11 @@ const TaskDetailsPopup: React.FC<TaskDetailsPopupProps> = ({ onClose, task: init
               left: 'auto',
               right: 30,
               borderWidth: 1,
-              borderStyle: 'solid',
-              borderColor: '#FFFFFF4D',
+        
               opacity: 1,
               borderRadius: 22,
               padding: 30,
               gap: 38,
-              background: '#0000004D',
               boxSizing: 'border-box',
               overflow: 'auto',
               // angle: 0 deg (not a valid CSS property)

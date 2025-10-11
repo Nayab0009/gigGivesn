@@ -59,9 +59,9 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
   }
 
   return (
-    <div className="fixed  inset-0 bg-black/30 backdrop-blur-[100px] flex items-center justify-center z-[9999] p-4">
-      <div className="rounded-3xl shadow-2xl w-full max-w-3xl max-h-[95vh] overflow-y-auto border-2 border-white/30 scrollbar-hide">
-        <div className="p-4 sm:p-6 bg-black/30 backdrop-blur-md relative">
+    <div className="fixed  inset-0 bg-team-bg backdrop-blur-[100px] flex items-center justify-center z-[9999] p-4">
+      <div className="rounded-3xl shadow-2xl w-full max-w-3xl max-h-[95vh] overflow-y-auto [border:var(--border-style)] [box-shadow:var(--shadow-combined)] scrollbar-hide">
+        <div className="p-4 sm:p-6 bg-team-bg  backdrop-blur-md relative">
           {/* Header */}
           <div className="text-center mb-8">
 
@@ -70,7 +70,7 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
           </div>
 
           {/* Form Container */}
-          <div className="rounded-[20px] backdrop-blur-md border border-white/10 shadow-xl overflow-hidden">
+          <div className="rounded-[20px] backdrop-blur-md [border:var(--border-style)] [box-shadow:var(--shadow-combined)]  shadow-xl overflow-hidden">
             <form className="p-6 sm:p-8 space-y-4" onSubmit={e => { e.preventDefault(); handleSubmit(); }}>
 
               {/* Basic Info Section */}

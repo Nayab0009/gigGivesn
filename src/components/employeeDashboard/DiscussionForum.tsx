@@ -173,7 +173,7 @@ export default function ForumPage() {
         </div>
       </div>
 
-      <div className="relative rounded-[20px] border border-white/30 p-[30px] gap-[20px] bg-[#0000004D] opacity-100 mx-auto">
+      <div className="relative rounded-[20px] [box-shadow:var(--shadow-combined)]  [border:var(--border-style)] p-[30px] gap-[20px]  [background:var(--container-bg)] opacity-100 mx-auto">
         {/* Authentication Check */}
         {!isAuthenticated ? (
           <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-2xl p-8 mb-10 shadow-lg">
@@ -273,7 +273,7 @@ export default function ForumPage() {
               threads.map((thread) => (
                 <div
                   key={thread.id}
-                  className="group cursor-pointer overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] mb-6 w-full bg-[#0000004D] rounded-[15px] border border-white/30"
+                  className="group cursor-pointer overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] mb-6 w-full  [background:var(--container-bg)] rounded-[15px] [box-shadow:var(--shadow-combined)]  [border:var(--border-style)]"
                   onClick={() => setSelectedThreadId(thread.id)}
                 >
                   <div className="p-8 relative h-full flex flex-col justify-between min-h-[182px]">
@@ -331,9 +331,9 @@ export default function ForumPage() {
         {/* Single Thread View */}
         {selectedThreadId !== null && selectedThread && (
           <div
-            className="rounded-[15px] border border-white/30 shadow-2xl overflow-hidden bg-black/30"
+            className="rounded-[15px] [box-shadow:var(--shadow-combined)]  [border:var(--border-style)]  shadow-2xl overflow-hidden bg-black/30"
             style={{
-              border: '1px solid #FFFFFF4D',
+             
               color: '#fff',
             }}
           >

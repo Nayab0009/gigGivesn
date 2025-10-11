@@ -220,11 +220,11 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
         </div>
       </div>
       <div
-        className={`w-full p-4 rounded-3xl border border-white/30 overflow-x-auto`}
+        className={`w-full p-4 rounded-3xl border [border:var(--border-style)] [box-shadow:var(--shadow-combined)] 
+ [background:var(--container-bg)] overflow-x-auto`}
         style={{
           scrollbarWidth: "none",
           opacity: 1,
-          background: "#0000004D",
           backdropFilter: "blur(101.67px)",
           backgroundBlendMode: "luminosity",
         }}
@@ -255,10 +255,11 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
                   return (
                     <div
                       key={`${day}-${task.id || idx}`}
-                      className="flex flex-col justify-between bg-black/30 text-[#0CA9F6] relative overflow-hidden shadow-lg h-[240px] p-4 rounded-[15px] border border-white/30 gap-y-[12px]"
+                      className="flex flex-col justify-between border [border:var(--border-style)] [box-shadow:var(--shadow-combined)] 
+ [background:var(--container-bg)] text-[#0CA9F6] relative overflow-hidden shadow-lg h-[240px] p-4 rounded-[15px] border border-white/30 gap-y-[12px]"
                       style={{
                         opacity: 1,
-                        boxShadow: "0 2px 12px 0 rgba(0,0,0,0.10)",
+              
                       }}
                       onClick={() => handleTaskClick(task)}
                     >

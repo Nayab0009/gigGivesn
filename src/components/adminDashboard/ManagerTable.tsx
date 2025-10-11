@@ -355,11 +355,11 @@ export default function EnhancedManagersTable() {
                 return (
                   <div
                     key={manager.id || index}
-                    className="relative rounded-2xl border overflow-hidden p-5 shadow-2xl backdrop-blur-md"
+                    className="relative rounded-2xl border overflow-hidden p-5 shadow-2xl [background:var(--container-bg)] backdrop-blur-md [box-shadow:var(--shadow-combined)] [border:var(--border-style)]"
                     style={{
-                      background: '#0000005D',
-                      borderColor: '#FFFFFF4D',
-                      boxShadow: '0 16px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05)',
+                      // background: '#0000005D',
+                      // borderColor: '#FFFFFF4D',
+                      // boxShadow: '0 16px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05)',
                     }}
                   >
                     {/* Removed decorative gradient overlay to match search bar's solid background style */}

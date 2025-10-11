@@ -593,11 +593,13 @@ export default function ProjectDashboard() {
         <div
           className="
             mb-8
-           bg-black/30
+           bg-team-bg
           rounded-[24px]
             shadow-lg
-             border border-[#FFFFFF4D]
+           [border:var(--border-style)]
+  [box-shadow:var(--shadow-combined)]
             p-[25px]
+            [background:var(--container-bg)] 
           "
         >
           <div className="flex flex-col sm:flex-row gap-4 items-center">
@@ -670,8 +672,10 @@ export default function ProjectDashboard() {
             backdrop-blur-xl
             rounded-2xl
             shadow-lg
-            border border-white/10
-            overflow-hidden"
+            [border:var(--border-style)]
+    mb-2 [box-shadow:var(--shadow-combined)]
+            overflow-hidden 
+            [background:var(--container-bg)] "
         >
 
           {isLoading ? (
@@ -686,7 +690,7 @@ export default function ProjectDashboard() {
               <table className="min-w-full divide-y divide-emerald-200 ">
                 <thead
                   className="
-    bg-black/50
+  bg-thead-bg
     rounded-tl-[20px] rounded-tr-[20px]
     shadow-lg
     border-b border-b-white/20
@@ -725,7 +729,7 @@ export default function ProjectDashboard() {
 
                 <tbody
                   className="
-    bg-black/30
+   bg-team-bg
     rounded-b-2xl
     shadow-lg
     overflow-hidden

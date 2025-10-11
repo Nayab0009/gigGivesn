@@ -52,7 +52,8 @@ const MembersTab = ({ project, membersLoading, members }: MembersTabProps) => {
   console.log("members", members, project);
   return (
     <div
-      className="    border-t border-t-[#FFFFFF4D]  rounded-[22px] p-[22px] border border-white/10 backdrop-blur-xl overflow-hidden    bg-[#0000004D] "
+      className="    border-t border-t-[#FFFFFF4D]  rounded-[22px] p-[22px] [border:var(--border-style)]
+ [box-shadow:var(--shadow-combined)] backdrop-blur-xl overflow-hidden    m-2 [background:var(--container-bg)] "
     >
       <div className="overflow-x-auto">
         <table className="min-w-full">

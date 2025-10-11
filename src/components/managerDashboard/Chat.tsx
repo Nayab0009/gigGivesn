@@ -822,7 +822,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
 
       {/* Sidebar */}
       {/* Sidebar - Replace from line 473 */}
-  <aside className="top-[226px] left-[10px] w-80 bg-black/30 rounded-xl pr-[1px] border border-[#FFFFFF33] flex flex-col">
+  <aside className="top-[226px] left-[10px] w-80 [background:var(--container-bg)]   rounded-xl pr-[1px] border [border:var(--border-style)] [box-shadow:var(--shadow-combined)] flex flex-col">
   {/* Header */}
   <div className="p-4 border-b border-white/10">
     <div className="flex items-center justify-between mb-4">
@@ -991,13 +991,13 @@ export default function ChatPage({ userId }: { userId?: string }) {
       {selectedUserId ? (
         <main
           className="flex flex-col flex-1  rounded-[20px]
-    border border-[#FFFFFF33]"
+    border [border:var(--border-style)] [background:var(--container-bg)]  [box-shadow:var(--shadow-combined)]"
         >
           {/* Chat
            */}
           <header
             className={`
-    bg-black/30
+    bg-team-bg 
     rounded-t-[20px]
     border-b border-b-[#FFFFFF33]
     pt-[24px] pr-[24px] pb-[25px] pl-[24px]
@@ -1217,7 +1217,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
             </div>
           </header>
           {/* Messages Area */}
-          <div className="px-4 py-2 space-y-4 flex flex-col-reverse flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-black/30  ">
+          <div className="px-4 py-2 space-y-4 flex flex-col-reverse flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-team-bg ">
             <div ref={messagesEndRef} />
             {/* Conditionally render messages based on search results */}
             {(isSearchActive ? searchResults : messages)
@@ -1333,7 +1333,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
           </div>
           {/* Chat Input */}
 
-          <div className="p-4 bg-black/30    border-t border-t-[#FFFFFF33]   rounded-b-[20px]     pt-[25px] pr-[24px] pb-[24px] pl-[24px]">
+          <div className="p-4 bg-team-bg   border-t border-t-[#FFFFFF33]   rounded-b-[20px]     pt-[25px] pr-[24px] pb-[24px] pl-[24px]">
             <div className="flex items-center justify-between gap-3">
               {/* File input button */}
               <input
@@ -1442,8 +1442,8 @@ export default function ChatPage({ userId }: { userId?: string }) {
   className={`
     w-[300px] h-[475px]
     rounded-[20px]
-    border border-[#FFFFFF33]
-    bg-[#0000004D]
+  border [border:var(--border-style)] [box-shadow:var(--shadow-combined)] 
+ [background:var(--container-bg)] 
     flex flex-col
     pt-[24px]  pb-[25px]
   `}

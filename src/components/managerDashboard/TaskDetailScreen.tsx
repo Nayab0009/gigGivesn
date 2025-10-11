@@ -406,8 +406,9 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete,
         />
       )}
       <div
-        className="relative flex border border-white/30 rounded-[22px] shadow-xl overflow-x-auto overflow-y-auto "
-        style={{ maxWidth: 1108, maxHeight: 846, width: '100%', height: '100%', padding: 40, gap: 38, background: '#0000004D' }}
+        className="relative flex border:var(--border-style)]
+   [box-shadow:var(--shadow-combined)]  rounded-[22px] shadow-xl overflow-x-auto overflow-y-auto [background:var(--container-bg)] "
+        style={{ maxWidth: 1108, maxHeight: 846, width: '100%', height: '100%', padding: 40, gap: 3 }}
         onClick={e => e.stopPropagation()}
       >
         {/* Cross Button Above Ticket Number */}
@@ -595,8 +596,9 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete,
 
         {/* Inner right panel flush right */}
         <div className="h-[742px] w-[594px] ml-auto">
-          <div className="h-full flex flex-col border border-white/30 rounded-[22px] px-8 pt-8 pb-6"
-            style={{ background: "#0000004D" }}>
+          <div className="h-full flex flex-col border:var(--border-style)]
+   [box-shadow:var(--shadow-combined)] rounded-[22px] px-8 pt-8 pb-6 [background:var(--container-bg)] "
+>
             {/* Date Chip */}
             {firstLogDateLabel && (
               <div className="flex justify-center mb-10">

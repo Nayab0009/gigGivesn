@@ -189,10 +189,10 @@ export function AssignTeamModal({
   if (!open || !project) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-md flex items-center justify-center z-[9999] p-4">
-      <div className="bg-black/30 backdrop-blur-xl rounded-3xl shadow-2xl w-full max-w-2xl max-h-[95vh] overflow-hidden border border-white/20 flex flex-col">
+    <div className="fixed inset-0 [background:var(--form-bg)] backdrop-blur-[50px] flex items-center justify-center z-[9999] p-4">
+      <div className="[background:var(--form-bg)]  rounded-3xl shadow-2xl w-full max-w-2xl max-h-[95vh] overflow-hidden [border:var(--border-style)] [box-shadow:var(--shadow-combined)]   flex flex-col">
         {/* Header */}
-        <div className="p-6 text-center bg-black/30 backdrop-blur-md border-b border-white/20">
+        <div className="p-6 text-center [background:var(--form-bg)] backdrop-blur-md border-b border-white/20">
           <h2 className="text-2xl font-bold text-white mb-1">
             Assign Team Members
           </h2>
@@ -216,7 +216,7 @@ export function AssignTeamModal({
 
         {/* Content */}
         <div
-          className="p-6 bg-black/30 backdrop-blur-md border-t border-b border-white/20 space-y-6 overflow-y-auto scrollbar-hide"
+          className="p-6 [background:var(--form-bg)] backdrop-blur-md border-t border-b border-white/20 space-y-6 overflow-y-auto scrollbar-hide"
           style={{ maxHeight: "calc(95vh - 220px)" }}
         >
           {!isLoading &&
@@ -231,7 +231,7 @@ export function AssignTeamModal({
                   {/* Team Header */}
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-4">
-                      <div className="p-3 rounded-xl border border-white/20 bg-black/30 backdrop-blur-sm">
+                      <div className="p-3 rounded-xl border border-white/20 [background:var(--form-bg)] backdrop-blur-sm">
                         <Users className="w-6 h-6 text-white" />
                       </div>
                       <div>
@@ -317,7 +317,7 @@ export function AssignTeamModal({
         </div>
 
         {/* Footer */}
-        <div className="bg-black/30 backdrop-blur-md border-t border-white/20 p-6 flex justify-end gap-3">
+        <div className="[background:var(--form-bg)] backdrop-blur-md border-t border-white/20 p-6 flex justify-end gap-3">
           <button
             onClick={onClose}
             className="px-6 py-2 rounded-xl border border-white/30 text-gray-200 hover:bg-black/40 transition"

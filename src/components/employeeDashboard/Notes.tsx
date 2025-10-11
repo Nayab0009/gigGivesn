@@ -213,7 +213,8 @@ const ProfessionalNotesEditor = () => {
   return (
     <div className={`min-h-screen transition-all duration-300 ${themeClass} bg-transparent `}>
 
-      <div className="flex flex-col md:flex-row bg-black/30 backdrop-blur-md p-[22px] rounded-4xl border-[1px] my-5 border-gray-500 text-white">
+      <div className="flex flex-col md:flex-row [background:var(--container-bg)] backdrop-blur-md p-[22px] rounded-4xl border-[1px] my-5 [border:var(--border-style)]
+    [box-shadow:var(--shadow-combined)] text-white">
         {/* Sidebar */}
         <aside className={`w-full md:w-80 flex flex-col transition-all duration-300 bg-none`}>
           <div className="flex flex-row gap-3 mb-4">
@@ -272,7 +273,8 @@ const ProfessionalNotesEditor = () => {
           </div>
         </aside>
         {/* Main Editor */}
-        <main className="flex-1 flex flex-col border-[1px] border-grey-50/50 rounded-2xl dark:hover:bg-gray-700/20 bg-black/15 backdrop-blur-md border-gray-500">
+        <main className="flex-1 flex flex-col [border:var(--border-style)]
+     [box-shadow:var(--shadow-combined)] rounded-2xl dark:hover:bg-gray-700/20 bg-black/15 backdrop-blur-md border-gray-500">
 
           {/* Enhanced Toolbar */}
           <div className={`border-gray-200 dark:border-gray-700 px-3 md:px-6 py-3 overflow-x-auto`}>

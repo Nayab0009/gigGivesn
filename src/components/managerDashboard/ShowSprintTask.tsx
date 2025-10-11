@@ -533,7 +533,8 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
             {taskView === "table" ? (
               <div className="space-y-6">
                 {/* Sprint name moved to toggle row */}
-                <div className="rounded-2xl border border-white/30 backdrop-blur-xl" style={{ background: "#0000004D" }}>
+                <div className="rounded-2xl  [border:var(--border-style) [background:var(--container-bg)]
+   [box-shadow:var(--shadow-combined)] backdrop-blur-xl">
                   <div className="overflow-x-auto">
                     <table className="min-w-full">
                       <thead>
@@ -630,7 +631,8 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                 </div>
 
                 {/* Completed Tasks Table */}
-                <div className="rounded-2xl border border-white/30 backdrop-blur-xl" style={{ background: "#0000004D" }}>
+                <div className="rounded-2xl [border:var(--border-style)]  [background:var(--container-bg)]
+   [box-shadow:var(--shadow-combined)] backdrop-blur-xl">
                   <div className="overflow-x-auto">
                     <table className="min-w-full">
                       <thead>
@@ -724,7 +726,8 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                 { key: "cancelled", title: "Cancelled", color: "white" }].map((column, idx) => {
                   const columnTasks = tasks.filter(task => task.status?.toLowerCase() === column.key);
                   return (
-                    <div key={column.key} className="flex-1 min-w-[260px] rounded-2xl border gap-3 border-white/30 backdrop-blur-xl p-4 flex flex-col bg-black/30">
+                    <div key={column.key} className="flex-1 min-w-[260px] rounded-2xl border gap-3 
+  border [border:var(--border-style)] [box-shadow:var(--shadow-combined)]  backdrop-blur-xl p-4 flex flex-col [background:var(--container-bg)] ">
                       {/* Header */}
                       <div className="flex items-center gap-2 mb-2">
                         <span className="w-3 h-3 rounded-full bg-white"></span>
@@ -735,7 +738,8 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                       {/* Tasks */}
                       <div className="flex-1 flex flex-col gap-4">
                         {columnTasks.length > 0 ? columnTasks.map((task) => (
-                          <div key={task.id} className="rounded-xl border border-white/30 shadow-md p-4 text-white/90 transition-all duration-200 cursor-pointer min-h-[150px] flex flex-col justify-center gap-4" style={{ background: '#0000004D' }} onClick={() => handleViewReport(task)}>
+                          <div key={task.id} className="rounded-xl border 
+  border [border:var(--border-style)] [box-shadow:var(--shadow-combined)] shadow-md p-4 text-white/90 transition-all duration-200 cursor-pointer min-h-[150px] flex flex-col justify-center gap-4" style={{ background: '#0000004D' }} onClick={() => handleViewReport(task)}>
                             {/* Task Header */}
                             <div className="flex items-center justify-between mb-2">
                               <span className="text-xs font-bold text-[#0CA9F6]">{`${task?.ticketNumber || task.id}`}</span>

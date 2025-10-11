@@ -207,8 +207,8 @@ const AppHeader: React.FC = () => {
     shadow-md transition-all duration-500 ease-in-out
     bg-navbar-bg text-white
     flex items-center justify-between px-[32px] py-[22px]
-    rounded-[16px] border border-white/30
-    mb-2
+    rounded-[16px] border   [border:var(--border-style)]
+    mb-2 [box-shadow:var(--shadow-combined)]
 `}
       style={{
         fontFamily:
