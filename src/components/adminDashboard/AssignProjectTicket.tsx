@@ -296,8 +296,8 @@ export function AssignTaskModal({
   }
 
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-[100px] flex items-center justify-center z-[9999] p-4 overflow-hidden">
-      <div className="bg-black/30 backdrop-blur-md rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden border-2 px-4 border-white/30 flex flex-col">
+    <div className="fixed inset-0 [background:var(--form-bg)] backdrop-blur-[100px] flex items-center justify-center z-[9999] p-4 overflow-hidden">
+      <div className="[background:var(--form-bg)] backdrop-blur-md rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden border-2 px-4 border-white/30 flex flex-col">
 
         {/* Header - Fixed */}
         <div className="p-6 text-center  flex-shrink-0 ">
@@ -333,7 +333,7 @@ export function AssignTaskModal({
             <div>
               <label className="block text-sm font-medium text-white mb-2">Ticket Number*</label>
               <div className="flex items-center">
-                <span className="px-4 py-3 rounded-l-xl bg-black/50 text-white font-semibold border-r border-white/10">
+                <span className="px-4 py-3 rounded-l-xl [background:var(--field-bg)] text-white font-semibold border-r border-white/10">
                   {task.ticketNumber?.split('-')[0] || ''}
                 </span>
                 <input
@@ -348,7 +348,7 @@ export function AssignTaskModal({
                   }}
                   placeholder="001"
                   disabled={isCreating}
-                  className="w-full px-4 py-3 rounded-r-xl bg-black/70 text-white placeholder-white focus:outline-none"
+                  className="w-full px-4 py-3 rounded-r-xl [background:var(--field-bg)] text-white placeholder-white focus:outline-none"
                 />
               </div>
             </div>
@@ -362,7 +362,7 @@ export function AssignTaskModal({
                 onChange={(e) => setTask({ ...task, title: e.target.value })}
                 placeholder="Title ..."
                 disabled={isCreating}
-                className="w-full px-4 py-3 rounded-xl bg-black/70 text-white placeholder-white focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl [background:var(--field-bg)] text-white placeholder-white focus:outline-none"
               />
             </div>
 
@@ -375,7 +375,7 @@ export function AssignTaskModal({
                 placeholder="Description ..."
                 rows={3}
                 disabled={isCreating}
-                className="w-full px-4 py-3 rounded-xl bg-black/70 text-white placeholder-white resize-none focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl [background:var(--field-bg)]  text-white placeholder-white resize-none focus:outline-none"
               />
             </div>
 
@@ -386,7 +386,7 @@ export function AssignTaskModal({
                 <DatePicker
                   selected={task.dueDate ? new Date(task.dueDate) : null}
                   onChange={(date) => setTask({ ...task, dueDate: date?.toISOString().split("T")[0] })}
-                  className="w-full rounded-xl bg-black/70 px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
+                  className="w-full rounded-xl [background:var(--field-bg)]  px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
                   placeholderText="Select due date"
                   dateFormat="MMM dd, yyyy"
                   isClearable
@@ -412,7 +412,7 @@ export function AssignTaskModal({
                 value={task.priority || TaskPriority.MEDIUM}
                 onChange={(e) => setTask({ ...task, priority: e.target.value as TaskPriority })}
                 disabled={isCreating}
-                className="w-full px-4 py-3 rounded-xl bg-black/70 text-white focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl [background:var(--field-bg)] text-white focus:outline-none"
               >
                 <option value={TaskPriority.HIGH}>High</option>
                 <option value={TaskPriority.MEDIUM}>Medium</option>
@@ -454,7 +454,7 @@ export function AssignTaskModal({
         </div>
 
         {/* Footer - Fixed */}
-        <div className="border-t border-white/20 p-6 flex justify-end space-x-3 flex-shrink-0 bg-black/20">
+        <div className="border-t border-white/20 p-6 flex justify-end space-x-3 flex-shrink-0 [background:var(--form-bg)]">
           <button
             onClick={onClose}
             disabled={isCreating}
