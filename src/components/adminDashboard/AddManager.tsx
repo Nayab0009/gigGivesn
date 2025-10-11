@@ -131,7 +131,7 @@
             <div className="flex justify-center mb-8">
               <label
                 htmlFor="avatar-upload"
-                className="w-full max-w-sm border-2 border-dashed border-gray-400 rounded-xl p-6 text-center cursor-pointer hover:border-blue-400 transition bg-black/30"
+                className="w-full max-w-sm border-2 border-dashed border-gray-400 rounded-xl p-6 text-center cursor-pointer hover:border-blue-400 transition [background:var(--field-bg)]"
               >
                 {imagePreview ? (
                   <img
@@ -170,7 +170,7 @@
                       onChange={handleChange}
                       required
                       placeholder="Enter manager's full name"
-                    className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
+                    className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                     />
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                   </div>
@@ -188,7 +188,7 @@
                       onChange={handleChange}
                       required
                       placeholder="manager@company.com"
-                      className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
+                      className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                     />
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                   </div>
@@ -209,7 +209,7 @@
                       onChange={handleChange}
                       required
                       placeholder="Create secure password"
-                    className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
+                    className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                     />
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                   </div>
@@ -227,7 +227,7 @@
                       onChange={handleChange}
                       required
                       placeholder="+1 (555) 123-4567"
-                      className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
+                      className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                     />
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                   </div>
@@ -248,7 +248,7 @@
           onChange={handleChange}
           required
           placeholder="Manager's address"
-          className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
+          className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
         />
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-500/5 to-red-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
       </div>

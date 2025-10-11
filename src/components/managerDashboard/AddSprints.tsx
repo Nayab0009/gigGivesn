@@ -91,7 +91,7 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
                       onChange={e => setForm(prev => ({ ...prev, title: e.target.value }))}
                       placeholder="e.g., Sprint 24 - User Authentication & Dashboard"
                       className="w-full px-4 py-4 rounded-xl focus:ring-2 outline-none
-                       bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
+                      [background:var(--field-bg)] backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
                         focus:border-white/40"
                     />
                   </div>
@@ -107,7 +107,7 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
                       onChange={e => setForm(prev => ({ ...prev, title2: e.target.value }))}
                       placeholder="e.g., Sprint 24 - User Authentication & Dashboard"
                       className="w-full px-4 py-4 rounded-xl focus:ring-2 outline-none
-                       bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
+                     [background:var(--field-bg)] backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
                         focus:border-white/40"
                     />
                   </div>
@@ -120,7 +120,7 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
                       rows={4}
                       placeholder="Describe the main objectives, scope, and expected outcomes for this sprint..."
                       className="w-full px-4 py-4 rounded-xl focus:ring-2 outline-none
-                                 bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
+                                [background:var(--field-bg)] backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
                                   focus:border-white/40"
                     />
                   </div>
@@ -170,7 +170,7 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
                       <DatePicker
                         selected={form.startDate ? new Date(form.startDate) : null}
                         onChange={(date) => setForm(prev => ({ ...prev, startDate: date?.toISOString().split("T")[0] || '' }))}
-                        className="w-full rounded-xl bg-black/80 px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
+                        className="w-full rounded-xl [background:var(--field-bg)] px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
                         placeholderText="Select start date"
                         dateFormat="MMM dd, yyyy"
                         isClearable
@@ -195,7 +195,7 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
                       <DatePicker
                         selected={form.endDate ? new Date(form.endDate) : null}
                         onChange={(date) => setForm(prev => ({ ...prev, endDate: date?.toISOString().split("T")[0] || '' }))}
-                        className="w-full rounded-xl bg-black/80 px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
+                        className="w-full rounded-xl [background:var(--field-bg)] px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
                         placeholderText="Select end date"
                         dateFormat="MMM dd, yyyy"
                         isClearable

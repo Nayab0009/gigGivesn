@@ -126,7 +126,7 @@ const AddProject: React.FC = () => {
                 onChange={handleLogoChange} // 👈 you’ll define this function
                 className="hidden"
               />
-              <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-2 border-dashed border-white/30 flex items-center justify-center overflow-hidden bg-black/50 group-hover:border-[#0CA9F6] transition-all duration-300">
+              <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-2 border-dashed border-white/30 flex items-center justify-center overflow-hidden [background:var(--field-bg)] group-hover:border-[#0CA9F6] transition-all duration-300">
                 {logoPreview ? (
                   <img
                     src={logoPreview}
@@ -157,7 +157,7 @@ const AddProject: React.FC = () => {
                   onChange={handleChange}
                   required
                   placeholder="Enter your amazing project title..."
-                  className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
+                  className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                 />
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
               </div>
@@ -176,7 +176,7 @@ const AddProject: React.FC = () => {
                   required
                   placeholder="Describe your project vision, goals, and key features..."
                   rows={5}
-                  className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] resize-none"
+                  className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] resize-none"
                 />
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
               </div>
@@ -193,7 +193,7 @@ const AddProject: React.FC = () => {
                   <DatePicker
                     selected={form.startDate}
                     onChange={(date) => handleDateChange(date, "startDate")}
-                    className="w-full rounded-lg border border-white/20 bg-black/60 px-12 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
+                    className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-12 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                     placeholderText="Select project start date"
                     dateFormat="MMM dd, yyyy"
                     isClearable
@@ -222,7 +222,7 @@ const AddProject: React.FC = () => {
                   <DatePicker
                     selected={form.endDate}
                     onChange={(date) => handleDateChange(date, "endDate")}
-                    className="w-full rounded-lg border border-white/20 bg-black/60 px-12 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
+                    className="w-full rounded-lg border border-white/20 [background:var(--field-bg)]  px-12 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                     placeholderText="Select project end date"
                     dateFormat="MMM dd, yyyy"
                     isClearable
