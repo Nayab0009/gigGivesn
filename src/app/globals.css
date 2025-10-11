@@ -73,7 +73,7 @@ body {
 
 [data-theme="dark"] .theme-solid-bg {
   display: block !important;
-  background: #000000;
+  background: #2E2E2E;
 }
 
 [data-theme="light"] .theme-solid-bg {

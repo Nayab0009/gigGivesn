@@ -173,7 +173,7 @@ export default function ForumPage() {
         </div>
       </div>
 
-      <div className="relative rounded-[20px] [box-shadow:var(--shadow-combined)]  [border:var(--border-style)] p-[30px] gap-[20px]  [background:var(--container-bg)] opacity-100 mx-auto">
+      <div className="relative rounded-[20px] ml-2 [box-shadow:var(--shadow-combined)]  [border:var(--border-style)] p-[30px] gap-[20px]  [background:var(--container-bg)] opacity-100 mx-auto">
         {/* Authentication Check */}
         {!isAuthenticated ? (
           <div className="bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-200 rounded-2xl p-8 mb-10 shadow-lg">
