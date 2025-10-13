@@ -197,7 +197,7 @@ export default function UserDropdown() {
       {/* Dropdown submenu on click */}
       {showDropdown && (
         <div className="absolute right-0 top-full mt-2 flex flex-col bg-[var(--dropdown-bg)]  backdrop-blur-xl border border-gray-600 rounded-xl w-[150px] shadow-lg z-50">
-          {(["light", "dark", "glass"] as const).map((mode) => {
+          {(["", "dark", "glass"] as const).map((mode) => {
             const isActive = theme === mode;
             return (
               <button
