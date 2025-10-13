@@ -192,9 +192,8 @@ export default function ForumPage() {
             {/* New Thread Form */}
             {showNewThreadForm && (
               <div
-                className="rounded-[15px] border border-white/30 p-10 mb-10 relative overflow-hidden shadow-2xl bg-["
+                className="rounded-[15px]  [box-shadow:var(--shadow-combined)]  [background:var(--form-bg)]  backdrop-blur-xl rounded-3xl [border:var(--border-style)] p-10 mb-10 relative overflow-hidden shadow-2xl bg-["
                 style={{
-                  border: '1px solid #FFFFFF4D',
                   color: '#fff',
                 }}
               >
@@ -213,7 +212,7 @@ export default function ForumPage() {
                     placeholder="Enter discussion title..."
                     value={newThreadTitle}
                     onChange={(e) => setNewThreadTitle(e.target.value)}
-                    className="w-full px-6 py-4 rounded-xl border-2 border-white/20 focus:border-transparent focus:ring-4 focus:ring-opacity-30 transition-all duration-300 text-lg font-medium bg-black/30 text-white placeholder-gray-300 shadow-sm"
+                    className="w-full px-6 py-4 rounded-xl border-2 border-white/20 focus:border-transparent focus:ring-4 focus:ring-opacity-30 transition-all duration-300 text-lg font-medium [background:var(--field-bg)] text-white placeholder-gray-300 shadow-sm"
                     style={{ focusRingColor: colors.primary.hex + '30' }}
                     disabled={isLoading}
                   />
@@ -227,7 +226,7 @@ export default function ForumPage() {
                     value={newThreadContent}
                     onChange={(e) => setNewThreadContent(e.target.value)}
                     rows={6}
-                    className="w-full px-6 py-4 rounded-xl border-2 border-white/20 focus:border-transparent focus:ring-4 focus:ring-opacity-30 transition-all duration-300 resize-none text-lg leading-relaxed bg-black/30 text-white placeholder-gray-300 shadow-sm"
+                    className="w-full px-6 py-4 rounded-xl border-2 border-white/20 focus:border-transparent focus:ring-4 focus:ring-opacity-30 transition-all duration-300 resize-none text-lg leading-relaxed [background:var(--field-bg)] text-white placeholder-gray-300 shadow-sm"
                     style={{ focusRingColor: colors.primary.hex + '30' }}
                     disabled={isLoading}
                   />
