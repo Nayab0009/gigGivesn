@@ -96,28 +96,27 @@ export default function UserDropdown() {
         )}
 
         {/* Name */}
-        <span className="mr-2 text-base font-medium text-white">
+        <span className="mr-2 text-base font-medium text-text-main">
           {displayName}
         </span>
 
         {/* Dropdown Arrow */}
         <svg
-          className={`stroke-white transition-transform duration-200 ${isOpen ? "rotate-180" : ""
-            }`}
-          width="18"
-          height="20"
-          viewBox="0 0 18 20"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M4.3125 8.65625L9 13.3437L13.6875 8.65625"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+  className={`text-var-main  transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+  width="18"
+  height="20"
+  viewBox="0 0 18 20"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    d="M4.3125 8.65625L9 13.3437L13.6875 8.65625"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  />
+</svg>
       </button>
 
       {/* Dropdown */}
@@ -132,22 +131,22 @@ export default function UserDropdown() {
           {/* User Info */}
           <div className="flex justify-between items-center">
             <div className="mb-3">
-              <span className="block text-xs font-semibold text-white">
+              <span className="block text-xs font-semibold text-text-main">
                 {displayName}
               </span>
-              <span className="block text-sm text-gray-400">{user.email}</span>
+              <span className="block text-sm text-text-main">{user.email}</span>
             </div>
 
             {/* Role + Active Badge Row */}
             <div className="flex items-center mb-4 gap-1">
-              <span className="px-3 py-0.5  font-bold text-[10px] rounded-[50px] bg-white/10 text-white">
+              <span className="px-3 py-0.5  font-bold text-[10px] rounded-[50px] bg-white/10 text-text-main">
                 {role}
               </span>
               <span
-                className="px-3 py-0.5 text-[10px] font-bold rounded-[50px]"
+                className="px-3 py-0.5 text-[10px] font-bold rounded-[50px] text-text-main"
                 style={{
                   backgroundColor: "rgba(50, 213, 131, 0.4)",
-                  color: "#fff",
+                
                 }}
               >
                 Active
@@ -161,13 +160,14 @@ export default function UserDropdown() {
               setIsOpen(false);
               setIsProfileOpen(true);
             }}
-            className="flex items-center hover:px-3 gap-3 w-full text-left  py-2 rounded-lg text-xs text-white hover:bg-white/10 transition"
+            className="flex items-center hover:px-3 gap-3 w-full text-left  py-2 rounded-lg text-xs text-text-main hover:bg-white/10 transition"
           >
             <Image
               src="/images/profile.svg"
               alt="Profile"
               width={16}
               height={16}
+               className="image-color"
             />
             Profile
           </button>
@@ -180,7 +180,7 @@ export default function UserDropdown() {
           e.stopPropagation();
           setShowDropdown((prev) => !prev);
         }}
-        className="flex items-center hover:px-3 gap-3 w-full text-left py-2 rounded-lg text-xs text-white hover:bg-white/10 transition"
+        className="flex items-center hover:px-3 gap-3 w-full text-left py-2 rounded-lg text-xs text-text-main  hover:bg-white/10 transition"
       >
         <Image src="/images/theme.svg" alt="Theme" width={16} height={16} />
         Theme
@@ -223,7 +223,7 @@ export default function UserDropdown() {
               setIsOpen(false);
               setIsSupportOpen(true);
             }}
-            className="flex items-center hover:px-3 gap-3 w-full text-left  py-2 rounded-lg text-xs text-white hover:bg-white/10 transition"
+            className="flex items-center hover:px-3 gap-3 w-full text-left  py-2 rounded-lg text-xs text-text-main  hover:bg-white/10 transition"
           >
             <Image
               src="/images/support.svg"

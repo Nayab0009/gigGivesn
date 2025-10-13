@@ -23,7 +23,7 @@ const ProjectStatusCard: React.FC<ProjectStatusCardProps> = ({ analytics }) => (
         backgroundBlendMode: 'luminosity',
       }}
     >
-    <div className="flex items-center justify-between mb-2">
+    <div className="flex items-center justify-between mb-2 text-text-main">
       <span
         style={{
           fontFamily: 'Inter, sans-serif',
@@ -33,7 +33,7 @@ const ProjectStatusCard: React.FC<ProjectStatusCardProps> = ({ analytics }) => (
           lineHeight: '28.47px',
           letterSpacing: '0px',
           verticalAlign: 'middle',
-          color: '#fff',
+        
         }}
       >
         Project Completed
@@ -57,7 +57,7 @@ const ProjectStatusCard: React.FC<ProjectStatusCardProps> = ({ analytics }) => (
       <div className="flex flex-col gap-2 ml-2">
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 rounded-full" style={{ background: '#A855F7' }}></span>
-          <span
+          <span className="text-text-main"
             style={{
               fontFamily: 'Inter, sans-serif',
               fontWeight: 400,
@@ -66,7 +66,7 @@ const ProjectStatusCard: React.FC<ProjectStatusCardProps> = ({ analytics }) => (
               lineHeight: '20.33px',
               letterSpacing: '0px',
               verticalAlign: 'middle',
-              color: '#fff',
+            
             }}
           >
             Project Done <span style={{ fontWeight: 600 }}>{analytics.completedProjects}</span>
@@ -74,7 +74,7 @@ const ProjectStatusCard: React.FC<ProjectStatusCardProps> = ({ analytics }) => (
         </div>
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 rounded-full" style={{ background: '#FBBF72' }}></span>
-          <span
+          <span className="text-text-main"
             style={{
               fontFamily: 'Inter, sans-serif',
               fontWeight: 400,
@@ -83,7 +83,7 @@ const ProjectStatusCard: React.FC<ProjectStatusCardProps> = ({ analytics }) => (
               lineHeight: '20.33px',
               letterSpacing: '0px',
               verticalAlign: 'middle',
-              color: '#fff',
+             
             }}
           >
             In Progress <span style={{ fontWeight: 600 }}>{analytics.activeProjects}</span>
@@ -91,7 +91,7 @@ const ProjectStatusCard: React.FC<ProjectStatusCardProps> = ({ analytics }) => (
         </div>
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 rounded-full" style={{ background: '#57B5E7' }}></span>
-          <span
+          <span className="text-text-main"
             style={{
               fontFamily: 'Inter, sans-serif',
               fontWeight: 400,
@@ -100,7 +100,7 @@ const ProjectStatusCard: React.FC<ProjectStatusCardProps> = ({ analytics }) => (
               lineHeight: '20.33px',
               letterSpacing: '0px',
               verticalAlign: 'middle',
-              color: '#fff',
+          
             }}
           >
             Backlog <span style={{ fontWeight: 600 }}>{analytics.totalProjects - analytics.completedProjects - analytics.activeProjects}</span>

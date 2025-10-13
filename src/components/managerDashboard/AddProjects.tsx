@@ -550,7 +550,7 @@ export default function ProjectDashboard() {
     leading-[28px]
     tracking-[0px]
     align-middle
-    text-white
+    text-text-main
     mb-2
   "
           >
@@ -565,7 +565,7 @@ export default function ProjectDashboard() {
     leading-[20px]
     tracking-[0px]
     align-middle
-    text-white
+    text-text-secondary
   "
           >
             Welcome back, {user.name || user.email}! Manage and track your assigned projects
@@ -607,12 +607,13 @@ export default function ProjectDashboard() {
             <div className="flex flex-col sm:flex-row gap-4 items-center flex-1 w-full">
               {/* Search Bar */}
               <div className="relative flex-1 w-full h-[44px]">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 z-10" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 z-10 " />
                 <input
                   type="text"
                   placeholder="Search projects by name, ID, or description..."
-                  style={{ backgroundColor: colors.black.transparent40 }}
+                  
                   className="
+          [background:var(--search-bg)]        
       w-full h-[44px]
       pl-[48px] pr-[16px] py-[12px]
       rounded-[16px]
@@ -699,28 +700,28 @@ export default function ProjectDashboard() {
   "
                 >
                   <tr className="h-[73px]">
-                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
+                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-text-primary tracking-[0px] uppercase"  style={{ color: 'var(--text-primary)' }}>
                       Name
                     </th>
-                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
+                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase" style={{ color: 'var(--text-primary)' }}>
                       Description
                     </th>
-                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
+                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase" style={{ color: 'var(--text-primary)' }}>
                       Start Date
                     </th>
-                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
+                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase" style={{ color: 'var(--text-primary)' }}>
                       End Date
                     </th>
-                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] min-w-[120px] uppercase">
+                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] min-w-[120px] uppercase" style={{ color: 'var(--text-primary)' }}>
                       Status
                     </th>
-                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] min-w-[200px] uppercase">
+                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] min-w-[200px] uppercase" style={{ color: 'var(--text-primary)' }}>
                       Actions
                     </th>
-                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
+                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase" style={{ color: 'var(--text-primary)' }}>
                       View Team
                     </th>
-                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase">
+                    <th className="whitespace-nowrap px-6 py-4 text-left font-roboto font-semibold text-[14px] leading-[20px] text-white tracking-[0px] uppercase" style={{ color: 'var(--text-primary)' }}>
                       Settings
                     </th>
                   </tr>
@@ -792,7 +793,7 @@ export default function ProjectDashboard() {
                             )}
 
                             {/* Project Name */}
-                            <span className="text-lg font-semibold text-white leading-tight hover:underline decoration-white/60">
+                            <span className="text-lg font-semibold text-white leading-tight hover:underline decoration-white/60" style={{ color: 'var(--text-primary)' }}>
                               {project.name}
                             </span>
                           </div>

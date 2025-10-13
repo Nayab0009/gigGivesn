@@ -886,8 +886,8 @@ export default function ChatPage({ userId }: { userId?: string }) {
               w-full h-[68px] px-[15px] py-[12px]
               ${
                 (selectedUserId.toString() === contact.id.toString() || selectedUser === contact.name)
-                  ? "bg-[#0CA9F633] border-l-[3px] border-[#0CA9F6]"
-                  : "hover:bg-[#0CA9F633] hover:border-l-[3px] hover:border-[#0CA9F6]"
+          ? "bg-[var(--active-bg)] border-l-[3px] border-[var(--active-border-color)]"
+      : "hover:bg-[var(--hover-bg)] hover:border-l-[3px] hover:border-[var(--hover-border-color)]"
               }`}
           >
             <div className="relative">

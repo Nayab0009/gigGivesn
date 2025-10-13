@@ -20,7 +20,17 @@ body {
     --dropdown-bg: #0000004D;
     --form-bg:rgba(0, 0, 0, 0.342);
     --field-bg:rgba(0, 0, 0, 0.366);
-
+    --image-color: #ffffff;
+ --search-bg:#00000066;
+  --text-primary:#FFFFFF;
+  --icon-bg:rgba(0, 0, 0, 0.4);
+   --icon-color:#FFFFFF;
+     --hover-bg: #0CA9F633;
+  --hover-border-color: #0CA9F6;
+  --hover-border-width: 3px;
+    --active-bg: #0CA9F633;
+  --active-border-color: #0CA9F6;
+  --active-border-width: 3px;
 }
 
 /* Dark Theme */
@@ -41,6 +51,19 @@ body {
      --dropdown-bg: #262525;
       --form-bg:#2E2E2E;
       --field-bg:#262525;
+       --image-color: #ffffff;
+       --search-bg:#00000066;
+        --text-primary:#FFFFFF;
+        --icon-bg:rgba(0, 0, 0, 0.4);
+         --icon-color:#FFFFFF;
+          --hover-bg: #262525;
+  --hover-border-color: #0CA9F6;
+  --hover-border-width: 3px;
+    --active-bg: #262525;
+  --active-border-color: #0CA9F6;
+  --active-border-width: 3px; 
+  
+       
       
 }
 
@@ -56,19 +79,26 @@ body {
    --border-style: none;
     --team-bg: #E0E3E7;
       --container-bg:#E0E3E7;
- --thead-bg:rgba(0, 0, 0, 0.616);
+ --thead-bg:#CDCDCD;
  --btn-bg: #E0E3E7;
  --dropdown-bg: #E0E3E7;
  --form-bg: #E0E3E7;
  --field-bg:#0000001A;
+   --image-color: #000000;
+   --search-bg:#FFFFFF66;
+   --text-primary:#8C8C8C;
+    --icon-bg:rgba(0, 0, 0, 0.4);
+    --icon-color:#FFFFFF;
 }
-
 /* Hide glass background for dark/light themes */
 [data-theme="dark"] .glass-bg-only,
 [data-theme="light"] .glass-bg-only {
   display: none !important;
 }
-
+.text-var-main {
+  color: var(--text-main);
+  stroke: var(--text-main);
+}
 /* Show solid backgrounds for dark/light themes */
 .theme-solid-bg {
   display: none;
@@ -81,7 +111,7 @@ body {
 
 [data-theme="light"] .theme-solid-bg {
   display: block !important;
-  background: #ffffff;
+  background: #E0E3E7;
 }
 
 
@@ -103,6 +133,10 @@ body {
       --form-bg: var(--form-bg);
       --thead-bg:var(--thead-bg);
       --field-bg:var(--field-bg);
+      --search-bg:var(--search-bg);
+      --text-primary:var(--text-primary);
+      --icon-bg:var(--icon-bg);
+      --icon-color:var(--icon-color);
 }
 
 

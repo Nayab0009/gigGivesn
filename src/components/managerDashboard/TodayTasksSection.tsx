@@ -59,7 +59,7 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
     >
       <div className="flex items-center justify-between mb-4">
         <h4
-          className="text-[18.3px] font-semibold text-white"
+          className="text-[18.3px] font-semibold text-text-main"
           style={{
             fontFamily: 'Inter, sans-serif',
             fontWeight: 600,
@@ -105,7 +105,7 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
             return (
               <div
                 key={task.id || idx}
-                className="flex flex-col justify-between border border-white/20 w-full"
+                className="flex flex-col justify-between border border-white/20 w-full [background:var(--container-bg)] "
                 style={{
                   borderRadius: '15px',
                   borderWidth: '1px',
@@ -114,7 +114,7 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
                   maxHeight: '158.6px',
                   height: '158.6px',
                   border: '1px solid #FFFFFF4D',
-                  background: '#0000004D',
+                
                   backgroundBlendMode: 'luminosity',
                   backdropFilter: 'blur(101.66923522949219px)',
                   
@@ -136,7 +136,7 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
                   {priorityLabel}
                 </div>
                 <div
-                  className="mb-4"
+                  className="mb-4 text-text-main"
                   style={{
                     fontFamily: 'Inter, sans-serif',
                     fontWeight: 600,
@@ -145,7 +145,7 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
                     lineHeight: '28.47px',
                     letterSpacing: '0px',
                     verticalAlign: 'middle',
-                    color: '#fff',
+                  
                   }}
                 >
                   {task.title || task.name || "Untitled Task"}

@@ -300,16 +300,19 @@ const AppHeader: React.FC = () => {
         {/* Rectangle 105 instead of notification icon */}
         {/* Notification Dropdown with image trigger */}
         <NotificationDropdown
-          trigger={
-            <Image
-              src="/images/notification.png"
-              alt="Notifications"
-              width={40}
-              height={40}
-              className="object-contain cursor-pointer"
-            />
-          }
-        />
+  trigger={
+    <div className="relative cursor-pointer">
+      <Image
+        src="/images/notification.png"
+        alt="Notifications"
+        width={40}
+        height={40}
+        className="object-contain invert-[var(--invert-value)] transition-all duration-300"
+      />
+    </div>
+  }
+/>
+
 
         {/* User Dropdown with white username */}
         <div
