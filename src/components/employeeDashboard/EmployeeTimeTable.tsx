@@ -156,12 +156,12 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
     return (
     <>
       <div
-        className="w-full p-4 rounded-3xl overflow-x-auto"
+        className="w-full p-4 rounded-3xl overflow-x-auto [background:var(--container-bg)]"
         style={{
           scrollbarWidth: "none",
           opacity: 1,
           borderRadius: "12px",
-          background: "#0000004D",
+
           backdropFilter: "blur(101.67px)",
           backgroundBlendMode: "luminosity",
         }}
@@ -176,7 +176,7 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
                 className={`flex flex-col gap-2 border-b border-white/30 px-2 w-[200px] min-w-[200px] ${!isLast ? 'border-r border-white/20' : ''}`}
               >
                 {/* Day header */}
-                <div className="p-2 text-white text-center border-b border-white/30">
+                <div className="p-2 text-text-main text-center border-b border-white/30">
                   <div className="text-sm">
                     {dayNames[day as keyof typeof dayNames]} {dayNumbers[day]}
                   </div>
@@ -192,10 +192,10 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
                   return (
                     <div
                       key={`${day}-${task.id || idx}`}
-                      className="flex flex-col justify-between bg-black/30 text-[#0CA9F6] relative overflow-hidden shadow-lg h-[240px] p-4 rounded-[15px] border border-white/10 gap-y-[12px]"
+                      className="flex flex-col justify-between [background:var(--container-bg)] text-[#0CA9F6] relative overflow-hidden shadow-lg h-[240px] p-4 rounded-[15px] border border-white/10 gap-y-[12px]"
                       style={{
                         opacity: 1,
-                        boxShadow: "0 2px 12px 0 rgba(0,0,0,0.10)",
+
                       }}
                     >
                       <div className="flex justify-between items-center mb-1 gap-[32px]">
@@ -214,7 +214,7 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
                           >
                             {task.taskCode}
                           </span>
-                          <span className="mt-1 px-1 py-0.5 text-[10px] rounded-full bg-[#0CA9F6] text-white font-semibold"
+                          <span className="mt-1 px-1 py-0.5 text-[10px] rounded-full bg-[#0CA9F6] text-text-main font-semibold"
                           style={{
                             fontFamily: "Inter",
                             fontWeight: 600,
@@ -228,7 +228,7 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
                           </span>
                         </div>
                         <span
-                          className="text-xs px-1 py-0.5 rounded-full text-white font-semibold"
+                          className="text-xs px-1 py-0.5 rounded-full text-text-main  font-semibold"
                           style={{
                             backgroundColor: priorityColors[
                               (task.priority || "Medium").trim().charAt(0).toUpperCase() + (task.priority || "Medium").trim().slice(1).toLowerCase()
@@ -246,7 +246,7 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
                       </div>
                       <div className="mt-2 gap-[12px]">
                         <div
-                          className="text-white font-semibold overflow-hidden"
+                          className="text-text-main font-semibold overflow-hidden"
                           style={{
                             fontFamily: "Inter",
                             fontWeight: 600,
@@ -330,7 +330,7 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
                           </span>
                           {/* Eye Icon */}
                           <span
-                            className="w-7 h-7 flex items-center justify-center rounded-full bg-black/30 border border-white/10 cursor-pointer"
+                            className="w-7 h-7 flex items-center justify-center rounded-full [background:var(--container-bg)]  border border-white/10 cursor-pointer"
                             onClick={(e) => {
                               e.stopPropagation();
                                handleTaskClick(task.id);
@@ -350,7 +350,7 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
 
                 {/* No tasks fallback */}
                 {tasks.length === 0 && (
-                  <div className="h-32 rounded-2xl border border-white/5 flex items-center justify-center text-white/30 text-sm">
+                  <div className="h-32 rounded-2xl border border-white/5 flex items-center justify-center text-text-secondary text-sm">
                     No tasks
                   </div>
                 )}

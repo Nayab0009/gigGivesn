@@ -233,7 +233,7 @@ export default function Dashboard() {
 
             {/* Timetable directly below Today Tasks and Notes, matching manager dashboard styling */}
             <div
-              className="rounded-2xl border border-blue-200/30 bg-black/30 overflow-auto scrollbar-none"
+              className="rounded-2xl border border-blue-200/30 overflow-auto scrollbar-none"
               style={{ minHeight: '300px', maxHeight: '420px', scrollbarWidth: 'none' }}
             >
               <TimeTable employeeId={user?.id} />

@@ -55,7 +55,7 @@ const EmployeeSprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName 
         <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
           <Clock className="w-6 h-6 text-emerald-600 animate-spin" />
         </div>
-        <p className="text-white/80">Loading sprints...</p>
+        <p className="text-text-secondary">Loading sprints...</p>
       </div>
     );
   }
@@ -93,7 +93,7 @@ const EmployeeSprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName 
  [box-shadow:var(--shadow-combined)] ml-2 p-6 transition cursor-pointer transform group"
             >
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-white">{sprint.name}</h2>
+                <h2 className="text-lg font-bold text-text-main">{sprint.name}</h2>
                 <span
                   className="w-[82px] h-[36px] flex items-center justify-center
              px-[22px] py-[10px] gap-[10px] rounded-[99px]
@@ -102,11 +102,11 @@ const EmployeeSprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName 
                   Active
                 </span>
               </div>
-              <p className="text-sm text-gray-300 mb-4 line-clamp-2">{sprint.description || "No description provided"}</p>
+              <p className="text-sm text-text-secondary mb-4 line-clamp-2">{sprint.description || "No description provided"}</p>
               <div className="space-y-2 text-sm text-gray-300 mb-4">
                 <div className="flex justify-between">
-                  <span className="font-medium text-white">Timeline:</span>
-                  <span>
+                  <span className="font-medium text-text-main">Timeline:</span>
+                  <span className='text-text-main'>
                     {sprint.startDate && new Date(sprint.startDate).toLocaleDateString()} - {sprint.endDate && new Date(sprint.endDate).toLocaleDateString()}
                   </span>
                 </div>
@@ -119,7 +119,7 @@ const EmployeeSprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName 
                     className=" h-[36px] flex items-center justify-center gap-[10px]
                px-[22px] py-[10px] rounded-[99px] text-sm font-medium
                transition hover:opacity-80 w-full
-              bg-[var(--btn-bg)] text-white"
+              bg-[var(--btn-bg)] text-text-main"
                     title="View all tasks in this sprint"
                   >
 

@@ -48,7 +48,7 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
   return (
     <div
       className="rounded-3xl w-full h-full [border:var(--border-style)]
-     [box-shadow:var(--shadow-combined)] shadow-md bg-black/30"
+     [box-shadow:var(--shadow-combined)] shadow-md [background:var(--container-bg)] "
       style={{
         minHeight: '248px',
         padding: '16px',
@@ -59,7 +59,7 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
     >
       <div className="flex items-center justify-between mb-4">
         <h4
-          className="text-[18.3px] font-semibold text-white"
+          className="text-[18.3px] font-semibold text-text-main"
           style={{
             fontFamily: 'Inter, sans-serif',
             fontWeight: 600,
@@ -84,7 +84,7 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
             <span className="text-blue-200">Loading tasks...</span>
           </div>
         ) : tasks.length === 0 ? (
-          <div className="col-span-3 text-center text-blue-200 py-8">No tasks found.</div>
+          <div className="col-span-3 text-center text-text-secondary py-8">No tasks found.</div>
         ) : (
           sortedTodayTasks.map((task, idx) => {
             const priorityLabel = task.priority ? `${task.priority} Priority` : "Task";

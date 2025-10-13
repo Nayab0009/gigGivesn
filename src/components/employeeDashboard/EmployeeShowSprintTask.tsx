@@ -204,7 +204,7 @@ const EmployeeShowSprintTask: React.FC = () => {
         {/* Loading State */}
         {isLoading ? (
           <div className="text-center py-16">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/10 mb-4">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full  [background:var(--container-bg)] mb-4">
               <Loader2 className="w-6 h-6 animate-spin text-white" />
             </div>
             <p className="text-gray-400">Loading sprint tasks...</p>
@@ -212,15 +212,15 @@ const EmployeeShowSprintTask: React.FC = () => {
         ) : (
           <div className="space-y-8">
             <div className="flex items-center gap-5">
-              <button className="flex items-center gap-2 text-white px-2 py-1 rounded-full transition-all focus:outline-none">
+              <button className="flex items-center gap-2 text-text-main px-2 py-1 rounded-full transition-all focus:outline-none">
                 <Filter className="w-4 h-4" />
-                <span className="text-sm font-medium ">Filter</span>
+                <span className="text-sm font-medium text-text-main ">Filter</span>
               </button>
               <div className="flex items-center gap-4">
 
                 <div
                   className="flex rounded-full p-1 gap-1 shadow-inner"
-                  style={{ background: "#0000004D" }}
+                
                 >
                   {[
                     { key: "sprints", label: "Sprints" },
@@ -238,7 +238,7 @@ const EmployeeShowSprintTask: React.FC = () => {
                       }}
                       className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${activeTab === (t.key as any)
                         ? "bg-[#0000004D] text-white shadow "
-                        : "text-white/80 hover:text-white hover:bg-white/10 "
+                        : "text-text-main hover:text-white hover:bg-white/10 "
                         }`}
                       style={{ minWidth: 90 }}
                     >
@@ -252,7 +252,7 @@ const EmployeeShowSprintTask: React.FC = () => {
             <div className="flex items-center justify-between w-full mb-4">
               {/* Sprint Name at left */}
               {sprintName ? (
-                <span className="text-[20px] font-[600px] text-white  px-4 py-2 " style={{ minWidth: '180px' }}>
+                <span className="text-[20px] font-[600px] text-text-main px-4 py-2 " style={{ minWidth: '180px' }}>
                   {sprintName}
                 </span>
               ) : <span />}
@@ -285,21 +285,21 @@ const EmployeeShowSprintTask: React.FC = () => {
             {taskView === "table" ? (
               <div className="space-y-6">
                 {/* Active Tasks Table */}
-                <div className="rounded-2xl [border:var(--border-style)]  [box-shadow:var(--shadow-combined)] ml-2 backdrop-blur-xl" style={{ background: "#0000004D" }}>
+                <div className="rounded-2xl [border:var(--border-style)]  [box-shadow:var(--shadow-combined)] ml-2 backdrop-blur-xl [background:var(--container-bg)] " >
                   <div className="overflow-x-auto">
                     <table className="min-w-full">
                       <thead>
-                        <tr className="text-white/70 text-sm border-b border-white/10">
+                        <tr className="text-text-secondary -sm border-b border-white/10">
                           <th className="px-6 py-3 text-left font-medium">
-                            <div className="flex items-center gap-2 text-white">
-                              <ChevronDown className="w-4 h-4 text-white/80" />
+                            <div className="flex items-center gap-2 text-text-secondary">
+                              <ChevronDown className="w-4 h-4 text-text-secondary" />
                               <span className="font-semibold">Active tasks</span>
-                              <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/10 text-white/80">
+                              <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/10 text-text-secondary ">
                                 {tasks.filter(task => task.status?.toLowerCase() === 'inprogress').length}
                               </span>
                             </div>
                           </th>
-                          <th className="px-6 py-3 text-white text-left font-medium">Status</th>
+                          <th className="px-6 py-3 text-left font-medium">Status</th>
                           <th className="px-6 py-3 text-left font-medium">Ticket Number</th>
                           <th className="px-6 py-3 text-left font-medium">Due Date</th>
                           <th className="px-6 py-3 text-left font-medium">Priority</th>
@@ -313,16 +313,16 @@ const EmployeeShowSprintTask: React.FC = () => {
                           .map((task) => (
                             <tr
                               key={task.id}
-                              className="text-white text-sm border-b border-white/10 last:border-b-0 cursor-pointer hover:bg-white/5"
+                              className="text-text-main text-sm border-b border-white/10 last:border-b-0 cursor-pointer hover:bg-white/5"
                               onClick={() => handleViewReport(task)}
                             >
                               <td className="px-6 py-4 whitespace-nowrap font-medium">
                                 {task.title}
-                                <span className="ml-2 text-white/50 text-xs">#{task.id}</span>
+                                <span className="ml-2 text-text-main  text-xs">#{task.id}</span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
                                 <span className="inline-flex items-center gap-2">
-                                  <span className="w-2 h-2 rounded-full bg-white"></span>
+                                  <span className="w-2 h-2 rounded-full bg-text-main"></span>
                                   In Progress
                                 </span>
                               </td>
@@ -354,7 +354,7 @@ const EmployeeShowSprintTask: React.FC = () => {
                                   <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
                                     {getAssigneeAvatar(task)}
                                   </span>
-                                  <span className="text-white/80 text-sm font-medium">
+                                  <span className="text-text-main text-sm font-medium">
                                     {task.taskFor?.name || "Unassigned"}
                                   </span>
                                 </span>
@@ -383,7 +383,7 @@ const EmployeeShowSprintTask: React.FC = () => {
                           ))}
                         {tasks.filter((task) => task.status?.toLowerCase() === 'inprogress').length === 0 && (
                           <tr>
-                            <td className="px-6 py-4 text-white/60 text-sm" colSpan={7}>
+                            <td className="px-6 py-4 text-text-secondary text-sm" colSpan={7}>
                               No active tasks
                             </td>
                           </tr>
@@ -395,21 +395,21 @@ const EmployeeShowSprintTask: React.FC = () => {
 
 
                 {/* Completed Tasks Table */}
-                <div className="rounded-2xl [box-shadow:var(--shadow-combined)] [border:var(--border-style)] ml-2 backdrop-blur-xl" style={{ background: "#0000004D" }}>
+                <div className="rounded-2xl [box-shadow:var(--shadow-combined)] [background:var(--container-bg)] [border:var(--border-style)] ml-2 backdrop-blur-xl">
                   <div className="overflow-x-auto">
                     <table className="min-w-full">
                       <thead>
-                        <tr className="text-white/70 text-sm border-b border-white/10">
+                        <tr className="text-text-secondary text-sm border-b border-white/10">
                           <th className="px-6 py-3 text-left font-medium">
-                            <div className="flex items-center gap-2 text-white">
-                              <ChevronDown className="w-4 h-4 text-white/80" />
+                            <div className="flex items-center gap-2 text-text-secondary">
+                              <ChevronDown className="w-4 h-4 text-text-secondary" />
                               <span className="font-semibold">Completed Task</span>
-                              <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/10 text-white/80">
+                              <span className="ml-1 inline-flex items-center justify-center w-5 h-5 rounded-full text-[10px] bg-white/10 text-text-secondary ">
                                 {tasks.filter(task => task.status?.toLowerCase() === 'completed').length}
                               </span>
                             </div>
                           </th>
-                          <th className="px-6 py-3 text-white text-left font-medium">Status</th>
+                          <th className="px-6 py-3 text-left font-medium">Status</th>
                           <th className="px-6 py-3 text-left font-medium">Type</th>
                           <th className="px-6 py-3 text-left font-medium">Due Date</th>
                           <th className="px-6 py-3 text-left font-medium">Priority</th>
@@ -422,7 +422,7 @@ const EmployeeShowSprintTask: React.FC = () => {
                           .map((task) => (
                             <tr
                               key={task.id}
-                              className="text-white text-sm border-b border-white/10 last:border-b-0 cursor-pointer hover:bg-white/5"
+                              className="text-text-main text-sm border-b border-white/10 last:border-b-0 cursor-pointer hover:bg-white/5"
                               onClick={() => handleViewReport(task)}
                             >
                               <td className="px-6 py-4 whitespace-nowrap font-medium">
@@ -459,10 +459,10 @@ const EmployeeShowSprintTask: React.FC = () => {
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap border-l border-white/10">
                                 <span className="inline-flex items-center gap-2">
-                                  <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
+                                  <span className="w-6 h-6 rounded-full  text-text-main bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
                                     {getAssigneeAvatar(task)}
                                   </span>
-                                  <span className="text-white/80 text-sm font-medium">
+                                  <span className="text-text-main text-sm font-medium">
                                     {task.taskFor?.name || "Unassigned"}
                                   </span>
                                 </span>
@@ -485,23 +485,23 @@ const EmployeeShowSprintTask: React.FC = () => {
             ) : (
               /* Kanban board view */
               <div className="flex gap-6 px-18 pb-6">
-                {[{ key: "inprogress", title: "In Progress", color: "white" },
+                {[{ key: "inprogress", title: "In Progress", color: "Black" },
                 { key: "completed", title: "Completed", color: "white" },
                 { key: "cancelled", title: "Cancelled", color: "white" }].map((column, idx) => {
                   const columnTasks = tasks.filter(task => task.status?.toLowerCase() === column.key);
                   return (
-                    <div key={column.key} className="flex-1 min-w-[260px] rounded-2xl border border-white/10 backdrop-blur-xl p-4 flex flex-col" style={{ background: '#0000004D', boxShadow: '0 2px 16px 0 rgba(0,0,0,0.10)' }}>
+                    <div key={column.key} className="flex-1 min-w-[260px] rounded-2xl border border-white/10 backdrop-blur-xl p-4 flex flex-col [background:var(--container-bg)] " style={{boxShadow: '0 2px 16px 0 rgba(0,0,0,0.10)' }}>
                       {/* Header */}
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="w-3 h-3 rounded-full bg-white"></span>
-                        <span className="text-white/90 font-semibold text-base">{column.title}</span>
-                        <span className="ml-2 inline-flex items-center justify-center w-6 h-6 rounded-full text-xs bg-white/10 text-white/80 font-bold">{columnTasks.length}</span>
+                        <span className="w-3 h-3 rounded-full bg-black"></span>
+                        <span className="text-text-main font-semibold text-base">{column.title}</span>
+                        <span className="ml-2 inline-flex items-center justify-center w-6 h-6 rounded-full text-xs bg-white/10 text-text-main font-bold">{columnTasks.length}</span>
                       </div>
                       <div className="border-b border-white/20 mb-4"></div>
                       {/* Tasks */}
                       <div className="flex-1 flex flex-col gap-4">
                         {columnTasks.length > 0 ? columnTasks.map((task) => (
-                          <div key={task.id} className="rounded-xl border border-white/10 shadow-md p-4 text-white/90 transition-all duration-200 cursor-pointer min-h-[150px] flex flex-col justify-center gap-4" style={{ background: '#0000004D' }} onClick={() => handleViewReport(task)}>
+                          <div key={task.id} className="rounded-xl border border-white/10 [background:var(--container-bg)] shadow-md p-4 text-white/90 transition-all duration-200 cursor-pointer min-h-[150px] flex flex-col justify-center gap-4" onClick={() => handleViewReport(task)}>
                             {/* Task Header */}
                             <div className="flex items-center justify-between mb-2">
                               <span className="text-xs font-bold text-blue-300">{`${task.id}`}</span>
@@ -522,18 +522,18 @@ const EmployeeShowSprintTask: React.FC = () => {
                               </span>
                             </div>
                             {/* Title */}
-                            <div className="font-semibold text-base mb-1">{task.title}</div>
+                            <div className="font-semibold  text-text-main text-base mb-1">{task.title}</div>
                             {/* Description */}
-                            <div className="text-xs text-white/70 mb-2">{task.description || 'No description'}</div>
+                            <div className="text-xs  text-text-main  mb-2">{task.description || 'No description'}</div>
 
                             {/* Assignee & Time */}
                             <div className="flex items-center gap-2">
-                              <span className="w-6 h-6 rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
+                              <span className="w-6 h-6 text-text-secondary rounded-full bg-white/10 border border-white/20 flex items-center justify-center overflow-hidden">
                                 {getAssigneeAvatar(task)}
                               </span>
-                              <span className="text-xs text-white/80 font-medium">{task.taskFor?.name || 'Unassigned'}</span>
+                              <span className="text-xs text-text-main font-medium">{task.taskFor?.name || 'Unassigned'}</span>
                               {/* Time (example static) */}
-                              <span className="flex items-center gap-1 text-xs text-white/60 ml-auto">
+                              <span className="flex items-center gap-1 text-xs text-text-main ml-auto">
                                 <Clock className="w-4 h-4" />
                                 0h 52m
                               </span>

@@ -220,8 +220,8 @@ export default function TeamListPage() {
      <div className="mb-8 flex flex-col lg:flex-row items-center justify-between gap-6">
   {/* Heading Section */}
   <div className="flex flex-col">
-    <h1 className="text-2xl sm:text-2xl font-bold text-white">Team Members</h1>
-    <p className="text-lg text-white">Manage and track all team members</p>
+    <h1 className="text-2xl sm:text-2xl font-bold text-text-main">Team Members</h1>
+    <p className="text-lg text-text-secondary">Manage and track all team members</p>
   </div>
 
   {/* Action Bar */}
@@ -250,7 +250,7 @@ export default function TeamListPage() {
 
     {/* Stats Badge */}
     <div
-      className="text-sm px-4 py-2 rounded-full border text-white border"
+      className="text-sm px-4 py-2 rounded-full  text-text-secondary border"
   
     >
       <span className="font-semibold " >
@@ -484,17 +484,17 @@ export default function TeamListPage() {
   }}
 >
           <tr className="h-[73px]">
-            <th className="px-6 py-4 text-left text-sm font-medium text-white/90">
+            <th className="px-6 py-4 text-left text-[18.3px] font-[600] text-text-main">
               Employee Details
             </th>
-            <th className="px-6 py-4 text-left text-sm font-medium text-white/90">
+            <th className="px-6 py-4 text-left text-[18.3px] font-[600]  text-text-main">
               Role
             </th>
-            <th className="px-6 py-4 text-left text-sm font-medium text-white/90">
+            <th className="px-6 py-4 text-left text-[18.3px] font-[600]  text-text-main">
               Contact Info
             </th>
             {userRole === "manager" && (
-              <th className="px-6 py-4 text-left text-sm font-medium text-white/90">
+              <th className="px-6 py-4 text-left text-[18.3px] font-[600]  text-text-main">
                 Actions
               </th>
             )}
@@ -540,7 +540,7 @@ export default function TeamListPage() {
               <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
             </div>
             <div>
-              <h3 className="text-base font-semibold text-white">
+              <h3 className="text-base text-[20px] text-text-main font-[500]">
                 {member.name}
               </h3>
               <p className="text-sm text-blue-400">Team Member</p>
@@ -549,14 +549,14 @@ export default function TeamListPage() {
         </td>
 
         <td className="px-6 py-4">
-          <span className="text-sm text-white/70 capitalize">
+          <span className="text-[20px] text-text-secondary  font-[400] capitalize">
             {member.role || "Employee"}
           </span>
         </td>
 
         <td className="px-6 py-4">
           <div className="space-y-1">
-            <div className="text-[20px] text-[#A4A7AE] font-medium">{member.email}</div>
+            <div className="text-[20px] text-text-secondary  font-[400]">{member.email}</div>
 
           </div>
         </td>
@@ -564,26 +564,30 @@ export default function TeamListPage() {
         {userRole === "manager" && (
           <td className="px-6 py-4">
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => handleEditStart(member)}
-                className="inline-flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:bg-white/10 backdrop-blur-xl"
-                style={{
-                  background: "rgba(255, 255, 255, 0.05)",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
-                }}
-              >
-                <Edit className="w-4 h-4 text-white/70" />
-              </button>
-              <button
-                onClick={() => handleEmployeeDelete(String(member.id))}
-                className="inline-flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:bg-red-500/20 backdrop-blur-xl"
-                style={{
-                  background: "rgba(239, 68, 68, 0.1)",
-                  border: "1px solid rgba(239, 68, 68, 0.2)",
-                }}
-              >
-                <Trash2 className="w-4 h-4 text-red-400" />
-              </button>
+            <button
+  onClick={() => handleEditStart(member)}
+  className="
+    inline-flex items-center justify-center w-8 h-8 rounded-full
+    transition-all duration-200 backdrop-blur-xl
+    bg-[var(--icon-bg)] border border-[var(--icon-border)]
+  
+  "
+>
+  <Edit className="w-4 h-4 text-[var(--icon-color)]" />
+</button>
+
+<button
+  onClick={() => handleEmployeeDelete(String(member.id))}
+  className="
+    inline-flex items-center justify-center w-8 h-8 rounded-full
+    transition-all duration-200 backdrop-blur-xl
+    bg-[var(--icon-bg)] border border-[var(--icon-border)]
+  
+  "
+>
+  <Trash2 className="w-4 h-4 text-[var(--icon-color)]" />
+</button>
+
             </div>
           </td>
         )}

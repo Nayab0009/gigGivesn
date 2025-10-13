@@ -207,14 +207,14 @@ const ProfessionalNotesEditor = () => {
 
   const themeClass = isDarkMode ? "dark bg-gray-900" : "bg-gray-50"
   const cardClass = isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
-  const textClass = isDarkMode ? "text-white" : "text-white"
-  const mutedTextClass = isDarkMode ? "text-gray-400" : "text-gray-500"
+  const textClass = isDarkMode ? "text-text-main" : "text-text-main"
+  const mutedTextClass = isDarkMode ? "text-text-main" : "text-text-main"
 
   return (
     <div className={`min-h-screen transition-all duration-300 ${themeClass} bg-transparent `}>
 
       <div className="flex flex-col md:flex-row [background:var(--container-bg)] backdrop-blur-md p-[22px] rounded-4xl border-[1px] my-5 [border:var(--border-style)]
-    [box-shadow:var(--shadow-combined)] text-white">
+    [box-shadow:var(--shadow-combined)] text-text-main">
         {/* Sidebar */}
         <aside className={`w-full md:w-80 flex flex-col transition-all duration-300 bg-none`}>
           <div className="flex flex-row gap-3 mb-4">
@@ -246,14 +246,14 @@ const ProfessionalNotesEditor = () => {
                   onClick={() => setSelectedNoteId(note.id)}
                   className={`group cursor-pointer p-5 rounded-xl transition-all duration-200 hover:-translate-y-0.5 ${
                     note.id === selectedNoteId
-                      ? "bg-[#00000083] text-white shadow-md border-l-4 border-[#0CA9F6]"
-                      : `bg-black/30 backdrop-blur-md border-none text-white hover:bg-black/40 hover:shadow-md`
+                      ? "bg-[var(--active-bg)] border-l-[3px] border-[var(--active-border-color)]"
+      : "hover:bg-[var(--hover-bg)] hover:border-l-[3px] hover:border-[var(--hover-border-color)]"
                   }`}
                 >
                   <div className="flex flex-col">
                     <div className="flex items-center justify-between">
                       <h3
-                        className={`font-semibold text-base ${textClass} transition-colors truncate pr-2 flex-1`}
+                        className={`font-semibold text-text-main text-base ${textClass} transition-colors truncate pr-2 flex-1`}
                       >
                         {note.title}
                       </h3>
@@ -274,7 +274,7 @@ const ProfessionalNotesEditor = () => {
         </aside>
         {/* Main Editor */}
         <main className="flex-1 flex flex-col [border:var(--border-style)]
-     [box-shadow:var(--shadow-combined)] rounded-2xl dark:hover:bg-gray-700/20 bg-black/15 backdrop-blur-md border-gray-500">
+     [box-shadow:var(--shadow-combined)] rounded-2xl dark:hover:bg-gray-700/20 [background:var(--container-bg)] backdrop-blur-md border-gray-500">
 
           {/* Enhanced Toolbar */}
           <div className={`border-gray-200 dark:border-gray-700 px-3 md:px-6 py-3 overflow-x-auto`}>

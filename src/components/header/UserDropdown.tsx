@@ -138,11 +138,13 @@ export default function UserDropdown() {
             </div>
 
             {/* Role + Active Badge Row */}
-            <div className="flex items-center mb-4 gap-1">
+          
+          </div>
+            <div className="flex items-center  justify-between mb-4 gap-1">
               <span className="px-3 py-0.5  font-bold text-[10px] rounded-[50px] bg-white/10 text-text-main">
                 {role}
               </span>
-              <span
+             <span
                 className="px-3 py-0.5 text-[10px] font-bold rounded-[50px] text-text-main"
                 style={{
                   backgroundColor: "rgba(50, 213, 131, 0.4)",
@@ -152,25 +154,36 @@ export default function UserDropdown() {
                 Active
               </span>
             </div>
-          </div>
+             
 
           {/* Profile Option */}
-          <button
-            onClick={() => {
-              setIsOpen(false);
-              setIsProfileOpen(true);
-            }}
-            className="flex items-center hover:px-3 gap-3 w-full text-left  py-2 rounded-lg text-xs text-text-main hover:bg-white/10 transition"
-          >
-            <Image
-              src="/images/profile.svg"
-              alt="Profile"
-              width={16}
-              height={16}
-               className="image-color"
-            />
-            Profile
-          </button>
+        <button
+  onClick={() => {
+    setIsOpen(false);
+    setIsProfileOpen(true);
+  }}
+  className="
+    flex items-center gap-3 w-full text-left py-2 rounded-lg text-xs 
+    text-text-main transition-all duration-200
+    hover:bg-[var(--hover-bg)] hover:border-l-[var(--hover-border-width)] hover:border-[var(--hover-border-color)]
+    border-l-transparent
+  "
+>
+  <div
+    className="
+      inline-flex items-center justify-center w-5 h-5 rounded-md
+    "
+  >
+    <Image
+      src="/images/profile.svg"
+      alt="Profile"
+      width={14}
+      height={14}
+      className="text-[var(--dropdown-icon-color)]"
+    />
+  </div>
+  Profile
+</button>
 
 {/* Theme Option with submenu */}
 <div className="relative">

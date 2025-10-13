@@ -21,7 +21,7 @@ const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs,
   return (
    <div
       className="flex flex-col justify-between [border:var(--border-style)]
-    mb-2 [box-shadow:var(--shadow-combined)] bg-black/30 backdrop-blur-[101.67px] shadow-md w-full mx-auto"
+    mb-2 [box-shadow:var(--shadow-combined)] [background:var(--container-bg)] backdrop-blur-[101.67px] shadow-md w-full mx-auto"
       style={{
         minHeight: '240px',
         borderRadius: '20px',
@@ -32,7 +32,7 @@ const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs,
         backgroundBlendMode: 'luminosity',
       }}
     >
-    <div className="flex items-center justify-between mb-2">
+    <div className="flex items-center justify-between mb-2 text-text-main " >
       <span
         style={{
           fontFamily: 'Inter, sans-serif',
@@ -42,7 +42,7 @@ const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs,
           lineHeight: '28.47px',
           letterSpacing: '0px',
           verticalAlign: 'middle',
-          color: '#fff',
+     
         }}
       >
         Communication Logs
@@ -79,12 +79,12 @@ const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs,
         commLogs.map((log,index) => (
           <div
             key={log.id ?? index}
-            className="flex items-center justify-between rounded-lg p-2 mb-2 bg-black/40 transition-shadow duration-200 hover:shadow-[0px_0px_10.7px_0px_#81818166] cursor-pointer"
+            className="flex items-center justify-between rounded-lg p-2 mb-2 [background:var(--container-bg)] transition-shadow duration-200 hover:shadow-[0px_0px_10.7px_0px_#81818166] cursor-pointer"
             onClick={() => router.push(`/dashboard/manager/chat/${log.id}`)}
           >
             {/* Left side: avatar + text */}
             <div className="flex items-center gap-3">
-              <div className="relative w-10 h-10 rounded-full flex items-center justify-center bg-blue-900 text-white font-bold text-lg">
+              <div className="relative w-10 h-10 rounded-full flex items-center justify-center bg-blue-900 text-text-main font-bold text-lg">
                 {log.avatar ? (
                   <img
                     src={log.avatar}
@@ -103,7 +103,7 @@ const CommunicationLogsCard: React.FC<CommunicationLogsCardProps> = ({ commLogs,
                 />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-medium text-white">{log.name}</span>
+                <span className="text-sm font-medium text-text-main">{log.name}</span>
                 <span
                   className="text-xs text-[#0CA9F6] truncate max-w-[120px]"
                   title={log.lastMessage}

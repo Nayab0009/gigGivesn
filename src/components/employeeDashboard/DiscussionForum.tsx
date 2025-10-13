@@ -145,8 +145,8 @@ export default function ForumPage() {
       {/* Header Section */}
       <div className="mb-6 flex items-center justify-between opacity-100 mx-auto">
         <div className="flex flex-col justify-leftye sp">
-          <h1 className="font-inter font-semibold text-[20px] leading-[28px] text-white align-middle mb-1">Discussion Forum</h1>
-          <p className="font-inter font-normal text-[14px] leading-[20px] text-white align-middle">Connect, collaborate & share ideas with your team</p>
+          <h1 className="font-inter font-semibold text-[20px] leading-[28px] text-text-main align-middle mb-1">Discussion Forum</h1>
+          <p className="font-inter font-normal text-[14px] leading-[20px] text-text-secondary align-middle">Connect, collaborate & share ideas with your team</p>
         </div>
         <div className="flex items-center gap-4">
           {/* Start New Discussion Button */}
@@ -202,11 +202,11 @@ export default function ForumPage() {
 
                 ></div>
 
-                <h2 className="text-3xl font-bold mb-8 text-center text-[white]">Create New Discussion</h2>
+                <h2 className="text-3xl font-bold mb-8 text-center text-text-main">Create New Discussion</h2>
 
                 {/* Title Input */}
                 <div className="mb-8">
-                  <label className="block text-lg font-bold mb-3" style={{ color: '#fff' }}>Title</label>
+                  <label className="block text-lg font-bold mb-3 text-text-main" >Title</label>
                   <input
                     type="text"
                     placeholder="Enter discussion title..."
@@ -220,7 +220,7 @@ export default function ForumPage() {
 
                 {/* Content Textarea */}
                 <div className="mb-8">
-                  <label className="block text-lg font-bold mb-3" style={{ color: '#fff' }}>Description</label>
+                  <label className="block text-lg font-bold mb-3 text-text-main" >Description</label>
                   <textarea
                     placeholder="Share your thoughts, questions, or ideas..."
                     value={newThreadContent}
@@ -283,7 +283,7 @@ export default function ForumPage() {
                         <Image className="rounded-full object-cover w-full h-full" src={thread.discussionBy?.avatar || "/images/user.svg"} alt="User" width={30} height={30} />
                       </div>
                       <div className="flex flex-col gap-y-2">
-                      <div className=" font-inter font-normal text-[13px] leading-[1] tracking-[0.05em] text-gray-200 group-hover:text-gray-100 transition-colors duration-300 ">
+                      <div className=" font-inter font-normal text-[13px] leading-[1] tracking-[0.05em] text-text-main group-hover:text-gray-100 transition-colors duration-300 ">
                        {thread.discussionBy?.name || "Unknown"}
 
                       </div>
@@ -302,14 +302,15 @@ export default function ForumPage() {
                     </h3>
 
                     {/* Content Preview */}
-                    <p className="text-sm my-2 text-gray-200 mb-1 font-light">{thread.description}</p>
+                    <p className="text-sm my-2 text-text-secondary mb-1 font-light">{thread.description}</p>
 
                     {/* Comments Count */}
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 mt-2">
                         <div className="flex items-center gap-2 px-6 py-1 rounded-full bg-gray-200/15 group-hover:bg-blue-50/30 transition-colors  ">
-                          <Image src="/images/msgIcon.svg" alt="Comments" width={18} height={18} style={{ color: colors.accent.hex }} />
-                          <span className="font-light text-sm text-white">
+                          <Image src="/images/msgIcon.svg" alt="Comments" width={18} height={18}   className="text-[var(--dropdown-icon-color)]"
+/>
+                          <span className="font-light text-sm text-text-main">
                             {(thread as any).comments?.length || 0} {" "}
                             {(thread as any).comments?.length === 1}
                           </span>
@@ -330,16 +331,16 @@ export default function ForumPage() {
         {/* Single Thread View */}
         {selectedThreadId !== null && selectedThread && (
           <div
-            className="rounded-[15px] [box-shadow:var(--shadow-combined)]  [border:var(--border-style)]  shadow-2xl overflow-hidden bg-black/30"
+            className="rounded-[15px] [box-shadow:var(--shadow-combined)]  [border:var(--border-style)]  overflow-hidden  [background:var(--container-bg)]"
             style={{
              
               color: '#fff',
             }}
           >
             {/* Back Button */}
-            <div className="p-8 border-b border-white/20 bg-black/30">
+            <div className="p-8 border-b border-white/20  [background:var(--container-bg)]">
               <button
-                className="group text-white inline-flex items-center gap-3 px-6 py-3 rounded-2xl font-bold transition-all duration-300 hover:shadow-lg transform hover:-translate-y-0.5"
+                className="group text-text-main inline-flex items-center gap-3 px-6 py-3 rounded-2xl font-bold  transform hover:-translate-y-0.5"
                 style={{
                   backgroundColor: colors.primary.hex + '10',
                 }}
@@ -357,7 +358,7 @@ export default function ForumPage() {
                 <div className="p-2 rounded-full bg-gray-100 group-hover:bg-blue-100 transition-colors duration-300">
                   <User size={35} className="text-gray-500 group-hover:text-blue-600" />
                 </div>
-                <span className="font-inter font-normal text-[18px] leading-[1] tracking-[0.05em] align-middle text-gray-200 group-hover:text-gray-100 transition-colors duration-300">
+                <span className="font-inter font-normal text-[18px] leading-[1] tracking-[0.05em] align-middle text-text-secondary group-hover:text-gray-100 transition-colors duration-300">
                   Started by {selectedThread.discussionBy?.name || "Unknown"}
                 </span>
               </div>
@@ -368,22 +369,22 @@ export default function ForumPage() {
                 {selectedThread.title}
               </h3>
               {/* Description */}
-              <p className="font-inter font-light text-[16px] leading-[25px] tracking-[0.05em] text-gray-200 mb-6">
+              <p className="font-inter font-light text-[16px] leading-[25px] tracking-[0.05em] text-text-secondary mb-6">
                 {selectedThread.description}
               </p>
-              <div className="flex items-center gap-2 text-[12px] text-sm mt-6 px-4 py-2 rounded-full bg-white/10 inline-flex" style={{ color: '#fff' }}>
+              <div className="flex items-center gap-2 text-[12px] text-sm mt-6 px-4 py-2 rounded-full text-text-main inline-flex">
                 <Clock size={16} />
                 <span className="font-medium">{new Date(selectedThread.createdAt).toLocaleString()}</span>
               </div>
             </div>
 
             {/* Comments Section */}
-            <div className="border-t border-white/20 p-10 bg-black/30">
+            <div className="border-t border-white/20 p-10 [background:var(--container-bg)]">
               <div className="flex items-center gap-3 mb-8">
                 <div className="p-3 rounded-full bg-white/10">
                   <MessageCircle size={28} style={{ color: colors.primary.hex }} />
                 </div>
-                <h3 className="text-3xl font-bold text-white" >
+                <h3 className="text-3xl font-bold text-text-main" >
                   Comments {comments.length > 0 ? `(${comments.length})` : ""}
                 </h3>
               </div>
@@ -393,7 +394,7 @@ export default function ForumPage() {
                 {isCommentsLoading ? (
                   <div className="text-center py-12">
                     <div className="animate-spin w-8 h-8 border-4 border-white border-t-[#0CA9F6] rounded-full mx-auto mb-4"></div>
-                    <p className="text-white text-lg">Loading comments...</p>
+                    <p className="text-text-secondary text-lg">Loading comments...</p>
                   </div>
                 ) : comments.length > 0 ? (
                   comments.map((comment: any) => (
@@ -422,7 +423,7 @@ export default function ForumPage() {
                 ) : (
                   <div className="text-center py-16">
                     <MessageCircle size={64} className="text-white/30 mx-auto mb-6" />
-                    <p className="text-white text-xl font-medium">
+                    <p className="text-text-secondary text-xl font-medium">
                       No comments yet. Be the first to share your thoughts!
                     </p>
                   </div>
@@ -431,14 +432,14 @@ export default function ForumPage() {
 
               {/* Add Comment Form - Only show if authenticated */}
               {isAuthenticated ? (
-                <div className="bg-black/30 rounded-2xl p-8 border-2 border-white/20 shadow-lg">
-                  <h4 className="text-2xl font-bold mb-6 text-white" >Add a comment</h4>
+                <div className="[background:var(--container-bg)] rounded-2xl p-8 border-2 border-white/20 shadow-lg">
+                  <h4 className="text-2xl font-bold mb-6 text-text-main" >Add a comment</h4>
                   <textarea
                     placeholder="Share your thoughts..."
                     value={newCommentContent}
                     onChange={(e) => setNewCommentContent(e.target.value)}
                     rows={5}
-                    className="w-full px-6 py-4 rounded-xl border-2 border-white/20 focus:border-transparent focus:ring-4 focus:ring-opacity-30 transition-all duration-300 resize-none mb-6 text-lg leading-relaxed bg-black/30 text-white placeholder-gray-300"
+                    className="w-full px-6 py-4 rounded-xl border-2 border-white/20 [background:var(--field-bg)] focus:border-transparent focus:ring-4 focus:ring-opacity-30 transition-all duration-300 resize-none mb-6 text-lg leading-relaxed background:var(--container-bg)]  text-white placeholder-gray-300"
                     style={{ focusRingColor: colors.primary.hex + '30' }}
                   />
                   <div className="flex justify-end">

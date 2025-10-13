@@ -408,7 +408,7 @@ export default function ProjectDetailsPage() {
 
         {/* Content */}
         {isLoading && activeTab !== "members" && activeTab !== "settings" ? (
-          <div className="p-12 text-center border border-white/10 rounded-2xl max-w-xl w-full mx-auto" style={{ background: "#0000004D" }}>
+          <div className="p-12 text-center rounded-2xl max-w-xl w-full mx-auto">
             <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
               <RefreshCw className="w-6 h-6 text-emerald-600 animate-spin" />
             </div>

@@ -31,6 +31,10 @@ body {
     --active-bg: #0CA9F633;
   --active-border-color: #0CA9F6;
   --active-border-width: 3px;
+   --icon-bg: #0000004D; /* background: #0000004D */
+  --icon-border: 1px solid #FFFFFF33; /* white translucent border */
+  --icon-color: #FFFFFF;
+     --dropdown-icon-color: #FFFFFF;
 }
 
 /* Dark Theme */
@@ -62,7 +66,10 @@ body {
     --active-bg: #262525;
   --active-border-color: #0CA9F6;
   --active-border-width: 3px; 
-  
+    --icon-bg: transparent;
+  --icon-border: none;
+  --icon-color: #FFFFFF;
+    --dropdown-icon-color: #FFFFFF;
        
       
 }
@@ -77,18 +84,27 @@ body {
   --background: #ffffff;
   --inner-background: #f5f5f5;
    --border-style: none;
-    --team-bg: #E0E3E7;
+    --team-bg:#E0E3E7;
       --container-bg:#E0E3E7;
  --thead-bg:#CDCDCD;
- --btn-bg: #E0E3E7;
+ --btn-bg: #0000004D;
  --dropdown-bg: #E0E3E7;
  --form-bg: #E0E3E7;
- --field-bg:#0000001A;
+ --field-bg:#FFFFFF66;
    --image-color: #000000;
    --search-bg:#FFFFFF66;
    --text-primary:#8C8C8C;
-    --icon-bg:rgba(0, 0, 0, 0.4);
-    --icon-color:#FFFFFF;
+    --icon-bg: #00000066; /* soft gray bg for icons */
+  --icon-border: 1px solid #0000001A; /* subtle border */
+  --icon-color: #FFFFFF;
+  --dropdown-icon-color: #0000001A;
+          --hover-bg: #E0E3E7;
+  --hover-border-color: #0CA9F6;
+  --hover-border-width: 3px;
+    --active-bg: #E0E3E7;
+  --active-border-color: #0CA9F6;
+  --active-border-width: 3px; 
+    
 }
 /* Hide glass background for dark/light themes */
 [data-theme="dark"] .glass-bg-only,
@@ -137,6 +153,7 @@ body {
       --text-primary:var(--text-primary);
       --icon-bg:var(--icon-bg);
       --icon-color:var(--icon-color);
+      --dropdown-icon-color:var(--dropdown-icon-color);
 }
 
 

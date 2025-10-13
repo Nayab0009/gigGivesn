@@ -874,19 +874,21 @@ export default function ProjectDashboard() {
                         {/* Actions - View Team */}
                         <td className="px-6 py-6">
                           <div className="flex items-center gap-2">
-                            <button
-                              className="group inline-flex items-center justify-center text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110"
-                              style={{
-                                width: "32px",
-                                height: "32px",
-                                borderRadius: "16px",
-                                border: "1px solid rgba(255, 255, 255, 0.4)",
-                                padding: "1px",
-                              }}
-                              onClick={() => setViewTeamProjectId(project.id)}
-                            >
-                              <Users style={{ width: "14.58px", height: "14px" }} />
-                            </button>
+                           <button
+  onClick={() => setViewTeamProjectId(project.id)}
+  className="
+    group inline-flex items-center justify-center
+    w-8 h-8 rounded-full
+    transition-all duration-300 ease-in-out
+    shadow-sm hover:shadow-lg transform hover:scale-110
+    bg-[var(--icon-bg)] 
+    text-[var(--icon-color)]
+  "
+  title="View Team"
+>
+  <Users className="w-[14.58px] h-[14px]" />
+</button>
+
                           </div>
                         </td>
 
@@ -897,8 +899,11 @@ export default function ProjectDashboard() {
                           <div className="flex items-center gap-2">
                             {/* Edit */}
                             <button
-                              className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 border"
-                              style={{ borderColor: "rgba(255, 255, 255, 0.4)", borderWidth: "1px" }}
+                              className="  group inline-flex items-center justify-center w-8 h-8 rounded-full
+    transition-all duration-300 ease-in-out
+    shadow-sm hover:shadow-lg transform hover:scale-110
+    bg-[var(--icon-bg)]"
+                             
                               onClick={() => setEditStatusProjectId(project.id)}
                             >
                               <img
@@ -910,18 +915,23 @@ export default function ProjectDashboard() {
 
 
                             {/*View */}
-                            <button
-                              className="group inline-flex items-center justify-center w-8 h-8 text-white rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 border"
-                              style={{ borderColor: "rgba(255, 255, 255, 0.4)", borderWidth: "1px" }}
-                              onClick={() => window.location.href = `/dashboard/manager/projects/${project.id}`}
-                              title="View project details"
-                            >
-                              <img
-                                src="/images/Eye.svg"
-                                alt="View Details"
-                                style={{ width: "17.58px", height: "17px" }}
-                              />
-                            </button>
+                           <button
+  className="
+    group inline-flex items-center justify-center w-8 h-8 rounded-full
+    transition-all duration-300 ease-in-out
+    shadow-sm hover:shadow-lg transform hover:scale-110
+    bg-[var(--icon-bg)] 
+  "
+  onClick={() => window.location.href = `/dashboard/manager/projects/${project.id}`}
+  title="View project details"
+>
+  <img
+    src="/images/Eye.svg"
+    alt="View Details"
+    className="w-[17.58px] h-[17px]"
+   
+  />
+</button>
 
                           </div>
                         </td>

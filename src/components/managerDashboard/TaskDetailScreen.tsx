@@ -427,10 +427,10 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete,
           <div className="flex w-full justify-between items-center mt-2">
             {/* Ticket Number */}
             <div>
-              <div className="text-[12px] tracking-wide text-[#A4A7AE] font-[400] mb-1">
+              <div className="text-[12px] tracking-wide text-text-secondary font-[400] mb-1">
                 Ticket Number
               </div>
-              <span className="text-[20px] font-[500]">
+              <span className="text-[20px] font-[500] text-text-main">
                 {task.ticketNumber ?? `TASK-${task.id}`}
               </span>
             </div>
@@ -493,22 +493,22 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete,
 
           {/* Sprint Number */}
           <div className="mt-8">
-            <div className="text-[12px] tracking-wide text-[#A4A7AE] font-[400px] mb-1">
+            <div className="text-[12px] tracking-wide text-text-secondary font-[400px] mb-1">
               Sprint Number
             </div>
-            <div className="text-[20px] font-[500px]">
+            <div className="text-[20px] font-[500px] text-text-main">
               {task.taskOf?.name ? `SP1-${task.ticketNumber ?? task.id}` : "—"}
             </div>
           </div>
 
           {/* Fields */}
-          <div className="mt-10 space-y-5 text-sm">
+          <div className="mt-10 space-y-5 text-sm text-text-main">
             <div className="flex items-center">
               <div className="flex items-center gap-2">
                 <span>Status</span>
               </div>
               <span className="ml-auto font-medium flex items-center gap-2">
-                <span className="h-4 w-4 rounded-full bg-white/80" />
+                <span className="h-4 w-4 rounded-full bg-text-secondary" />
                 {task.status ?? "New Task"}
               </span>
             </div>
@@ -547,7 +547,7 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete,
                   <img
                     src={task.taskFor.avatar}
                     alt={task.taskFor.name || "A"}
-                    className="w-5 h-5 rounded-full object-cover border border-white/20 bg-white/15"
+                    className="w-5 h-5 rounded-full object-cover border border-white/20 bg-white/15 "
                   />
                 ) : (
                   <span className="w-5 h-5 rounded-full bg-white/15 border border-white/20 flex items-center justify-center text-[10px] uppercase text-white/80">
@@ -583,12 +583,12 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete,
 
           {/* Description */}
           <div>
-            <div className="flex items-center gap-2 text-sm font-medium mb-3">
-              <Circle className="w-3 h-3 text-white/60" />
-              <span>Description</span>
+            <div className="flex items-center gap-2 text-sm font-medium mb-3 ">
+              <Circle className="w-3 h-3 text-text-main" />
+              <span className="text-text-main">Description</span>
             </div>
-            <div className="text-sm leading-relaxed tracking-wide">
-              {task.description || <span className="text-white/40">Hallow</span>}
+            <div className="text-sm leading-relaxed tracking-wide text-text-main">
+              {task.description || <span className="text-text-main">Hallow</span>}
             </div>
             <div className="mt-8 h-px bg-white/30 w-full" />
           </div>
@@ -613,12 +613,12 @@ export default function TaskDetailsPanel({ taskId, onClose, projectId, onDelete,
               {sortedLogs.map((log) => (
                 <div
                   key={log.id}
-                  className="flex items-center text-[12px] text-white/75"
+                  className="flex items-center text-[12px] text-text-secondary"
                 >
                   <span className="pr-4">
                     {log.user?.name || log.userName} {log.message || log.action}
                   </span>
-                  <span className="ml-auto text-white/40 tabular-nums">
+                  <span className="ml-auto text-text-secondary tabular-nums">
                     {new Date(log.timestamp).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",

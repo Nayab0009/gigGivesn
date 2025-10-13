@@ -334,12 +334,12 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
         {/* Header */}
         <div className="mb-8 ml-2">
           <h1
-            className="font-roboto font-semibold text-[20px] leading-[28px] tracking-[0px] align-middle text-white mb-2"
+            className="font-roboto font-semibold text-[20px] leading-[28px] tracking-[0px] align-middle text-text-main mb-2"
           >
             {viewMode === "projects" ? "My Projects" : selectedProject?.name}
           </h1>
           <p
-            className="font-roboto font-normal text-[14px] leading-[20px] tracking-[0px] align-middle text-white"
+            className="font-roboto font-normal text-[14px] leading-[20px] tracking-[0px] align-middle text-text-secondary"
           >
             {viewMode === "projects"
               ? `Welcome back, ${user.name || user.email}! Here are your assigned projects`
@@ -349,9 +349,17 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
 
         {/* Action Bar */}
         <div
-          className="mb-8 bg-black/30 rounded-[24px] shadow-lg    [border:var(--border-style)]
-  [box-shadow:var(--shadow-combined)] p-[25px]"
-        >
+        className="
+            mb-8
+           bg-team-bg
+          rounded-[24px]
+            shadow-lg
+           [border:var(--border-style)]
+  [box-shadow:var(--shadow-combined)]
+            p-[25px]
+            [background:var(--container-bg)] 
+          "
+        > 
           <div className="flex flex-col sm:flex-row gap-4 items-center">
             {/* Search Bar and View Toggle Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 items-center flex-1 w-full">
@@ -434,10 +442,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
         <div
           className="relative rounded-3xl overflow-hidden [border:var(--border-style)]
     mb-2 [box-shadow:var(--shadow-combined)] shadow-2xl backdrop-blur-xl"
-          style={{
-            background: "#0000005D",
-           
-          }}
+      
         >
           {isLoading ? (
             <div className="p-16 text-center">
@@ -471,37 +476,55 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
             ) : (
               <div className="overflow-x-hidden">
                 <table className="min-w-full  divide-y divide-white/10">
-                  <thead className="backdrop-blur-md bg-[var(--thead-bg)]" style={{height: '73px', borderBottom: '5px solid #FFFFFF1A'}}>
+  <thead
+                  className="
+   bg-[var(--thead-bg)]
+    rounded-tl-[20px] rounded-tr-[20px]
+    shadow-lg
+   
+    overflow-hidden
+    p-[1px]
+  "
+                >
                     <tr className="h-[56px]">
-                      <th className="px-4 sm:px-6 py-4 text-left w-[180px] border-b-2 border-[#4A6A65]">
-                        <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                      <th className="px-4 sm:px-6 py-4 text-left w-[180px]">
+                        <span className="font-[Roboto] font-bold text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 ,color: 'var(--text-primary)'}}>
                           NAME
                         </span>
                       </th>
-                      <th className="px-4 sm:px-6 py-4 text-left w-[260px] border-b-2 border-[#4A6A65]">
-                        <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                      <th className="px-4 sm:px-6 py-4 text-left w-[260px] ">
+                        <span className="font-[Roboto] font-bold text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 ,color: 'var(--text-primary)' }}>
                           DESCRIPTION
                         </span>
                       </th>
                       {/* Status column removed */}
-                      <th className="px-4 sm:px-6 py-4 text-left w-[110px] border-b-2 border-[#4A6A65]">
-                        <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left whitespace-nowrap uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                      <th className="px-4 sm:px-6 py-4 text-left w-[110px]">
+                        <span className="font-[Roboto] font-bold text-[14px] leading-[20px] tracking-[0.7px] text-left whitespace-nowrap uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 ,color: 'var(--text-primary)'}}>
                           START DATE
                         </span>
                       </th>
-                      <th className="px-4 sm:px-6 py-4 text-left w-[110px] border-b-2 border-[#4A6A65]">
-                        <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left whitespace-nowrap uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                      <th className="px-4 sm:px-6 py-4 text-left w-[110px] ">
+                        <span className="font-[Roboto] font-bold  text-[14px] leading-[20px] tracking-[0.7px] text-left whitespace-nowrap uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 ,color: 'var(--text-primary)'}}>
                           END DATE
                         </span>
                       </th>
-                      <th className="px-4 sm:px-6 py-4 text-left w-[160px] border-b-2 border-[#4A6A65]">
-                        <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                      <th className="px-4 sm:px-6 py-4 text-left w-[160px]">
+                        <span className="font-[Roboto] font-bold text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 ,color: 'var(--text-primary)'}}>
                           ACTIONS
                         </span>
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-transparent divide-y divide-gray-400" style={{ borderColor: '#BDBDBD' }}>
+                    <tbody
+                  className="
+   bg-team-bg
+    rounded-b-2xl
+    shadow-lg
+    overflow-hidden
+    divide-y divide-white/10
+    backdrop-blur-xl
+  "
+                >
                     {filteredProjects.map((project, index) => (
                       <tr
                         key={project.id}
@@ -523,7 +546,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                             <div>
                               <h3
                                 className="text-xs sm:text-sm  leading-tight break-words whitespace-normal"
-                                style={{ color: "#FFFFFF", fontWeight: 500, wordBreak: 'break-word', fontSize: '16px' }}
+                                style={{ color: 'var(--text-primary)', fontWeight: 500, wordBreak: 'break-word', fontSize: '16px' }}
                               >
                                 {(() => {
                                   // Split name into words, insert <br/> after every 30 words
@@ -545,32 +568,33 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                           </div>
                         </td>
                         <td className="px-6 py-6">
-                          <p className="text-sm leading-relaxed break-words whitespace-normal max-w-2xl" style={{ color: "#A8A8A8" }}>
+                          <p className="text-sm leading-relaxed break-words whitespace-normal max-w-2xl text-text-secondary" >
                            {truncateByWords(project.description, 30)}
                           </p>
                         </td>
                         {/* Status cell removed */}
                         <td className="px-6 py-6">
-                          <span className="text-sm text-white/80 whitespace-nowrap">
+                          <span className="text-sm text-text-secondary whitespace-nowrap">
                             {project.startDate ? new Date(project.startDate).toLocaleDateString() : "—"}
                           </span>
                         </td>
                         <td className="px-6 py-6">
-                          <span className="text-sm text-white/80">
+                          <span className="text-sm text-text-secondary">
                             {project.endDate ? new Date(project.endDate).toLocaleDateString() : "—"}
                           </span>
                         </td>
                         <td className="px-6 py-6">
                           <button
                             onClick={() => handleProjectSelect(project)}
-                            className="group inline-flex items-center justify-center w-12 h-12 "
+                           className="  group inline-flex items-center justify-center w-8 h-8 rounded-full
+    transition-all duration-300 ease-in-out
+    shadow-sm hover:shadow-lg transform hover:scale-110
+  "
 
                           >
                             <img
                               src="/images/icons/BUTTON-168.svg"
                               alt="View Tasks"
-                              className="w-10 h-10 object-contain"
-                              style={{ display: 'block', margin: 'auto' }}
                             />
                           </button>
                         </td>

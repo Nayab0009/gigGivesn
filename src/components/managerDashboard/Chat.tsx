@@ -816,8 +816,8 @@ export default function ChatPage({ userId }: { userId?: string }) {
   }
   return (<>
   <div>
-    <h1 className="font-[600] text-[20px] text-white">Communication</h1>
-  <h5 className="font-[400] text-[14px] text-white">Welcome back, Oversee your assigned projects and manage your team effectively</h5></div>
+    <h1 className="font-[600] text-[20px] text-text-main">Communication</h1>
+  <h5 className="font-[400] text-[14px] text-text-secondary">Welcome back, Oversee your assigned projects and manage your team effectively</h5></div>
     <div className="flex h-screen  rounded-3xl gap-10 pt-6 px-1">
 
       {/* Sidebar */}
@@ -846,7 +846,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
         )}
 
         {/* Chat Title */}
-        <h1 className="text-xl font-bold flex items-center gap-2 text-white">
+        <h1 className="text-xl font-bold flex items-center gap-2 text-text-main">
           <span>Chat</span>
         </h1>
       </div>
@@ -869,7 +869,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
   <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
     {/* Team section */}
     <div className="p-4">
-      <h3 className="text-sm font-medium text-white/70 mb-3">Team</h3>
+      <h3 className="text-sm font-medium text-text-secondary mb-3">Team</h3>
       <div className="space-y-2">
         {filteredContacts.slice(0, Math.ceil(filteredContacts.length / 2)).map((contact) => (
           <div
@@ -909,8 +909,8 @@ export default function ChatPage({ userId }: { userId?: string }) {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-white text-sm font-medium truncate">{contact.name}</p>
-              <p className="text-white/60 text-xs truncate">
+              <p className="text-text-main text-sm font-medium truncate">{contact.name}</p>
+              <p className="text-text-secondary text-xs truncate">
                 {contact.lastMessage ? (
                   <>
                     {contact.lastMessageSenderId === currentUser?.id?.toString() &&
@@ -932,7 +932,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
 
     {/* Personal section */}
     <div className="p-4">
-      <h3 className="text-sm font-medium text-white/70 mb-3">Personal</h3>
+      <h3 className="text-sm font-medium text-text-main mb-3">Personal</h3>
       <div className="space-y-2">
         {filteredContacts.slice(Math.ceil(filteredContacts.length / 2)).map((contact) => (
           <div
@@ -949,8 +949,8 @@ export default function ChatPage({ userId }: { userId?: string }) {
               w-[322px] h-[68px] px-[15px] py-[12px]
               ${
                 (selectedUserId.toString() === contact.id.toString() || selectedUser === contact.name)
-                  ? "bg-[#0CA9F633] border-l-[3px] border-[#0CA9F6]"
-                  : "hover:bg-[#0CA9F633] hover:border-l-[3px] hover:border-[#0CA9F6]"
+                  ? "bg-[var(--active-bg)] border-l-[3px] border-[var(--active-border-color)]"
+      : "hover:bg-[var(--hover-bg)] hover:border-l-[3px] hover:border-[var(--hover-border-color)]"
               }`}
           >
             <div className="relative">
@@ -964,8 +964,8 @@ export default function ChatPage({ userId }: { userId?: string }) {
               </div>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-white text-sm font-medium truncate">{contact.name}</p>
-              <p className="text-white/60 text-xs truncate">
+              <p className="text-text-main text-sm font-medium truncate">{contact.name}</p>
+              <p className="text-text-secondary text-xs truncate">
                 {contact.lastMessage ? (
                   <>
                     {contact.lastMessageSenderId === currentUser?.id?.toString() &&
@@ -1036,7 +1036,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
                 </div>
                 <div>
                   {/* Display the contact name from contacts array if available */}
-                  <h2 className="font-semibold text-white">
+                  <h2 className="font-semibold text-text-main">
                     {contacts.find((c) => c.id.toString() === selectedUserId.toString())?.name || selectedUser || "Chat"}
                   </h2>
                 </div>
@@ -1404,10 +1404,10 @@ export default function ChatPage({ userId }: { userId?: string }) {
           </div>
         </main>
       ) : (
-        <div className="flex flex-col flex-1 items-center justify-center h-full bg-black/30   rounded-xl text-white">
-          <MessageCircle className="w-24 h-24 mb-4" />
-          <h2 className="text-2xl font-semibold mb-2">Welcome to Chat!</h2>
-          <p className="text-lg">Select a conversation from the sidebar to start messaging.</p>
+        <div className="flex flex-col flex-1 items-center justify-center h-full [background:var(--container-bg)]    rounded-xl text-white">
+          <MessageCircle className="w-24 h-24 mb-4 text-text-main" />
+          <h2 className="text-2xl text-text-main font-semibold mb-2">Welcome to Chat!</h2>
+          <p className="text-lg text-text-secondary">Select a conversation from the sidebar to start messaging.</p>
         </div>
       )}
      
@@ -1469,7 +1469,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
     )}
 
     {/* Name */}
-    <h3 className="font-roboto font-semibold text-[20px] leading-[28px] text-white text-center align-middle">
+    <h3 className="font-roboto font-semibold text-[20px] leading-[28px] text-text-main text-center align-middle">
       {selectedUser}
     </h3>
 

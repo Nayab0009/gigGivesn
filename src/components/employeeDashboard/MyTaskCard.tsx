@@ -23,7 +23,7 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
   return (
     <div
       className="flex flex-col justify-between [border:var(--border-style)]
-     [box-shadow:var(--shadow-combined)] bg-black/30  backdrop-blur-[101.67px]   shadow-md w-full mx-auto"
+     [box-shadow:var(--shadow-combined)] [background:var(--container-bg)] backdrop-blur-[101.67px]   shadow-md w-full mx-auto"
       style={{
         minHeight: '240px',
         borderRadius: '20px',
@@ -36,7 +36,7 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
         // backgroundBlendMode: 'luminosity',
       }}
     >
-    <div className="flex items-center justify-between mb-2">
+    <div className="flex items-center justify-between mb-2 text-text-main">
       <span
         style={{
           fontFamily: 'Inter, sans-serif',
@@ -46,7 +46,7 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
           lineHeight: '28.47px',
           letterSpacing: '0px',
           verticalAlign: 'middle',
-          color: '#fff',
+         
         }}
       >
         Task Completed
@@ -69,8 +69,8 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
     <div className="flex items-center gap-2 justify-between space-evenly">
       <div className="flex flex-col gap-2 ml-2">
         <div className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full" style={{ background: '#A855F7' }}></span>
-          <span
+          <span className="w-3 h-3 rounded-fulltext-text-main " style={{ background: '#A855F7' }}></span>
+          <span className="text-text-secondary"
             style={{
               fontFamily: 'Inter, sans-serif',
               fontWeight: 400,
@@ -79,15 +79,15 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
               lineHeight: '20.33px',
               letterSpacing: '0px',
               verticalAlign: 'middle',
-              color: '#fff',
+            
             }}
           >
-            Completed <span style={{ fontWeight: 600 }}>{completed}</span>
+            Completed <span style={{ fontWeight: 600 }} className="text-text-secondary">{completed}</span>
           </span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-3 h-3 rounded-full" style={{ background: '#FBBF72' }}></span>
-          <span
+          <span className="w-3 h-3 rounded-full text-text-main" style={{ background: '#FBBF72' }}></span>
+          <span className="text-text-secondary"
             style={{
               fontFamily: 'Inter, sans-serif',
               fontWeight: 400,
@@ -96,10 +96,10 @@ const MyTaskCard: FC<MyTaskCardProps> = ({
               lineHeight: '20.33px',
               letterSpacing: '0px',
               verticalAlign: 'middle',
-              color: '#fff',
+           
             }}
           >
-            Pending <span style={{ fontWeight: 600 }}>{pending}</span>
+            Pending <span style={{ fontWeight: 600 }} className="text-text-secondary">{pending}</span>
           </span>
         </div>
       </div>
