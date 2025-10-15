@@ -79,7 +79,7 @@ body {
  --shadow-dark: -8px -8px 16px 0px #0000001A;
   --shadow-light: -4px -4px 8px 0px #FFFFFF80;
   --shadow-combined: var(--shadow-dark), var(--shadow-light);
-  --text-secondary:#A1A1A1;
+  --text-secondary:black;
   --text-main: black;
   --background: #ffffff;
   --inner-background: #f5f5f5;

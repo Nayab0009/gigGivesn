@@ -351,7 +351,7 @@ const TimeTable = () => {
                 {/* No tasks fallback */}
                 {tasks.length === 0 && (
                   <div className="h-32 rounded-2xl border border-white/5 flex items-center justify-center text-text-secondary text-sm">
-                    No taskssss
+                    No tasks
                   </div>
                 )}
               </div>
