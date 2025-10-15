@@ -793,7 +793,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
 
         {/* Table Container - match Manager cards background and screenshot */}
         <div
-          className="relative rounded-2xl overflow-hidden border backdrop-blur-md [background:var(--container-bg)]  [box-shadow:var(--shadow-combined)]"
+          className="relative rounded-2xl overflow-hidden  backdrop-blur-md [background:var(--container-bg)]  [box-shadow:var(--shadow-combined)]"
           // style={{
           //   background: "#0000005D",
           //   borderColor: "#FFFFFFff",

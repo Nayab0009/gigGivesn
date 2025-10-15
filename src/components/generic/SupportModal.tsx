@@ -99,7 +99,6 @@ export default function SupportModal({ isOpen, onClose, onSubmit, user }: Props)
   const handlePick = (e: React.ChangeEvent<HTMLInputElement>) => {
     const picked = Array.from(e.target.files || []);
     if (picked.length) setFiles((prev) => [...prev, ...picked]);
-    // allow re-pick of same file
     e.currentTarget.value = "";
   };
 
@@ -130,9 +129,8 @@ export default function SupportModal({ isOpen, onClose, onSubmit, user }: Props)
     >
       <div
         onMouseDown={(e) => e.stopPropagation()}
-        className="relative w-full max-w-xl max-h-[80vh] rounded-2xl border overflow-y-auto custom-scrollbar shadow-2xl p-6"
+        className="relative w-full max-w-xl max-h-[80vh] rounded-2xl border overflow-y-auto custom-scrollbar shadow-2xl p-6 [background:var(--container-bg)]"
         style={{
-          background: "rgba(0,0,0,0.55)",
           borderColor: "#FFFFFF26",
           boxShadow: "0 16px 40px rgba(0,0,0,0.45)",
         }}
@@ -143,27 +141,38 @@ export default function SupportModal({ isOpen, onClose, onSubmit, user }: Props)
           .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
           .custom-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.12) transparent; }
         `}</style>
-        <h3 className="text-white text-xl font-semibold mb-4">Contact support</h3>
+
+        <h3 className="text-text-main text-xl font-semibold mb-4">
+          Contact support
+        </h3>
 
         {/* Type select with avatar */}
         <div className="relative mb-4">
           <select
             value={type}
             onChange={(e) => setType(e.target.value)}
-            className="w-full appearance-none rounded-xl border text-white px-4 py-3 pr-14 outline-none focus:ring-2"
-            style={{ background: "#00000066", borderColor: "#FFFFFF26" }}
+            className="w-full appearance-none rounded-xl border text-text-main px-4 py-3 pr-14 outline-none focus:ring-2 [background:var(--container-bg)]"
+            style={{ borderColor: "#FFFFFF26" }}
           >
             {TYPES.map((t) => (
-              <option key={t} value={t} className="bg-[#0d1017]">
+              <option
+                key={t}
+                value={t}
+                className="[background:var(--container-bg)]"
+              >
                 {t}
               </option>
             ))}
           </select>
+
           <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
             {/* user avatar bubble */}
             <div className="pointer-events-auto relative">
               {user?.avatarUrl || user?.image ? (
-                <div className="h-9 w-9 rounded-full overflow-hidden ring-2" style={{ borderColor: "#FFFFFF26" }}>
+                <div
+                  className="h-9 w-9 rounded-full overflow-hidden ring-2"
+                  style={{ borderColor: "#FFFFFF26" }}
+                >
                   <Image
                     src={(user.avatarUrl || user.image) as string}
                     alt="User avatar"
@@ -173,7 +182,7 @@ export default function SupportModal({ isOpen, onClose, onSubmit, user }: Props)
                 </div>
               ) : (
                 <div
-                  className="h-9 w-9 rounded-full flex items-center justify-center text-white text-sm font-semibold ring-2"
+                  className="h-9 w-9 rounded-full flex items-center justify-center text-text-main text-sm font-semibold ring-2"
                   style={avatarStyle}
                   aria-hidden
                 >
@@ -191,8 +200,8 @@ export default function SupportModal({ isOpen, onClose, onSubmit, user }: Props)
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             rows={6}
-            className="w-full resize-none rounded-xl border text-white px-4 py-3 outline-none focus:ring-2 placeholder:text-white/60"
-            style={{ background: "#00000066", borderColor: "#FFFFFF26" }}
+            className="w-full resize-none rounded-xl border text-text-secondary px-4 py-3 outline-none focus:ring-2 placeholder:text-grey-400 [background:var(--container-bg)]"
+            style={{ borderColor: "#FFFFFF26" }}
           />
         </div>
 
@@ -204,11 +213,7 @@ export default function SupportModal({ isOpen, onClose, onSubmit, user }: Props)
           }}
           onDragLeave={() => setDragging(false)}
           onDrop={handleDrop}
-          className={`rounded-xl border-2 border-dashed px-4 py-4 mb-3 text-white/80`}
-          style={{
-            borderColor: "#FFFFFF26",
-            background: dragging ? "#0B0B0B80" : "#0B0B0B66",
-          }}
+          className="rounded-xl border-2 border-dashed px-4 py-4 mb-3 text-text-secondary [background:var(--container-bg)]"
         >
           <label className="flex items-center justify-center gap-2 cursor-pointer select-none">
             <span className="text-lg">＋</span>
@@ -224,7 +229,10 @@ export default function SupportModal({ isOpen, onClose, onSubmit, user }: Props)
           {files.length > 0 && (
             <ul className="mt-3 space-y-2 text-sm">
               {files.map((f, idx) => (
-                <li key={`${f.name}-${idx}`} className="flex items-center justify-between">
+                <li
+                  key={`${f.name}-${idx}`}
+                  className="flex items-center justify-between"
+                >
                   <span className="truncate max-w-[75%]">{f.name}</span>
                   <button
                     onClick={() => removeFile(idx)}
@@ -244,8 +252,8 @@ export default function SupportModal({ isOpen, onClose, onSubmit, user }: Props)
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg text-white hover:bg-white/10 transition border"
-            style={{ borderColor: "#FFFFFF26", background: "#00000066" }}
+            className="px-4 py-2 rounded-lg text-white transition border [background:var(--container-bg)] hover:bg-white/10"
+            style={{ borderColor: "#FFFFFF26" }}
           >
             Cancel
           </button>
@@ -253,11 +261,7 @@ export default function SupportModal({ isOpen, onClose, onSubmit, user }: Props)
             type="button"
             disabled={!canSubmit}
             onClick={submit}
-            className="px-5 py-2 rounded-lg text-white font-semibold shadow disabled:opacity-60 bg-[#0CA9F6]"
-            // style={{
-            //   background: `linear-gradient(180deg, ${colors.primary.hex}, ${colors.accent.hex})`,
-            //   boxShadow: "0 16px 40px rgba(0,0,0,0.45)",
-            // }}
+            className="px-5 py-2 rounded-lg text-white font-semibold shadow disabled:opacity-60 [background:var(--container-bg)]"
           >
             {submitting ? "Saving..." : "Save"}
           </button>

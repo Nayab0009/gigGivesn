@@ -309,106 +309,107 @@ export default function TeamListPage() {
       </div>
 
       {/* Form */}
-      <div className="px-8 py-6 space-y-6 text-text-main">
-        {/* Name Field */}
-        <div className="space-y-2">
-          <label className="text-sm font-semibold mb-2 flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full" style={{ background: colors.primary.hex }}></div>
-            Full Name *
-          </label>
-          <input
-            type="text"
-            value={editingMember.name}
-            onChange={(e) => handleInputChange("name", e.target.value)}
-            className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-text-secondary placeholder-gray-300"
-            style={{
-              borderColor: editingMember.name.trim() ? colors.primary.hex : "#ef4444",
-            }}
-            placeholder="Enter full name"
-          />
-          {!editingMember.name.trim() && (
-            <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" />
-              Name is required
-            </p>
-          )}
-        </div>
+    <div className="px-8 py-6 space-y-6 text-text-main">
+  {/* Full Name */}
+  <div className="space-y-2">
+    <label className="text-sm font-semibold mb-2 flex items-center gap-2">
+      <div className="w-2 h-2 rounded-full" style={{ background: colors.primary.hex }}></div>
+      Full Name *
+    </label>
+    <input
+      type="text"
+      value={editingMember.name}
+      onChange={(e) => handleInputChange("name", e.target.value)}
+      className="w-full px-4 py-3 [border:var(--border-style)] rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-text-secondary placeholder-gray-300"
+      style={{
+        borderColor: editingMember.name.trim() ? "rgba(255, 255, 255, 0.3)" : "#ef4444",
+      }}
+      placeholder="Enter full name"
+    />
+    {!editingMember.name.trim() && (
+      <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+        <AlertCircle className="w-3 h-3" />
+        Name is required
+      </p>
+    )}
+  </div>
 
-        {/* Email Field */}
-        <div className="space-y-2">
-          <label className="text-sm font-semibold mb-2 flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full" style={{ background: colors.secondary.hex }}></div>
-            Email Address *
-          </label>
-          <input
-            type="email"
-            value={editingMember.email}
-            onChange={(e) => handleInputChange("email", e.target.value)}
-            className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-text-secondary  placeholder-gray-300"
-            style={{
-              borderColor:
-                editingMember.email.trim() && editingMember.email.includes("@")
-                  ? colors.primary.hex
-                  : "#ef4444",
-            }}
-            placeholder="Enter email address"
-          />
-          {(!editingMember.email.trim() || !editingMember.email.includes("@")) && (
-            <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" />
-              Valid email is required
-            </p>
-          )}
-        </div>
+  {/* Email Address */}
+  <div className="space-y-2">
+    <label className="text-sm font-semibold mb-2 flex items-center gap-2">
+      <div className="w-2 h-2 rounded-full" style={{ background: colors.secondary.hex }}></div>
+      Email Address *
+    </label>
+    <input
+      type="email"
+      value={editingMember.email}
+      onChange={(e) => handleInputChange("email", e.target.value)}
+      className="w-full px-4 py-3 [border:var(--border-style)] rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-text-secondary placeholder-gray-300"
+      style={{
+        borderColor:
+          editingMember.email.trim() && editingMember.email.includes("@")
+            ? "rgba(255, 255, 255, 0.3)"
+            : "#ef4444",
+      }}
+      placeholder="Enter email address"
+    />
+    {(!editingMember.email.trim() || !editingMember.email.includes("@")) && (
+      <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+        <AlertCircle className="w-3 h-3" />
+        Valid email is required
+      </p>
+    )}
+  </div>
 
-        {/* Phone Field */}
-        <div className="space-y-2">
-          <label className="text-sm font-semibold mb-2 flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full" style={{ background: colors.accent.hex }}></div>
-            Phone Number *
-          </label>
-          <input
-            type="tel"
-            value={editingMember.phone}
-            onChange={(e) => handleInputChange("phone", e.target.value)}
-            className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-text-secondary  placeholder-gray-300"
-            style={{
-              borderColor: editingMember.phone.trim() ? colors.primary.hex : "#ef4444",
-            }}
-            placeholder="Enter phone number"
-          />
-          {!editingMember.phone.trim() && (
-            <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" />
-              Phone number is required
-            </p>
-          )}
-        </div>
+  {/* Phone Number */}
+  <div className="space-y-2">
+    <label className="text-sm font-semibold mb-2 flex items-center gap-2">
+      <div className="w-2 h-2 rounded-full" style={{ background: colors.accent.hex }}></div>
+      Phone Number *
+    </label>
+    <input
+      type="tel"
+      value={editingMember.phone}
+      onChange={(e) => handleInputChange("phone", e.target.value)}
+      className="w-full px-4 py-3 [border:var(--border-style)] rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-text-secondary placeholder-gray-300"
+      style={{
+        borderColor: editingMember.phone.trim() ? "rgba(255, 255, 255, 0.3)" : "#ef4444",
+      }}
+      placeholder="Enter phone number"
+    />
+    {!editingMember.phone.trim() && (
+      <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+        <AlertCircle className="w-3 h-3" />
+        Phone number is required
+      </p>
+    )}
+  </div>
 
-        {/* Address Field */}
-        <div className="space-y-2">
-          <label className="text-sm font-semibold mb-2 flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full" style={{ background: colors.highlight.hex }}></div>
-            Address *
-          </label>
-          <textarea
-            value={editingMember.address}
-            onChange={(e) => handleInputChange("address", e.target.value)}
-            rows={3}
-            className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none resize-none transition-all duration-300 font-medium bg-transparent text-text-secondary  placeholder-gray-300"
-            style={{
-              borderColor: editingMember.address.trim() ? colors.primary.hex : "#ef4444",
-            }}
-            placeholder="Enter complete address"
-          />
-          {!editingMember.address.trim() && (
-            <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
-              <AlertCircle className="w-3 h-3" />
-              Address is required
-            </p>
-          )}
-        </div>
-      </div>
+  {/* Address */}
+  <div className="space-y-2">
+    <label className="text-sm font-semibold mb-2 flex items-center gap-2">
+      <div className="w-2 h-2 rounded-full" style={{ background: colors.highlight.hex }}></div>
+      Address *
+    </label>
+    <textarea
+      value={editingMember.address}
+      onChange={(e) => handleInputChange("address", e.target.value)}
+      rows={3}
+      className="w-full px-4 py-3 [border:var(--border-style)] rounded-xl focus:ring-4 focus:outline-none resize-none transition-all duration-300 font-medium bg-transparent text-text-secondary placeholder-gray-300"
+      style={{
+        borderColor: editingMember.address.trim() ? "rgba(255, 255, 255, 0.3)" : "#ef4444",
+      }}
+      placeholder="Enter complete address"
+    />
+    {!editingMember.address.trim() && (
+      <p className="text-red-400 text-xs mt-1 flex items-center gap-1">
+        <AlertCircle className="w-3 h-3" />
+        Address is required
+      </p>
+    )}
+  </div>
+</div>
+
 
       {/* Footer */}
       <div

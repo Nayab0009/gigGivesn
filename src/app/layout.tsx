@@ -39,13 +39,13 @@ export default function RootLayout({
         {/* Background Wrapper - Only shown for glass theme */}
         <div className="fixed inset-0 -z-20 glass-bg-only">
           {/* Blurred full background */}
-          <Image
+          {/* <Image
             src="/images/final7.jpg"
             alt="Blurred Background"
             fill
             priority
             className="object-cover blur-2xl scale-110"
-          />
+          /> */}
 
           {/* Centered main image */}
           <div className="absolute inset-0 flex items-center justify-center">
