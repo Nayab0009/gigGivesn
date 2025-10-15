@@ -280,7 +280,7 @@ export default function TeamListPage() {
 
         {/* Edit Modal */}
        {editingMember && (
-  <div className="fixed inset-0 bg-[#0000004D] backdrop-blur-[100px] flex items-center justify-center z-50 p-4">
+  <div className="fixed inset-0 [background:var(--container-bg)]  backdrop-blur-[100px] flex items-center justify-center z-50 p-4">
     <div
       className="rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto scrollbar-hide transform transition-all duration-300 scale-100"
       style={{
@@ -296,8 +296,8 @@ export default function TeamListPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
         <div className="relative flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold mb-1 text-white">Edit Team Member</h2>
-            <p className="text-white/80 text-sm">Update employee information</p>
+            <h2 className="text-2xl font-bold mb-1 text-text-main">Edit Team Member</h2>
+            <p className="text-text-secondary text-sm">Update employee information</p>
           </div>
           <button
             onClick={handleEditCancel}
@@ -309,7 +309,7 @@ export default function TeamListPage() {
       </div>
 
       {/* Form */}
-      <div className="px-8 py-6 space-y-6 text-white">
+      <div className="px-8 py-6 space-y-6 text-text-main">
         {/* Name Field */}
         <div className="space-y-2">
           <label className="text-sm font-semibold mb-2 flex items-center gap-2">
@@ -320,7 +320,7 @@ export default function TeamListPage() {
             type="text"
             value={editingMember.name}
             onChange={(e) => handleInputChange("name", e.target.value)}
-            className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
+            className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-text-secondary placeholder-gray-300"
             style={{
               borderColor: editingMember.name.trim() ? colors.primary.hex : "#ef4444",
             }}
@@ -344,7 +344,7 @@ export default function TeamListPage() {
             type="email"
             value={editingMember.email}
             onChange={(e) => handleInputChange("email", e.target.value)}
-            className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
+            className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-text-secondary  placeholder-gray-300"
             style={{
               borderColor:
                 editingMember.email.trim() && editingMember.email.includes("@")
@@ -371,7 +371,7 @@ export default function TeamListPage() {
             type="tel"
             value={editingMember.phone}
             onChange={(e) => handleInputChange("phone", e.target.value)}
-            className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
+            className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none transition-all duration-300 font-medium bg-transparent text-text-secondary  placeholder-gray-300"
             style={{
               borderColor: editingMember.phone.trim() ? colors.primary.hex : "#ef4444",
             }}
@@ -395,7 +395,7 @@ export default function TeamListPage() {
             value={editingMember.address}
             onChange={(e) => handleInputChange("address", e.target.value)}
             rows={3}
-            className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none resize-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
+            className="w-full px-4 py-3 border-2 rounded-xl focus:ring-4 focus:outline-none resize-none transition-all duration-300 font-medium bg-transparent text-text-secondary  placeholder-gray-300"
             style={{
               borderColor: editingMember.address.trim() ? colors.primary.hex : "#ef4444",
             }}
