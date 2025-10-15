@@ -597,7 +597,7 @@ export default function EnhancedManagersTable() {
                       setShowEditModal(false);
                       setEditFormErrors({ name: '', email: '', phone: '', address: '' });
                     }}
-                    className="flex-1 px-6 py-3 border-2 rounded-xl font-semibold transition-all duration-300 hover:bg-white/20 transform hover:scale-105 text-white border-white/30"
+                    className="flex-1 px-6 py-3 border-2 rounded-xl font-semibold transition-all duration-300 hover:bg-white/20 transform hover:scale-105 text-text-secondary border-white/30"
                     disabled={isUpdating}
                   >
                     Cancel

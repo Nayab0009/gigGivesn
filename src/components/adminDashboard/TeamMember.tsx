@@ -541,7 +541,7 @@ export default function TeamListPage() {
               <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
             </div>
             <div>
-              <h3 className="text-base text-[20px] text-text-main font-[500]">
+              <h3 className="text-base text-[16px] text-text-main font-[500]">
                 {member.name}
               </h3>
               <p className="text-sm text-blue-400">Team Member</p>
@@ -550,14 +550,14 @@ export default function TeamListPage() {
         </td>
 
         <td className="px-6 py-4">
-          <span className="text-[20px] text-text-secondary  font-[400] capitalize">
+          <span className="text-[16px] text-text-secondary  font-[400] capitalize">
             {member.role || "Employee"}
           </span>
         </td>
 
         <td className="px-6 py-4">
           <div className="space-y-1">
-            <div className="text-[20px] text-text-secondary  font-[400]">{member.email}</div>
+            <div className="text-[16px] text-text-secondary  font-[400]">{member.email}</div>
 
           </div>
         </td>
