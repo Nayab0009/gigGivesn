@@ -8,6 +8,7 @@ import Link from "next/link"
 import { useEffect, useState, useCallback } from "react"
 import type React from "react"
 import { colors } from "@/colors"
+import { allIcons } from "@/lib/icons";
 import NotificationDropdown from "@/components/header/NotificationDropdown"
 
 // Define the type for navigation items (same as sidebar)
@@ -302,13 +303,12 @@ const AppHeader: React.FC = () => {
         <NotificationDropdown
   trigger={
     <div className="relative cursor-pointer">
-      <Image
-        src="/images/notification.png"
-        alt="Notifications"
-        width={40}
-        height={40}
-        className="object-contain invert-[var(--invert-value)] transition-all duration-300"
-      />
+         <div
+  className="w-5 h-5 flex items-center justify-center"
+  style={{ color: "var(--text-main)" }}
+>
+  {allIcons.notificationIcon}
+</div>
     </div>
   }
 />

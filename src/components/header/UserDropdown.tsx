@@ -199,7 +199,9 @@ export default function UserDropdown() {
               }}
               className="flex items-center hover:px-3 gap-3 w-full text-left py-2 rounded-lg text-xs text-text-main  hover:bg-white/10 transition"
             >
-              <Image src="/images/theme.svg" alt="Theme" width={16} height={16} />
+             <div className="w-5 h-5 flex items-center justify-center text-foreground">
+  {allIcons.themeIcon}
+</div>  
               Theme
               <svg
                 className={`ml-auto w-3 h-3 transition-transform ${showDropdown ? "rotate-180" : ""}`}
@@ -241,12 +243,9 @@ export default function UserDropdown() {
             }}
             className="flex items-center hover:px-3 gap-3 w-full text-left  py-2 rounded-lg text-xs text-text-main  hover:bg-white/10 transition"
           >
-            <Image
-              src="/images/support.svg"
-              alt="Support"
-              width={16}
-              height={16}
-            />
+                   <div className="w-5 h-5 flex items-center justify-center text-foreground">
+  {allIcons.supportIcon}
+</div>  
             Support
           </button>
 
