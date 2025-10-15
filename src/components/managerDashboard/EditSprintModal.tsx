@@ -95,8 +95,8 @@ const EditSprintModal: React.FC<EditSprintModalProps> = ({ projectId, sprint, on
 					{/* Header */}
 					<div className="text-center mb-8">
 
-						<h1 className="text-[32px] font-semibold mb-2 text-white">Edit sprint</h1>
-						<p className="text-[12px] font-semibold  text-white">Edit the sprint details</p>
+						<h1 className="text-[32px] font-semibold mb-2 text-text-main">Edit sprint</h1>
+						<p className="text-[12px] font-semibold  text-text-secondary">Edit the sprint details</p>
 					</div>
 
 					{/* Form Container */}
@@ -107,11 +107,11 @@ const EditSprintModal: React.FC<EditSprintModalProps> = ({ projectId, sprint, on
 							<div className="space-y-6">
 								<div className="flex items-center gap-3 pb-4 " style={{ borderColor: colors.primary.hex }}>
 
-									<h2 className="text-[18px] font-semibold text-white">Basic Information</h2>
+									<h2 className="text-[18px] font-semibold text-text-main">Basic Information</h2>
 								</div>
 								<div className="grid grid-cols-1 gap-3">
 									<div>
-										<label className="block text-[14px] font-semibold mb-3 text-white">
+										<label className="block text-[14px] font-semibold mb-3 text-text-main">
 											Sprint Title <span style={{ color: colors.warning.hex }}>*</span>
 										</label>
 										<input
@@ -121,13 +121,13 @@ const EditSprintModal: React.FC<EditSprintModalProps> = ({ projectId, sprint, on
 											onChange={e => setTempSprint(prev => ({ ...prev, title: e.target.value }))}
 											placeholder="e.g., Sprint 24 - User Authentication & Dashboard"
 											className="w-full px-4 py-4 rounded-xl focus:ring-2 outline-none
-                       bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
+                     [background:var(--field-bg)] backdrop-blur-sm text-text-secondary placeholder-gray-400 transition-all duration-200
                         focus:border-white/40"
 										/>
 									</div>
 
 									<div>
-										<label className="block text-[14px] font-semibold mb-3 text-white">
+										<label className="block text-[14px] font-semibold mb-3 text-text-main">
 											Sprint Name <span style={{ color: colors.warning.hex }}>*</span>
 										</label>
 										<input
@@ -137,20 +137,20 @@ const EditSprintModal: React.FC<EditSprintModalProps> = ({ projectId, sprint, on
 											onChange={e => setTempSprint(prev => ({ ...prev, name: e.target.value }))}
 											placeholder="e.g., Sprint 24 - User Authentication & Dashboard"
 											className="w-full px-4 py-4 rounded-xl focus:ring-2 outline-none
-                       bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
+                       [background:var(--field-bg)]  backdrop-blur-sm  text-text-secondary  placeholder-gray-400 transition-all duration-200
                         focus:border-white/40"
 										/>
 									</div>
 
 									<div>
-										<label className="block text-[14px] font-semibold mb-3 text-white">Description</label>
+										<label className="block text-[14px] font-semibold mb-3 text-text-main">Description</label>
 										<textarea
 											value={tempSprint.description}
 											onChange={e => setTempSprint(prev => ({ ...prev, description: e.target.value }))}
 											rows={4}
 											placeholder="Describe the main objectives, scope, and expected outcomes for this sprint..."
 											className="w-full px-4 py-4 rounded-xl focus:ring-2 outline-none
-                                 bg-black/80 backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
+                                 [background:var(--field-bg)]  backdrop-blur-sm text-text-secondary  placeholder-gray-400 transition-all duration-200
                                   focus:border-white/40"
 										/>
 									</div>
@@ -189,18 +189,18 @@ const EditSprintModal: React.FC<EditSprintModalProps> = ({ projectId, sprint, on
 							<div className="space-y-6">
 								<div className="flex items-center gap-3 pb-4" style={{ borderColor: colors.primary.hex }}>
 
-									<h2 className="text-[18px] font-semibold text-white">Timeline & Duration</h2>
+									<h2 className="text-[18px] font-semibold text-text-main">Timeline & Duration</h2>
 								</div>
 								<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 									<div>
-										<label className="block text-[14px] font-semibold mb-3 text-white">
+										<label className="block text-[14px] font-semibold mb-3 text-text-main">
 											Start Date <span style={{ color: colors.warning.hex }}>*</span>
 										</label>
 										<div className="relative w-full full-width-datepicker">
 											<DatePicker
 												selected={tempSprint.startDate ? new Date(tempSprint.startDate) : null}
 												onChange={(date) => setTempSprint(prev => ({ ...prev, startDate: date?.toISOString().split("T")[0] || '' }))}
-												className="w-full rounded-xl bg-black/80 px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
+												className="w-full rounded-xl  [background:var(--field-bg)] px-4 py-4 text-text-secondary  placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
 												placeholderText="Select start date"
 												dateFormat="MMM dd, yyyy"
 												isClearable
@@ -218,14 +218,14 @@ const EditSprintModal: React.FC<EditSprintModalProps> = ({ projectId, sprint, on
 										</div>
 									</div>
 									<div>
-										<label className="block text-[14px] font-semibold mb-3 text-white">
+										<label className="block text-[14px] font-semibold mb-3 text-text-main">
 											End Date <span style={{ color: colors.warning.hex }}>*</span>
 										</label>
 										<div className="relative w-full full-width-datepicker">
 											<DatePicker
 												selected={tempSprint.endDate ? new Date(tempSprint.endDate) : null}
 												onChange={(date) => setTempSprint(prev => ({ ...prev, endDate: date?.toISOString().split("T")[0] || '' }))}
-												className="w-full rounded-xl bg-black/80 px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
+												className="w-full rounded-xl  [background:var(--field-bg)]  px-4 py-4 text-text-secondary  placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
 												placeholderText="Select end date"
 												dateFormat="MMM dd, yyyy"
 												isClearable
@@ -247,8 +247,8 @@ const EditSprintModal: React.FC<EditSprintModalProps> = ({ projectId, sprint, on
 
 							{/* Submit Section */}
 							<div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 " style={{ borderColor: colors.primary.hex }}>
-								<div className="flex items-center gap-2 text-sm text-white/80">
-									<CheckCircle2 className="w-4 h-4 text-white/80" />
+								<div className="flex items-center gap-2 text-sm text-text-main">
+									<CheckCircle2 className="w-4 h-4 text-text-main" />
 									All required fields marked with * must be completed
 								</div>
 								<button
@@ -277,7 +277,7 @@ const EditSprintModal: React.FC<EditSprintModalProps> = ({ projectId, sprint, on
 
 						{/* Footer */}
 						<div className="px-6 pb-6">
-							<div className="text-center text-sm text-white/60">
+							<div className="text-center text-sm text-text-secondary">
 								Sprint planning made simple and effective
 							</div>
 						</div>
