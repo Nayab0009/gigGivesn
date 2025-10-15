@@ -160,7 +160,7 @@ useEffect(() => {
                   className="w-7 h-4 rounded-sm mr-4"
                   style={{ backgroundColor: selected === null ? entry.color : (selected === index ? entry.color : entry.dim) }}
                 ></div>
-                <span className={`text-white text-sm font-medium ${selected === index ? '' : 'opacity-60'}`}>
+                <span className={`text-text-main text-sm font-medium ${selected === index ? '' : 'opacity-60'}`}>
                   {entry.name}
                   {selected === index && (
                     <span className="ml-2 text-xs text-text-main">({entry.count})</span>
