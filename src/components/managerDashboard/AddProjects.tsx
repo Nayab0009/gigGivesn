@@ -139,36 +139,36 @@ function EditStatusModal({
   if (!open || !project) return null
 
   return (
-    <div className="fixed inset-0 bg-[background:var(--form-bg)] backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="[background:var(--form-bg)]  rounded-2xl [border:var(--border-style)] [box-shadow:var(--shadow-combined)] border border-white/20 shadow-2xl w-full max-w-md overflow-hidden transition-all duration-200">
+    <div className="fixed inset-0 [background:var(--container-bg)] ] backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="[background:var(--container-bg)]   rounded-2xl [border:var(--border-style)] [box-shadow:var(--shadow-combined)] border border-white/20 shadow-2xl w-full max-w-md overflow-hidden transition-all duration-200">
         {/* Header */}
-        <div className="p-6 text-white border-b border-white/10 bg-black/20 backdrop-blur-sm">
+        <div className="p-6 text-white border-b border-white/10 [background:var(--container-bg)]  backdrop-blur-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold mb-1 text-white">Update Project Status</h2>
-              <p className="text-gray-300 text-sm">{project.name}</p>
+              <h2 className="text-xl font-bold mb-1 text-text-main">Update Project Status</h2>
+              <p className="text-text-main text-sm">{project.name}</p>
             </div>
             <button
               onClick={onClose}
               className="p-2 rounded-full hover:bg-white/20 transition-colors"
             >
-              <X className="w-5 h-5 text-white" />
+              <X className="w-5 h-5 text-text-main" />
             </button>
           </div>
         </div>
 
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(85vh-120px)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-black/20 backdrop-blur-sm">
+        <div className="p-6 overflow-y-auto max-h-[calc(85vh-120px)] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] [background:var(--container-bg)]  backdrop-blur-sm">
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-200 mb-3">
+              <label className="block text-sm font-medium text-text-main mb-3">
                 Select New Status
               </label>
               <div className="space-y-2">
                 {Object.values(ProjectStatus).map((status) => (
                   <label
                     key={status}
-                    className="flex items-center p-3 border [border:var(--border-style)] rounded-lg hover:bg-black/40 cursor-pointer transition-all duration-200 bg-black/30 backdrop-blur-sm"
+                    className="flex items-center p-3 border [border:var(--border-style)] rounded-lg hover:bg-black/40 cursor-pointer transition-all duration-200 backdrop-blur-sm"
                   >
                     <input
                       type="radio"
@@ -176,9 +176,9 @@ function EditStatusModal({
                       value={status}
                       checked={selectedStatus === status}
                       onChange={(e) => setSelectedStatus(e.target.value)}
-                      className="w-4 h-4 text-white border-white/20 focus:ring-white/30 bg-white/10"
+                      className="w-4 h-4 text-text-main border-white/20 focus:ring-white/30 bg-white/10"
                     />
-                    <span className="ml-3 text-sm font-medium text-white capitalize">
+                    <span className="ml-3 text-sm font-medium text-text-main capitalize">
                       {status === ProjectStatus.INPROGRESS ? "In Progress" : status}
                     </span>
                   </label>
@@ -189,7 +189,7 @@ function EditStatusModal({
         </div>
 
         {/* Footer */}
-        <div className="border-t border-white/10 bg-black/30 backdrop-blur-sm px-6 py-4">
+        <div className="border-t border-white/10 [background:var(--container-bg)]  backdrop-blur-sm px-6 py-4">
           <div className="flex justify-end gap-3">
             <button
               onClick={onClose}
@@ -202,7 +202,7 @@ function EditStatusModal({
               disabled={isUpdating || selectedStatus === project.status}
               className="px-4 py-2 text-white rounded-lg font-medium hover:bg-black/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 bg-black/30 backdrop-blur-sm border border-white/20"
             >
-              {isUpdating && <Loader2 className="w-4 h-4 animate-spin text-white" />}
+              {isUpdating && <Loader2 className="w-4 h-4 animate-spin text-text-main" />}
               Update Status
             </button>
           </div>
@@ -260,11 +260,11 @@ function ViewTeamModal({
         <div className="p-6 text-whitebackdrop-blur-sm border-white/10">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold mb-1 text-white">Project Team</h2>
-              <p className="text-gray-300 text-sm">Team members for project {projectId}</p>
+              <h2 className="text-2xl font-bold mb-1 text-text-main">Project Team</h2>
+              <p className="text-text-secondary text-sm">Team members for project {projectId}</p>
             </div>
             <button onClick={onClose} className="p-2 rounded-full hover:bg-white/20 transition-colors">
-              <X className="w-6 h-6 text-white" />
+              <X className="w-6 h-6 text-text-main" />
             </button>
           </div>
         </div>
@@ -275,8 +275,8 @@ function ViewTeamModal({
           {isLoading ? (
             <div className="text-center py-12">
               <Loader2 className="w-8 h-8 text-white animate-spin mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-white mb-2">Loading Team...</h3>
-              <p className="text-gray-400">Fetching team members for this project.</p>
+              <h3 className="text-lg font-medium text-text-main mb-2">Loading Team...</h3>
+              <p className="text-text-secondary">Fetching team members for this project.</p>
             </div>
           ) : error ? (
             <div className="text-center py-12">
@@ -298,8 +298,8 @@ function ViewTeamModal({
               <div>
                 <div className="flex items-center space-x-2 mb-4">
                   <Users className="w-5 h-5 text-white" />
-                  <h3 className="font-semibold text-lg text-white">Team Members</h3>
-                  <span className="bg-white/20 backdrop-blur-sm text-white text-sm px-3 py-1 rounded-full font-medium border border-white/10">
+                  <h3 className="font-semibold text-lg text-text-main">Team Members</h3>
+                  <span className="bg-white/20 backdrop-blur-sm text-text-main text-sm px-3 py-1 rounded-full font-medium border border-white/10">
                     {project.teamMembers?.length || 0} member{(project.teamMembers?.length || 0) !== 1 ? "s" : ""}
                   </span>
                 </div>
@@ -308,7 +308,7 @@ function ViewTeamModal({
                     {project.teamMembers.map((member, index) => (
                       <div
                         key={member.id}
-                        className="flex items-center space-x-4 p-4 [border:var(--border-style)] [box-shadow:var(--shadow-combined)]  rounded-xl border border-white/20 hover:bg-black/40 hover:shadow-md transition-all duration-200"
+                        className="flex items-center space-x-4 p-4 [border:var(--border-style)] [box-shadow:var(--shadow-combined)]  rounded-xl border border-white/20 transition-all duration-200"
                       >
                         <div className="relative flex-shrink-0">
                           <img
@@ -323,9 +323,9 @@ function ViewTeamModal({
                           )}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="font-semibold text-white truncate">{member.name}</div>
-                          <div className="text-sm text-gray-300 truncate">{member.role}</div>
-                          <div className="text-xs text-gray-400 truncate">{member.email}</div>
+                          <div className="font-semibold text-text-main truncate">{member.name}</div>
+                          <div className="text-sm text-text-secondary truncate">{member.role}</div>
+                          <div className="text-xs text-text-secondary truncate">{member.email}</div>
                         </div>
                       </div>
                     ))}

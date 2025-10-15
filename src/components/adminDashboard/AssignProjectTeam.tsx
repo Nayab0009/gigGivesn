@@ -193,10 +193,10 @@ export function AssignTeamModal({
       <div className="[background:var(--form-bg)]  rounded-3xl shadow-2xl w-full max-w-2xl max-h-[95vh] overflow-hidden [border:var(--border-style)] [box-shadow:var(--shadow-combined)]   flex flex-col">
         {/* Header */}
         <div className="p-6 text-center [background:var(--form-bg)] backdrop-blur-md border-b border-white/20">
-          <h2 className="text-2xl font-bold text-white mb-1">
+          <h2 className="text-2xl font-bold text-text-main mb-1">
             Assign Team Members
           </h2>
-          <p className="text-gray-300 text-sm">
+          <p className="text-text-secondary text-sm">
             Select team members for{" "}
             <span className="font-semibold">{project.title}</span>
           </p>
@@ -235,10 +235,10 @@ export function AssignTeamModal({
                         <Users className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-xl text-white">
+                        <h3 className="font-bold text-xl text-text-main">
                           {team.name}
                         </h3>
-                        <p className="text-sm text-gray-300 font-medium">
+                        <p className="text-sm text-text-secondary font-medium">
                           {team.department} Department
                         </p>
                       </div>
@@ -320,7 +320,7 @@ export function AssignTeamModal({
         <div className="[background:var(--form-bg)] backdrop-blur-md border-t border-white/20 p-6 flex justify-end gap-3">
           <button
             onClick={onClose}
-            className="px-6 py-2 rounded-xl border border-white/30 text-gray-200 hover:bg-black/40 transition"
+            className="px-6 py-2 rounded-xl border border-white/30 text-text-secondary hover:bg-black/40 transition"
           >
             Cancel
           </button>
