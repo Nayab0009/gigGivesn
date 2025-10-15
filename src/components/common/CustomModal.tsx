@@ -112,11 +112,11 @@ const CustomModal = ({ manager, onClose, generateAvatar }: CustomModalProps) => 
     fetchTasks()
   }, [manager.id])
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 [background:var(--container-bg)]   backdrop-blur-sm">
       <div
-        className="w-full max-w-3xl max-h-[80vh] rounded-2xl border shadow-2xl overflow-y-auto custom-scrollbar"
+        className="w-full max-w-3xl max-h-[80vh] rounded-2xl border shadow-2xl overflow-y-auto custom-scrollbar [background:var(--container-bg)] "
         style={{
-          background: "rgba(0,0,0,0.55)",
+        
           borderColor: "#FFFFFF26",
           boxShadow: "0 16px 40px rgba(0,0,0,0.45)",
         }}
@@ -154,8 +154,8 @@ const CustomModal = ({ manager, onClose, generateAvatar }: CustomModalProps) => 
           {/* Main panel now fills all columns */}
           <div>
             <div
-              className="rounded-2xl border p-5 sm:p-6 lg:p-7"
-              style={{ background: "#00000066", borderColor: "#FFFFFF26" }}
+              className="rounded-2xl border p-5 sm:p-6 lg:p-7 [background:var(--container-bg)] "
+              style={{  borderColor: "#FFFFFF26" }}
             >
               {/* Header profile + mini task */}
               <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
@@ -189,11 +189,11 @@ const CustomModal = ({ manager, onClose, generateAvatar }: CustomModalProps) => 
                       </div>
 
                       <div>
-                        <div className="text-white text-xl sm:text-2xl font-semibold">{employeeData.name}</div>
-                        <div className="text-white -mt-0.5 capitalize">{employeeData.role || 'Employee'} - {employeeData.industry || 'N/A'}</div>
-                        <div className="mt-3 flex flex-col gap-4 text-white text-sm">
-                          <div className="inline-flex items-center gap-2"><Phone className="w-4 h-4 text-white" /> {employeeData.phone}</div>
-                          <div className="inline-flex items-center gap-2"><MapPin className="w-4 h-4 text-white" /> {employeeData.address}</div>
+                        <div className="text-text-main text-xl sm:text-2xl font-semibold">{employeeData.name}</div>
+                        <div className="text-text-main -mt-0.5 capitalize">{employeeData.role || 'Employee'} - {employeeData.industry || 'N/A'}</div>
+                        <div className="mt-3 flex flex-col gap-4 text-text-main text-sm">
+                          <div className="inline-flex items-center gap-2"><Phone className="w-4 h-4 text-text-main" /> {employeeData.phone}</div>
+                          <div className="inline-flex items-center gap-2"><MapPin className="w-4 h-4 text-text-main" /> {employeeData.address}</div>
                         </div>
                       </div>
                     </>
@@ -224,8 +224,8 @@ const CustomModal = ({ manager, onClose, generateAvatar }: CustomModalProps) => 
                 </div>
                 {/* Mini task card */}
                 <div
-                  className="rounded-xl border p-4 w-full md:w-[260px]"
-                  style={{ background: "#0B0B0B80", borderColor: "#FFFFFF26" }}
+                  className="rounded-xl border p-4 w-full md:w-[260px] [background:var(--container-bg)] "
+                  style={{  borderColor: "#FFFFFF26" }}
                 >
                   {tasksLoading ? (
                     <div className="flex items-center justify-center h-24">
@@ -248,7 +248,7 @@ const CustomModal = ({ manager, onClose, generateAvatar }: CustomModalProps) => 
                           </div>
                         </div>
                       </div>
-                      <div className="mt-2 text-white font-semibold">{completedTask.title}</div>
+                      <div className="mt-2 text-text-secondary font-semibold">{completedTask.title}</div>
                       <div className="text-slate-300 text-sm ">{completedTask.description}</div>
                       <div className="flex -space-x-2 mt-2">
                         {[0,1,2,3].slice(0, (manager.team?.length || 3)).map((i) => (
@@ -271,7 +271,7 @@ const CustomModal = ({ manager, onClose, generateAvatar }: CustomModalProps) => 
                       </div>
                     </>
                   ) : (
-                    <div className="flex flex-col items-center justify-center h-24 text-slate-300">
+                    <div className="flex flex-col items-center justify-center h-24 text-text-secondary">
                       <div>No completed tasks found</div>
                     </div>
                   )}
@@ -280,7 +280,7 @@ const CustomModal = ({ manager, onClose, generateAvatar }: CustomModalProps) => 
 
               {/* Tasks list */}
               <div className="mt-6 space-y-4">
-                <h3 className="text-white font-semibold text-lg">In-progress Tasks</h3>
+                <h3 className="text-text-main font-semibold text-lg">In-progress Tasks</h3>
                 {tasksLoading ? (
                   <div className="flex items-center justify-center h-24">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
@@ -289,8 +289,8 @@ const CustomModal = ({ manager, onClose, generateAvatar }: CustomModalProps) => 
                   inProgressTasks.map((task) => (
                     <div 
                       key={task.id} 
-                      className="rounded-xl border p-4 flex items-start justify-between" 
-                      style={{ background: "#0B0B0B66", borderColor: "#FFFFFF26" }}
+                      className="rounded-xl border p-4 flex items-start justify-between [background:var(--container-bg)] " 
+                      style={{  borderColor: "#FFFFFF26" }}
                     >
                       <div>
                         <div className="flex items-center gap-2">
@@ -300,7 +300,7 @@ const CustomModal = ({ manager, onClose, generateAvatar }: CustomModalProps) => 
                             {task.ticketNumber}
                           </div>
                         </div>
-                        <div className="text-slate-300 text-sm">{task.description}</div>
+                        <div className="text-text-secondary text-sm">{task.description}</div>
                         <div className="mt-2 inline-flex items-center gap-2 text-slate-400 text-xs">
                           <Clock className="w-4 h-4" /> 
                           {new Date(task.taskDate).toLocaleDateString()}
@@ -328,7 +328,7 @@ const CustomModal = ({ manager, onClose, generateAvatar }: CustomModalProps) => 
                     </div>
                   ))
                 ) : (
-                  <div className="flex items-center justify-center h-24 text-slate-300">
+                  <div className="flex items-center justify-center h-24 text-text-secondary">
                     <div>No in-progress tasks found</div>
                   </div>
                 )}

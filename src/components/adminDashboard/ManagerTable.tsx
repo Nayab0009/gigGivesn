@@ -463,9 +463,9 @@ export default function EnhancedManagersTable() {
         )}
 
         {showEditModal && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 [background:var(--container-bg)]   backdrop-blur-sm flex items-center justify-center z-50 p-4">
             <div
-              className="rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 custom-scrollbar border border-white/30 bg-black/30">
+              className="rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 custom-scrollbar border border-white/30 [background:var(--container-bg)] ">
               <style>{`
                 .custom-scrollbar::-webkit-scrollbar {
                   width: 8px;
@@ -486,12 +486,12 @@ export default function EnhancedManagersTable() {
               `}</style>
               {/* Header */}
               <div
-                className="px-8 py-6 relative overflow-hidden rounded-t-3xl text-white">
+                className="px-8 py-6 relative overflow-hidden rounded-t-3xl text-text-main">
                 <div className="absolute"></div>
                 <div className="relative flex items-center justify-between">
                   <div>
                     <h2 className="text-2xl font-bold mb-1">Edit Manager</h2>
-                    <p className="text-white/80 text-sm">Update manager information</p>
+                    <p className="text-text-secondary text-sm">Update manager information</p>
                   </div>
                   <button
                     onClick={() => {
@@ -508,7 +508,7 @@ export default function EnhancedManagersTable() {
 
               {/* Form */}
               <form onSubmit={e => { e.preventDefault(); handleUpdateManager(); }} className="flex flex-col h-full">
-                <div className="px-8 pb-6 space-y-6 text-white">
+                <div className="px-8 pb-6 space-y-6 text-text-main">
                   {/* Name */}
                   <div className="space-y-2">
                     <label className="text-sm font-semibold mb-2 flex items-center gap-2">
@@ -519,7 +519,7 @@ export default function EnhancedManagersTable() {
                       name="name"
                       value={editForm.name}
                       onChange={handleEditFormChange}
-                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-1 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300 border-white/30"
+                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-1 focus:outline-none transition-all duration-300 font-medium bg-transparent text-text-secondary  placeholder-gray-300 border-white/30"
                      
                       placeholder="Enter manager name"
                       disabled={isUpdating}
@@ -538,7 +538,7 @@ export default function EnhancedManagersTable() {
                       name="email"
                       value={editForm.email}
                       onChange={handleEditFormChange}
-                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300 border-white/30"
+                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:outline-none transition-all duration-300 font-medium bg-transparent text-text-secondary placeholder-gray-300 border-white/30"
                       placeholder="Enter manager email"
                       disabled={isUpdating}
                     />
@@ -556,7 +556,7 @@ export default function EnhancedManagersTable() {
                       name="phone"
                       value={editForm.phone}
                       onChange={handleEditFormChange}
-                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300 border-white/30"
+                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:outline-none transition-all duration-300 font-medium bg-transparent text-text-secondary placeholder-gray-300 border-white/30"
                       
                       placeholder="Enter manager phone"
                       disabled={isUpdating}
@@ -575,7 +575,7 @@ export default function EnhancedManagersTable() {
                       name="address"
                       value={editForm.address}
                       onChange={handleEditFormChange}
-                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:outline-none transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300 border-white/30"
+                      className="w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:outline-none transition-all duration-300 font-medium bg-transparent text-text-secondary placeholder-gray-300 border-white/30"
                       // style={{ borderColor: editFormErrors.address ? "#ef4444" : colors.primary.hex }}
                       placeholder="Enter manager address"
                       disabled={isUpdating}

@@ -209,7 +209,7 @@ const AddProject: React.FC = () => {
                   />
                   {/* Calendar Icon inside input */}
                   <CalendarDays className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-2xl  duration-300 pointer-events-none"></div>
                 </div>
               </div>
 
@@ -239,7 +239,7 @@ const AddProject: React.FC = () => {
                   />
                   {/* Calendar Icon inside input */}
                   <CalendarDays className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                  <div className="absolute inset-0 rounded-2xl transition-opacity duration-300 pointer-events-none"></div>
                 </div>
               </div>
             </div>
