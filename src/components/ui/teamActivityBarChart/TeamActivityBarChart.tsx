@@ -40,8 +40,8 @@ export default function TeamActivityBarChart({ data }: TeamActivityBarChartProps
           axisLine={false}
           tickLine={false}
           domain={[0, 'dataMax']}
-          tick={{ fill: 'white', fontSize: 12 }}
-          className="text-white"
+          tick={{fontSize: 12 }}
+          className="text-text-main"
           allowDecimals={false}
           width={30}
         />
@@ -52,7 +52,8 @@ export default function TeamActivityBarChart({ data }: TeamActivityBarChartProps
           type="category"
           axisLine={false}
           tickLine={false}
-          tick={{ fill: 'white', fontSize: 12 }}
+          tick={{ fontSize: 12 }}
+           className="text-text-main"
           height={5}
         />
         

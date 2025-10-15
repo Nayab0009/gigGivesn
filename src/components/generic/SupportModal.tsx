@@ -252,7 +252,7 @@ export default function SupportModal({ isOpen, onClose, onSubmit, user }: Props)
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-lg text-white transition border [background:var(--container-bg)] hover:bg-white/10"
+            className="px-4 py-2 rounded-lg text-text-main transition border [background:var(--container-bg)] hover:bg-white/10"
             style={{ borderColor: "#FFFFFF26" }}
           >
             Cancel
@@ -261,7 +261,7 @@ export default function SupportModal({ isOpen, onClose, onSubmit, user }: Props)
             type="button"
             disabled={!canSubmit}
             onClick={submit}
-            className="px-5 py-2 rounded-lg text-white font-semibold shadow disabled:opacity-60 [background:var(--container-bg)]"
+            className="px-5 py-2 rounded-lg text-text-main font-semibold shadow disabled:opacity-60 [background:var(--container-bg)]"
           >
             {submitting ? "Saving..." : "Save"}
           </button>
