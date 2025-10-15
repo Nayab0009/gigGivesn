@@ -85,7 +85,7 @@ const TodayTasksSection: React.FC<TodayTasksSectionProps> = ({
             <span className="text-blue-200">Loading tasks...</span>
           </div>
         ) : tasks.length === 0 ? (
-          <div className="col-span-3 text-center text-blue-200 py-8">No tasks found.</div>
+          <div className="col-span-3 text-center text-text-main py-8">No tasks found.</div>
         ) : (
           sortedTodayTasks.map((task, idx) => {
             const priorityLabel = task.priority ? `${task.priority} Priority` : "Task";

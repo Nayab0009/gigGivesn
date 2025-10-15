@@ -469,9 +469,9 @@ export default function TeamListPage() {
           WebkitBackdropFilter: "blur(20px)"
         }}
       >
-        <RefreshCw className="w-6 h-6 animate-spin text-white" />
+        <RefreshCw className="w-6 h-6 animate-spin text-text-main" />
       </div>
-      <p className="text-lg text-white">
+      <p className="text-lg text-text-main">
         Loading team members...
       </p>
     </div>

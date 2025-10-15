@@ -277,9 +277,9 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
       return (
      <div className="p-12 text-center">
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 bg-white/10 border border-white/20">
-                <RefreshCw className="w-6 h-6 animate-spin text-white" />
+                <RefreshCw className="w-6 h-6 animate-spin text-text-main" />
               </div>
-              <p className="text-lg text-white/90">Loading Dashboard...</p>
+              <p className="text-lg text-text-main">Loading Dashboard...</p>
             </div>
       )
     }
@@ -409,7 +409,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                 <p className="text-text-main text-sm">Task distribution and efficiency by team</p>
               </div>
               <div className="w-10 h-10 bg-[rgba(0,0,0,0.3)] rounded-full flex items-center justify-center">
-                <Image src="/images/users.svg" alt="Users" width={20} height={20} className="text-white" />
+                <Image src="/images/users.svg" alt="Users" width={20} height={20} className="text-text-main" />
               </div>
             </div>
           </div>
@@ -430,7 +430,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
               <div>
                 <div className="flex gap-x-3 items-start">
                   <div className="w-10 h-10 bg-[rgba(0,0,0,0.3)] rounded-full flex items-center justify-center">
-                <Image src="/images/clock.svg" alt="clock" width={20} height={20} className=" text-white" />
+                <Image src="/images/clock.svg" alt="clock" width={20} height={20} className=" text-text-main" />
               </div>
               <div>
   <h3 className="text-xl font-medium text-text-main mb-1 flex items-center">Project Breakdown</h3>

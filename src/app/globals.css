@@ -75,21 +75,21 @@ body {
 }
 
 [data-theme="light"] {
-  --navbar-bg: #ffffff;
+  --navbar-bg: #E0E3E7;
  --shadow-dark: -8px -8px 16px 0px #0000001A;
   --shadow-light: -4px -4px 8px 0px #FFFFFF80;
   --shadow-combined: var(--shadow-dark), var(--shadow-light);
-  --text-secondary:black;
-  --text-main: black;
-  --background: #ffffff;
+  --text-secondary:black !important;;
+  --text-main: black !important;;
+  --background: #E0E3E7;
   --inner-background: #f5f5f5;
-   --border-style:  1px solid rgba(255, 255, 255, 0.3);
+   --border-style:  1px solid black;
     --team-bg:#E0E3E7;
-      --container-bg:#ffffff;
- --thead-bg:#E0E3E7;
+      --container-bg:#E0E3E7;
+ --thead-bg:#CDCDCD;
  --btn-bg: #0000004D;
- --dropdown-bg: #ffffff;
- --form-bg: #ffffff;
+ --dropdown-bg: #E0E3E7;
+ --form-bg: #E0E3E7;
  --field-bg:#ffffff19;
    --image-color: #000000;
    --search-bg:#FFFFFF66;
@@ -127,7 +127,7 @@ body {
 
 [data-theme="light"] .theme-solid-bg {
   display: block !important;
-  background: #ffffff;
+  background: #E0E3E7;
 }
 
 

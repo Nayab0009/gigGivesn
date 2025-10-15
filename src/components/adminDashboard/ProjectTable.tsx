@@ -804,7 +804,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4 bg-white/10 border border-white/20">
                 <RefreshCw className="w-6 h-6 animate-spin text-white" />
               </div>
-              <p className="text-lg text-white/90">Loading projects...</p>
+              <p className="text-lg text-text-main">Loading projects...</p>
             </div>
           ) : (
             <div className="overflow-x-hidden">

@@ -61,8 +61,8 @@ useEffect(() => {
       const percent = total ? Math.round((d.value / total) * 100) : 0;
       return (
         <div className="rounded-md shadow-lg bg-black/80 px-3 py-2">
-          <p className="font-semibold text-gray-200">{`${d.name}: ${percent}%`}</p>
-          <p className="text-gray-300 text-xs">Count: {d.count}</p>
+          <p className="font-semibold text-text-main">{`${d.name}: ${percent}%`}</p>
+          <p className="text-text-main text-xs">Count: {d.count}</p>
         </div>
       );
     }
@@ -163,7 +163,7 @@ useEffect(() => {
                 <span className={`text-white text-sm font-medium ${selected === index ? '' : 'opacity-60'}`}>
                   {entry.name}
                   {selected === index && (
-                    <span className="ml-2 text-xs text-gray-300">({entry.count})</span>
+                    <span className="ml-2 text-xs text-text-main">({entry.count})</span>
                   )}
                 </span>
               </div>

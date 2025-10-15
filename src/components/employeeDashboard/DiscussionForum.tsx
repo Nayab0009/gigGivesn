@@ -255,7 +255,7 @@ export default function ForumPage() {
             {threads.length === 0 ? (
               <div className="text-center py-20">
                 <div className="relative inline-block mb-6">
-                  <MessageCircle size={80} className="text-gray-300" />
+                  <MessageCircle size={80} className="text-text-main" />
                   <div
                     className="absolute -top-2 -right-2 w-6 h-6 rounded-full animate-pulse"
                     style={{ backgroundColor: colors.accent.hex }}
@@ -382,7 +382,7 @@ export default function ForumPage() {
             <div className="border-t border-white/20 p-10 [background:var(--container-bg)]">
               <div className="flex items-center gap-3 mb-8">
                 <div className="p-3 rounded-full bg-white/10">
-                  <MessageCircle size={28} style={{ color: colors.primary.hex }} />
+                  <MessageCircle size={28} className="text-text-main" />
                 </div>
                 <h3 className="text-3xl font-bold text-text-main" >
                   Comments {comments.length > 0 ? `(${comments.length})` : ""}
@@ -422,7 +422,7 @@ export default function ForumPage() {
                   ))
                 ) : (
                   <div className="text-center py-16">
-                    <MessageCircle size={64} className="text-white/30 mx-auto mb-6" />
+                    <MessageCircle size={64} className="text-text-main  mx-auto mb-6" />
                     <p className="text-text-secondary text-xl font-medium">
                       No comments yet. Be the first to share your thoughts!
                     </p>
