@@ -309,7 +309,7 @@ export default function ProjectDetailsPage() {
           <div>
             {/* <div className="text-white/70 text-sm">Project</div> */}
             <h1
-              className="text-[20px] font-semibold text-white mt-1 mb-8"
+              className="text-[20px] font-semibold text-text-main mt-1 mb-8"
               style={{
                 fontFamily: 'Roboto, sans-serif',
                 fontWeight: 600,
@@ -328,13 +328,13 @@ export default function ProjectDetailsPage() {
         <div className="flex items-center justify-between mt-2 mb-6">
           <div className="flex justify-between w-full">
             <div className="flex items-center gap-4 ">
-              <button className="flex items-center gap-2 text-white/70 hover:text-white px-2 py-1 rounded-full transition-all focus:outline-none">
+              <button className="flex items-center gap-2 text-text-main hover:text-white px-2 py-1 rounded-full transition-all focus:outline-none">
                 <Filter className="w-4 h-4" />
                 <span className="text-sm font-medium">Filter</span>
               </button>
               <div
-                className="flex  rounded-full p-1 gap-1 shadow-inner"
-                style={{ background: "#0000004D" }}
+                className="flex  rounded-full p-1 gap-1 shadow-inner [background:var(--container-bg)]"
+              
               >
                 {[
                   { key: "summary", label: "Summary" },
@@ -352,9 +352,9 @@ export default function ProjectDetailsPage() {
                       url.searchParams.set('tab', t.key);
                       router.replace(url.pathname + url.search);
                     }}
-                    className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${activeTab === t.key
-                      ? "bg-[#0000004D] text-white shadow "
-                      : "text-white/80  hover:bg-[#0000004D] border-transparent"
+                    className={`  [box-shadow:var(--shadow-combined)] px-6 py-2 rounded-full text-sm font-semibold transition-all duration-200 focus:outline-none ${activeTab === t.key
+                      ? "bg-[#0000004D] text-text-main shadow "
+                      : "text-text-main hover:bg-[#0000004D] border-transparent"
                       }`}
                     style={{ minWidth: 90 }}
                   >

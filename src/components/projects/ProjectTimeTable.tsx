@@ -201,21 +201,22 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
   return (
     <>
       <div className="flex items-center justify-between mb-2`">
-        <div className="text-white/60 text-sm font-medium">{weekRange}</div>
+        
+        <div className="text-text-main text-sm font-medium">{weekRange}</div>
         <div className="flex gap-2">
           <button
             className="p-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/20"
             onClick={() => setWeekOffset((w) => w - 1)}
             aria-label="Previous week"
           >
-            <ChevronLeft className="w-5 h-5 text-white" />
+            <ChevronLeft className="w-5 h-5 text-text-main" />
           </button>
           <button
             className="p-1 rounded-full bg-white/10 hover:bg-white/20 border border-white/20"
             onClick={() => setWeekOffset((w) => w + 1)}
             aria-label="Next week"
           >
-            <ChevronRight className="w-5 h-5 text-white" />
+            <ChevronRight className="w-5 h-5 text-text-main" />
           </button>
         </div>
       </div>
@@ -239,7 +240,7 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
                 className={`flex flex-col gap-2 border-b border-white/30 px-2 flex-1 min-w-0 ${!isLast ? 'border-r border-white/20' : ''}`}
               >
                 {/* Day header */}
-                <div className="p-2 text-white text-center border-b border-white/30">
+                <div className="p-2 text-text-main text-center border-b border-white/30">
                   <div className="text-sm">
                     {dayNames[day as keyof typeof dayNames]} {dayNumbers[day]}
                   </div>
@@ -311,7 +312,7 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
                       </div>
                       <div className="mt-2 gap-3 flex flex-col">
                         <div
-                          className="text-white font-semibold overflow-hidden"
+                          className="text-text-main font-semibold overflow-hidden"
                           style={{
                             fontFamily: "Inter",
                             fontWeight: 600,
@@ -329,7 +330,7 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
                         >
                           {task.title}
                         </div>
-                        <div className="text-xs text-[#FFFFFF] mt-1 overflow-hidden"
+                        <div className="text-xs text-text-main mt-1 overflow-hidden"
                           style={{
                             fontFamily: "Inter",
                             fontWeight: 400,
@@ -367,7 +368,7 @@ const TimeTable = ({ projectId, projectName }: TimeTableProps) => {
                           )}
                         </div>
                         <div className="flex items-center justify-between gap-2 mt-2">
-                          <span className="flex items-center text-xs font-semibold text-white/80">
+                          <span className="flex items-center text-xs font-semibold text-text-main">
                             <svg
                               className="w-4 h-4 mr-1"
                               fill="none"

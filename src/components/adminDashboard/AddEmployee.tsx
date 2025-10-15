@@ -119,10 +119,10 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         {/* Header */}
         <div className="text-center mb-10">
 
-          <h1 className="text-2xl font-bold mb-3" style={{ color: colors.white.hex }}>
+          <h1 className="text-2xl font-bold mb-3 text-text-main" >
             Add New Employee
           </h1>
-          <p className=" text-lg font-medium" style={{ color: colors.white.hex }}>Build your team with talented individuals</p>
+          <p className=" text-lg font-medium text-text-secondary">Build your team with talented individuals</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -161,7 +161,7 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <span className="text-md" style={{ color: colors.white.hex }}>Full Name</span>
+                  <span className="text-md text-text-main">Full Name</span>
                 </label>
                 <div className="relative">
                   <input
@@ -180,7 +180,7 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
 
-                  <span className="text-md"style={{ color: colors.white.hex }}>Email Address</span>
+                  <span className="text-md text-text-main">Email Address</span>
                 </label>
                 <div className="relative">
                   <input
@@ -202,7 +202,7 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
 
-                  <span className="text-md" style={{ color: colors.white.hex }}>Password</span>
+                  <span className="text-md text-text-main">Password</span>
                 </label>
                 <div className="relative">
                   <input
@@ -221,7 +221,7 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
 
-                  <span className="text-md" style={{ color: colors.white.hex }}>Phone Number</span>
+                  <span className="text-md text-text-main">Phone Number</span>
                 </label>
                 <div className="relative">
                   <input
@@ -243,7 +243,7 @@ const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
   <div className="group lg:col-span-2">
     <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-      <span className="text-md" style={{ color: colors.white.hex }}>Address</span>
+      <span className="text-md text-text-main" >Address</span>
     </label>
     <div className="relative">
       <input

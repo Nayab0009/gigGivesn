@@ -65,8 +65,8 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
           {/* Header */}
           <div className="text-center mb-8">
 
-            <h1 className="text-[32px] font-semibold mb-2 text-white">Create New Sprint</h1>
-            <p className="text-[12px] font-semibold  text-white">Plan and organize your next development sprint</p>
+            <h1 className="text-[32px] font-semibold mb-2 text-text-main">Create New Sprint</h1>
+            <p className="text-[12px] font-semibold  text-text-secondary">Plan and organize your next development sprint</p>
           </div>
 
           {/* Form Container */}
@@ -77,11 +77,11 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
               <div className="space-y-6">
                 <div className="flex items-center gap-3 pb-4 " style={{ borderColor: colors.primary.hex }}>
 
-                  <h2 className="text-[18px] font-semibold text-white">Basic Information</h2>
+                  <h2 className="text-[18px] font-semibold text-text-main">Basic Information</h2>
                 </div>
                 <div className="grid grid-cols-1 gap-3">
                   <div>
-                    <label className="block text-[14px] font-semibold mb-3 text-white">
+                    <label className="block text-[14px] font-semibold mb-3 text-text-main">
                       Sprint Title <span style={{ color: colors.warning.hex }}>*</span>
                     </label>
                     <input
@@ -91,13 +91,13 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
                       onChange={e => setForm(prev => ({ ...prev, title: e.target.value }))}
                       placeholder="e.g., Sprint 24 - User Authentication & Dashboard"
                       className="w-full px-4 py-4 rounded-xl focus:ring-2 outline-none
-                      [background:var(--field-bg)] backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
+                      [background:var(--field-bg)] backdrop-blur-sm text-text-main placeholder-gray-400 transition-all duration-200
                         focus:border-white/40"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[14px] font-semibold mb-3 text-white">
+                    <label className="block text-[14px] font-semibold mb-3 text-text-main">
                       Sprint Name <span style={{ color: colors.warning.hex }}>*</span>
                     </label>
                     <input
@@ -107,20 +107,20 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
                       onChange={e => setForm(prev => ({ ...prev, title2: e.target.value }))}
                       placeholder="e.g., Sprint 24 - User Authentication & Dashboard"
                       className="w-full px-4 py-4 rounded-xl focus:ring-2 outline-none
-                     [background:var(--field-bg)] backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
+                     [background:var(--field-bg)] backdrop-blur-sm text-text-mainplaceholder-gray-400 transition-all duration-200
                         focus:border-white/40"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[14px] font-semibold mb-3 text-white">Description</label>
+                    <label className="block text-[14px] font-semibold mb-3 text-text-main">Description</label>
                     <textarea
                       value={form.description}
                       onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}
                       rows={4}
                       placeholder="Describe the main objectives, scope, and expected outcomes for this sprint..."
                       className="w-full px-4 py-4 rounded-xl focus:ring-2 outline-none
-                                [background:var(--field-bg)] backdrop-blur-sm text-white placeholder-gray-400 transition-all duration-200
+                                [background:var(--field-bg)] backdrop-blur-sm text-text-main placeholder-gray-400 transition-all duration-200
                                   focus:border-white/40"
                     />
                   </div>
@@ -159,18 +159,18 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
               <div className="space-y-6">
                 <div className="flex items-center gap-3 pb-4" style={{ borderColor: colors.primary.hex }}>
 
-                  <h2 className="text-[18px] font-semibold text-white">Timeline & Duration</h2>
+                  <h2 className="text-[18px] font-semibold text-text-main">Timeline & Duration</h2>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-[14px] font-semibold mb-3 text-white">
+                    <label className="block text-[14px] font-semibold mb-3 text-text-main">
                       Start Date <span style={{ color: colors.warning.hex }}>*</span>
                     </label>
                     <div className="relative w-full full-width-datepicker">
                       <DatePicker
                         selected={form.startDate ? new Date(form.startDate) : null}
                         onChange={(date) => setForm(prev => ({ ...prev, startDate: date?.toISOString().split("T")[0] || '' }))}
-                        className="w-full rounded-xl [background:var(--field-bg)] px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
+                        className="w-full rounded-xl [background:var(--field-bg)] px-4 py-4 text-text-main placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
                         placeholderText="Select start date"
                         dateFormat="MMM dd, yyyy"
                         isClearable
@@ -188,14 +188,14 @@ const AddSprint: React.FC<{ projectId: string | number }> = ({ projectId }) => {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-[14px] font-semibold mb-3 text-white">
+                    <label className="block text-[14px] font-semibold mb-3 text-text-main">
                       End Date <span style={{ color: colors.warning.hex }}>*</span>
                     </label>
                     <div className="relative w-full full-width-datepicker">
                       <DatePicker
                         selected={form.endDate ? new Date(form.endDate) : null}
                         onChange={(date) => setForm(prev => ({ ...prev, endDate: date?.toISOString().split("T")[0] || '' }))}
-                        className="w-full rounded-xl [background:var(--field-bg)] px-4 py-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
+                        className="w-full rounded-xl [background:var(--field-bg)] px-4 py-4 text-text-main  placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
                         placeholderText="Select end date"
                         dateFormat="MMM dd, yyyy"
                         isClearable

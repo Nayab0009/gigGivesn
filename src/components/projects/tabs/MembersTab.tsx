@@ -41,11 +41,11 @@ type MembersTabProps = {
 const MembersTab = ({ project, membersLoading, members }: MembersTabProps) => {
   if (membersLoading) {
     return (
-      <div className="p-12 text-center border border-white/10 rounded-2xl max-w-xl w-full mx-auto" style={{ background: "#0000004D" }}>
+      <div className="p-12 text-center border border-white/10 rounded-2xl max-w-xl w-full mx-auto" >
         <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
           <div className="w-6 h-6 text-emerald-600 animate-spin border-2 border-emerald-600 border-t-transparent rounded-full" />
         </div>
-        <p className="text-white/80">Loading members…</p>
+        <p className="text-text-main">Loading members…</p>
       </div>
     )
   }
@@ -59,10 +59,10 @@ const MembersTab = ({ project, membersLoading, members }: MembersTabProps) => {
         <table className="min-w-full">
           <thead>
             <tr className="border-b border-white/10">
-              <th className="px-6 py-4 text-left text-sm font-semibold text-white">Name</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-white">Email</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-white">Role in project</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-white">Status</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-main">Name</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-main">Email</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-main">Role in project</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-main">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -74,23 +74,23 @@ const MembersTab = ({ project, membersLoading, members }: MembersTabProps) => {
               >
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
-                    {project.manager.avatar ? <img src={project.manager.avatar} alt={project.manager.name} className="w-8 h-8 rounded-full object-cover" /> :   <div className="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm">
+                    {project.manager.avatar ? <img src={project.manager.avatar} alt={project.manager.name} className="w-8 h-8 rounded-full object-cover" /> :   <div className="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center text-text-main font-bold text-sm">
                       {project.manager.name.charAt(0)}
                     </div>}
-                    <span className="text-white font-medium">
+                    <span className="text-text-main font-medium">
                       {project.manager.name}{" "}
-                      <span className="ml-1 text-xs text-emerald-400"></span>
+                      <span className="ml-1 text-xs text-"></span>
                     </span>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-white/80">{project.manager.email}</td>
-                <td className="px-6 py-4 text-white/80">
+                <td className="px-6 py-4 text-text-main">{project.manager.email}</td>
+                <td className="px-6 py-4 text-text-main">
                   {project.manager.role || "Manager"}
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
-                    <span className="text-white font-medium">
+                    <span className="text-text-main font-medium">
                       {project.manager.isActive ? "Active" : "Inactive"}
                     </span>
                   </div>
@@ -109,17 +109,17 @@ const MembersTab = ({ project, membersLoading, members }: MembersTabProps) => {
                     {member.avatar ? <img src={member.avatar} alt={member.name} className="w-8 h-8 rounded-full object-cover" /> : <div className="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center text-white font-bold text-sm">
                       {member.name.charAt(0)}
                     </div>}
-                    <span className="text-white font-medium">{member.name}</span>
+                    <span className="text-text-main font-medium">{member.name}</span>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-white/80">{member.email}</td>
-                <td className="px-6 py-4 text-white/80">
+                <td className="px-6 py-4 text-text-main">{member.email}</td>
+                <td className="px-6 py-4 text-text-main">
                   {member.role || "Project Member"}
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
-                    <span className="text-white font-medium">
+                    <span className="text-text-main font-medium">
                       {"isActive" in member
                         ? member.isActive
                           ? "Active"

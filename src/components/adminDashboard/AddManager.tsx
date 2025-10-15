@@ -115,10 +115,10 @@
 
           {/* Header */}
           <div className="text-center mb-10">
-            <h1 className="text-2xl font-bold mb-3" style={{ color: colors.white.hex }}>
+            <h1 className="text-2xl font-bold mb-3 text-text-main">
               Add New Manager
             </h1>
-            <p className=" text-lg font-medium" style={{ color: colors.white.hex }}>Empower your team with strong leadership</p>
+            <p className=" text-lg font-medium text-text-secondary" >Empower your team with strong leadership</p>
           </div>
  <button
   type="button"
@@ -160,7 +160,7 @@
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="group">
                   <label className="text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                    <span className="text-md" style={{ color: colors.white.hex }}>Full Name</span>
+                    <span className="text-md text-text-main" >Full Name</span>
                   </label>
                   <div className="relative">
                     <input
@@ -170,7 +170,7 @@
                       onChange={handleChange}
                       required
                       placeholder="Enter manager's full name"
-                    className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
+                    className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-text-main  focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                     />
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                   </div>
@@ -178,7 +178,7 @@
 
                 <div className="group">
                   <label className="text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                    <span className="text-md"style={{ color: colors.white.hex }}>Email Address</span>
+                    <span className="text-md text-text-main">Email Address</span>
                   </label>
                   <div className="relative">
                     <input
@@ -188,7 +188,7 @@
                       onChange={handleChange}
                       required
                       placeholder="manager@company.com"
-                      className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
+                      className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-text-main  focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                     />
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                   </div>
@@ -199,7 +199,7 @@
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="group">
                   <label className="text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                    <span className="text-md" style={{ color: colors.white.hex }}>Password</span>
+                    <span className="text-md text-text-main">Password</span>
                   </label>
                   <div className="relative">
                     <input
@@ -209,7 +209,7 @@
                       onChange={handleChange}
                       required
                       placeholder="Create secure password"
-                    className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
+                    className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-text-main  focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                     />
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                   </div>
@@ -217,7 +217,7 @@
 
                 <div className="group">
                   <label className="text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                    <span className="text-md" style={{ color: colors.white.hex }}>Phone Number</span>
+                    <span className="text-md text-text-main" >Phone Number</span>
                   </label>
                   <div className="relative">
                     <input
@@ -227,7 +227,7 @@
                       onChange={handleChange}
                       required
                       placeholder="+1 (555) 123-4567"
-                      className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
+                      className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-text-main focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                     />
                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-500/5 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                   </div>
@@ -238,7 +238,7 @@
   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
     <div className="group lg:col-span-2">
       <label className="text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-        <span className="text-md" style={{ color: colors.white.hex }}>Address</span>
+        <span className="text-md text-text-main" >Address</span>
       </label>
       <div className="relative">
         <input
@@ -248,7 +248,7 @@
           onChange={handleChange}
           required
           placeholder="Manager's address"
-          className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
+          className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-text-mainfocus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
         />
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-orange-500/5 to-red-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
       </div>

@@ -319,11 +319,11 @@ export default function CalendarPage() {
     <div className="min-h-screen pb-12 text-white rounded-2xl px-6 space-y-4">
       {/* Calendar heading and subheading at the top */}
       <div className="pb-[16px] pt-6 px-2">
-        <h1 className="text-2xl font-bold text-white">My Calendar</h1>
-        <p className="text-white/60 ">Manage your schedule and events-259</p>
+        <h1 className="text-2xl font-bold text-text-main">My Calendar</h1>
+        <p className="text-text-secondary ">Manage your schedule and events-259</p>
       </div>
       {/* Week range and navigation header below heading */}
-      <div className="flex items-center justify-between mb-4 px-2">
+      <div className="flex items-center justify-between mb-4 px-2 text-text-secondary">
         <div 
           style={{
             fontFamily: 'Roboto, sans-serif',
@@ -335,7 +335,7 @@ export default function CalendarPage() {
             verticalAlign: 'middle',
             borderRadius: '6px',
             // padding: '2px 12px',
-            color: '#FFFFFF99',
+          
             display: 'inline-block',
             
           }}
@@ -360,14 +360,14 @@ export default function CalendarPage() {
         </div>
       </div>
       <div
-        className="w-full text-white overflow-auto scrollbar-hide mx-auto"
+        className="w-full text-white overflow-auto scrollbar-hide mx-auto [background:var(--container-bg)] "
         style={{
           height: 'auto',
           borderRadius: '12px',
           borderWidth: '1px',
           opacity: 1,
           padding: '4px',
-          background: '#0000004D',
+
           backgroundBlendMode: 'luminosity',
           border: '1px solid #FFFFFF4D',
           position: 'relative',
@@ -392,7 +392,7 @@ export default function CalendarPage() {
               className={`flex flex-col gap-2 border-b border-white/30 px-2 flex-1 min-w-0 ${!isLast ? 'border-r border-white/20' : ''}`}
             >
               {/* Day header */}
-                <div className="p-2 text-white text-center border-b border-white/30">
+                <div className="p-2 text-text-main text-center border-b border-white/30">
                   <div className="text-sm">
                     {dayNames[day as keyof typeof dayNames]} {dayNumbers[day]}
                   </div>
@@ -408,7 +408,7 @@ export default function CalendarPage() {
                   return (
                     <div
                       key={`${day}-${task.id || idx}`}
-                      className="flex flex-col justify-between bg-black/30 text-[#0CA9F6] relative overflow-hidden shadow-lg h-[240px] p-4 rounded-[15px] border border-white/10 gap-y-[12px]"
+                      className="flex flex-col justify-between [background:var(--container-bg)] text-[#0CA9F6] relative overflow-hidden shadow-lg h-[240px] p-4 rounded-[15px] border border-white/10 gap-y-[12px]"
                       style={{
                         opacity: 1,
                         boxShadow: "0 2px 12px 0 rgba(0,0,0,0.10)",
@@ -462,7 +462,7 @@ export default function CalendarPage() {
                       </div>
                       <div className="mt-2 gap-[12px]">
                         <div
-                          className="text-white font-semibold overflow-hidden"
+                          className="text-text-main font-semibold overflow-hidden"
                           style={{
                             fontFamily: "Inter",
                             fontWeight: 600,
@@ -480,7 +480,7 @@ export default function CalendarPage() {
                         >
                           {task.title}
                         </div>
-                        <div className="text-xs text-[#FFFFFF] mt-1 overflow-hidden"
+                        <div className="text-xs text-text-main mt-1 overflow-hidden"
                         style={{
                             fontFamily: "Inter",
                             fontWeight: 400,
@@ -510,7 +510,7 @@ export default function CalendarPage() {
                             />
                           ) : (
                             <div
-                              className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center text-xs border-2 border-white"
+                              className="w-7 h-7 rounded-full bg-blue-600 text-text-main flex items-center justify-center text-xs border-2 border-white"
                               title={task.taskFor?.name || "Assignee"}
                             >
                               {task.taskFor?.name?.charAt(0) || "A"}
@@ -518,7 +518,7 @@ export default function CalendarPage() {
                           )}
                         </div>
                         <div className="flex items-center justify-between gap-2 mt-2">
-                          <span className="flex items-center text-xs font-semibold text-white/80">
+                          <span className="flex items-center text-xs font-semibold text-text-main ">
                             <svg
                               className="w-4 h-4 mr-1"
                               fill="none"
@@ -566,7 +566,7 @@ export default function CalendarPage() {
 
                 {/* No tasks fallback */}
                 {tasks.length === 0 && (
-                  <div className="h-32 rounded-2xl border border-white/5 flex items-center justify-center text-white/30 text-sm">
+                  <div className="h-32 rounded-2xl border border-white/5 flex items-center justify-center text-text-main text-sm">
                     No tasks
                   </div>
                 )}

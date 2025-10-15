@@ -238,7 +238,7 @@ export default function EnhancedManagersTable() {
           {/* Left: Heading */}
           <div className="flex flex-col gap-1 md:gap-2 justify-center flex-shrink-0" style={{ minWidth: 220 }}>
             <h1
-              className="font-bold text-white font-sans not-italic text-2xl leading-9 tracking-normal [font-family:Montserrat,sans-serif] [font-weight:700] [vertical-align:middle] [background-clip:text]"
+              className="font-bold text-text-main font-sans not-italic text-2xl leading-9 tracking-normal [font-family:Montserrat,sans-serif] [font-weight:700] [vertical-align:middle] [background-clip:text]"
               style={{
                 fontFamily: 'Montserrat, sans-serif',
                 fontWeight: 700,
@@ -253,7 +253,7 @@ export default function EnhancedManagersTable() {
               Managers Details 
             </h1>
             <p
-              className="font-normal align-middle text-white font-sans not-italic text-sm leading-5 tracking-normal [font-family:Montserrat,sans-serif] [font-weight:400] [background-clip:text]"
+              className="font-normal align-middle text-text-secondary font-sans not-italic text-sm leading-5 tracking-normal [font-family:Montserrat,sans-serif] [font-weight:400] [background-clip:text]"
             >
               Manage and track all project managers
             </p>
@@ -267,10 +267,10 @@ export default function EnhancedManagersTable() {
               <input
                 type="text"
                 placeholder="Search manager by name, email or ID"
-                className="w-full h-[38px] rounded-[16px] border border-[#FFFFFF4D] bg-[#0000004D] opacity-100 px-[41px] py-[9px] pr-[17px] text-[#9CA3AF] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm"
+               className="w-[396px] h-[38px] rounded-[16px] border border-[#FFFFFF4D] [background:var(--field-bg)] opacity-100 px-[41px] py-[9px]   pr-[17px] text-[#9CA3AF] placeholder-[#A1A1A1] focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm mx-auto"
                 style={{
                   borderWidth: 1,
-                  background: '#0000004D',
+          
                   borderColor: '#FFFFFF4D',
                   borderRadius: '16px',
                   opacity: 1,
@@ -283,16 +283,16 @@ export default function EnhancedManagersTable() {
           {/* Right: 3 Buttons */}
           <div className="flex flex-row items-center gap-2 md:gap-3 flex-shrink-0">
             <div
-              className="text-xs text-white sm:text-sm px-[24px] py-[8px] rounded-full border bg-[#0000004D] border-[#FFFFFF4D] opacity-100  focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm flex items-center"
+              className="text-xs text-text-main sm:text-sm px-[24px] py-[8px] rounded-full border [background:var(--container-bg)]  border-[#FFFFFF4D] opacity-100  focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm flex items-center"
               style={{
                 borderWidth: 1,
-                background: '#0000004D',
+              
                 borderColor: '#FFFFFF4D',
                 opacity: 1,
               }}
             >
-              <span className="font-semibold text-white" >{filteredManagers.length}</span>
-              <span className="mx-1">of</span>
+              <span className="font-semibold text-text-main" >{filteredManagers.length}</span>
+              <span className="mx-1 text-text-main">of</span>
               {managers.length} Managers
             </div>
             <button
@@ -300,7 +300,7 @@ export default function EnhancedManagersTable() {
               className="text-xs text-white sm:text-sm px-[24px] py-[8px] rounded-full border bg-[#0000004D] border-[#FFFFFF4D] opacity-100 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm inline-flex items-center gap-2 font-medium group hover:shadow-lg transform hover:scale-105"
               style={{
                 borderWidth: 1,
-                background: '#0000004D',
+              background: colors.primary.hex,
                 borderColor: '#FFFFFF4D',
                 opacity: 1,
               }}
@@ -332,15 +332,15 @@ export default function EnhancedManagersTable() {
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-4" style={{ background: colors.accent.hex }}>
                 <RefreshCw className="w-6 h-6 animate-spin" style={{ color: colors.primary.hex }} />
               </div>
-              <p className="text-lg text-slate-200">Loading managers...</p>
+              <p className="text-lg text-text-secondary">Loading managers...</p>
             </div>
           ) : filteredManagers.length === 0 ? (
             <div className="px-6 py-16 text-center">
               <div className="mx-auto w-16 h-16 rounded-full flex items-center justify-center mb-4" style={{ background: '#ffffff14' }}>
                 <AlertCircle className="w-8 h-8 text-slate-300" />
               </div>
-              <p className="text-slate-200 text-lg font-medium mb-1">No managers found</p>
-              <p className="text-slate-400">Try adjusting your search criteria</p>
+              <p className="text-text-secondary text-lg font-medium mb-1">No managers found</p>
+              <p className="text-text-secondary">Try adjusting your search criteria</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -376,23 +376,23 @@ export default function EnhancedManagersTable() {
                           {initials}
                         </div>
                         <div>
-                          <h3 className="text-white font-semibold text-[16px] leading-tight">{manager.name}</h3>
-                          <div className="text-xs text-slate-300">Project Manager</div>
+                          <h3 className="text-text-main font-semibold text-[16px] leading-tight">{manager.name}</h3>
+                          <div className="text-xs text-text-secondary">Project Manager</div>
                         </div>
                       </div>
                     </div>
 
                     <div className="relative mt-4 grid grid-cols-2 gap-y-2 text-sm">
                       <div
-                        className="text-[#A8A8A8] [font-family:Montserrat,sans-serif] font-normal not-italic text-sm leading-5 tracking-normal align-middle"
+                        className="text-text-main [font-family:Montserrat,sans-serif] font-normal not-italic text-sm leading-5 tracking-normal align-middle"
                       >
                         Email:
                       </div>
-                      <div className="text-right text-white font-medium truncate" title={manager.email}>{manager.email}</div>
-                      <div className="text-[#A8A8A8] [font-family:Montserrat,sans-serif] text-[14px] not-italic text-sm leading-5 tracking-normal align-middle">Phone:</div>
-                      <div className="text-right text-slate-200 font-medium truncate" title={manager.phone}>{manager.phone}</div>
-                      <div className="text-[#A8A8A8] [font-family:Montserrat,sans-serif] font-normal not-italic text-sm leading-5 tracking-normal align-middle">Location:</div>
-                      <div className="text-right text-slate-200 font-medium truncate" title={manager.address}>{manager.address}</div>
+                      <div className="text-right text-text-main font-medium truncate" title={manager.email}>{manager.email}</div>
+                      <div className="text-text-main  [font-family:Montserrat,sans-serif] text-[14px] not-italic text-sm leading-5 tracking-normal align-middle">Phone:</div>
+                      <div className="text-right text-text-main  font-medium truncate" title={manager.phone}>{manager.phone}</div>
+                      <div className="text-text-main  [font-family:Montserrat,sans-serif] font-normal not-italic text-sm leading-5 tracking-normal align-middle">Location:</div>
+                      <div className="text-right text-text-main  font-medium truncate" title={manager.address}>{manager.address}</div>
                       {/* <div className="text-[#A8A8A8] [font-family:Montserrat,sans-serif] font-normal not-italic text-sm leading-5 tracking-normal align-middle">Team Size:</div> */}
                       {/* <div className="text-right text-white font-medium">{teamSize} members</div> */}
                     </div>
@@ -415,19 +415,19 @@ export default function EnhancedManagersTable() {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleDelete(manager.id)}
-                          className="inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200"
-                          style={{ background: '#0000004D' }}
+                          className=" [background:var(--container-bg)]  inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200 text-text-main"
+                        
                           title="Delete"
                         >
-                          <Image src="/images/liteDelete.svg" alt="Delete" width={16} height={16} className="w-4 h-4" style={{ color: '#B0B9C6' }}/>
+                          <Image src="/images/liteDelete.svg" alt="Delete" width={16} height={16} className="w-4 h-4" style={{ color: '#FFF' }}/>
                         </button>
                         
                         
                         
                         <button
                           onClick={() => handleEditClick(manager)}
-                          className="inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200"
-                          style={{ background: '#0000005D' }}
+                          className=" [background:var(--container-bg)] inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200"
+                      
                           title="Edit"
                         >
                           <Image src="/images/ri_edit-line.svg" alt="Edit" width={16} height={16} className="w-4 h-4" style={{ color: '#B0B9C6' }} />

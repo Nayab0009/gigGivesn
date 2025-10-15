@@ -305,10 +305,10 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
           <div className="flex flex-cols-2 [background:var(--container-bg)] items-center py-3 rounded-2xl  shadow-md group [border:var(--border-style)] [box-shadow:var(--shadow-combined)] justify-between">
             <div>
               <div className="px-4 py-2">
-              <p className="text-gray-200 font-light text-xs tracking-wider">Total Projects</p>
+              <p className="text-text-main font-light text-xs tracking-wider">Total Projects</p>
 
             <div>
-              <p className="text-lg font-bold text-white">
+              <p className="text-lg font-bold text-text-main">
                {formatNumber(dashboardData.adminStats.totalProjects)}
               </p>
               {/* <div className="flex items-center">
@@ -331,7 +331,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
             </div>
             <div>
               <div className="w-16 h-16 [background:var(--container-bg)] items-center justify-center justify-items-center rounded-2xl flex mr-7">
-                <Image src="/images/bag.svg" alt="bag" width={30} height={30} className="text-white p-1" />
+                <Image src="/images/bag.svg" alt="bag" width={30} height={30} className="text-text-main p-1" />
               </div>
               </div>
           </div>
@@ -340,9 +340,9 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
           <div className="flex flex-cols-2 [background:var(--container-bg)] items-center py-3 rounded-2xl shadow-md group [border:var(--border-style)] [box-shadow:var(--shadow-combined)]  justify-between">
             <div>
               <div className="px-4 py-2">
-                <p className="text-gray-200 font-light text-xs tracking-wider">Completed projects</p>
+                <p className="text-text-main font-light text-xs tracking-wider">Completed projects</p>
                 <div>
-                  <p className="text-lg font-bold text-white">
+                  <p className="text-lg font-bold text-text-main">
                     {formatNumber(dashboardData.adminStats.totalTasks)}
                   </p>
                   {/* <div className="flex items-center">
@@ -368,9 +368,9 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
           <div className="flex flex-cols-2 [background:var(--container-bg)]  items-center py-3 rounded-2xl shadow-md group [border:var(--border-style)] [box-shadow:var(--shadow-combined)] justify-between">
             <div>
               <div className="px-4 py-2">
-                <p className="text-gray-200 font-light text-xs tracking-wider">Users</p>
+                <p className="text-text-main font-light text-xs tracking-wider">Users</p>
                 <div>
-                  <p className="text-lg font-bold text-white">
+                  <p className="text-lg font-bold text-text-main">
                     {formatNumber(dashboardData.adminStats.totalUsers)}
                   </p>
                   {/* <div className="flex items-center">
@@ -405,8 +405,8 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
             <div className="flex items-center gap-4 w-full justify-between">
 
               <div>
-                <h3 className="text-xl font-medium text-white mb-1">Team Activity</h3>
-                <p className="text-gray-300 text-sm">Task distribution and efficiency by team</p>
+                <h3 className="text-xl font-medium text-text-main mb-1">Team Activity</h3>
+                <p className="text-text-main text-sm">Task distribution and efficiency by team</p>
               </div>
               <div className="w-10 h-10 bg-[rgba(0,0,0,0.3)] rounded-full flex items-center justify-center">
                 <Image src="/images/users.svg" alt="Users" width={20} height={20} className="text-white" />
@@ -433,8 +433,8 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                 <Image src="/images/clock.svg" alt="clock" width={20} height={20} className=" text-white" />
               </div>
               <div>
-  <h3 className="text-xl font-medium text-white mb-1 flex items-center">Project Breakdown</h3>
-                <p className="text-gray-300 text-sm ">Completed vs In Progress</p>
+  <h3 className="text-xl font-medium text-text-main mb-1 flex items-center">Project Breakdown</h3>
+                <p className="text-text-main text-sm ">Completed vs In Progress</p>
               </div>
                 </div>
 
@@ -479,9 +479,9 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                     ].map((header, index) => (
                       <th
                         key={index}
-                        className="px-4 py-2 text-center text-xs font-semibold text-white border-r border-white/30"
+                        className="px-4 py-2 text-center text-xs font-semibold text-text-secondary  border-r border-white/30"
                       >
-                        <span className="bg-black/30 p-2 rounded-md font-medium">{header.title}</span>
+                        <span className=" p-2 rounded-md font-medium">{header.title}</span>
                       </th>
                     ))}
                   </tr>
@@ -497,22 +497,22 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                     return (
                       <tr key={project.id} className="hover:bg-gray-800/20 transition-colors">
                         <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-2/12">
-                          <span className="text-sm text-white"><span></span>
+                          <span className="text-sm text-text-main"><span></span>
                           {project.name}
                           </span>
                         </td>
                         <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-2/12">
-                          <span className="text-sm text-white">
+                          <span className="text-sm text-text-main">
                             {project.managername}
                             </span>
                         </td>
                         <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-1/12">
-                          <span className="text-sm text-white">
+                          <span className="text-sm text-text-main">
                             {formatDate(project.startDate)}
                             </span>
                         </td>
                         <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-1/12">
-                          <span className="text-sm text-white">
+                          <span className="text-sm text-text-main">
                             {formatDate(project.endDate)}
                             </span>
                         </td>
@@ -521,19 +521,19 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                             <div className="w-24 mr-2">
                               <ProgressBar percentage={progress} />
                             </div>
-                            <span className="text-xs text-white">{progress}%</span>
+                            <span className="text-xs text-text-main">{progress}%</span>
                           </div>
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-center border-r border-white/30 w-1/12">
-                          <span className="text-sm text-white">
+                          <span className="text-sm text-text-main">
                             {totalTasks}
                             </span>
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-center border-r border-white/30 w-2/12">
-                          <span className="text-sm text-white">{pendingTask}</span>
+                          <span className="text-sm text-text-main">{pendingTask}</span>
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap text-center w-4/12">
-                          <span className="text-sm text-white">{completedTask}</span>
+                          <span className="text-sm text-text-main">{completedTask}</span>
                         </td>
                       </tr>
                     );

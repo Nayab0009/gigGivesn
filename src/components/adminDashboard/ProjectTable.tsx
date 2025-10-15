@@ -165,9 +165,9 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
     if (!open || !project) return null
 
     return (
-      <div className="fixed inset-0 bg-black/30 backdrop-blur-[100px] flex items-center justify-center z-50 p-4 border border">
+      <div className="fixed inset-0 [background:var(--container-bg)] backdrop-blur-[100px] flex items-center justify-center z-50 p-4 border border">
         <div
-          className="rounded-3xl  bg-black/30  border border-white/30  max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 no-scrollbar"
+          className="rounded-3xl  [background:var(--container-bg)] border border-white/30  max-w-lg w-full max-h-[90vh] overflow-y-auto transform transition-all duration-300 scale-100 no-scrollbar"
           style={{
             // background: "black/40",
 
@@ -180,17 +180,17 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
 `}</style> */}
           {/* Header */}
           <div
-            className="px-8 py-6 relative overflow-hidden rounded-t-3xl"
+            className="px-8 py-6 relative overflow-hidden rounded-t-3xl "
             // style={{
             //   background: `linear-gradient(135deg, ${colors.primary.hex}, ${colors.secondary.hex})`,
             //   color: "#fff",
             // }}
           >
-            <div className="absolute inset-0 bg-black/30"></div>
+            <div className="absolute inset-0 [background:var(--form-bg)]   [border:var(--border-style)] "></div>
             <div className="relative flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold mb-1 text-white">Edit Project</h2>
-                <p className="text-white/80 text-sm">Update project information</p>
+                <h2 className="text-2xl font-bold mb-1 text-text-main">Edit Project</h2>
+                <p className="text-text-secondary text-sm">Update project information</p>
               </div>
               <button
                 onClick={onClose}
@@ -203,11 +203,11 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="flex flex-col h-full bg-black/30">
-            <div className="px-8 py-6 space-y-6 text-white">
+          <form onSubmit={handleSubmit} className="flex flex-col h-full [background:var(--form-bg)]     [border:var(--border-style)] ">
+            <div className="px-8 py-6 space-y-6 text-text-main ">
               {/* Project Name */}
               <div className="space-y-2">
-                <label className="text-sm font-semibold mb-2 flex items-center gap-2">
+                <label className="text-sm ont-semibold mb-2 flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full" style={{ background: colors.primary.hex }}></div>
                   Project Name *
                 </label>
@@ -215,7 +215,7 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleInputChange("name", e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl focus:ring-4 focus:outline-none border  border-white/30 transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
+                  className="w-full px-4 py-3 rounded-xl focus:ring-4 focus:outline-none [border:var(--border-style)] transition-all duration-300 font-medium bg-transparent text-white placeholder-gray-300"
                   style={{
                     borderColor: errors.name ? "#ef4444" : "rgba(255, 255, 255, 0.3)",
                   }}
@@ -333,7 +333,7 @@ function EditProjectModal({ open, onClose, onUpdate, project, isUpdating = false
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-6 py-3 border-2 rounded-xl font-semibold transition-all duration-300 hover:bg-white/20 transform hover:scale-105 text-white"
+                className="flex-1 px-6 py-3 border-2 rounded-xl font-semibold transition-all duration-300 hover:bg-white/20 transform hover:scale-105 text-text-secondary disabled:opacity-50 disabled:cursor-not-allowed"
                 style={{
                   borderColor: "#fff",
                 }}
@@ -680,7 +680,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
           {/* Left: Heading */}
           <div className="flex flex-col gap-1 md:gap-2 justify-center flex-shrink-0" style={{ minWidth: 220 }}>
             <h1
-              className="font-bold text-white font-sans not-italic text-2xl leading-9 tracking-normal [font-family:Montserrat,sans-serif] [font-weight:700] [vertical-align:middle] [background-clip:text]"
+              className="font-bold text-text-main font-sans not-italic text-2xl leading-9 tracking-normal [font-family:Montserrat,sans-serif] [font-weight:700] [vertical-align:middle] [background-clip:text]"
               style={{
                 fontFamily: 'Montserrat, sans-serif',
                 fontWeight: 700,
@@ -695,7 +695,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
               Project Dashboard
             </h1>
             <p
-              className="font-normal align-middle text-[#E5E5E5] text-opacity-75  font-montserrat not-italic text-sm leading-5 tracking-normal [font-family:Montserrat,sans-serif] [font-weight:400] [background-clip:text]"
+              className="font-normal align-middle text-text-secondary text-opacity-75  font-montserrat not-italic text-sm leading-5 tracking-normal [font-family:Montserrat,sans-serif] [font-weight:400] [background-clip:text]"
             >
               Manage and track your project progress
             </p>
@@ -710,10 +710,10 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
               <input
                 type="text"
                 placeholder="Search projects by name or description"
-                className="w-[396px] h-[38px] rounded-[16px] border border-[#FFFFFF4D] bg-[#0000004D] opacity-100 px-[41px] py-[9px]   pr-[17px] text-[#9CA3AF] placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm mx-auto"
+                className="w-[396px] h-[38px] rounded-[16px] border border-[#FFFFFF4D] [background:var(--field-bg)] opacity-100 px-[41px] py-[9px]   pr-[17px] text-[#9CA3AF] placeholder-[#A1A1A1] focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm mx-auto"
                 style={{
                   borderWidth: 1,
-                  background: '#0000004D',
+
                   borderColor: '#FFFFFF4D',
                   borderRadius: '16px',
                   paddingTop: '9px',
@@ -736,10 +736,10 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
               <button
                 type="button"
                 onClick={() => setStatusOpen((v) => !v)}
-                className="text-xs text-white sm:text-sm px-[24px] py-[8px] rounded-full border opacity-100 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm inline-flex items-center gap-2"
+                className=" [background:var(--container-bg)]  text-xs text-text-main sm:text-sm px-[24px] py-[8px] rounded-full border opacity-100 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm inline-flex items-center gap-2"
                 style={{
                   borderWidth: 1,
-                  background: '#0000004D',
+  
                   borderColor: '#FFFFFF4D',
                 }}
               >
@@ -748,7 +748,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                   : statusFilter === 'in-progress'
                   ? 'In Progress'
                   : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
-                <ChevronDown className="w-4 h-4 text-white" />
+                <ChevronDown className="w-4 h-4 text-text-main" />
               </button>
               {statusOpen && (
                 <div
@@ -815,37 +815,37 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                 <thead className="backdrop-blur-md  bg-[var(--thead-bg)] " style={{height: '73px', borderBottom: '5px solid #FFFFFF1A'}}>
                   <tr className="h-[56px]">
                     <th className="px-4 sm:px-6 py-4 text-left w-[180px] border-b-2 border-[#4A6A65]">
-                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 ,color: 'var(--text-primary)'}}>
                         NAME
                       </span>
                     </th>
                     <th className="px-4 sm:px-6 py-4 text-left w-[260px] border-b-2 border-[#4A6A65]">
-                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 ,color: 'var(--text-primary)'}}>
                         DESCRIPTION
                       </span>
                     </th>
                     <th className="px-4 sm:px-6 py-4 text-left w-[110px] border-b-2 border-[#4A6A65]">
-                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left whitespace-nowrap uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left whitespace-nowrap uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700,color: 'var(--text-primary)' }}>
                         START DATE
                       </span>
                     </th>
                     <th className="px-4 sm:px-6 py-4 text-left w-[110px] border-b-2 border-[#4A6A65]">
-                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left whitespace-nowrap uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left whitespace-nowrap uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700,color: 'var(--text-primary)' }}>
                         END DATE
                       </span>
                     </th>
                     <th className="px-4 sm:px-6 py-4 text-left w-[140px] border-b-2 border-[#4A6A65]">
-                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 ,color: 'var(--text-primary)'}}>
                         STATUS
                       </span>
                     </th>
                     <th className="px-4 sm:px-6 py-4 text-left w-[160px] border-b-2 border-[#4A6A65]">
-                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700,color: 'var(--text-primary)' }}>
                         MANAGERS
                       </span>
                     </th>
                     <th className="px-4 sm:px-6 py-4 text-left w-[120px] border-b-2 border-[#4A6A65]">
-                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 }}>
+                      <span className="font-[Roboto] font-bold text-white text-[14px] leading-[20px] tracking-[0.7px] text-left uppercase" style={{ fontFamily: 'Roboto, sans-serif', fontWeight: 700 ,color: 'var(--text-primary)'}}>
                         VIEW TEAM
                       </span>
                     </th>
@@ -859,8 +859,8 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                           <div className="w-16 h-16 bg-white/10 border border-white/20 rounded-full flex items-center justify-center mb-4">
                             <AlertCircle className="w-8 h-8 text-white/70" />
                           </div>
-                          <p className="text-white/90 text-lg font-medium mb-1">No projects found</p>
-                          <p className="text-white/60">Try adjusting your search or filter criteria</p>
+                          <p className="text-text-main text-lg font-medium mb-1">No projects found</p>
+                          <p className="text-text-main">Try adjusting your search or filter criteria</p>
                         </div>
                       </td>
                     </tr>
@@ -895,7 +895,7 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                               <h3
                                 className="text-xs sm:text-sm  leading-tight break-words whitespace-normal cursor-pointer"
                                 onClick={() => router.push(`/dashboard/manager/projects/${project.id}`)}
-                                style={{ color: "#FFFFFF", fontWeight: 500, wordBreak: 'break-word', fontSize: '16px' }}
+                                style={{ color: 'var(--text-primary)', fontWeight: 500, wordBreak: 'break-word', fontSize: '16px' }}
                               >
                                 {(() => {
                                   // Split name into words, insert <br/> after every 30 words
@@ -924,17 +924,17 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                           </div>
                         </td>
                         <td className="px-6 py-6">
-                          <p className="text-sm leading-relaxed break-words whitespace-normal max-w-2xl" style={{ color: "#A8A8A8" }}>
+                          <p className="text-sm leading-relaxed break-words whitespace-normal max-w-2xl text-text-secondary" >
                            {truncateByWords(project.description, 30)}
                           </p>
                         </td>
                         <td className="px-6 py-6">
-                          <span className="text-sm text-white/80 whitespace-nowrap">
+                          <span className="text-sm text-text-secondary  whitespace-nowrap">
                             {project.startDate ? new Date(project.startDate).toLocaleDateString() : "—"}
                           </span>
                         </td>
                         <td className="px-6 py-6">
-                          <span className="text-sm text-white/80">
+                          <span className="text-sm text-text-secondary">
                             {project.endDate ? new Date(project.endDate).toLocaleDateString() : "—"}
                           </span>
                         </td>
@@ -968,19 +968,19 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                               })()}
                             </span>
                           ) : (
-                            <span className="text-xs text-white/60">
+                            <span className="text-xs text-text-secondary">
                               —
                             </span>
                           )}
                         </td>
                         <td className="px-6 py-6">
                           {project.manager ? (
-                            <span className="text-sm leading-relaxed break-words whitespace-normal max-w-2xl" style={{ color: "#A8A8A8" }}>
+                            <span className="text-sm leading-relaxed break-words whitespace-normal max-w-2xl text-text-secondary">
                               {project.manager.name}
                             </span>
                           ) : (
                             <div className="flex items-center gap-2">
-                              <span className="text-sm text-white/60">
+                              <span className="text-sm text-text-secondary">
                                 No manager
                               </span>
                               <button
@@ -1014,11 +1014,11 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
                             </button>
                             <button
                               onClick={() => setEditProjectId(project.id)}
-                              className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1 border"
+className="group inline-flex items-center justify-center w-10 h-10 rounded-full transition-all duration-300 ease-in-out shadow-sm hover:shadow-lg transform hover:scale-110 hover:-translate-y-1 border"
                               style={{
                                 background: "#0000004D",
                                 borderColor: "#FFFFFF4D",
-                                color: "#BDBDBD", // light gray
+                                color: "#FFFF", // light gray
                               }}
                               title="Edit"
                             >
@@ -1059,9 +1059,9 @@ const truncateByWords = (text: string, maxLength: number = 100) => {
           {!isLoading && (
             <div
               className="flex flex-col md:flex-row items-center justify-between gap-4 px-4 sm:px-6 py-4 border-t"
-              style={{ borderColor: "#FFFFFF26", background: "rgba(0,0,0,0.15)" }}
+              style={{ borderColor: "#FFFFFF26", }}
             >
-              <div className="text-sm" style={{ color: "#E5E7EB" }}>
+              <div className="text-sm text-text-secondary" >
                 {(() => {
                   const total = filteredProjects.length
                   const start = total === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1

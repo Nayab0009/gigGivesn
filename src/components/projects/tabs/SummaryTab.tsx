@@ -42,15 +42,15 @@ const SummaryTab = ({
           <div
             key={c.label}
             className="rounded-2xl border:var(--border-style)]
-    mb-2 [box-shadow:var(--shadow-combined)] [background:var(--container-bg)]  p-4 text-white/90 backdrop-blur-xl flex flex-col gap-2"
+    mb-2 [box-shadow:var(--shadow-combined)] [background:var(--container-bg)]  p-4 text-text-main backdrop-blur-xl flex flex-col gap-2"
           
           >
             <div className="flex items-center gap-2 mb-1">
               <span className="inline-flex items-center justify-center w-6 h-6 rounded-md">{c.icon}</span>
-              <span className="text-2xl font-semibold text-white mx-1">{c.value}</span>
-              <span className="text-sm capitalize font-medium text-white/80">{c.label}</span>
+              <span className="text-2xl font-semibold mx-1">{c.value}</span>
+              <span className="text-sm capitalize font-medium ">{c.label}</span>
             </div>
-            <div className="text-xs text-white/60 mt-1">
+            <div className="text-xs  mt-1">
               {c.label === "due soon" ? "in the next 7 days" : "in the last 7 days"}
             </div>
           </div>
@@ -62,8 +62,8 @@ const SummaryTab = ({
     [box-shadow:var(--shadow-combined)] [background:var(--container-bg)] p-6 text-white/90 backdrop-blur-xl min-h-[320px] max-h-[380px] overflow-auto"
           
         >
-          <div className="text-lg font-semibold mb-2">Status overview</div>
-          <div className="text-white/70 text-sm mb-6">
+          <div className="text-lg font-semibold mb-2 text-text-main">Status overview</div>
+          <div className="text-text-main text-sm mb-6">
             {taskCounts.totalTask > 0 ? (
               "Current status overview of all work items in this project"
             ) : (
@@ -73,17 +73,17 @@ const SummaryTab = ({
               </>
             )}
           </div>
-          <div className="text-center mt-18 text-6xl font-light font-roboto">{taskCounts.totalTask}</div>
-          <div className="text-center text-white/60 text-sm">Total work items</div>
+          <div className="text-center text-text-main  mt-18 text-6xl font-light font-roboto">{taskCounts.totalTask}</div>
+          <div className="text-center text-text-main text-sm">Total work items</div>
         </div>
         <div
           className="rounded-2xl  [border:var(--border-style)]
     [box-shadow:var(--shadow-combined)] [background:var(--container-bg)] p-6 text-white/90 backdrop-blur-xl min-h-[320px] max-h-[380px] overflow-auto"
         
         >
-          <div className="text-lg font-semibold mb-2">Description</div>
+          <div className="text-lg font-semibold mb-2 text-text-main">Description</div>
           {project?.description ? (
-            <div className="mt-4 text-white/80">{project.description}</div>
+            <div className="mt-4 text-text-main">{project.description}</div>
           ) : (
             <div className="flex flex-col mt-12 items-center justify-center h-[150px]">
               <div className="font-medium text-white/60">No description available</div>
@@ -97,8 +97,8 @@ const SummaryTab = ({
     [box-shadow:var(--shadow-combined)]  [background:var(--container-bg)] p-6 text-white/90 backdrop-blur-xl min-h-[320px] "
          
         >
-          <div className="text-lg font-semibold mb-2">Priority breakdown</div>
-          <div className="text-white/70 text-sm mb-6">
+          <div className="text-lg font-semibold mb-2 text-text-main ">Priority breakdown</div>
+          <div className="text-text-main text-sm mb-6 text-text-main">
             Get a holistic view of how work is being prioritized.{" "}
             <a
               href="#"
@@ -144,7 +144,7 @@ const SummaryTab = ({
                         return (
                           <div
                             key={`tick-${i}`}
-                            className="absolute text-white/90 text-xs"
+                            className="absolute text-text-main text-xs"
                             style={{
                               bottom: `${pos}%`,
                               right: 8,
@@ -177,7 +177,7 @@ const SummaryTab = ({
                         return (
                           <div key={bar.priority} className="relative group flex flex-col items-center" style={{ width: 64 }}>
                             {/* Value label */}
-                            <div className="text-white text-sm font-medium mb-1">{bar.value}</div>
+                            <div className="text-text-main text-sm font-medium mb-1">{bar.value}</div>
                             <div
                               className="w-full transition-all duration-300 rounded-t-lg"
                               style={{ height: h, backgroundColor: bar.color, position: "relative" }}
@@ -226,8 +226,8 @@ const SummaryTab = ({
     [box-shadow:var(--shadow-combined)] p-6 text-white/90 backdrop-blur-xl  [background:var(--container-bg)] max-h-[450px] overflow-auto flex flex-col "
         
         >
-          <div className="text-lg font-semibold mb-2">Members Task Breakdown</div>
-          <div className="text-white/70 text-base font-semibold mb-4">Member</div>
+          <div className="text-lg font-semibold mb-2 text-text-main">Members Task Breakdown</div>
+          <div className="text-text-main text-base font-semibold mb-4" >Member</div>
           <div className="space-y-4 flex-1 flex flex-col justify-center">
             {memberTaskCounts.length === 0 ? (
               <div className="text-center py-8">
@@ -243,11 +243,11 @@ const SummaryTab = ({
                 return (
                   <div
                     key={member.userId}
-                    className="bg-[#0000004D] rounded-xl px-4 py-2 flex flex-col gap-1 shadow border border-white/20"
+                    className=" [background:var(--container-bg)]  rounded-xl px-4 py-2 flex flex-col gap-1 shadow border border-white/20"
                   >
                     <div className="flex justify-between items-center mb-1">
-                      <span className="text-white text-xs font-medium">{member.userName}</span>
-                      <span className="text-white/70 text-xs">{member.taskCount} tasks</span>
+                      <span className="text-text-main text-xs font-medium">{member.userName}</span>
+                      <span className="text-text-main text-xs">{member.taskCount} tasks</span>
                     </div>
                     <div className="w-full h-3 rounded-full bg-white/20 overflow-hidden">
                       <div

@@ -303,8 +303,8 @@ export function AssignTaskModal({
         <div className="p-6 text-center  flex-shrink-0 ">
           <div className="flex items-center justify-between">
             <div className="flex-1">
-              <h2 className="text-[32px] font-bold text-white mb-1">Create New Task</h2>
-              <p className="text-gray-300 text-sm">Add a task and assign team members</p>
+              <h2 className="text-[32px] font-bold text-text-main mb-1">Create New Task</h2>
+              <p className="text-text-secondary text-sm">Add a task and assign team members</p>
             </div>
             <button
               onClick={onClose}
@@ -331,9 +331,9 @@ export function AssignTaskModal({
           <div className="p-6 space-y-6 bg-">
             {/* Ticket Number */}
             <div>
-              <label className="block text-sm font-medium text-white mb-2">Ticket Number*</label>
+              <label className="block text-sm font-medium text-text-main mb-2">Ticket Number*</label>
               <div className="flex items-center">
-                <span className="px-4 py-3 rounded-l-xl [background:var(--field-bg)] text-white font-semibold border-r border-white/10">
+                <span className="px-4 py-3 rounded-l-xl [background:var(--field-bg)] text-text-secondary font-semibold border-r border-white/10">
                   {task.ticketNumber?.split('-')[0] || ''}
                 </span>
                 <input
@@ -348,45 +348,45 @@ export function AssignTaskModal({
                   }}
                   placeholder="001"
                   disabled={isCreating}
-                  className="w-full px-4 py-3 rounded-r-xl [background:var(--field-bg)] text-white placeholder-white focus:outline-none"
+                  className="w-full px-4 py-3 rounded-r-xl [background:var(--field-bg)] text-text-main placeholder-gray-400  focus:outline-none"
                 />
               </div>
             </div>
 
             {/* Task Title */}
             <div>
-              <label className="block text-sm font-medium text-white mb-2">Task Title*</label>
+              <label className="block text-sm font-medium text-text-main mb-2">Task Title*</label>
               <input
                 type="text"
                 value={task.title ?? ""}
                 onChange={(e) => setTask({ ...task, title: e.target.value })}
                 placeholder="Title ..."
                 disabled={isCreating}
-                className="w-full px-4 py-3 rounded-xl [background:var(--field-bg)] text-white placeholder-white focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl [background:var(--field-bg)] text-text-main placeholder-gray-400 focus:outline-none"
               />
             </div>
 
             {/* Description */}
             <div>
-              <label className="block text-sm font-medium text-white mb-2">Description</label>
+              <label className="block text-sm font-medium text-text-main  mb-2">Description</label>
               <textarea
                 value={task.description ?? ""}
                 onChange={(e) => setTask({ ...task, description: e.target.value })}
                 placeholder="Description ..."
                 rows={3}
                 disabled={isCreating}
-                className="w-full px-4 py-3 rounded-xl [background:var(--field-bg)]  text-white placeholder-white resize-none focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl [background:var(--field-bg)]  text-text-main placeholder-gray-400  resize-none focus:outline-none"
               />
             </div>
 
             {/* Due Date */}
             <div>
-              <label className="block text-sm font-medium text-white mb-2">Task Due Date*</label>
+              <label className="block text-sm font-medium text-text-main  mb-2">Task Due Date*</label>
               <div className="relative w-full full-width-datepicker">
                 <DatePicker
                   selected={task.dueDate ? new Date(task.dueDate) : null}
                   onChange={(date) => setTask({ ...task, dueDate: date?.toISOString().split("T")[0] })}
-                  className="w-full rounded-xl [background:var(--field-bg)]  px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
+                  className="w-full rounded-xl [background:var(--field-bg)]  px-4 py-3 text-text-main placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] border border-white/20"
                   placeholderText="Select due date"
                   dateFormat="MMM dd, yyyy"
                   isClearable
@@ -407,12 +407,12 @@ export function AssignTaskModal({
 
             {/* Task Priority */}
             <div>
-              <label className="block text-sm font-medium text-white mb-2">Priority*</label>
+              <label className="block text-sm font-medium text-text-main mb-2">Priority*</label>
               <select
                 value={task.priority || TaskPriority.MEDIUM}
                 onChange={(e) => setTask({ ...task, priority: e.target.value as TaskPriority })}
                 disabled={isCreating}
-                className="w-full px-4 py-3 rounded-xl [background:var(--field-bg)] text-white focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl [background:var(--field-bg)] text-text-main placeholder-gray-400 focus:outline-none"
               >
                 <option value={TaskPriority.HIGH}>High</option>
                 <option value={TaskPriority.MEDIUM}>Medium</option>
@@ -425,7 +425,7 @@ export function AssignTaskModal({
               <h3 className="text-white font-semibold text-sm mb-3">Assign Team Members*</h3>
               {teams.map((team) => (
                 <div key={team.id} className="mb-4">
-                  <p className="text-sm text-gray-300 mb-2">{team.department} Department</p>
+                  <p className="text-sm text-text-main mb-2">{team.department} Department</p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {team.members.map((member: any) => (
                       <div
@@ -458,7 +458,7 @@ export function AssignTaskModal({
           <button
             onClick={onClose}
             disabled={isCreating}
-            className="px-6 py-2 rounded-xl border border-gray-400 text-gray-200 hover:bg-white/10 disabled:opacity-50 transition-all"
+            className="px-6 py-2 rounded-xl border border-gray-400 text-text-secondary hover:bg-white/10 disabled:opacity-50 transition-all"
           >
             Cancel
           </button>

@@ -228,14 +228,14 @@ export default function TeamListPage() {
   <div className="flex flex-1 items-center gap-6 w-full lg:w-auto justify-end">
     {/* Search Bar */}
   <div className="relative block sm:flex flex-1 w-full max-w-[396px]">
-<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-[14px] h-[14px] text-white/60 z-10" />
+<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-[14px] h-[14px] text-text-secondary z-10" />
 
 <input
   type="text"
   placeholder="Search employees by name, email or ID..."
-  className="w-full pl-10 pr-4 py-3 rounded-full focus:ring-2 transition-all duration-300 shadow-lg focus:shadow-xl text-white placeholder-gray-300"
+ className="w-[396px] h-[38px] rounded-[16px] border border-[#FFFFFF4D] [background:var(--field-bg)] opacity-100 px-[41px] py-[9px]   pr-[17px] text-[#9CA3AF] placeholder-[#A1A1A1] focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]/30 transition-all duration-300 shadow-sm mx-auto"
   style={{
-    background: "rgba(0, 0, 0, 0.4)", 
+    
     backdropFilter: "blur(12px)",
     WebkitBackdropFilter: "blur(12px)",
     border: "1px solid rgba(255, 255, 255, 0.2)", 

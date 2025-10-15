@@ -110,10 +110,10 @@ const AddProject: React.FC = () => {
           <X className="w-4 h-4 text-white" />
         </button>{/* Header */}
         <div className="text-center mb-10">
-          <h1 className="text-2xl font-bold mb-3" style={{ color: colors.white.hex }}>
+          <h1 className="text-2xl font-bold mb-3 text-text-main" >
             Add New Project
           </h1>
-          <p className=" text-lg font-medium" style={{ color: colors.white.hex }}>Transform your ideas into reality</p>
+          <p className=" text-lg font-medium text-text-secondary" >Transform your ideas into reality</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -147,7 +147,7 @@ const AddProject: React.FC = () => {
             {/* Project Title */}
             <div className="group">
               <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                <span className="text-md" style={{ color: colors.white.hex }}>Project Title</span>
+                <span className="text-md text-text-main" >Project Title</span>
               </label>
               <div className="relative">
                 <input
@@ -157,7 +157,7 @@ const AddProject: React.FC = () => {
                   onChange={handleChange}
                   required
                   placeholder="Enter your amazing project title..."
-                  className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
+                  className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-text-main  focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                 />
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/5 to-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
               </div>
@@ -166,7 +166,7 @@ const AddProject: React.FC = () => {
             {/* Description */}
             <div className="group">
               <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                <span className="text-md" style={{ color: colors.white.hex }}>Project Description</span>
+                <span className="text-md text-text-main" >Project Description</span>
               </label>
               <div className="relative">
                 <textarea
@@ -176,7 +176,7 @@ const AddProject: React.FC = () => {
                   required
                   placeholder="Describe your project vision, goals, and key features..."
                   rows={5}
-                  className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] resize-none"
+                  className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-text-main   focus:outline-none focus:ring-2 focus:ring-[#0CA9F6] resize-none"
                 />
                 <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
               </div>
@@ -187,13 +187,13 @@ const AddProject: React.FC = () => {
               {/* Start Date */}
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <span className="text-md" style={{ color: colors.white.hex }}>Start Date <span className="text-sm text-gray-400 font-normal">(optional)</span></span>
+                  <span className="text-md text-text-main" >Start Date <span className="text-sm text-text-secondary font-normal">(optional)</span></span>
                 </label>
                 <div className="relative">
                   <DatePicker
                     selected={form.startDate}
                     onChange={(date) => handleDateChange(date, "startDate")}
-                    className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-12 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
+                    className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-12 py-3 text-text-main focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                     placeholderText="Select project start date"
                     dateFormat="MMM dd, yyyy"
                     isClearable
@@ -216,13 +216,13 @@ const AddProject: React.FC = () => {
               {/* End Date */}
               <div className="group">
                 <label className="block text-gray-800 font-semibold mb-3 flex items-center space-x-3">
-                  <span className="text-md" style={{ color: colors.white.hex }}>End Date <span className="text-sm text-gray-400 font-normal">(optional)</span></span>
+                  <span className="text-md text-text-main" >End Date <span className="text-sm text-gray-400 font-normal">(optional)</span></span>
                 </label>
                 <div className="relative">
                   <DatePicker
                     selected={form.endDate}
                     onChange={(date) => handleDateChange(date, "endDate")}
-                    className="w-full rounded-lg border border-white/20 [background:var(--field-bg)]  px-12 py-3 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
+                    className="w-full rounded-lg border border-white/20 [background:var(--field-bg)]  px-12 py-3 text-text-main focus:outline-none focus:ring-2 focus:ring-[#0CA9F6]"
                     placeholderText="Select project end date"
                     dateFormat="MMM dd, yyyy"
                     isClearable

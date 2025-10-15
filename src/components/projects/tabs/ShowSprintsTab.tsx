@@ -123,7 +123,7 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
         <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
           <Clock className="w-6 h-6 text-emerald-600 animate-spin" />
         </div>
-        <p className="text-white/80">Loading sprints...</p>
+        <p className="text-text-secondary">Loading sprints...</p>
       </div >
     );
   }
@@ -171,7 +171,7 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
           <Calendar className="w-16 h-16 text-white/20" />
           <div className="text-center">
             <p className="text-lg font-medium mb-2">No sprints found</p>
-            <p className="text-white/70">
+            <p className="text-text-main">
               Create your first sprint to get started with project management.
             </p>
           </div>
@@ -188,20 +188,20 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
               <div className="flex flex-col w-full">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-0">
-                  <h2 className="text-lg font-bold text-white">{sprint.title || "-"}</h2>
+                  <h2 className="text-lg font-bold text-text-main">{sprint.title || "-"}</h2>
                 </div>
 
                 {/* Description */}
-                <p className="text-sm text-gray-300 mb-5 line-clamp-2 ">
+                <p className="text-sm text-text-main mb-5 line-clamp-2 ">
                   {sprint.name || "No description provided"}
 
                 </p>
 
                 {/* Details */}
-                <div className="space-y-2 text-sm text-gray-300 mb-5">
+                <div className="space-y-2 text-sm text-text-main mb-5">
                   <div className="flex justify-between">
                     <span className="font-medium ">Timeline</span>
-                    <span className="text-white">
+                    <span className="text-text-main">
                       {sprint.startDate &&
                         new Date(sprint.startDate).toLocaleDateString()}{" "}
                       -{" "}
@@ -211,7 +211,7 @@ const SprintsTab: React.FC<SprintsTabProps> = ({ projectId, projectName }) => {
                   </div>
                   <div className="flex justify-between">
                     <span className="font-medium ">Progress</span>
-                    <span className="text-white">
+                    <span className="text-text-main">
                       {Math.round(sprint.progress || 0)}%
                     </span>
                   </div>

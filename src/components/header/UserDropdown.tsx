@@ -210,7 +210,7 @@ export default function UserDropdown() {
       {/* Dropdown submenu on click */}
       {showDropdown && (
         <div className="absolute right-0 top-full mt-2 flex flex-col bg-[var(--dropdown-bg)]  backdrop-blur-xl border border-gray-600 rounded-xl w-[150px] shadow-lg z-50">
-          {(["", "dark", "glass"] as const).map((mode) => {
+          {(["light", "dark", "glass"] as const).map((mode) => {
             const isActive = theme === mode;
             return (
               <button
@@ -219,7 +219,7 @@ export default function UserDropdown() {
                   setTheme(mode);
                   setShowDropdown(false);
                 }}
-                className={`text-left px-4 py-2 text-xs text-white hover:bg-white/10 rounded-lg capitalize transition ${
+                className={`text-left px-4 py-2 text-xs text-text-main hover:bg-white/10 rounded-lg capitalize transition ${
                   isActive ? "bg-white/20 font-semibold" : ""
                 }`}
               >

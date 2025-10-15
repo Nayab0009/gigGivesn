@@ -166,7 +166,7 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
     <div
       ref={overlayRef}
       onMouseDown={handleOverlayClick}
-      className="fixed inset-0 z-[1000] flex items-center justify-center p-2 bg-black/60 backdrop-blur-[50px]"
+      className="fixed inset-0 z-[1000] flex items-center justify-center p-2   backdrop-blur-[50px]"
     >
       {loading ? (
         <div className="flex items-center justify-center w-full h-full">
@@ -175,7 +175,7 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
       ) : (
        <div
   onMouseDown={(e) => e.stopPropagation()}
-  className="relative w-full bg-black/30 backdrop-blur-[101px] max-w-3xl max-h-[80vh] rounded-3xl [border:var(--border-style)] [box-shadow:var(--shadow-combined)] overflow-y-auto hide-scrollbar shadow-2xl p-8"
+  className="relative w-full [background:var(--form-bg)]  backdrop-blur-[101px] max-w-3xl max-h-[80vh] rounded-3xl [border:var(--border-style)] [box-shadow:var(--shadow-combined)] overflow-y-auto hide-scrollbar shadow-2xl p-8"
 
 >
           <style>{`
@@ -224,19 +224,19 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
             {/* Name & Email as plain text */}
             <div className="flex-1">
               <div className="flex flex-col justify-center h-full">
-                <div className="text-[22px] font-semibold   text-white mb-2">{form.name || "-"}</div>
-                <div className="text-base text-[14] text-gray-300">{form.email || "-"}</div>
+                <div className="text-[22px] font-semibold   text-text-main mb-2">{form.name || "-"}</div>
+                <div className="text-base text-[14] text-text-secondary">{form.email || "-"}</div>
               </div>
             </div>
           </div>
 
           {/* Form with proper spacing */}
-          <div className="max-w-2xl mx-auto">
+          <div className="max-w-2xl mx-auto ">
             <form id="profile-form" onSubmit={handleSubmit} className="space-y-6">
               {/* Name & Email in one row */}
               <div className="flex gap-6">
                 <div className="group w-1/2">
-                  <label className="block mb-2 text-[14px] font-[400] text-[#D1D5DB]">
+                  <label className="block mb-2 text-[14px] font-[400] text-text-main">
                     Name
                   </label>
                   <input
@@ -245,11 +245,11 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
                     value={form.name}
                     onChange={handleChange}
                     placeholder="Enter full name"
-                    className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
+                    className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-text-secondary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
                   />
                 </div>
                 <div className="group w-1/2">
-                  <label className="block mb-2 text-[14px] font-[400] text-[#D1D5DB]">
+                  <label className="block mb-2 text-[14px] font-[400] text-text-main">
                     Email
                   </label>
                   <input
@@ -257,14 +257,14 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
                     type="email"
                     value={form.email}
               
-                    className="w-full rounded-lg border border-white/20 bg-black/40 px-4 py-3 text-gray-400 "
+                    className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-text-secondary"
                   />
                 </div>
               </div>
 
               {/* Phone */}
               <div className="group">
-                <label className="block mb-2 text-[14px] font-[400] text-[#D1D5DB]">
+                <label className="block mb-2 text-[14px] font-[400] text-text-main">
                   Phone
                 </label>
                 <input
@@ -273,13 +273,13 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
                   value={form.phone}
                   onChange={handleChange}
                   placeholder="0999888888"
-                  className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
+                  className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-text-secondary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
                 />
               </div>
 
               {/* Address */}
               <div className="group">
-                  <label className="block mb-2 text-[14px] font-[400] text-[#D1D5DB]">
+                  <label className="block mb-2 text-[14px] font-[400] text-text-main">
                   Address
                 </label>
                 <input
@@ -288,12 +288,12 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
                   value={form.address}
                   onChange={handleChange}
                   placeholder="Enter address"
-                  className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
+                  className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-text-secondary placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
                 />
               </div>
 {/* Password */}
   <div className="group">
-    <label className="block mb-2 text-[14px] font-[400] text-[#D1D5DB]">
+    <label className="block mb-2 text-[14px] font-[400] text-text-main">
       Password
     </label>
     <input  
@@ -302,7 +302,7 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
       value={form.password || ""}
       onChange={handleChange}
       placeholder="Change password"
-      className="w-full rounded-lg border border-white/20 bg-black/60 px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
+      className="w-full rounded-lg border border-white/20 [background:var(--field-bg)] px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
     />
   </div>
               {/* Success/Error Messages */}
@@ -329,8 +329,8 @@ export default function UserProfile({ isOpen, onClose }: UserProfileProps) {
 
             {/* Delete Account Section */}
             <div className="mt-12 pt-8 border-t border-white/20">
-              <h2 className="text-xl font-bold text-white mb-4">Delete Account</h2>
-              <p className="text-[#D1D5DB] text-[14px] font-[400] mb-6 leading-relaxed">
+              <h2 className="text-xl font-bold text-text-main mb-4">Delete Account</h2>
+              <p className="text-text-secondary text-[14px] font-[400] mb-6 leading-relaxed">
                 After deleting your account you will lose all related information including tasks, projects, notes etc. You will not be able to recover it later, so think twice before doing this.
               </p>
               <button
