@@ -607,7 +607,7 @@ export default function ProjectDashboard() {
             <div className="flex flex-col sm:flex-row gap-4 items-center flex-1 w-full">
               {/* Search Bar */}
               <div className="relative flex-1 w-full h-[44px]">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/60 z-10 " />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-main z-10 " />
                 <input
                   type="text"
                   placeholder="Search projects by name, ID, or description..."
@@ -618,7 +618,7 @@ export default function ProjectDashboard() {
       pl-[48px] pr-[16px] py-[12px]
       rounded-[16px]
       backdrop-blur-[100px]
-      text-white
+      text-text-main
       focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500
       transition-all duration-300
       shadow-sm focus:shadow-md
