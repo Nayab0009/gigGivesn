@@ -35,6 +35,7 @@ body {
   --icon-border: 1px solid #FFFFFF33; /* white translucent border */
   --icon-color: #FFFFFF;
      --dropdown-icon-color: #FFFFFF;
+       --table-border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Dark Theme */
@@ -70,6 +71,7 @@ body {
   --icon-border: none;
   --icon-color: #FFFFFF;
     --dropdown-icon-color: #FFFFFF;
+     --table-border-color: rgba(255, 255, 255, 0.3);
        
       
 }
@@ -104,6 +106,7 @@ body {
     --active-bg: #E0E3E7;
   --active-border-color: #0CA9F6;
   --active-border-width: 3px; 
+    --table-border-color: rgba(0, 0, 0, 0.2); 
     
 }
 /* Hide glass background for dark/light themes */
@@ -154,6 +157,7 @@ body {
       --icon-bg:var(--icon-bg);
       --icon-color:var(--icon-color);
       --dropdown-icon-color:var(--dropdown-icon-color);
+      --table-border-color:var(--table-border-color);
 }
 
 

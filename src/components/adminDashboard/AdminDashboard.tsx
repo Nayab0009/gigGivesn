@@ -330,9 +330,15 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
 
             </div>
             <div>
-              <div className="w-16 h-16 [background:var(--container-bg)] items-center justify-center justify-items-center rounded-2xl flex mr-7">
-                <Image src="/images/bag.svg" alt="bag" width={30} height={30} className="text-text-main p-1" />
-              </div>
+             <div className="w-16 h-16 flex items-center justify-center rounded-full bg-black/10 dark:bg-white/10 mr-7">
+  <Image
+    src="/images/bag.svg"
+    alt="bag"
+    width={30}
+    height={30}
+    className="text-black dark:text-white p-1"
+  />
+</div>
               </div>
           </div>
 
@@ -359,9 +365,15 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
               </div>
             </div>
             <div>
-              <div className="w-16 h-16 [background:var(--container-bg)]  items-center justify-center justify-items-center rounded-2xl flex mr-7">
-                <Image src="/images/tick.svg" alt="bag" width={30} height={30} className="text-white p-1" />
-              </div>
+           <div className="w-16 h-16 flex items-center justify-center rounded-full bg-black/10 dark:bg-white/10 mr-7">
+  <Image
+    src="/images/tick.svg"
+    alt="tick"
+    width={30}
+    height={30}
+    className="text-white dark:text-black p-1"
+  />
+</div>
             </div>
           </div>
           {/* Users */}
@@ -387,9 +399,15 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
               </div>
             </div>
             <div>
-              <div className="w-16 h-16 bg-[rgba(0,0,0,0.3)] items-center justify-center justify-items-center rounded-2xl flex mr-7">
-                <Image src="/images/user.svg" alt="users" width={30} height={30} className="text-white p-1" />
-              </div>
+              <div className="w-16 h-16 flex items-center justify-center rounded-full bg-black/30 mr-7">
+  <Image
+    src="/images/user.svg"
+    alt="user"
+    width={30}
+    height={30}
+    className="text-white p-1"
+  />
+</div>
             </div>
           </div>
 
@@ -466,7 +484,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-[rgba(47,79,79,0.5) text-center">
+                  <tr className="text-center">
                     {[
                       { title: "Projects" },
                       { title: "Project Manager" },
@@ -479,7 +497,7 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                     ].map((header, index) => (
                       <th
                         key={index}
-                        className="px-4 py-2 text-center text-xs font-semibold text-text-secondary  border-r border-white/30"
+                        className="px-4 py-2 text-center text-xs font-semibold text-text-secondary  border-r [border-color:var(--table-border-color)]"
                       >
                         <span className=" p-2 rounded-md font-medium">{header.title}</span>
                       </th>
@@ -496,27 +514,27 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
 
                     return (
                       <tr key={project.id} className="hover:bg-gray-800/20 transition-colors">
-                        <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-2/12">
+                        <td className="px-4 py-2 whitespace-nowrap border-r [border-color:var(--table-border-color)] w-2/12">
                           <span className="text-sm text-text-main"><span></span>
                           {project.name}
                           </span>
                         </td>
-                        <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-2/12">
+                        <td className="px-4 py-2 whitespace-nowrap border-r [border-color:var(--table-border-color)]  w-2/12">
                           <span className="text-sm text-text-main">
                             {project.managername}
                             </span>
                         </td>
-                        <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-1/12">
+                        <td className="px-4 py-2 whitespace-nowrap border-r [border-color:var(--table-border-color)] w-1/12">
                           <span className="text-sm text-text-main">
                             {formatDate(project.startDate)}
                             </span>
                         </td>
-                        <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-1/12">
+                        <td className="px-4 py-2 whitespace-nowrap border-r [border-color:var(--table-border-color)] w-1/12">
                           <span className="text-sm text-text-main">
                             {formatDate(project.endDate)}
                             </span>
                         </td>
-                        <td className="px-4 py-2 whitespace-nowrap border-r border-white/30 w-1/12">
+                        <td className="px-4 py-2 whitespace-nowrap border-r [border-color:var(--table-border-color)]  w-1/12">
                           <div className="flex items-center">
                             <div className="w-24 mr-2">
                               <ProgressBar percentage={progress} />
@@ -524,17 +542,17 @@ import {getManagerTasksGraphData} from "../../lib/TaskService"
                             <span className="text-xs text-text-main">{progress}%</span>
                           </div>
                         </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-center border-r border-white/30 w-1/12">
+                        <td className="px-4 py-3 whitespace-nowrap text-center border-r [border-color:var(--table-border-color)] w-1/12">
                           <span className="text-sm text-text-main">
                             {totalTasks}
                             </span>
                         </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-center border-r border-white/30 w-2/12">
+                        <td className="px-4 py-3 whitespace-nowrap text-center border-r [border-color:var(--table-border-color)] w-2/12">
                           <span className="text-sm text-text-main">{pendingTask}</span>
                         </td>
-                        <td className="px-4 py-3 whitespace-nowrap text-center w-4/12">
-                          <span className="text-sm text-text-main">{completedTask}</span>
-                        </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-center w-4/12">
+  <span className="text-sm text-text-main">{completedTask}</span>
+</td>
                       </tr>
                     );
                   })}
