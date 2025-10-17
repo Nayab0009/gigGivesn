@@ -1153,7 +1153,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
                       ></div>
 
                       {/* Modal content */}
-                      <div className="relative bg-black/30 rounded-2xl shadow-2xl p-8 w-96 border border-white/20">
+                      <div className="relative [background:var(--container-bg)] rounded-2xl shadow-2xl p-8 w-96 border border-white/20">
                         <div className="text-center">
                           {/* Conditional Call icon */}
                         
@@ -1164,19 +1164,19 @@ export default function ChatPage({ userId }: { userId?: string }) {
                             }}
                           >
                             {isAudioCall ? (
-                            <Phone className="w-8 h-8 text-white" />
+                            <Phone className="w-8 h-8 text-text-main" />
                             ) : (
-                            <Video className="w-8 h-8 text-white" />
+                            <Video className="w-8 h-8 text-text-main" />
                             )}
                         </div>
                           
                           {isAudioCall ? (
-                            <h3 className="text-xl font-semibold mb-2 text-white">Start Audio Call</h3>
+                            <h3 className="text-xl font-semibold mb-2 text-text-main">Start Audio Call</h3>
                             ) : (
-                            <h3 className="text-xl font-semibold mb-2 text-white">Start Video Call</h3>
+                            <h3 className="text-xl font-semibold mb-2 text-text-main">Start Video Call</h3>
                             )}
                           
-                          <p className="text-white/70 text-sm mb-8">Ready to start a meeting with {selectedUser}?</p>
+                          <p className="text-text-main text-sm mb-8">Ready to start a meeting with {selectedUser}?</p>
 
                           {/* Action buttons */}
                           <div className="space-y-3">
@@ -1199,7 +1199,7 @@ export default function ChatPage({ userId }: { userId?: string }) {
                             </button>
 
                             <button
-                              className="w-full py-3 bg-white/10 backdrop-blur-sm text-white rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20"
+                              className="w-full py-3 bg-white/10 backdrop-blur-sm text-text-main rounded-xl hover:bg-white/20 transition-all duration-200 border border-white/20"
                               onClick={() => {
                                 setShowMeetingDialog(false);
                                 setIsAudioCall(false);
