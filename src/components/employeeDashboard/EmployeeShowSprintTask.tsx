@@ -471,7 +471,7 @@ const EmployeeShowSprintTask: React.FC = () => {
                           ))}
                         {tasks.filter((task) => task.status?.toLowerCase() === 'completed').length === 0 && (
                           <tr>
-                            <td className="px-6 py-4 text-white/60 text-sm" colSpan={6}>
+                            <td className="px-6 py-4 text-text-main text-sm" colSpan={6}>
                               No completed tasks
                             </td>
                           </tr>

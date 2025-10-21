@@ -412,7 +412,7 @@ export default function ProjectDetailsPage() {
             <div className="inline-flex items-center justify-center w-12 h-12 bg-emerald-100 rounded-full mb-4">
               <RefreshCw className="w-6 h-6 text-emerald-600 animate-spin" />
             </div>
-            <p className="text-white/80">Loading project…</p>
+            <p className="text-text-main">Loading project…</p>
           </div>
         ) : error && activeTab !== "members" && activeTab !== "settings" ? (
           <div className="p-6 border border-red-200/40 rounded-2xl text-white max-w-xl w-full mx-auto" style={{ background: "#0000004D" }}>

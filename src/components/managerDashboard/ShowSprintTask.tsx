@@ -417,7 +417,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
             <div className="flex items-center gap-5">
               <button className="flex items-center gap-1 text-white/70 hover:text-white px-2 py-1 rounded-full transition-all focus:outline-none">
                 <Filter className="w-4 h-4" />
-                <span className="text-sm font-medium">Filter</span>
+                <span className="text-sm font-medium">Filtersss</span>
               </button>
               <div
                 className="flex  rounded-full p-1 gap-1 shadow-inner"
@@ -619,7 +619,7 @@ const ShowSprintTask: React.FC<ShowSprintTaskProps> = ({ projectId: propProjectI
                           ))}
                         {tasks.filter((task) => task.status?.toLowerCase() === 'inprogress').length === 0 && (
                           <tr>
-                            <td className="px-6 py-4 text-white/60 text-sm" colSpan={6}>
+                            <td className="px-6 py-4 text-text-main text-sm" colSpan={6}>
                               No active tasks
                             </td>
                           </tr>

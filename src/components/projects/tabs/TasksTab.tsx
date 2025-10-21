@@ -135,7 +135,7 @@ const TasksTab = ({ project, tasks, taskCounts, taskView, setTaskView }: TasksTa
                     ))}
                   {tasks.filter((t) => t.status?.toLowerCase() === "inprogress").length === 0 && (
                     <tr>
-                      <td className="px-6 py-4 text-white/60 text-sm" colSpan={8}>
+                      <td className="px-6 py-4 text-text-main text-sm" colSpan={8}>
                         No active tasks
                       </td>
                     </tr>
