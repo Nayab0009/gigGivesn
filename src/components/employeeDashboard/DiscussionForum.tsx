@@ -12,7 +12,7 @@ import {
   createDiscussionComment,
   getDiscussionComments,
 } from "@/lib/DiscussionService"
-
+import { allIcons } from "@/lib/icons";
 // Type definitions for backend discussions
 type Discussion = {
   id: number
@@ -308,8 +308,9 @@ export default function ForumPage() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3 mt-2">
                         <div className="flex items-center gap-2 px-6 py-1 rounded-full bg-gray-200/15 group-hover:bg-blue-50/30 transition-colors  ">
-                          <Image src="/images/msgIcon.svg" alt="Comments" width={18} height={18}   className="text-[var(--dropdown-icon-color)]"
-/>
+               <div className="w-5 h-5 flex items-center justify-center text-foreground">
+  {allIcons.messageIcon}
+</div>
                           <span className="font-light text-sm text-text-main">
                             {(thread as any).comments?.length || 0} {" "}
                             {(thread as any).comments?.length === 1}

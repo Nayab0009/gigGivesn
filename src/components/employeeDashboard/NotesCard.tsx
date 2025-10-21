@@ -140,7 +140,7 @@ const NotesCard: React.FC = () => {
                       </button>
                     </>
                   ) : (
-                    <button onClick={handleEdit} className="text-white">
+                    <button onClick={handleEdit} className="text-text-main">
                       <Edit3 size={16} />
                     </button>
                   )}
