@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getTasksByEmployeeId,getTaskById } from "@/lib/TaskService";
 import { MoreHorizontal } from "lucide-react";
 import TaskDetailsPopup from "../managerDashboard/TaskDetails";
-
+import { allIcons } from "@/lib/icons";
 import React from "react"
 
 
@@ -156,7 +156,7 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
     return (
     <>
       <div
-        className="w-full p-4 rounded-3xl overflow-x-auto [background:var(--container-bg)]"
+        className="w-full p-4 rounded-3xl overflow-x-auto  [border:var(--border-style)]"
         style={{
           scrollbarWidth: "none",
           opacity: 1,
@@ -264,7 +264,7 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
                         >
                           {task.title}
                         </div>
-                        <div className="text-xs text-[#FFFFFF] mt-1 overflow-hidden"
+                        <div className="text-xs text-text-main mt-1 overflow-hidden"
                         style={{
                             fontFamily: "Inter",
                             fontWeight: 400,
@@ -302,7 +302,7 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
                           )}
                         </div>
                         <div className="flex items-center justify-between gap-2 mt-2">
-                          <span className="flex items-center text-xs font-semibold text-white/80">
+                          <span className="flex items-center text-xs font-semibold text-text-main">
                             <svg
                               className="w-4 h-4 mr-1"
                               fill="none"
@@ -336,11 +336,9 @@ const TimeTable = ({ employeeId }: TimeTableProps) => {
                                handleTaskClick(task.id);
                             }}
                           >
-                            <img
-                              src="/images/Eye.svg"
-                              alt="View Icon"
-                              className="w-4 h-4 text-white/80"
-                            />
+                                       <div className="w-5 h-5 flex items-center justify-center text-foreground">
+                             {allIcons.eyeIcon}
+                           </div>  
                           </span>
                         </div>
                       </div>
