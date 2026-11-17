@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Chat from '@/components/managerDashboard/Chat';
 
 export default function UserChatPage({ params }: { params: Promise<{ userId: string }> }) {
