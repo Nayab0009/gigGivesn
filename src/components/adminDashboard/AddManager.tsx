@@ -5,7 +5,7 @@
   "use client"
   import type React from "react"
   import { useState } from "react"
-  import { User, Mail, Phone, Loader2, KeyRound, MapPin, UserPlus, Sparkles,X } from "lucide-react"
+  import { User, Loader2, Sparkles, X } from "lucide-react"
   import axiosInstance from "@/lib/axios"
   import { colors } from "@/colors"
   import { useRouter } from "next/navigation"
