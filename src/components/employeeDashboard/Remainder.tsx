@@ -1,5 +1,3 @@
-import { Check } from "lucide-react";
-
 export default function Remainder() {
   return (
     <div
