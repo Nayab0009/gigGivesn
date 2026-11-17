@@ -1,4 +1,4 @@
-import { X, Phone, MapPin, Clock, MoreHorizontal } from "lucide-react"
+import { X, Phone, MapPin, Clock } from "lucide-react"
 import { colors } from "@/colors"
 import { getEmployeeById } from "@/lib/TeamService"
 import { getTasksByStatus } from "@/lib/TaskService"
