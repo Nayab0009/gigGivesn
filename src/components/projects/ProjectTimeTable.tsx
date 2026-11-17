@@ -6,7 +6,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { getManagerTasksByProjectId, getEmployeeTasksByProjectId, getTasksByProjectId } from "@/lib/TaskService";
 import TaskDetailsPopup from "../managerDashboard/TaskDetails";
 import { useEffect, useState } from "react";
-import { interFont } from "@/app/layout";
 
 // Helper to get day name from date string
 function getDayName(dateString: string) {
