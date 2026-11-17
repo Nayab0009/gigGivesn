@@ -6,7 +6,6 @@ import {
   ChevronLeft, 
   Edit,
   Share,
-  Star,
   MapPin,
   DollarSign,
   Calendar,
