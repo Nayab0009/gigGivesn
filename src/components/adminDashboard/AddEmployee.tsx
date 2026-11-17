@@ -5,11 +5,8 @@ import { User, Loader2, Sparkles, X } from "lucide-react"
 import axiosInstance from "@/lib/axios"
 import { colors } from "@/colors"
 import { useRouter } from "next/navigation"
-import { useAuth } from "@/context/AuthContext"
 const AddEmployee: React.FC = () => {
   const router = useRouter()
-  const { token } = useAuth() // Fixed token destructuring from auth context
-  console.log("this is the token:", token)
   const [form, setForm] = useState({
     name: "",
     email: "",

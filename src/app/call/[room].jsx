@@ -228,7 +228,6 @@ export default function IndividualMeetingRoom() {
         title: "Failed to communicate with turn server",
       });
     }
-    console.log("Got creds key and message from backend:", gotCredsKeyAndMessage);
     const turnServerCreds = await requestTurnCreds();
 
     if (!turnServerCreds || !(turnServerCreds.userName && turnServerCreds.password)) {
@@ -236,7 +235,6 @@ export default function IndividualMeetingRoom() {
         title: "Failed to communicate with turn server",
       });
     }
-    console.log("TURN server credentials:", turnServerCreds);
     try {
       const dekryptedUserName = await dekryptTurnUserAndPass(turnServerCreds.userName, dekryptionKeyForCreds.current);
       const dekryptedPassword = await dekryptTurnUserAndPass(turnServerCreds.password, dekryptionKeyForCreds.current);

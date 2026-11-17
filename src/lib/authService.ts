@@ -29,8 +29,6 @@ export const authenticateUser = async (email: string, password: string): Promise
       password
     });
 
-    console.log('Login API Response:', loginResponse.data);
-
     if (loginResponse.data && loginResponse.data.access_token) {
       // Store the access token first
       if (typeof window !== 'undefined') {
@@ -73,11 +71,11 @@ export const authenticateUser = async (email: string, password: string): Promise
         };
       }
     } else {
-      console.log('Login response is missing access_token:', loginResponse.data);
+      console.warn('Login response is missing an access token.');
       return null;
     }
   } catch (loginError) {
-    console.log('Login API endpoint failed:', loginError instanceof Error ? loginError.message : loginError);
+    console.error('Login API endpoint failed:', loginError instanceof Error ? loginError.message : 'Unknown error');
     return null;
   }
 };
@@ -85,10 +83,9 @@ export const authenticateUser = async (email: string, password: string): Promise
 export const getUserById = async (id: number): Promise<UserData | null> => {
   try {
     const response = await axiosInstance.get(`/user/${id}`);
-    console.log(`User details for ID ${id}:`, response.data); // Debug log
     return response.data;
   } catch (error) {
-    console.error(`Error fetching user with ID ${id}:`, error);
+    console.error(`Error fetching user with ID ${id}:`, error instanceof Error ? error.message : 'Unknown error');
     return null;
   }
 };

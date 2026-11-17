@@ -9,11 +9,8 @@
   import axiosInstance from "@/lib/axios"
   import { colors } from "@/colors"
   import { useRouter } from "next/navigation"
-  import { useAuth } from "@/context/AuthContext"
   const AddManager: React.FC = () => {
     const router = useRouter()
-    const { token } = useAuth()
-    console.log("this is the token:", token)
     const [form, setForm] = useState({
       name: "",
       email: "",
