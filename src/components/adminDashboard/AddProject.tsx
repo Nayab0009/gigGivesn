@@ -1,7 +1,7 @@
 "use client"
 import type React from "react"
 import { useState } from "react"
-import { Loader2, CalendarDays, FileText, Plus, Sparkles, X } from "lucide-react"
+import { Loader2, CalendarDays, FileText, Sparkles, X } from "lucide-react"
 import { createProject } from "@/lib/ProjectService"
 import { colors } from "@/colors"
 // You can install and use react-datepicker for a better UX:
@@ -202,7 +202,7 @@ const AddProject: React.FC = () => {
                     dropdownMode="select"
                     popperClassName="react-datepicker-dark"
                     calendarClassName="react-datepicker-dark-calendar"
-                    dayClassName={(date) => "react-datepicker-dark-day"}
+                    dayClassName={() => "react-datepicker-dark-day"}
                     weekDayClassName={() => "react-datepicker-dark-weekday"}
                     monthClassName={() => "react-datepicker-dark-month"}
                     yearClassName={() => "react-datepicker-dark-year"}
@@ -232,7 +232,7 @@ const AddProject: React.FC = () => {
                     dropdownMode="select"
                     popperClassName="react-datepicker-dark"
                     calendarClassName="react-datepicker-dark-calendar"
-                    dayClassName={(date) => "react-datepicker-dark-day"}
+                    dayClassName={() => "react-datepicker-dark-day"}
                     weekDayClassName={() => "react-datepicker-dark-weekday"}
                     monthClassName={() => "react-datepicker-dark-month"}
                     yearClassName={() => "react-datepicker-dark-year"}
